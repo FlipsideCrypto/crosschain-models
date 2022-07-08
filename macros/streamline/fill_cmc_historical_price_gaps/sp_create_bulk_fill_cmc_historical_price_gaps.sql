@@ -7,11 +7,22 @@ AS
 $$
   DECLARE
     RESULT VARCHAR;
+    row_cnt INTEGER;
   BEGIN
-    RESULT:= (
+    row_cnt:= (
+      SELECT
+        COUNT(1)
+      FROM
+        silver.legacy_prices_gaps
+    );
+    if (
+        row_cnt > 0
+      ) THEN RESULT:= (
         SELECT
           silver.udf_bulk_fill_cmc_historical_price_gaps()
       );
+      ELSE RESULT:= NULL;
+    END if;
     RETURN RESULT;
   END;
 $${% endset %}
