@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: legacy_db
+    database: flipside_prod_db
+    schema: silver
+    tables:
+      - name: prices_v2
+      - name: market_asset_metadata
+      - name: hours
+  - name: legacy_dev_db
+    database: flipside_dev_db
+    schema: silver
+    tables:
+      - name: prices_v2
+      - name: market_asset_metadata
+      - name: hours
+
+  
