@@ -3,6 +3,8 @@
     post_hook = 'call silver.sp_bulk_fill_cmc_historical_price_gaps()'
 ) }}
 
+-- gto
+
 WITH cte_date (date_rec) AS (
 
     SELECT
