@@ -15,5 +15,11 @@ sources:
       - name: prices_v2
       - name: market_asset_metadata
       - name: hours
+  - name: ethereum_core
+    database: ethereum
+    schema: core
+    tables:
+      - name: fact_transactions
+
 
   
