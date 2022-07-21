@@ -1,6 +1,6 @@
-{% macro sp_create_bulk_fill_cmc_historical_price_gaps() %}
+{% macro sp_create_bulk_get_coin_market_cap_hourly_ohlc() %}
 {% set sql %}
-CREATE OR REPLACE PROCEDURE silver.sp_bulk_fill_cmc_historical_price_gaps() 
+CREATE OR REPLACE PROCEDURE streamline.sp_bulk_get_coin_market_cap_hourly_ohlc() 
 RETURNS variant 
 LANGUAGE SQL 
 AS 
@@ -13,13 +13,13 @@ $$
       SELECT
         COUNT(1)
       FROM
-        streamline.legacy_prices_gaps
+        silver.all_unknown_coin_market_cap_asset_ohlc_hourly
     );
     if (
         row_cnt > 0
       ) THEN RESULT:= (
         SELECT
-          silver.udf_bulk_fill_cmc_historical_price_gaps()
+          streamline.udf_bulk_get_coin_market_cap_hourly_ohlc()
       );
       ELSE RESULT:= NULL;
     END if;

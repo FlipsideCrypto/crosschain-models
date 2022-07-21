@@ -15,5 +15,52 @@ sources:
       - name: prices_v2
       - name: market_asset_metadata
       - name: hours
-
+  - name: crosschain_external
+    schema: bronze
+    loader: S3
+    tables:
+      - name: asset_metadata_api
+        description: "all coins supported by provider"
+        external:
+          location: "@crosschain.bronze.analytics_external_tables/{{target.database}}/ASSET_METADATA_API"
+          file_format: "( type = json, strip_outer_array = TRUE )"
+          auto_refresh: true
+          partitions:
+            - name: provider
+              data_type: string 
+              expression: split_part(METADATA$FILENAME,'/',3)
+        columns:
+          - name: id
+            data_type: string
+            description: ""
+          - name: symbol
+            data_type: string
+            description: ""
+          - name: name
+            data_type: string
+            description: ""
+      - name: asset_ohlc_coin_market_cap_api
+        description: "all coins supported by provider"
+        external:
+          location: "@crosschain.bronze.analytics_external_tables/{{target.database}}/ASSET_OHLC_API/coinmarketcap"
+          file_format: "( type = json, strip_outer_array = TRUE )"
+          auto_refresh: true
+          partitions:
+            - name: _inserted_date
+              data_type: string
+              expression: substr((split_part(METADATA$FILENAME,'/',4)),16,10)
+        columns:
+          - name: id
+            data_type: number
+            description: ""
+          - name: api_start_time
+            data_type: number
+          - name: api_end_time
+            data_type: number
+          - name: metadata
+            data_type: string
+            description: ""
+          - name: data
+            data_type: variant
+            description: ""
   
