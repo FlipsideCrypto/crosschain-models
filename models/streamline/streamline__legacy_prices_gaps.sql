@@ -1,6 +1,5 @@
 {{ config(
     materialized = 'view',
-    post_hook = 'call silver.sp_bulk_fill_cmc_historical_price_gaps()'
 ) }}
 
 WITH cte_date (date_rec) AS (

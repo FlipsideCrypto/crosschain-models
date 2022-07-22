@@ -32,6 +32,7 @@ on-run-start:
   - '{{ sp_create_bulk_get_coin_market_cap_asset_metadata() }}'
   - '{{ sp_create_bulk_get_coin_market_cap_prices() }}'
   - '{{ sp_create_bulk_get_coin_gecko_prices() }}'
+  - '{{ sp_create_bulk_get_coin_market_cap_hourly_ohlc() }}'
   - '{{create_tasks()}}'
 
 
