@@ -13,7 +13,7 @@ $$
       SELECT
         COUNT(1)
       FROM
-        silver.all_unknown_coin_market_cap_asset_ohlc_hourly
+        streamline.all_unknown_coin_market_cap_asset_ohlc_hourly
     );
     if (
         row_cnt > 0
