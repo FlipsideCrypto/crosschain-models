@@ -24,7 +24,8 @@ WITH from_addresses AS (
         'thorchain dex user' AS tag_name,
         'dex' AS tag_type,
         MIN(DATE_TRUNC('day', block_timestamp)) AS start_date,
-        NULL AS end_date
+        NULL AS end_date,
+        current_timestamp as _inserted_timestamp
     FROM
          {{source('thorchain', 'swaps')}}
 
@@ -107,7 +108,8 @@ to_addresses AS (
         'thorchain dex user' AS tag_name,
         'dex' AS tag_type,
         MIN(DATE_TRUNC('day', block_timestamp)) AS start_date,
-        NULL AS end_date
+        NULL AS end_date,
+        current_timestamp as _inserted_timestamp
     FROM
         {{source('thorchain', 'swaps')}}
     WHERE
