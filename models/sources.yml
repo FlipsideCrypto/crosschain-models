@@ -20,6 +20,12 @@ sources:
     schema: core
     tables:
       - name: fact_transactions
+  - name: thorchain
+    database: flipside_prod_db
+    schema: thorchain
+    tables:
+      - name: swaps
+      - name: liquidity_actions
   - name: crosschain_external
     schema: bronze
     loader: S3
