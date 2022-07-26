@@ -16,7 +16,7 @@ SELECT
     ) AS start_date,
     NULL AS end_date,
     _inserted_timestamp,
-    CURRENT_TIMESTAMP AS tag_created
+    CURRENT_TIMESTAMP AS tag_created_at
 FROM
     {{ source(
         'ethereum_silver',

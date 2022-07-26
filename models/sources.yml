@@ -25,6 +25,7 @@ sources:
     schema: silver
     tables:
       - name: logs
+      - name: traces
   - name: crosschain_external
     schema: bronze
     loader: S3

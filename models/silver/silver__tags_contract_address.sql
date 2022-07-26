@@ -7,24 +7,36 @@
 SELECT
     DISTINCT 'ethereum' AS blockchain,
     'flipside' AS creator,
-    tx_json :receipt :contractAddress::string AS address,
+    to_address :: STRING AS address,
     'contract address' AS tag_name,
     'contract' AS tag_type,
+    block_number,
     DATE_TRUNC(
         'day',
         block_timestamp
     ) AS start_date,
     NULL AS end_date,
-    current_timestamp as _inserted_timestamp
+    _inserted_timestamp,
+    CURRENT_TIMESTAMP AS tag_created_at
 FROM
-    {{source('ethereum_core', 'fact_transactions')}}
-WHERE tx_json :receipt :contractAddress != 'null'
-    
-    {% if is_incremental() %} 
-    and 
-        block_timestamp > (
-        SELECT
-            MAX(start_date)
-        FROM {{this}}
-    ) 
-    {% endif %} 
+    {{ source(
+        'ethereum_silver',
+        'traces'
+    ) }}
+WHERE
+    TYPE = 'CREATE'
+    AND tx_status = 'SUCCESS'
+    AND to_address IS NOT NULL
+
+{% if is_incremental() %}
+AND _inserted_timestamp > (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
+{% endif %}
+
+qualify(ROW_NUMBER() over(PARTITION BY address
+ORDER BY
+    block_number DESC)) = 1
