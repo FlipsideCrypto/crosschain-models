@@ -2,8 +2,7 @@
     materialized = 'view',
 ) }}
 
-
-select 
+SELECT
     blockchain,
     creator,
     address,
@@ -11,6 +10,18 @@ select
     tag_type,
     start_date,
     end_date,
-    _inserted_timestamp
-from 
-    {{ref('silver__tags_contract_address')}}
+    tag_created_at
+FROM
+    {{ ref('silver__tags_contract_address') }}
+UNION
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_gnosis_safe_address') }}

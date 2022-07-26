@@ -7,10 +7,9 @@
 SELECT
     DISTINCT 'ethereum' AS blockchain,
     'flipside' AS creator,
-    to_address :: STRING AS address,
-    'contract address' AS tag_name,
+    event_inputs :instantiation :: STRING AS address,
+    'gnosis safe address' AS tag_name,
     'contract' AS tag_type,
-    block_number,
     DATE_TRUNC(
         'day',
         block_timestamp
@@ -21,12 +20,10 @@ SELECT
 FROM
     {{ source(
         'ethereum_silver',
-        'traces'
+        'logs'
     ) }}
 WHERE
-    TYPE = 'CREATE'
-    AND tx_status = 'SUCCESS'
-    AND to_address IS NOT NULL
+    event_name = 'ContractInstantiation'
 
 {% if is_incremental() %}
 AND _inserted_timestamp > (
@@ -39,4 +36,4 @@ AND _inserted_timestamp > (
 
 qualify(ROW_NUMBER() over(PARTITION BY address
 ORDER BY
-    block_number DESC)) = 1
+    start_date ASC)) = 1
