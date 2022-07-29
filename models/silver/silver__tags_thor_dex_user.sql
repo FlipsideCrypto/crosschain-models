@@ -23,28 +23,25 @@ WITH from_addresses AS (
         from_address AS address,
         'thorchain dex user' AS tag_name,
         'dex' AS tag_type,
+        MIN(block_id) as block_id,
         MIN(DATE_TRUNC('day', block_timestamp)) AS start_date,
         NULL AS end_date,
-        current_timestamp as _inserted_timestamp
+        CURRENT_TIMESTAMP AS tag_created_at
     FROM
          {{source('thorchain', 'swaps')}}
 
     {% if is_incremental() %}
     WHERE
-    block_timestamp > (
+    block_id not in (
         SELECT
-            MAX(start_date)
+            distinct block_id
         FROM
             {{ this }}
     )
     {% endif %}
     GROUP BY
-        blockchain,
-        creator,
-        address,
-        tag_name,
-        tag_type,
-        end_date
+    blockchain,
+        address
 ),
 to_addresses AS (
     SELECT
@@ -107,9 +104,10 @@ to_addresses AS (
         native_to_address AS address,
         'thorchain dex user' AS tag_name,
         'dex' AS tag_type,
+        MIN(block_id) as block_id,
         MIN(DATE_TRUNC('day', block_timestamp)) AS start_date,
         NULL AS end_date,
-        current_timestamp as _inserted_timestamp
+        current_timestamp as tag_created_at
     FROM
         {{source('thorchain', 'swaps')}}
     WHERE
@@ -122,20 +120,16 @@ to_addresses AS (
         )
 
         {% if is_incremental() %}
-        AND block_timestamp > (
+        and
+        block_id not in (
             SELECT
-                MAX(start_date)
+                distinct block_id
             FROM
                 {{ this }}
         )
         {% endif %}
     GROUP BY
-        blockchain,
-        creator,
-        address,
-        tag_name,
-        tag_type,
-        end_date
+        address
 )
 SELECT
     *
