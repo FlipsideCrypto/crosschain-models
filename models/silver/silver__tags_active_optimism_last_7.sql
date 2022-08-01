@@ -77,7 +77,8 @@
     select  
         eoa,
         day_all,
-        datediff('day', lag(day_all) over (partition by eoa order by eoa, day_all), day_all) as difference
+        datediff('day', lag(day_all) over (partition by eoa order by eoa, day_all), day_all) as difference,
+        max(day_all) over (partition by eoa) as max_date
     from all_dates a, 
     lateral (select * from address_base as c where a.day_all <= DATEADD('Day', 7,c.day_) AND a.day_all >= c.day_)
     group by eoa, day_all
@@ -93,7 +94,8 @@
         'active on optimism last 7' as tag_name,
         'profile' as tag_type,
         day_all as start_date, 
-        dateadd('day', -lead(difference) over (partition by eoa order by eoa, day_all), lead(day_all) over (partition by eoa order by eoa, day_all)) as end_date
+        dateadd('day', -lead(difference) over (partition by eoa order by eoa, day_all), lead(day_all) over (partition by eoa order by eoa, day_all)) as end_date,
+        max_date
     from all_hits 
     where difference != 1 or difference is null
     order by eoa, day_all
@@ -102,7 +104,7 @@
     distinct
     blockchain, creator, address, tag_name, tag_type, start_date, 
     case when end_date is null then 
-        case when datediff('day', start_date, current_date) > 7 then dateadd('day', 7, start_date)
+        case when datediff('day', max_date, current_date) > 0 then date_trunc('day', max_date)
         else null
         end
     else end_date
