@@ -16,11 +16,11 @@
         'transactions'
         ) }}
         WHERE block_timestamp >= current_date -7
-        group by from_address having count(distinct tx_hash) > 0
+        group by from_address 
   ), current_tagged as (
       select *
       from {{ this }}
-      where end_date is null and tag_name = 'active on arbitrum last 7'
+      where end_date is null 
   ), additions as (
       select distinct 
         'arbitrum' as blockchain,
@@ -60,7 +60,6 @@
         'arbitrum_silver',
         'transactions'
     ) }}
-    ORDER BY day_ DESC
     ),
 
     all_dates AS ( 
@@ -70,7 +69,6 @@
         'arbitrum_silver',
         'transactions'
     ) }}
-    ORDER BY day_all DESC
     ),
 
     all_hits as (
@@ -82,7 +80,6 @@
     from all_dates a, 
     lateral (select * from address_base as c where a.day_all <= DATEADD('Day', 7,c.day_) AND a.day_all >= c.day_)
     group by eoa, day_all
-    order by day_all
     ),
     final_output as (
 
@@ -98,7 +95,6 @@
         max_date
     from all_hits 
     where difference != 1 or difference is null
-    order by eoa, day_all
     )
     select 
     distinct
@@ -111,6 +107,5 @@
     end as end_date,
     CURRENT_TIMESTAMP AS tag_created_at
     from final_output
-    order by address, start_date
 
 {% endif %}

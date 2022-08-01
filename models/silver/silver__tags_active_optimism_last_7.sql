@@ -16,11 +16,11 @@
         'transactions'
         ) }}
         WHERE block_timestamp >= current_date -7
-        group by from_address having count(distinct tx_hash) > 0
+        group by from_address
   ), current_tagged as (
       select *
       from {{ this }}
-      where end_date is null and tag_name = 'active on optimism last 7'
+      where end_date is null
   ), additions as (
       select distinct 
         'optimism' as blockchain,
