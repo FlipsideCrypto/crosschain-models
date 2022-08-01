@@ -25,20 +25,20 @@ WITH core_values AS (
         ) A
         CROSS JOIN (
             SELECT
-                DISTINCT date_day AS xfer_date
+                DISTINCT date_trunc('day', hour) AS xfer_date
             FROM
                 {{ source(
-                    'crosschain_dev_silver',
-                    'dates_table'
+                    'legacy_db',
+                    'hours'
                 ) }}
-            where date_day >= (SELECT
+            where xfer_date >= (SELECT
                     MIN(xfer_date)
                 FROM
                     {{ source(
                         'legacy_silver_crosschain',
                         'ntr'
                     ) }})
-                and date_day <= current_date
+                and xfer_date <= current_date
         ) b
     ORDER BY
         A.blockchain,
