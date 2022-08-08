@@ -19,6 +19,7 @@ WITH core_values AS (
                     'legacy_silver_crosschain',
                     'ntr'
                 ) }}
+            where blockchain != 'algoana'
             ORDER BY
                 blockchain,
                 symbol
@@ -88,7 +89,7 @@ base AS (
             'ntr'
         ) }}
     WHERE
-        reward > 0
+        reward > 0 and blockchain != 'algoana'
     GROUP BY
         blockchain,
         symbol,
