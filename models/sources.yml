@@ -93,6 +93,9 @@ sources:
             - name: provider
               data_type: string 
               expression: split_part(METADATA$FILENAME,'/',3)
+            - name: _inserted_date
+              data_type: string
+              expression: substr((split_part(METADATA$FILENAME,'/',4)),16,10)
         columns:
           - name: id
             data_type: string
