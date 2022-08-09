@@ -35,6 +35,8 @@ WITH base AS (
                     'crosschain_external',
                     'asset_metadata_api'
                 ) }}
+            WHERE
+                provider = 'coinmarketcap'
         )
         AND VALUE :last_historical_data :: timestamp_ntz >= CURRENT_DATE - 365
 )
