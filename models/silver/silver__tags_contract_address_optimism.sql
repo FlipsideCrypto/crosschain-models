@@ -5,7 +5,7 @@
 ) }}
 
 SELECT
-    DISTINCT 'ethereum' AS blockchain,
+    DISTINCT 'optimism' AS blockchain,
     'flipside' AS creator,
     to_address :: STRING AS address,
     'contract address' AS tag_name,
@@ -20,7 +20,7 @@ SELECT
     CURRENT_TIMESTAMP AS tag_created_at
 FROM
     {{ source(
-        'ethereum_silver',
+        'optimism_silver',
         'traces'
     ) }}
 WHERE
