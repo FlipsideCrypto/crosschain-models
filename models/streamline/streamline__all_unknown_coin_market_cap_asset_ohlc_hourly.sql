@@ -27,7 +27,8 @@ WITH hours AS (
 ),
 cmc_active_assets AS (
     SELECT
-        id::number as id
+        id :: NUMBER AS id,
+        VALUE :first_historical_data :: timestamp_ntz AS genesis_recorded_time
     FROM
         {{ source(
             'crosschain_external',
@@ -36,6 +37,17 @@ cmc_active_assets AS (
     WHERE
         provider = 'coinmarketcap'
         AND VALUE :status :: STRING = 'active'
+        AND _inserted_date = (
+            SELECT
+                MAX(_inserted_date)
+            FROM
+                {{ source(
+                    'crosschain_external',
+                    'asset_metadata_api'
+                ) }}
+            WHERE
+                provider = 'coinmarketcap'
+        )
 ),
 base AS (
     SELECT
@@ -45,6 +57,11 @@ base AS (
     FROM
         cmc_active_assets
         CROSS JOIN hours
+    WHERE
+        start_time > DATE_PART(
+            'epoch',
+            genesis_recorded_time
+        )
     EXCEPT
     SELECT
         api_start_time,
@@ -55,6 +72,10 @@ base AS (
             'crosschain_external',
             'asset_ohlc_coin_market_cap_api'
         ) }}
+    WHERE
+        NULLIF(
+            DATA,{}
+        ) IS NOT NULL
 ),
 base_params AS (
     SELECT
@@ -84,6 +105,11 @@ SELECT
     ) AS asset_ids
 FROM
     base_params
+WHERE
+    start_time > DATE_PART(
+        'epoch',
+        CURRENT_DATE - 3
+    )
 GROUP BY
     1,
     2,
