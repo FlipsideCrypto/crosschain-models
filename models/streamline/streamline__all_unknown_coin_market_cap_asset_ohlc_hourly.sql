@@ -45,6 +45,8 @@ cmc_active_assets AS (
                     'crosschain_external',
                     'asset_metadata_api'
                 ) }}
+            WHERE
+                provider = 'coinmarketcap'
         )
 ),
 base AS (
