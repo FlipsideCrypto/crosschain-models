@@ -28,7 +28,7 @@
         address as address,
         'active on arbitrum last 7' as tag_name,
         'profile' as tag_type,
-        start_date as start_date, 
+        start_date::date as start_date, 
         null as end_date,
         CURRENT_TIMESTAMP AS tag_created_at
         from base
@@ -41,8 +41,8 @@
         address,
         tag_name,
         tag_type,
-        start_date, 
-        date_trunc('DAY', current_date) as end_date,
+        start_date::date, 
+        date_trunc('DAY', current_date)::date as end_date,
         CURRENT_TIMESTAMP AS tag_created_at
         from current_tagged
         where address not in (select distinct address from base)
@@ -53,59 +53,50 @@
 
 {% else %}
 
-    with address_base AS (
-    SELECT distinct from_address as EOA, date_trunc('DAY', block_timestamp) as day_, 1 as active 
-    FROM     
+    with address_base as (
+    select distinct from_address, block_timestamp::date as bt
+    from    
     {{ source(
         'arbitrum_silver',
         'transactions'
     ) }}
     ),
-
-    all_dates AS ( 
-    SELECT DISTINCT(DATE_TRUNC('DAY', block_timestamp)) as day_all
-    FROM 
-    {{ source(
-        'arbitrum_silver',
-        'transactions'
-    ) }}
-    ),
-
-    all_hits as (
-    select  
-        eoa,
-        day_all,
-        datediff('day', lag(day_all) over (partition by eoa order by eoa, day_all), day_all) as difference,
-        max(day_all) over (partition by eoa) as max_date
-    from all_dates a, 
-    lateral (select * from address_base as c where a.day_all <= DATEADD('Day', 7,c.day_) AND a.day_all >= c.day_)
-    group by eoa, day_all
-    ),
-    final_output as (
-
+    next_date as (
+        select *, 
+            lead(bt) over (partition by from_address order by bt) as nt,
+            datediff('day',bt, nt) as days_between_activity
+        from address_base
+    )
+    , conditional_group as (
     select 
-        distinct 
-        'arbitrum' as blockchain,
-        'flipside' as creator,
-        eoa as address,
-        'active on arbitrum last 7' as tag_name,
-        'profile' as tag_type,
-        day_all as start_date, 
-        dateadd('day', -lead(difference) over (partition by eoa order by eoa, day_all), lead(day_all) over (partition by eoa order by eoa, day_all)) as end_date,
-        max_date
-    from all_hits 
-    where difference != 1 or difference is null
+        *,
+        conditional_true_event(days_between_activity > 7) over (partition by from_address order by bt) as e
+        from next_date
+    )
+    , conditional_group_lagged as (
+        select *,
+        coalesce(lag(e) over (partition by from_address order by bt),0) as grouping_val
+        from conditional_group
+    )
+    , final_base as (
+        select 
+            from_address,
+            grouping_val,
+            min(bt) as start_date,
+            dateadd('day',7,max(bt)) as end_date
+        from conditional_group_lagged
+        group by 1, 2
     )
     select 
-    distinct
-    blockchain, creator, address, tag_name, tag_type, start_date, 
-    case when end_date is null then 
-        case when datediff('day', max_date, current_date) > 0 then date_trunc('day', max_date)
-        else null
-        end
-    else end_date
-    end as end_date,
-    CURRENT_TIMESTAMP AS tag_created_at
-    from final_output
+        'arbitrum' as blockchain,
+        'flipside' as creator,
+        from_address as address,
+        'active on arbitrum last 7' as tag_name,
+        'profile' as tag_type,
+        start_date, 
+        iff(end_date>current_date, null, end_date) as end_date,
+        CURRENT_TIMESTAMP AS tag_created_at
+    from final_base
+
 
 {% endif %}
