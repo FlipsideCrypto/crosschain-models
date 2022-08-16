@@ -13,6 +13,7 @@ sources:
     schema: silver_crosschain
     tables:
       - name: ntr
+      - name: address_labels
   - name: legacy_dev_db
     database: flipside_dev_db
     schema: silver
