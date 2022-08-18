@@ -139,5 +139,5 @@ FROM
 )
 select a.* from final_table a
 {% if is_incremental() %}
-left outer join {{this}} b on final_table.address = b.address 
+left outer join {{this}} b on a.address = b.address 
 {% endif %}
