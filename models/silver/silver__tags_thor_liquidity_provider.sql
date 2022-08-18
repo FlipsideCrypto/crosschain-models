@@ -125,7 +125,8 @@ GROUP BY
     address
 ORDER BY
     address DESC
-)
+),
+final_table as (
 SELECT
     *
 FROM
@@ -135,4 +136,8 @@ SELECT
     *
 FROM
     to_asset
-
+)
+select a.* from final_table a
+{% if is_incremental() %}
+left outer join {{this}} b on a.address = b.address 
+{% endif %}
