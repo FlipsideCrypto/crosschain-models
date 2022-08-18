@@ -130,7 +130,8 @@ to_addresses AS (
         {% endif %}
     GROUP BY
         address
-)
+),
+final_table as (
 SELECT
     *
 FROM
@@ -140,3 +141,8 @@ SELECT
     *
 FROM
     to_addresses
+)
+select a.* from final_table a
+{% if is_incremental() %}
+left outer join {{this}} b on a.address = b.address 
+{% endif %}
