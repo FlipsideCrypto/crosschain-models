@@ -39,6 +39,17 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+  - name: ethereum_silver_nft
+    database: ethereum
+    schema: silver_nft
+    tables:
+      - name: cryptopunk_sales
+      - name: looksrare_sales
+      - name: nftx_sales
+      - name: opensea_sales
+      - name: rarible_sales
+      - name: seaport_sales
+      - name: x2y2_sales
   - name: arbitrum_silver
     database: arbitrum
     schema: silver
