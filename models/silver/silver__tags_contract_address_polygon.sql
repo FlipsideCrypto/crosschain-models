@@ -24,7 +24,7 @@ FROM
         'traces'
     ) }}
 WHERE
-    TYPE = 'CREATE'
+    TYPE in ('CREATE', 'CREATE2')
     AND tx_status = 'SUCCESS'
     AND to_address IS NOT NULL
 
