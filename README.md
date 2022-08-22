@@ -2,7 +2,7 @@
 ----
 There are 3 ways to add tags to our data!
 
-#### 1. Add a SQL statement to our GitHub
+#### <u>1. Add a SQL statement to our GitHub</u>
 
 You can use a Flipside query to create a tag set that will run on a reoccurring basis. This is a very powerful and scalable way to create a dynamic tag set that can update regularly. 
 
@@ -23,7 +23,7 @@ Please make sure your table includes a valid:
   - start_date
   - end_date
 
-#### 2. Add a DBT seed file to our GitHub
+#### <u>2. Add a DBT seed file to our GitHub</u>
 
 If you have a static list of addresses that need a tag, a DBT seed file is the best route. This is the most efficient method to tag a list of addresses that will not change and don't rely on a SQL query. 
 
@@ -44,17 +44,10 @@ Please make sure your table includes a valid:
   - start_date
   - end_date
 
-#### 3. I know what I want but I don't know how to tag
+#### <u>3. I know what I want but I don't know how to tag</u>
 
 Flipside has a very active community and extraordinarily helpful employees. Reach out to the community, or to @gto, in Discord and someone will help you set up your tags. 
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
-## Profile Set Up
 
 #### Use the following within profiles.yml 
 ----
