@@ -49,6 +49,10 @@ Please make sure your table includes a valid:
 Flipside has a very active community and extraordinarily helpful employees. Reach out to the community, or to @gto, in Discord and someone will help you set up your tags. 
 
 
+
+
+## Profile Set Up
+
 #### Use the following within profiles.yml 
 ----
 
