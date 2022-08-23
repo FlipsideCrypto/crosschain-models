@@ -1,27 +1,33 @@
-## User Added Tags
+## How to Add Tags to Flipside's Data
 ----
 There are 3 ways to add tags to our data!
+
+(Before you begin, be sure to [read our docs on Tags](https://docs.flipsidecrypto.com/our-data/data-models/tags).)
 
 #### <ins>1. Add a SQL statement to our GitHub</ins>
 
 You can use a Flipside query to create a tag set that will run on a reoccurring basis. This is a very powerful and scalable way to create a dynamic tag set that can update regularly. 
 
-In order to submit a flipside query for tagging:
-  - [Submit a github issue](https://github.com/FlipsideCrypto/crosschain-models/issues/new) on this repo. 
+To submit a Flipside query for tagging:
+  - [Submit a Github issue](https://github.com/FlipsideCrypto/crosschain-models/issues/new) on this repo. 
   - Title the issue: "Tags: " and the name of the tag(s) you wish to include in our data model. 
-  - In the comment section, paste the query that can be run to isolate the addresses you want to tag. 
+  - In the comment section, paste the query SQL that can be run to isolate the addresses you want to tag (also include a link to the query in the Flipside app). 
   - Assign the issue to gronders for review.
   - Submit!
 
-We will review your code and get back to you if there are any questions or modifications to your code. 
-Please make sure your table includes a valid:
-  - blockchain
-  - creator (your name, or identifying name, NOT flipside)
-  - address
-  - tag_name
-  - tag_type
-  - start_date
-  - end_date
+We will review your query and get back to you if there are any questions or changes. 
+
+Your tags query must return these 7 columns:
+
+  Column Name | Data type | Description
+  --- | --- | --- 
+  blockchain | string | The blockchain that the address belongs to.
+  creator | string | Who created the tag. Use your Flipside username, shown in your Flipside profile URL, for tags you create.
+  address | string | The address of the contract or wallet the tag describes.
+  tag_name | string | Tag name (sub-category).
+  tag_type | string | Tag type (high-level category).
+  start_date | timestamp | Date the tag first applies. For tags that are permanent, this might be the date the address had its first behavior that warrants its tag, or the addresses' first transaction (e.g. if the tag identifies a celebrity NFT address).
+  end_date | timestamp | Date the tag no longer applies (for tags that are permanent or currently active, end_date can be NULL).
 
 #### <ins>2. Add a DBT seed file to our GitHub</ins>
 
@@ -34,15 +40,19 @@ Once you are familiar with PR's, to add your tags:
   - Create your PR to add your seed file to our data model. 
   - Assign the PR to gronders for review.
 
-We will review your seed file and get back to you if there are any questions or modifications that are necessary.  
-Please make sure your table includes a valid:
-  - blockchain
-  - creator (your name, or identifying name, NOT flipside)
-  - address
-  - tag_name
-  - tag_type
-  - start_date
-  - end_date
+We will review your seed file and get back to you if there are any questions or changes.  
+
+Your seed file must contain these 7 columns:
+
+  Column Name | Data type | Description
+  --- | --- | --- 
+  blockchain | string | The blockchain that the address belongs to.
+  creator | string | Who created the tag. Use your Flipside username, shown in your Flipside profile URL, for tags you create.
+  address | string | The address of the contract or wallet the tag describes.
+  tag_name | string | Tag name (sub-category).
+  tag_type | string | Tag type (high-level category).
+  start_date | timestamp | Date the tag first applies. For tags that are permanent, this might be the date the address had its first behavior that warrants its tag, or the addresses' first transaction (e.g. if the tag identifies a celebrity NFT address).
+  end_date | timestamp | Date the tag no longer applies (for tags that are permanent or currently active, end_date can be NULL).
 
 #### <ins>3. I know what I want but I don't know how to tag</ins>
 
@@ -51,7 +61,8 @@ Flipside has a very active community and extraordinarily helpful employees. Reac
 
 
 
-## Profile Set Up
+## How to Set Up a DBT Profile for this Repo
+This info is for contributors who plan to use [DBT](https://docs.getdbt.com/docs/introduction) to contribute to Flipside's data models. A DBT profile is _not_ required to add tags via a seed file (to add tags, follow the instructions above).
 
 #### Use the following within profiles.yml 
 ----
@@ -75,7 +86,7 @@ crosschain:
       query_tag: <TAG>
 ```
 
-### Resources:
+### DBT Learning Resources:
 - Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
 - Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
 - Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
