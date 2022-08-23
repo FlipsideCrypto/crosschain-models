@@ -1,8 +1,6 @@
 ## How to Add Tags to Flipside's Data
-----
-There are 3 ways to add tags to our data!
 
-Be sure to [read our docs on Tags](https://docs.flipsidecrypto.com/our-data/data-models/tags).
+There are 3 ways to add tags to our data!
 
 #### <ins>1. Add a SQL statement to our GitHub</ins>
 
@@ -28,6 +26,8 @@ Your tags query must return these 7 columns:
   tag_type | string | Tag type (high-level category).
   start_date | timestamp | Date the tag first applies. For tags that are permanent, this might be the date the address had its first behavior that warrants its tag, or the addresses' first transaction (e.g. if the tag identifies a celebrity NFT address).
   end_date | timestamp | Date the tag no longer applies (for tags that are permanent or currently active, end_date can be NULL).
+  
+ We recommend you [review our docs on Tags](https://docs.flipsidecrypto.com/our-data/data-models/tags) before contributing your first tags query.
 
 #### <ins>2. Add a DBT seed file to our GitHub</ins>
 
@@ -53,6 +53,8 @@ Your seed file must contain these 7 columns:
   tag_type | string | Tag type (high-level category).
   start_date | timestamp | Date the tag first applies. For tags that are permanent, this might be the date the address had its first behavior that warrants its tag, or the addresses' first transaction (e.g. if the tag identifies a celebrity NFT address).
   end_date | timestamp | Date the tag no longer applies (for tags that are permanent or currently active, end_date can be NULL).
+
+We recommend you [review our docs on Tags](https://docs.flipsidecrypto.com/our-data/data-models/tags) before contributing your first tags seed file.
 
 #### <ins>3. I know what I want but I don't know how to tag</ins>
 
