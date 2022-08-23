@@ -2,7 +2,7 @@
 ----
 There are 3 ways to add tags to our data!
 
-(Before you begin, be sure to [read our docs on Tags](https://docs.flipsidecrypto.com/our-data/data-models/tags).)
+Be sure to [read our docs on Tags](https://docs.flipsidecrypto.com/our-data/data-models/tags).
 
 #### <ins>1. Add a SQL statement to our GitHub</ins>
 
