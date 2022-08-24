@@ -142,7 +142,7 @@ sources:
           - name: data
             data_type: variant
             description: ""
-      - name: asset_historical_hourly_market_data_coingecko_api
+      - name: asset_historical_hourly_market_data_coin_gecko_api
         description: "all coins supported by provider"
         external:
           location: "@crosschain.bronze.analytics_external_tables/{{target.database}}/ASSET_HISTORICAL_HOURLY_MARKET_DATA_API/coingecko"
@@ -164,7 +164,10 @@ sources:
           - name: data
             data_type: variant
             description: ""
-      - name: asset_ohlc_coingecko_api
+          - name: error
+            data_type: string
+            description: ""
+      - name: asset_ohlc_coin_gecko_api
         description: "all coins supported by provider"
         external:
           location: "@crosschain.bronze.analytics_external_tables/{{target.database}}/ASSET_OHLC_API/coingecko"
@@ -185,6 +188,9 @@ sources:
             description: ""
           - name: data
             data_type: variant
+            description: ""
+          - name: error
+            data_type: string
             description: ""
       
   

@@ -30,5 +30,5 @@ SELECT
 FROM
     {{ source(
         'crosschain_external',
-        'asset_historical_hourly_market_data_coingecko_api'
+        'asset_historical_hourly_market_data_coin_gecko_api'
     ) }}
