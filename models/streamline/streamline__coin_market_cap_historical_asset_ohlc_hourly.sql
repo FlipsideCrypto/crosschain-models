@@ -40,25 +40,30 @@ WITH base AS (
         )
         AND VALUE :last_historical_data :: timestamp_ntz >= CURRENT_DATE - 365
 )
-SELECT
+, ids_needed as (
+    SELECT
+        id
+    FROM
+        base
+    WHERE 
+        historical_load_end_time > historical_load_start_time
+    EXCEPT
+    SELECT
+        id
+    FROM
+        {{ source(
+            'crosschain_external',
+            'asset_ohlc_coin_market_cap_api'
+        ) }}
+    WHERE
+        NULLIF(
+            DATA,{}
+        ) IS NOT NULL
+    and _inserted_date >= '2022-08-09'
+)
+select
     historical_load_start_time as start_time,
     historical_load_end_time as end_time,
-    id AS asset_ids
-FROM
-    base
-WHERE 
-    end_time > start_time
-EXCEPT
-SELECT
-    api_start_time,
-    api_end_time,
-    id
-FROM
-    {{ source(
-        'crosschain_external',
-        'asset_ohlc_coin_market_cap_api'
-    ) }}
-WHERE
-    NULLIF(
-        DATA,{}
-    ) IS NOT NULL
+    base.id as asset_ids
+from base
+inner join ids_needed i on i.id = base.id

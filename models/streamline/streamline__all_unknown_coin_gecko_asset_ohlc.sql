@@ -30,5 +30,5 @@ SELECT
 FROM
     {{ source(
         'crosschain_external',
-        'asset_ohlc_coingecko_api'
+        'asset_ohlc_coin_gecko_api'
     ) }}
