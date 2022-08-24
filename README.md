@@ -36,6 +36,7 @@ If you have a static list of addresses that need a tag, a DBT seed file is the b
 In order to submit a DBT seed file, we will be using a Pull Request (PR). Please see the [docs](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) on how to create a pull request!
 Once you are familiar with PR's, to add your tags:
   - Create your DBT seed file. (A DBT seed file is a csv file with the same column names as our table that can be uploaded via DBT.) 
+  - DBT seed file needs to have the naming convention: ```silver__<name of seed file>.csv```. Please try to make the name unique, we don't want mulitple files with the same naming convention. 
   - Place the seed file within the ```data/``` folder of the repo. 
   - Create your PR to add your seed file to our data model. 
   - Assign the PR to gronders for review.
