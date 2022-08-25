@@ -6,7 +6,7 @@ execute immediate 'create or replace task streamline.bulk_get_coin_market_cap_ho
     schedule = \'USING CRON 15,30,45 * * * * UTC\'
 as
 BEGIN
-    call streamline.refresh_external_table_by_recent_date(\'asset_metadata_api\');
+    call streamline.refresh_external_table_by_recent_date(\'asset_metadata_coin_market_cap_api\');
     call streamline.refresh_external_table_by_recent_date(\'asset_ohlc_coin_market_cap_api\');
 
     select streamline.udf_bulk_get_coin_market_cap_hourly_ohlc()
