@@ -8,7 +8,7 @@ SELECT
 FROM
     {{ source(
         'crosschain_external',
-        'asset_metadata_api'
+        'asset_metadata_coin_gecko_api'
     ) }}
 WHERE
     provider = 'coingecko'
@@ -18,7 +18,7 @@ WHERE
         FROM
             {{ source(
                 'crosschain_external',
-                'asset_metadata_api'
+                'asset_metadata_coin_gecko_api'
             ) }}
         WHERE
             provider = 'coingecko'

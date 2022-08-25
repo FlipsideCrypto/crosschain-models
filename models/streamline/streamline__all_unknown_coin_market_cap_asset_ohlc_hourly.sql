@@ -32,7 +32,7 @@ cmc_active_assets AS (
     FROM
         {{ source(
             'crosschain_external',
-            'asset_metadata_api'
+            'asset_metadata_coin_market_cap_api'
         ) }}
     WHERE
         provider = 'coinmarketcap'
@@ -43,7 +43,7 @@ cmc_active_assets AS (
             FROM
                 {{ source(
                     'crosschain_external',
-                    'asset_metadata_api'
+                    'asset_metadata_coin_market_cap_api'
                 ) }}
             WHERE
                 provider = 'coinmarketcap'
