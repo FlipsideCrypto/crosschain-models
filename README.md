@@ -7,7 +7,7 @@ There are 3 ways to add tags to our data!
 You can use a Flipside query to create a tag set that will run on a reoccurring basis. This is a very powerful and scalable way to create a dynamic tag set that can update regularly. 
 
 To submit a Flipside query for tagging:
-  - [Submit a Github issue](https://github.com/FlipsideCrypto/crosschain-models/issues/new) on this repo. 
+  - [Submit a Github issue](https://github.com/FlipsideCrypto/crosschain-models/issues/new?assignees=&labels=&template=add-tag-s--.md&title=) on this repo. 
   - Title the issue: "Tags: " and the name of the tag(s) you wish to include in our data model. 
   - In the comment section, paste the query SQL that can be run to isolate the addresses you want to tag (also include a link to the query in the Flipside app). 
   - Assign the issue to gronders for review.
