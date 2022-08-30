@@ -7,6 +7,8 @@
         {{ udf_bulk_get_coin_market_cap_prices() }};
         {{ udf_bulk_get_coin_gecko_prices() }};
         {{ udf_bulk_get_coin_market_cap_hourly_ohlc() }};
+        {{ udf_bulk_get_coin_gecko_ohlc() }};
+        {{ udf_bulk_get_coin_gecko_asset_market_data_historical() }};
     {% endset %}
     {% do run_query(sql) %}
 {% endmacro %}

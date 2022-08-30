@@ -33,11 +33,17 @@ on-run-start:
   - '{{ sp_create_bulk_get_coin_market_cap_prices() }}'
   - '{{ sp_create_bulk_get_coin_gecko_prices() }}'
   - '{{ sp_create_bulk_get_coin_market_cap_hourly_ohlc() }}'
+  - '{{ sp_refresh_external_table_by_recent_date() }}'
   - '{{create_tasks()}}'
 
 
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
+models:
+  +copy_grants: true
+  +persist_docs:
+    relation: true
+    columns: true
 
 # In this example config, we tell dbt to build all models in the example/ directory
 # as tables. These settings can be overridden in the individual model files

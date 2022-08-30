@@ -1,0 +1,77 @@
+version: 2
+models:
+  - name: core__dim_dates
+    description: Hold rows for each date from 2017 - 2030
+    columns:
+      - name: DATE_DAY
+        description: date for the row
+      - name: PRIOR_DATE_DAY
+        description: date before DATE_DAY
+      - name: NEXT_DATE_DAY
+        description: date after DATE_DAY
+      - name: PRIOR_YEAR_DATE_DAY
+        description: date exactly 1 year before DATE_DAY
+      - name: PRIOR_YEAR_OVER_YEAR_DATE_DAY
+        description: date exactly 1 year after DATE_DAY
+      - name: DAY_OF_WEEK
+        description: number representing day of week for DATE_DAY where 1=Sunday
+      - name: DAY_OF_WEEK_ISO
+        description: number representing day of week for DATE_DAY where 1=Monday
+      - name: DAY_OF_WEEK_NAME
+        description: day of week name for DATE_DAY
+      - name: DAY_OF_WEEK_NAME_SHORT
+        description: day of week abbreviation for DATE_DAY
+      - name: DAY_OF_MONTH
+        description: day of month for DATE_DAY
+      - name: DAY_OF_YEAR
+        description: day of year for DATE_DAY
+      - name: WEEK_START_DATE
+        description: date representing the start of the week for DATE_DAY
+      - name: WEEK_END_DATE
+        description: date representing the end of the week for DATE_DAY
+      - name: PRIOR_YEAR_WEEK_START_DATE
+        description: date representing the start of the week for PRIOR_YEAR_DATE_DAY
+      - name: PRIOR_YEAR_WEEK_END_DATE
+        description: date representing the end of the week for PRIOR_YEAR_DATE_DAY
+      - name: WEEK_OF_YEAR
+        description: number representing the week of the year for DATE_DAY
+      - name: ISO_WEEK_START_DATE
+        description: ISO date representing the start of the week for DATE_DAY
+      - name: ISO_WEEK_END_DATE
+        description: ISO date representing the end of the week for DATE_DAY
+      - name: PRIOR_YEAR_ISO_WEEK_START_DATE
+        description: ISO date representing the start of the week for PRIOR_YEAR_DATE_DAY
+      - name: PRIOR_YEAR_ISO_WEEK_END_DATE
+        description: ISO date representing the end of the week for PRIOR_YEAR_DATE_DAY
+      - name: ISO_WEEK_OF_YEAR
+        description: number representing the ISO week of the year for DATE_DAY
+      - name: PRIOR_YEAR_WEEK_OF_YEAR
+        description: number representing the week of the year for PRIOR_YEAR_DATE_DAY
+      - name: PRIOR_YEAR_ISO_WEEK_OF_YEAR
+        description: number representing the ISO week of the year for PRIOR_YEAR_DATE_DAY
+      - name: MONTH_OF_YEAR
+        description: number representing the month of the year for DATE_DAY
+      - name: MONTH_NAME
+        description: month of year name for DATE_DAY
+      - name: MONTH_NAME_SHORT
+        description: month of year abbreviation for DATE_DAY
+      - name: MONTH_START_DATE
+        description: first date of month for DATE_DAY
+      - name: MONTH_END_DATE
+        description: last date of month for DATE_DAY
+      - name: PRIOR_YEAR_MONTH_START_DATE
+        description: first date of month for PRIOR_YEAR_DATE_DAY
+      - name: PRIOR_YEAR_MONTH_END_DATE
+        description: last date of month for PRIOR_YEAR_DATE_DAY
+      - name: QUARTER_OF_YEAR
+        description: number representing quarter for DATE_DAY
+      - name: QUARTER_START_DATE
+        description: first date of quarter for DATE_DAY
+      - name: QUARTER_END_DATE
+        description: last date of quarter for DATE_DAY
+      - name: YEAR_NUMBER
+        description: number presenting the year for DATE_DAY
+      - name: YEAR_START_DATE
+        description: first date of year for DATE_DAY
+      - name: YEAR_END_DATE
+        description: last date of year for DATE_DAY

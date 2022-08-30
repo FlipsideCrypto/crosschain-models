@@ -95,10 +95,33 @@ sources:
     schema: bronze
     loader: S3
     tables:
-      - name: asset_metadata_api
+      - name: asset_metadata_coin_market_cap_api
         description: "all coins supported by provider"
         external:
-          location: "@crosschain.bronze.analytics_external_tables/{{target.database}}/ASSET_METADATA_API"
+          location: "@crosschain.bronze.analytics_external_tables/{{target.database}}/ASSET_METADATA_API/coinmarketcap"
+          file_format: "( type = json, strip_outer_array = TRUE )"
+          auto_refresh: true
+          partitions:
+            - name: provider
+              data_type: string 
+              expression: split_part(METADATA$FILENAME,'/',3)
+            - name: _inserted_date
+              data_type: string
+              expression: substr((split_part(METADATA$FILENAME,'/',4)),16,10)
+        columns:
+          - name: id
+            data_type: string
+            description: ""
+          - name: symbol
+            data_type: string
+            description: ""
+          - name: name
+            data_type: string
+            description: ""
+      - name: asset_metadata_coin_gecko_api
+        description: "all coins supported by provider"
+        external:
+          location: "@crosschain.bronze.analytics_external_tables/{{target.database}}/ASSET_METADATA_API/coingecko"
           file_format: "( type = json, strip_outer_array = TRUE )"
           auto_refresh: true
           partitions:
@@ -142,7 +165,7 @@ sources:
           - name: data
             data_type: variant
             description: ""
-      - name: asset_historical_hourly_market_data_coingecko_api
+      - name: asset_historical_hourly_market_data_coin_gecko_api
         description: "all coins supported by provider"
         external:
           location: "@crosschain.bronze.analytics_external_tables/{{target.database}}/ASSET_HISTORICAL_HOURLY_MARKET_DATA_API/coingecko"
@@ -164,7 +187,10 @@ sources:
           - name: data
             data_type: variant
             description: ""
-      - name: asset_ohlc_coingecko_api
+          - name: error
+            data_type: string
+            description: ""
+      - name: asset_ohlc_coin_gecko_api
         description: "all coins supported by provider"
         external:
           location: "@crosschain.bronze.analytics_external_tables/{{target.database}}/ASSET_OHLC_API/coingecko"
@@ -185,6 +211,9 @@ sources:
             description: ""
           - name: data
             data_type: variant
+            description: ""
+          - name: error
+            data_type: string
             description: ""
       
   
