@@ -62,7 +62,6 @@ SELECT
 FROM
     {{ ref('silver__tags_contract_address_polygon') }}
 UNION
-
 SELECT
     blockchain,
     creator,
@@ -242,4 +241,39 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_nft_x2y2_user') }}
-
+UNION
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_wallet_ETH_value') }}
+UNION
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_wallet_TOKEN_value') }}
+UNION
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_wallet_value') }}

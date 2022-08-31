@@ -13,9 +13,9 @@ WITH current_totals AS (
         ) AS start_date,
         SUM(usd_value_now) AS wallet_value,
         CASE
-            WHEN SUM(usd_value_now) >= 1000000000 THEN 'wallet billionaire'
+            WHEN SUM(usd_value_now) >= 1000000000 THEN 'token billionaire'
             WHEN SUM(usd_value_now) >= 1000000
-            AND SUM(usd_value_now) < 1000000000 THEN 'wallet millionaire'
+            AND SUM(usd_value_now) < 1000000000 THEN 'token millionaire'
             ELSE 'NONE'
         END AS wallet_flag,
         NTILE(100) over(
@@ -27,6 +27,7 @@ WITH current_totals AS (
             'ethereum_core',
             'ez_current_balances'
         ) }}
+    where symbol != 'ETH' and contract_address is not NULL
     GROUP BY
         1
     HAVING
@@ -37,7 +38,7 @@ new_wallet_oner AS (
         'ethereum' AS blockchain,
         'flipside' AS creator,
         A.user_address AS address,
-        'wallet top 1%' AS tag_name,
+        'token top 1%' AS tag_name,
         'wallet' AS tag_type,
         A.start_date,
         NULL AS end_date,
@@ -52,7 +53,7 @@ LEFT OUTER JOIN (
     FROM
         {{ this }}
     WHERE
-        tag_name = 'wallet top 1%'
+        tag_name = 'token top 1%'
 ) b
 ON A.user_address = b.address
 {% endif %}
@@ -64,7 +65,7 @@ new_billionaires AS (
         'ethereum' AS blockchain,
         'flipside' AS creator,
         A.user_address AS address,
-        'wallet billionaire' AS tag_name,
+        'token billionaire' AS tag_name,
         'wallet' AS tag_type,
         A.start_date,
         NULL AS end_date,
@@ -79,19 +80,19 @@ LEFT OUTER JOIN (
     FROM
         {{ this }}
     WHERE
-        tag_name = 'wallet billionaire'
+        tag_name = 'token billionaire'
 ) b
 ON A.user_address = b.address
 {% endif %}
 WHERE
-    A.wallet_flag = 'wallet billionaire'
+    A.wallet_flag = 'token billionaire'
 ),
 new_millionaires AS (
     SELECT
         'ethereum' AS blockchain,
         'flipside' AS creator,
         A.user_address AS address,
-        'wallet millionaire' AS tag_name,
+        'token millionaire' AS tag_name,
         'wallet' AS tag_type,
         A.start_date,
         NULL AS end_date,
@@ -106,12 +107,12 @@ LEFT OUTER JOIN (
     FROM
         {{ this }}
     WHERE
-        tag_name = 'wallet millionaire'
+        tag_name = 'token millionaire'
 ) b
 ON A.user_address = b.address
 {% endif %}
 WHERE
-    A.wallet_flag = 'wallet millionaire'
+    A.wallet_flag = 'token millionaire'
 )
 
 {% if is_incremental() %},
@@ -120,7 +121,7 @@ cap_wallet_oner AS (
         'ethereum' AS blockchain,
         'flipside' AS creator,
         address,
-        'wallet top 1%' AS tag_name,
+        'token top 1%' AS tag_name,
         'wallet' AS tag_type,
         start_date,
         DATE_TRUNC(
@@ -135,7 +136,7 @@ cap_wallet_oner AS (
             FROM
                 {{ this }}
             WHERE
-                tag_name = 'wallet top 1%'
+                tag_name = 'token top 1%'
         )
     WHERE
         address NOT IN (
@@ -152,7 +153,7 @@ cap_billionaires AS (
         'ethereum' AS blockchain,
         'flipside' AS creator,
         address,
-        'wallet billionaire' AS tag_name,
+        'token billionaire' AS tag_name,
         'wallet' AS tag_type,
         start_date,
         DATE_TRUNC(
@@ -167,7 +168,7 @@ cap_billionaires AS (
             FROM
                 {{ this }}
             WHERE
-                tag_name = 'wallet billionaire'
+                tag_name = 'token billionaire'
         )
     WHERE
         address NOT IN (
@@ -176,7 +177,7 @@ cap_billionaires AS (
             FROM
                 current_totals
             WHERE
-                wallet_flag = 'wallet billionaire'
+                wallet_flag = 'token billionaire'
         )
 ),
 cap_millionaires AS (
@@ -184,7 +185,7 @@ cap_millionaires AS (
         'ethereum' AS blockchain,
         'flipside' AS creator,
         address,
-        'wallet millionaire' AS tag_name,
+        'token millionaire' AS tag_name,
         'wallet' AS tag_type,
         start_date,
         DATE_TRUNC(
@@ -199,7 +200,7 @@ cap_millionaires AS (
             FROM
                 {{ this }}
             WHERE
-                tag_name = 'wallet millionaire'
+                tag_name = 'token millionaire'
         )
     WHERE
         address NOT IN (
@@ -208,7 +209,7 @@ cap_millionaires AS (
             FROM
                 current_totals
             WHERE
-                wallet_flag = 'wallet millionaire'
+                wallet_flag = 'token millionaire'
         )
 )
 {% endif %}
