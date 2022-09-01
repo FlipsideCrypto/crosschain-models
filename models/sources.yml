@@ -32,6 +32,7 @@ sources:
     tables:
       - name: fact_transactions
       - name: ez_nft_sales
+      - name: ez_current_balances
   - name: ethereum_silver
     database: ethereum
     schema: silver
