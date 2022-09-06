@@ -277,3 +277,15 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_wallet_value') }}
+UNION
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    '2022-09-06'::timestamp AS tag_created_at
+FROM
+    {{ ref('silver__godmode_nft_minters') }}
