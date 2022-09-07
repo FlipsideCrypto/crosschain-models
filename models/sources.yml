@@ -40,6 +40,7 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+      - name: labels
   - name: ethereum_silver_nft
     database: ethereum
     schema: silver_nft
