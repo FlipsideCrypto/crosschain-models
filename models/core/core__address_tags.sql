@@ -286,6 +286,9 @@ SELECT
     tag_type,
     start_date,
     end_date,
-    '2022-09-06'::timestamp AS tag_created_at
+    '2022-09-06' :: TIMESTAMP AS tag_created_at
 FROM
-    {{ ref('silver__godmode_nft_minters') }}
+    {{ source(
+        'crosschain_silver',
+        'godmode_nft_minters'
+    ) }}
