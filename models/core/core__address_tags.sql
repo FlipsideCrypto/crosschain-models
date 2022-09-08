@@ -288,7 +288,10 @@ SELECT
     end_date,
     '2022-09-06'::timestamp AS tag_created_at
 FROM
-    {{ ref('silver__godmode_nft_minters') }}
+    {{ source( 
+        'crosschain_silver',
+        'godmode_nft_minters'
+    ) }}
 UNION
 SELECT
     blockchain,
