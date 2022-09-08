@@ -40,6 +40,12 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+      - name: labels
+  - name: crosschain_silver
+    database: crosschain
+    schema: silver
+    tables:
+      - name: godmode_nft_minters
   - name: ethereum_silver_nft
     database: ethereum
     schema: silver_nft
