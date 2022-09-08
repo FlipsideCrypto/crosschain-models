@@ -285,7 +285,7 @@ SELECT
     tag_name,
     tag_type,
     start_date :: date,
-    end_date,
+    null as end_date,
     '2022-09-06' :: TIMESTAMP AS tag_created_at
 FROM
     {{ source(
