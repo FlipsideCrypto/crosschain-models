@@ -46,6 +46,7 @@ sources:
     schema: silver
     tables:
       - name: godmode_nft_minters
+      - name: optimism_delegates
   - name: ethereum_silver_nft
     database: ethereum
     schema: silver_nft
