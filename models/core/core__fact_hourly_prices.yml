@@ -1,0 +1,41 @@
+version: 2
+models:
+  - name: core__fact_hourly_prices
+    description: A dimension table holding provider specific asset metadata
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - PROVIDER
+            - ID
+            - RECORDED_HOUR
+    columns:
+      - name: PROVIDER
+        description: provider of the data
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_to_exist
+      - name: ID
+        description: unique identifier representing the asset
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: RECORDED_HOUR
+        description: opening hour of price data
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: OPEN
+        description: open price of asset for hour
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: HIGH
+        description: high price of asset for hour
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: LOW
+        description: low price of asset for hour
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: CLOSE
+        description: close price of asset for hour
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      
