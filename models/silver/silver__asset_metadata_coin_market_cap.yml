@@ -1,0 +1,33 @@
+version: 2
+models:
+  - name: silver__asset_metadata_coin_market_cap
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ID
+            - TOKEN_ADDRESS
+    columns:
+      - name: ID
+        description: unique identifier representing the asset
+        tests:
+          - not_null
+      - name: NAME
+        description: name of asset
+        tests:
+          - not_null
+      - name: SYMBOL
+        description: symbol of asset
+        tests:
+          - not_null
+      - name: TOKEN_ADDRESS
+        description: specific address representing the asset in a specific platform
+      - name: PLATFORM
+        description: platform where this asset has a token address
+        tests:
+          - not_null:
+              where: token_address is not null
+      - name: _INSERTED_TIMESTAMP
+        description: Time the record was inserted into snowflake
+        tests:
+          - not_null
+      
