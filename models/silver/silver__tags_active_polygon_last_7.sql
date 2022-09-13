@@ -27,7 +27,7 @@
         'flipside' as creator,
         address as address,
         'active on polygon last 7' as tag_name,
-        'profile' as tag_type,
+        'activity' as tag_type,
         start_date::date as start_date, 
         null as end_date,
         CURRENT_TIMESTAMP AS tag_created_at
@@ -92,7 +92,7 @@
         'flipside' as creator,
         from_address as address,
         'active on polygon last 7' as tag_name,
-        'profile' as tag_type,
+        'activity' as tag_type,
         start_date, 
         iff(end_date>current_date, null, end_date) as end_date,
         CURRENT_TIMESTAMP AS tag_created_at
