@@ -92,17 +92,17 @@ nft_top_1_new AS (
     SELECT
         'ethereum' AS blockchain,
         'flipside' AS creator,
-        address,
+        A.address,
         CASE
-            WHEN transaction_group = '100' THEN 'nft transactor top 1%'
+            WHEN A.transaction_group = '100' THEN 'nft transactor top 1%'
             ELSE NULL
         END AS tag_name,
         'nft' AS tag_type,
-        start_date,
+        A.start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
-        total_transactions_small
+        total_transactions_small A
 
 {% if is_incremental() %}
 LEFT OUTER JOIN (
@@ -113,18 +113,18 @@ LEFT OUTER JOIN (
     WHERE
         tag_name = 'nft transactor top 1%'
 ) b
-ON A.user_address = b.address
+ON A.address = b.address
 {% endif %}
 WHERE
-    tag_name IS NOT NULL
+    A.transaction_group = '100'
 ),
 nft_top_5_new AS (
     SELECT
         'ethereum' AS blockchain,
         'flipside' AS creator,
-        address,
+        A.address,
         CASE
-            WHEN transaction_group IN (
+            WHEN A.transaction_group IN (
                 '100',
                 '99',
                 '98',
@@ -134,11 +134,11 @@ nft_top_5_new AS (
             ELSE NULL
         END AS tag_name,
         'nft' AS tag_type,
-        start_date,
+        A.start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
-        total_transactions_small
+        total_transactions_small A
 
 {% if is_incremental() %}
 LEFT OUTER JOIN (
@@ -149,18 +149,24 @@ LEFT OUTER JOIN (
     WHERE
         tag_name = 'nft transactor top 5%'
 ) b
-ON A.user_address = b.address
+ON A.address = b.address
 {% endif %}
 WHERE
-    tag_name IS NOT NULL
+    A.transaction_group IN (
+        '100',
+        '99',
+        '98',
+        '97',
+        '96'
+    )
 ),
 nft_top_10_new AS (
     SELECT
         'ethereum' AS blockchain,
         'flipside' AS creator,
-        address,
+        A.address,
         CASE
-            WHEN transaction_group IN (
+            WHEN A.transaction_group IN (
                 '100',
                 '99',
                 '98',
@@ -175,11 +181,11 @@ nft_top_10_new AS (
             ELSE NULL
         END AS tag_name,
         'nft' AS tag_type,
-        start_date,
+        A.start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
-        total_transactions_small
+        total_transactions_small A
 
 {% if is_incremental() %}
 LEFT OUTER JOIN (
@@ -190,10 +196,21 @@ LEFT OUTER JOIN (
     WHERE
         tag_name = 'nft transactor top 10%'
 ) b
-ON A.user_address = b.address
+ON A.address = b.address
 {% endif %}
 WHERE
-    tag_name IS NOT NULL
+    A.transaction_group IN (
+        '100',
+        '99',
+        '98',
+        '97',
+        '96',
+        '95',
+        '94',
+        '93',
+        '92',
+        '91'
+    )
 )
 
 {% if is_incremental() %},
@@ -222,15 +239,14 @@ nft_top_1_cap AS (
     WHERE
         address NOT IN (
             SELECT
-                DISTINCT user_address
+                DISTINCT address
             FROM
-                current_totals
+                total_transactions_small
             WHERE
-                wallet_flag = 'nft transactor top 1%'
+                transaction_group = '100'
         )
 ),
 nft_top_5_cap AS (
-    SELECT
     SELECT
         'ethereum' AS blockchain,
         'flipside' AS creator,
@@ -255,14 +271,20 @@ nft_top_5_cap AS (
     WHERE
         address NOT IN (
             SELECT
-                DISTINCT user_address
+                DISTINCT address
             FROM
-                current_totals
+                total_transactions_small
             WHERE
-                wallet_flag = 'nft transactor top 5%'
+                transaction_group IN (
+                    '100',
+                    '99',
+                    '98',
+                    '97',
+                    '96'
+                )
         )
 ),
-nft_top_10_new AS (
+nft_top_10_cap AS (
     SELECT
         'ethereum' AS blockchain,
         'flipside' AS creator,
@@ -287,11 +309,22 @@ nft_top_10_new AS (
     WHERE
         address NOT IN (
             SELECT
-                DISTINCT user_address
+                DISTINCT address
             FROM
-                current_totals
+                total_transactions_small
             WHERE
-                wallet_flag = 'nft transactor top 10%'
+                transaction_group IN (
+                    '100',
+                    '99',
+                    '98',
+                    '97',
+                    '96',
+                    '95',
+                    '94',
+                    '93',
+                    '92',
+                    '91'
+                )
         )
 )
 {% endif %}
