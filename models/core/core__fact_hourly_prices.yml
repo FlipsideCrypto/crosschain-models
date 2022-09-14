@@ -18,6 +18,10 @@ models:
         description: unique identifier representing the asset
         tests:
           - dbt_expectations.expect_column_to_exist
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - STRING
+                - VARCHAR
       - name: RECORDED_HOUR
         description: opening hour of price data
         tests:
