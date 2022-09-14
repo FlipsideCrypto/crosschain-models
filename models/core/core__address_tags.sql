@@ -316,3 +316,15 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_token_vesting_ETH') }}
+UNION
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_nft_transactor_ETH') }}
