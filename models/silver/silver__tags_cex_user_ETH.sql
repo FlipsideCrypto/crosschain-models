@@ -138,9 +138,3 @@ SELECT
     A.*
 FROM
     total_table_small A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN {{ this }}
-b
-ON A.address = b.address
-{% endif %}
