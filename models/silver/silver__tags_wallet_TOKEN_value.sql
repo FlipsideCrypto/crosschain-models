@@ -27,7 +27,9 @@ WITH current_totals AS (
             'ethereum_core',
             'ez_current_balances'
         ) }}
-    where symbol != 'ETH' and contract_address is not NULL
+    WHERE
+        symbol != 'ETH'
+        AND contract_address IS NOT NULL
     GROUP BY
         1
     HAVING
@@ -45,20 +47,8 @@ new_wallet_oner AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         current_totals A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN (
-    SELECT
-        *
-    FROM
-        {{ this }}
     WHERE
-        tag_name = 'token top 1%'
-) b
-ON A.user_address = b.address
-{% endif %}
-WHERE
-    A.wallet_group = 100
+        A.wallet_group = 100
 ),
 new_billionaires AS (
     SELECT
@@ -72,20 +62,8 @@ new_billionaires AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         current_totals A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN (
-    SELECT
-        *
-    FROM
-        {{ this }}
     WHERE
-        tag_name = 'token billionaire'
-) b
-ON A.user_address = b.address
-{% endif %}
-WHERE
-    A.wallet_flag = 'token billionaire'
+        A.wallet_flag = 'token billionaire'
 ),
 new_millionaires AS (
     SELECT
@@ -99,20 +77,8 @@ new_millionaires AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         current_totals A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN (
-    SELECT
-        *
-    FROM
-        {{ this }}
     WHERE
-        tag_name = 'token millionaire'
-) b
-ON A.user_address = b.address
-{% endif %}
-WHERE
-    A.wallet_flag = 'token millionaire'
+        A.wallet_flag = 'token millionaire'
 )
 
 {% if is_incremental() %},

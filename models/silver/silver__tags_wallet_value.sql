@@ -44,20 +44,8 @@ new_wallet_oner AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         current_totals A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN (
-    SELECT
-        *
-    FROM
-        {{ this }}
     WHERE
-        tag_name = 'wallet top 1%'
-) b
-ON A.user_address = b.address
-{% endif %}
-WHERE
-    A.wallet_group = 100
+        A.wallet_group = 100
 ),
 new_billionaires AS (
     SELECT
@@ -71,20 +59,8 @@ new_billionaires AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         current_totals A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN (
-    SELECT
-        *
-    FROM
-        {{ this }}
     WHERE
-        tag_name = 'wallet billionaire'
-) b
-ON A.user_address = b.address
-{% endif %}
-WHERE
-    A.wallet_flag = 'wallet billionaire'
+        A.wallet_flag = 'wallet billionaire'
 ),
 new_millionaires AS (
     SELECT
@@ -98,20 +74,8 @@ new_millionaires AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         current_totals A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN (
-    SELECT
-        *
-    FROM
-        {{ this }}
     WHERE
-        tag_name = 'wallet millionaire'
-) b
-ON A.user_address = b.address
-{% endif %}
-WHERE
-    A.wallet_flag = 'wallet millionaire'
+        A.wallet_flag = 'wallet millionaire'
 )
 
 {% if is_incremental() %},
