@@ -103,20 +103,8 @@ nft_top_1_new AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         total_transactions_small A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN (
-    SELECT
-        *
-    FROM
-        {{ this }}
     WHERE
-        tag_name = 'nft transactor top 1%'
-) b
-ON A.address = b.address
-{% endif %}
-WHERE
-    A.transaction_group = '100'
+        A.transaction_group = '100'
 ),
 nft_top_5_new AS (
     SELECT
@@ -139,26 +127,14 @@ nft_top_5_new AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         total_transactions_small A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN (
-    SELECT
-        *
-    FROM
-        {{ this }}
     WHERE
-        tag_name = 'nft transactor top 5%'
-) b
-ON A.address = b.address
-{% endif %}
-WHERE
-    A.transaction_group IN (
-        '100',
-        '99',
-        '98',
-        '97',
-        '96'
-    )
+        A.transaction_group IN (
+            '100',
+            '99',
+            '98',
+            '97',
+            '96'
+        )
 ),
 nft_top_10_new AS (
     SELECT
@@ -186,31 +162,19 @@ nft_top_10_new AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         total_transactions_small A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN (
-    SELECT
-        *
-    FROM
-        {{ this }}
     WHERE
-        tag_name = 'nft transactor top 10%'
-) b
-ON A.address = b.address
-{% endif %}
-WHERE
-    A.transaction_group IN (
-        '100',
-        '99',
-        '98',
-        '97',
-        '96',
-        '95',
-        '94',
-        '93',
-        '92',
-        '91'
-    )
+        A.transaction_group IN (
+            '100',
+            '99',
+            '98',
+            '97',
+            '96',
+            '95',
+            '94',
+            '93',
+            '92',
+            '91'
+        )
 )
 
 {% if is_incremental() %},
