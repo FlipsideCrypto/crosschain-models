@@ -138,6 +138,3 @@ FROM
     to_asset
 )
 select a.* from final_table a
-{% if is_incremental() %}
-left outer join {{this}} b on a.address = b.address 
-{% endif %}

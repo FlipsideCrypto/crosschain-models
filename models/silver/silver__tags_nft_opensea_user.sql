@@ -145,9 +145,3 @@ SELECT
     A.*
 FROM
     final_table A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN {{ this }}
-b
-ON A.address = b.address
-{% endif %}
