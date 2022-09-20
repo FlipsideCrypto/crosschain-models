@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "CONCAT_WS('-', id, token_address)",
+    unique_key = "CONCAT_WS('-', id, coalesce(token_address,''))",
     incremental_strategy = 'delete+insert'
 ) }}
 
