@@ -7,7 +7,7 @@ SELECT
     90 AS days
 FROM
     {{ source(
-        'crosschain_external',
+        'bronze_streamline',
         'asset_metadata_coin_gecko_api'
     ) }}
 WHERE
@@ -17,7 +17,7 @@ WHERE
             MAX(_inserted_date)
         FROM
             {{ source(
-                'crosschain_external',
+                'bronze_streamline',
                 'asset_metadata_coin_gecko_api'
             ) }}
         WHERE
@@ -29,6 +29,6 @@ SELECT
     90
 FROM
     {{ source(
-        'crosschain_external',
+        'bronze_streamline',
         'asset_historical_hourly_market_data_coin_gecko_api'
     ) }}

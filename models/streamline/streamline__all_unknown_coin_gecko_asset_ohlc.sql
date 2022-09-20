@@ -7,7 +7,7 @@ SELECT
     date_trunc('hour',current_timestamp) AS run_time
 FROM
     {{ source(
-        'crosschain_external',
+        'bronze_streamline',
         'asset_metadata_coin_gecko_api'
     ) }}
 WHERE
@@ -17,7 +17,7 @@ WHERE
             MAX(_inserted_date)
         FROM
             {{ source(
-                'crosschain_external',
+                'bronze_streamline',
                 'asset_metadata_coin_gecko_api'
             ) }}
         WHERE
@@ -29,6 +29,6 @@ SELECT
     run_time
 FROM
     {{ source(
-        'crosschain_external',
+        'bronze_streamline',
         'asset_ohlc_coin_gecko_api'
     ) }}

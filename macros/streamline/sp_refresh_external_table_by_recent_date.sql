@@ -20,7 +20,7 @@ $$
         for row_variable in c1 do
             path := row_variable.path;
         end for;
-        refresh_stmt := 'alter external table bronze.' || :external_table_name || ' refresh \'' || :PATH || '\'';
+        refresh_stmt := 'alter external table streamline.{{ target.database }}.' || :external_table_name || ' refresh \'' || :PATH || '\'';
         res := (execute immediate :refresh_stmt);
 
         res := (execute immediate :select_stmt2);
@@ -28,7 +28,7 @@ $$
         for row_variable in c2 do
             path := row_variable.path;
         end for;
-        refresh_stmt2 := 'alter external table bronze.' || :external_table_name || ' refresh \'' || :PATH || '\'';
+        refresh_stmt2 := 'alter external table streamline.{{ target.database }}.' || :external_table_name || ' refresh \'' || :PATH || '\'';
         res := (execute immediate :refresh_stmt2);
         return 'table refreshed with ' || :refresh_stmt || ' and ' || :refresh_stmt2;
     end;

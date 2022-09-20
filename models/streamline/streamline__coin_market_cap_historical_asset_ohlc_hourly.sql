@@ -22,7 +22,7 @@ WITH base AS (
         ) AS historical_load_end_time
     FROM
         {{ source(
-            'crosschain_external',
+            'bronze_streamline',
             'asset_metadata_coin_market_cap_api'
         ) }}
     WHERE
@@ -32,7 +32,7 @@ WITH base AS (
                 MAX(_inserted_date)
             FROM
                 {{ source(
-                    'crosschain_external',
+                    'bronze_streamline',
                     'asset_metadata_coin_market_cap_api'
                 ) }}
             WHERE
@@ -52,7 +52,7 @@ WITH base AS (
         id
     FROM
         {{ source(
-            'crosschain_external',
+            'bronze_streamline',
             'asset_ohlc_coin_market_cap_api'
         ) }}
     WHERE

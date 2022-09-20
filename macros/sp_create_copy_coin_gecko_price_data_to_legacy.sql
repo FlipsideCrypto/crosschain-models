@@ -29,7 +29,7 @@ $$
                         d.value[4]::float as price,
                         md.name, 
                         md.symbol
-                    from crosschain.bronze.asset_ohlc_coin_gecko_api a
+                    from streamline.{{ target.database }}.asset_ohlc_coin_gecko_api a
                     left outer join base_metadata md on md.asset_id = a.id
                     left join table(flatten(data)) d
                     where recorded_at >= current_date - 1

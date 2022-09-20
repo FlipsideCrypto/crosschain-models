@@ -31,7 +31,7 @@ cmc_active_assets AS (
         VALUE :first_historical_data :: timestamp_ntz AS genesis_recorded_time
     FROM
         {{ source(
-            'crosschain_external',
+            'bronze_streamline',
             'asset_metadata_coin_market_cap_api'
         ) }}
     WHERE
@@ -42,7 +42,7 @@ cmc_active_assets AS (
                 MAX(_inserted_date)
             FROM
                 {{ source(
-                    'crosschain_external',
+                    'bronze_streamline',
                     'asset_metadata_coin_market_cap_api'
                 ) }}
             WHERE
@@ -69,7 +69,7 @@ base AS (
         id
     FROM
         {{ source(
-            'crosschain_external',
+            'bronze_streamline',
             'asset_ohlc_coin_market_cap_api'
         ) }}
     WHERE
