@@ -5,15 +5,6 @@
     merge_update_columns = ['creator'],
 ) }}
 
-
--- We do not want to full refresh this model until we have a historical tags code set up
-{% if execute %}
-  {% if flags.FULL_REFRESH and var('allow_full_refresh', False) != True %}
-      {{ exceptions.raise_compiler_error("Full refresh is not allowed for this model unless the argument \"- -vars 'allow_full_refresh: True'\" is included in the dbt run command.") }}
-  {% endif %}
-{% endif %}
-
-
 WITH from_cex AS (
 
     SELECT

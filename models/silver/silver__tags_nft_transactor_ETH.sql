@@ -1,35 +1,20 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "address",
+    unique_key = "CONCAT_WS('-', address, tag_name, start_date)",
     incremental_strategy = 'delete+insert',
 ) }}
+-- We do not want to full refresh this model until we have a historical tags code set up.
+-- to full-refresh either include the variable allow_full_refresh: True to command or comment out below code
+{% if execute %}
+    {% if flags.full_refresh and var(
+            'allow_full_refresh',
+            False
+        ) != True %}
+        {{ exceptions.raise_compiler_error("Full refresh is not allowed for this model unless the argument \"- -vars 'allow_full_refresh: True'\" is included in the dbt run command.") }}
+    {% endif %}
+{% endif %}
 
-WITH nft_buys AS (
-
-    SELECT
-        DISTINCT buyer_address AS address,
-        MAX(block_timestamp) AS block_timestamp,
-        COUNT(
-            DISTINCT tx_hash
-        ) AS num_transactions
-    FROM
-        ethereum.core.ez_nft_sales
-    GROUP BY
-        1
-),
-nft_sells AS (
-    SELECT
-        DISTINCT seller_address AS address,
-        MAX(block_timestamp) AS block_timestamp,
-        COUNT(
-            DISTINCT tx_hash
-        ) AS num_transactions
-    FROM
-        ethereum.core.ez_nft_sales
-    GROUP BY
-        1
-),
-nft_receipts AS (
+WITH nft_receipts AS (
     SELECT
         DISTINCT nft_to_address AS address,
         MAX(block_timestamp) AS block_timestamp,
@@ -54,16 +39,6 @@ nft_transfers AS (
         1
 ),
 total_transactions AS (
-    SELECT
-        *
-    FROM
-        nft_buys
-    UNION
-    SELECT
-        *
-    FROM
-        nft_sells
-    UNION
     SELECT
         *
     FROM
@@ -103,20 +78,19 @@ nft_top_1_new AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         total_transactions_small A
+    WHERE
+        A.transaction_group = '100'
 
 {% if is_incremental() %}
-LEFT OUTER JOIN (
+AND A.address NOT IN (
     SELECT
-        *
+        DISTINCT address
     FROM
         {{ this }}
     WHERE
         tag_name = 'nft transactor top 1%'
-) b
-ON A.address = b.address
+)
 {% endif %}
-WHERE
-    A.transaction_group = '100'
 ),
 nft_top_5_new AS (
     SELECT
@@ -139,26 +113,25 @@ nft_top_5_new AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         total_transactions_small A
+    WHERE
+        A.transaction_group IN (
+            '100',
+            '99',
+            '98',
+            '97',
+            '96'
+        )
 
 {% if is_incremental() %}
-LEFT OUTER JOIN (
+AND A.address NOT IN (
     SELECT
-        *
+        DISTINCT address
     FROM
         {{ this }}
     WHERE
         tag_name = 'nft transactor top 5%'
-) b
-ON A.address = b.address
+)
 {% endif %}
-WHERE
-    A.transaction_group IN (
-        '100',
-        '99',
-        '98',
-        '97',
-        '96'
-    )
 ),
 nft_top_10_new AS (
     SELECT
@@ -186,31 +159,30 @@ nft_top_10_new AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         total_transactions_small A
+    WHERE
+        A.transaction_group IN (
+            '100',
+            '99',
+            '98',
+            '97',
+            '96',
+            '95',
+            '94',
+            '93',
+            '92',
+            '91'
+        )
 
 {% if is_incremental() %}
-LEFT OUTER JOIN (
+AND A.address NOT IN (
     SELECT
-        *
+        DISTINCT address
     FROM
         {{ this }}
     WHERE
         tag_name = 'nft transactor top 10%'
-) b
-ON A.address = b.address
+)
 {% endif %}
-WHERE
-    A.transaction_group IN (
-        '100',
-        '99',
-        '98',
-        '97',
-        '96',
-        '95',
-        '94',
-        '93',
-        '92',
-        '91'
-    )
 )
 
 {% if is_incremental() %},

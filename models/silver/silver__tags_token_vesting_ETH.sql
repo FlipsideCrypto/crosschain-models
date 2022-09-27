@@ -1,7 +1,8 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "address",
-    incremental_strategy = 'delete+insert',
+    unique_key = "CONCAT_WS('-', address, tag_name)",
+    incremental_strategy = 'merge',
+    merge_update_columns = ['creator'],
 ) }}
 
 WITH base_table AS (
@@ -89,9 +90,11 @@ WITH base_table AS (
             ELSE event_inputs :"_to"
         END AS wallets,
         MIN(_INSERTED_TIMESTAMP) AS _INSERTED_TIMESTAMP,
-        MIN(block_timestamp :: DATE) AS start_date
+        MIN(
+            block_timestamp :: DATE
+        ) AS start_date
     FROM
-                {{ source(
+        {{ source(
             'ethereum_silver',
             'logs'
         ) }}
@@ -108,6 +111,7 @@ WITH base_table AS (
             'VestedTokenRedeemed',
             'VestingMemberAdded'
         )
+
 {% if is_incremental() %}
 AND _inserted_timestamp > (
     SELECT
@@ -116,21 +120,20 @@ AND _inserted_timestamp > (
         {{ this }}
 )
 {% endif %}
-    GROUP BY
-        1
+GROUP BY
+    1
 )
 SELECT
-DISTINCT 'ethereum' AS blockchain,
-        'flipside' AS creator,
-        wallets AS address,
-        'vested or locked token recipient' AS tag_name,
-        'wallet' AS tag_type,
-        start_date,
-        NULL AS end_date,
-        CURRENT_TIMESTAMP AS tag_created_at,
-        _inserted_timestamp
+    DISTINCT 'ethereum' AS blockchain,
+    'flipside' AS creator,
+    wallets AS address,
+    'vested or locked token recipient' AS tag_name,
+    'wallet' AS tag_type,
+    start_date,
+    NULL AS end_date,
+    CURRENT_TIMESTAMP AS tag_created_at,
+    _inserted_timestamp
 FROM
     base_table
 WHERE
     wallets IS NOT NULL
-

@@ -1,11 +1,20 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "address",
+    unique_key = "CONCAT_WS('-', address, tag_name, start_date)",
     incremental_strategy = 'delete+insert',
 ) }}
+-- We do not want to full refresh this model until we have a historical tags code set up.
+-- to full-refresh either include the variable allow_full_refresh: True to command or comment out below code
+{% if execute %}
+    {% if flags.full_refresh and var(
+            'allow_full_refresh',
+            False
+        ) != True %}
+        {{ exceptions.raise_compiler_error("Full refresh is not allowed for this model unless the argument \"- -vars 'allow_full_refresh: True'\" is included in the dbt run command.") }}
+    {% endif %}
+{% endif %}
 
 WITH current_totals AS (
-
     SELECT
         DISTINCT user_address,
         MAX(
@@ -27,7 +36,9 @@ WITH current_totals AS (
             'ethereum_core',
             'ez_current_balances'
         ) }}
-    where symbol = 'ETH' and contract_address is NULL
+    WHERE
+        symbol = 'ETH'
+        AND contract_address IS NULL
     GROUP BY
         1
     HAVING
@@ -45,20 +56,19 @@ new_wallet_oner AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         current_totals A
+    WHERE
+        A.wallet_group = 100
 
 {% if is_incremental() %}
-LEFT OUTER JOIN (
+AND A.user_address NOT IN (
     SELECT
-        *
+        DISTINCT address
     FROM
         {{ this }}
     WHERE
         tag_name = 'eth top 1%'
-) b
-ON A.user_address = b.address
+)
 {% endif %}
-WHERE
-    A.wallet_group = 100
 ),
 new_billionaires AS (
     SELECT
@@ -72,20 +82,19 @@ new_billionaires AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         current_totals A
+    WHERE
+        A.wallet_flag = 'eth billionaire'
 
 {% if is_incremental() %}
-LEFT OUTER JOIN (
+AND A.user_address NOT IN (
     SELECT
-        *
+        DISTINCT address
     FROM
         {{ this }}
     WHERE
         tag_name = 'eth billionaire'
-) b
-ON A.user_address = b.address
+)
 {% endif %}
-WHERE
-    A.wallet_flag = 'eth billionaire'
 ),
 new_millionaires AS (
     SELECT
@@ -99,20 +108,19 @@ new_millionaires AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         current_totals A
+    WHERE
+        A.wallet_flag = 'eth millionaire'
 
 {% if is_incremental() %}
-LEFT OUTER JOIN (
+AND A.user_address NOT IN (
     SELECT
-        *
+        DISTINCT address
     FROM
         {{ this }}
     WHERE
         tag_name = 'eth millionaire'
-) b
-ON A.user_address = b.address
+)
 {% endif %}
-WHERE
-    A.wallet_flag = 'eth millionaire'
 )
 
 {% if is_incremental() %},
