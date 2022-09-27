@@ -79,20 +79,19 @@ new_billionaires AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         current_totals A
+    WHERE
+        A.wallet_flag = 'wallet billionaire'
 
 {% if is_incremental() %}
-LEFT OUTER JOIN (
+AND A.user_address NOT IN (
     SELECT
-        *
+        DISTINCT address
     FROM
         {{ this }}
     WHERE
         tag_name = 'wallet billionaire'
-) b
-ON A.user_address = b.address
+)
 {% endif %}
-WHERE
-    A.wallet_flag = 'wallet billionaire'
 ),
 new_millionaires AS (
     SELECT
