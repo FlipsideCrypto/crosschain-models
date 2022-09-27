@@ -1,7 +1,8 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "address",
-    incremental_strategy = 'delete+insert',
+    unique_key = "CONCAT_WS('-', address, tag_name)",
+    incremental_strategy = 'merge',
+    merge_update_columns = ['creator'],
 ) }}
 
 WITH from_cex AS (
