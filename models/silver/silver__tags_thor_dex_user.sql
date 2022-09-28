@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "CONCAT_WS('-', address, tag_name)",
+    unique_key = "address",
     incremental_strategy = 'merge',
     merge_update_columns = ['creator'],
 ) }}
@@ -19,6 +19,7 @@ WITH from_addresses AS (
             WHEN 'LTC' THEN 'litecoin'
             WHEN 'DOGE' THEN 'dogechain'
             WHEN 'BTC' THEN 'bitcoin'
+            else 'error'
         END AS blockchain,
         'flipside' AS creator,
         from_address AS address,
@@ -34,8 +35,9 @@ WITH from_addresses AS (
             'swaps'
         ) }}
 
+where (blockchain not in ('error', 'NULL', 'null', 'Null') or blockchain is not null)
 {% if is_incremental() %}
-WHERE
+and
     block_id NOT IN (
         SELECT
             DISTINCT block_id
@@ -142,13 +144,15 @@ final_table AS (
         *
     FROM
         from_addresses
+    where blockchain != 'error'
     UNION
     SELECT
         *
     FROM
         to_addresses
+    where blockchain != 'error'
 )
 SELECT
-    A.*
+    *
 FROM
-    final_table A
+    final_table 

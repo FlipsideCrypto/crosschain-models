@@ -5,13 +5,17 @@
 ) }}
 -- We do not want to full refresh this model until we have a historical tags code set up.
 -- to full-refresh either include the variable allow_full_refresh: True to command or comment out below code
+-- DO NOT FORMAT will break the full refresh code if formatted copy from below
+
+-- {% if execute %}
+--   {% if flags.FULL_REFRESH and var('allow_full_refresh', False) != True %}
+--       {{ exceptions.raise_compiler_error("Full refresh is not allowed for this model unless the argument \"- -vars 'allow_full_refresh: True'\" is included in the dbt run command.") }}
+--   {% endif %}
+-- {% endif %}
 {% if execute %}
-    {% if flags.full_refresh and var(
-            'allow_full_refresh',
-            False
-        ) != True %}
-        {{ exceptions.raise_compiler_error("Full refresh is not allowed for this model unless the argument \"- -vars 'allow_full_refresh: True'\" is included in the dbt run command.") }}
-    {% endif %}
+  {% if flags.FULL_REFRESH and var('allow_full_refresh', False) != True %}
+      {{ exceptions.raise_compiler_error("Full refresh is not allowed for this model unless the argument \"- -vars 'allow_full_refresh: True'\" is included in the dbt run command.") }}
+  {% endif %}
 {% endif %}
 
 WITH nft_receipts AS (

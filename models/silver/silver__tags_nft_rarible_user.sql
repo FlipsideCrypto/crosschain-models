@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "CONCAT_WS('-', address, tag_name)",
+    unique_key = "address",
     incremental_strategy = 'merge',
     merge_update_columns = ['creator'],
 ) }}
