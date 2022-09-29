@@ -1,7 +1,8 @@
 {{ config(
     materialized = 'incremental',
     unique_key = "address",
-    incremental_strategy = 'delete+insert',
+    incremental_strategy = 'merge',
+    merge_update_columns = ['creator'],
 ) }}
 
 WITH from_addresses AS (
@@ -18,30 +19,35 @@ WITH from_addresses AS (
             WHEN 'LTC' THEN 'litecoin'
             WHEN 'DOGE' THEN 'dogechain'
             WHEN 'BTC' THEN 'bitcoin'
+            else 'error'
         END AS blockchain,
         'flipside' AS creator,
         from_address AS address,
         'thorchain dex user' AS tag_name,
         'dex' AS tag_type,
-        MIN(block_id) as block_id,
+        MIN(block_id) AS block_id,
         MIN(DATE_TRUNC('day', block_timestamp)) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
-         {{source('thorchain', 'swaps')}}
+        {{ source(
+            'thorchain',
+            'swaps'
+        ) }}
 
-    {% if is_incremental() %}
-    WHERE
-    block_id not in (
+where (blockchain not in ('error', 'NULL', 'null', 'Null') or blockchain is not null)
+{% if is_incremental() %}
+and
+    block_id NOT IN (
         SELECT
-            distinct block_id
+            DISTINCT block_id
         FROM
             {{ this }}
     )
-    {% endif %}
-    GROUP BY
+{% endif %}
+GROUP BY
     blockchain,
-        address
+    address
 ),
 to_addresses AS (
     SELECT
@@ -104,12 +110,15 @@ to_addresses AS (
         native_to_address AS address,
         'thorchain dex user' AS tag_name,
         'dex' AS tag_type,
-        MIN(block_id) as block_id,
+        MIN(block_id) AS block_id,
         MIN(DATE_TRUNC('day', block_timestamp)) AS start_date,
         NULL AS end_date,
-        current_timestamp as tag_created_at
+        CURRENT_TIMESTAMP AS tag_created_at
     FROM
-        {{source('thorchain', 'swaps')}}
+        {{ source(
+            'thorchain',
+            'swaps'
+        ) }}
     WHERE
         blockchain != 'error'
         AND native_to_address NOT IN (
@@ -119,30 +128,31 @@ to_addresses AS (
                 from_addresses
         )
 
-        {% if is_incremental() %}
-        and
-        block_id not in (
-            SELECT
-                distinct block_id
-            FROM
-                {{ this }}
-        )
-        {% endif %}
-    GROUP BY
-        address
-),
-final_table as (
-SELECT
-    *
-FROM
-    from_addresses
-UNION
-SELECT
-    *
-FROM
-    to_addresses
-)
-select a.* from final_table a
 {% if is_incremental() %}
-left outer join {{this}} b on a.address = b.address 
+AND block_id NOT IN (
+    SELECT
+        DISTINCT block_id
+    FROM
+        {{ this }}
+)
 {% endif %}
+GROUP BY
+    address
+),
+final_table AS (
+    SELECT
+        *
+    FROM
+        from_addresses
+    where blockchain != 'error'
+    UNION
+    SELECT
+        *
+    FROM
+        to_addresses
+    where blockchain != 'error'
+)
+SELECT
+    *
+FROM
+    final_table 

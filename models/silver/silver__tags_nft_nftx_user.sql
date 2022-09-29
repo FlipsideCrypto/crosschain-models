@@ -1,10 +1,12 @@
 {{ config(
     materialized = 'incremental',
     unique_key = "address",
-    incremental_strategy = 'delete+insert',
+    incremental_strategy = 'merge',
+    merge_update_columns = ['creator'],
 ) }}
 
 WITH buyers AS (
+
     SELECT
         DISTINCT 'ethereum' AS blockchain,
         'flipside' AS creator,
@@ -25,7 +27,12 @@ WITH buyers AS (
 
 {% if is_incremental() %}
 WHERE
-    _INSERTED_TIMESTAMP > (select max(_INSERTED_TIMESTAMP) from {{this}})
+    _INSERTED_TIMESTAMP > (
+        SELECT
+            MAX(_INSERTED_TIMESTAMP)
+        FROM
+            {{ this }}
+    )
 {% endif %}
 GROUP BY
     buyer_address
@@ -51,7 +58,12 @@ sellers AS (
 
 {% if is_incremental() %}
 WHERE
-    _INSERTED_TIMESTAMP > (select max(_INSERTED_TIMESTAMP) from {{this}})
+    _INSERTED_TIMESTAMP > (
+        SELECT
+            MAX(_INSERTED_TIMESTAMP)
+        FROM
+            {{ this }}
+    )
 {% endif %}
 GROUP BY
     seller_address
@@ -66,7 +78,6 @@ union_table AS (
         *
     FROM
         sellers
-
 ),
 final_table AS (
     SELECT
@@ -80,9 +91,3 @@ SELECT
     A.*
 FROM
     final_table A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN {{ this }}
-b
-ON A.address = b.address
-{% endif %}

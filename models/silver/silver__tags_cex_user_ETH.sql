@@ -1,7 +1,8 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "address",
-    incremental_strategy = 'delete+insert',
+    unique_key = "unique_id",
+    incremental_strategy = 'merge',
+    merge_update_columns = ['creator'],
 ) }}
 
 WITH from_cex AS (
@@ -135,6 +136,7 @@ total_table_small AS (
         start_date ASC)) = 1
 )
 SELECT
-    A.*
+    *,
+     {{ dbt_utils.surrogate_key(['address', 'tag_name']) }} as unique_id
 FROM
-    total_table_small A
+    total_table_small 

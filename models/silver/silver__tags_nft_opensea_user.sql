@@ -1,10 +1,12 @@
 {{ config(
     materialized = 'incremental',
     unique_key = "address",
-    incremental_strategy = 'delete+insert',
+    incremental_strategy = 'merge',
+    merge_update_columns = ['creator'],
 ) }}
 
 WITH opensea_buyer AS (
+
     SELECT
         DISTINCT 'ethereum' AS blockchain,
         'flipside' AS creator,
@@ -17,7 +19,7 @@ WITH opensea_buyer AS (
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
         MIN(ingested_at) AS ingested_at,
-        'opensea' as source
+        'opensea' AS source
     FROM
         {{ source(
             'ethereum_silver_nft',
@@ -26,7 +28,14 @@ WITH opensea_buyer AS (
 
 {% if is_incremental() %}
 WHERE
-    ingested_at > (select max(ingested_at) from {{this}} where source = 'opensea')
+    ingested_at > (
+        SELECT
+            MAX(ingested_at)
+        FROM
+            {{ this }}
+        WHERE
+            source = 'opensea'
+    )
 {% endif %}
 GROUP BY
     nft_to_address
@@ -44,7 +53,7 @@ opensea_seller AS (
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
         MIN(ingested_at) AS ingested_at,
-        'opensea' as source
+        'opensea' AS source
     FROM
         {{ source(
             'ethereum_silver_nft',
@@ -53,7 +62,14 @@ opensea_seller AS (
 
 {% if is_incremental() %}
 WHERE
-    ingested_at > (select max(ingested_at) from {{this}} where source = 'opensea')
+    ingested_at > (
+        SELECT
+            MAX(ingested_at)
+        FROM
+            {{ this }}
+        WHERE
+            source = 'opensea'
+    )
 {% endif %}
 GROUP BY
     nft_from_address
@@ -71,7 +87,7 @@ seaport_buyer AS (
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
         MIN(ingested_at) AS ingested_at,
-        'seaport' as source
+        'seaport' AS source
     FROM
         {{ source(
             'ethereum_silver_nft',
@@ -80,7 +96,14 @@ seaport_buyer AS (
 
 {% if is_incremental() %}
 WHERE
-    ingested_at > (select max(ingested_at) from {{this}} where source = 'seaport')
+    ingested_at > (
+        SELECT
+            MAX(ingested_at)
+        FROM
+            {{ this }}
+        WHERE
+            source = 'seaport'
+    )
 {% endif %}
 GROUP BY
     buyer_address
@@ -98,7 +121,7 @@ seaport_seller AS (
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
         MIN(ingested_at) AS ingested_at,
-        'seaport' as source
+        'seaport' AS source
     FROM
         {{ source(
             'ethereum_silver_nft',
@@ -107,7 +130,14 @@ seaport_seller AS (
 
 {% if is_incremental() %}
 WHERE
-    ingested_at > (select max(ingested_at) from {{this}} where source = 'seaport')
+    ingested_at > (
+        SELECT
+            MAX(ingested_at)
+        FROM
+            {{ this }}
+        WHERE
+            source = 'seaport'
+    )
 {% endif %}
 GROUP BY
     seller_address
@@ -145,9 +175,3 @@ SELECT
     A.*
 FROM
     final_table A
-
-{% if is_incremental() %}
-LEFT OUTER JOIN {{ this }}
-b
-ON A.address = b.address
-{% endif %}
