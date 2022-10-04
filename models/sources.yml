@@ -108,3 +108,8 @@ sources:
       - name: asset_ohlc_coin_market_cap_api
       - name: asset_historical_hourly_market_data_coin_gecko_api
       - name: asset_ohlc_coin_gecko_api
+  - name: bronze
+    database: flipside_prod_db
+    schema: bronze
+    tables: 
+      - name: prod_address_label_sink_291098491
