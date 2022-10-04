@@ -19,7 +19,7 @@
 
 WITH t1 AS (
     SELECT
-        DISTINCT event_inputs :to AS wallets,
+        DISTINCT event_inputs :to :: STRING AS wallets,
         x.block_timestamp,
         event_inputs :value /(pow(10, 18)) AS tokens_claimed,
         price AS token_price_usd
@@ -101,15 +101,15 @@ base_table AS (
         3 DESC
 ),
 new_additions AS (
-    select 
-    DISTINCT 'ethereum' AS blockchain,
-    'flipside' AS creator,
-    wallets AS address,
-    'airdrop master' AS tag_name,
-    'wallet' AS tag_type,
-    start_date,
-    NULL AS end_date,
-    CURRENT_TIMESTAMP AS tag_created_at
+    SELECT
+        DISTINCT 'ethereum' AS blockchain,
+        'flipside' AS creator,
+        wallets AS address,
+        'airdrop master' AS tag_name,
+        'wallet' AS tag_type,
+        start_date,
+        NULL AS end_date,
+        CURRENT_TIMESTAMP AS tag_created_at
     FROM
         base_table
 
@@ -127,8 +127,7 @@ WHERE
 {% if is_incremental() %},
 cap_end_date AS (
     SELECT
-    distinct 
-        'ethereum' AS blockchain,
+        DISTINCT 'ethereum' AS blockchain,
         'flipside' AS creator,
         address,
         'airdrop master' AS tag_name,
