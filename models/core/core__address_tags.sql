@@ -340,3 +340,18 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_airdrop_master_ETH') }}
+UNION 
+SELECT 
+    blockchain, 
+    creator, 
+    address, 
+    tag_name, 
+    tag_type, 
+    to_date(start_date) AS start_date, 
+    NULL AS end_date, 
+    NULL as tag_created_at
+FROM 
+    {{ source(
+        'crosschain_silver',
+        'optimism_delegates'
+    )}}
