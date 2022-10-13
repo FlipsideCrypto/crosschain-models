@@ -1,139 +1,227 @@
-CREATE OR REPLACE SCHEMA deposit_wallet_poly; 
+{{ config(
+    materialized = 'incremental',
+    unique_key = "address",
+    incremental_strategy = 'delete+insert',
+) }}
 
-USE SCHEMA deposit_wallet_poly; 
-
-CREATE OR REPLACE TABLE poly_addr_labels LIKE bronze.prod_address_label_sink_291098491;  
-
-CREATE OR REPLACE TABLE poly_address_labels_staging (
-    system_created_at TIMESTAMP, 
-    insert_date TIMESTAMP, 
-    blockchain STRING, 
-    address STRING,
-    creator STRING, 
-    l1_label STRING, 
-    l2_label STRING, 
-    project_name STRING, 
-    address_name STRING, 
-    primary key (blockchain, address, l1_label)
-); 
-
-INSERT INTO poly_addr_labels (
-  WITH flattened AS (  
-    SELECT *
-    FROM bronze.prod_address_label_sink_291098491,  
-    table(flatten(record_content)) AS rc
-    )
-  
-  SELECT 
-    record_metadata, 
-    value AS rc, 
-   _inserted_timestamp 
-  FROM flattened
-);
-
-INSERT INTO poly_address_labels_staging (
-  WITH distributor_cex AS (
+WITH distributor_cex AS (
     -- THIS STATEMENT FINDS KNOWN CEX LABELS WITHIN THE BRONZE ADDRESS LABELS TABLE
-    SELECT
-      (
-           record_metadata :CreateTime :: INT / 1000
-      ) :: TIMESTAMP AS system_created_at,
-      split(substr(record_metadata:key::string, 2, len(record_metadata:key::string)-2),'-')[1]::string AS blockchain,
-      to_timestamp(split(substr(record_metadata:key::string, 2, len(record_metadata:key::string)-2),'-')[2]::int) as insert_date, 
-      LOWER(t.value :address :: STRING) AS address, 
-      t.value :creator :: STRING AS creator,
-      t.value :l1_label :: STRING AS l1_label, 
-      t.value :l2_label :: STRING AS l2_label, 
-      t.value :address_name :: STRING AS address_name, 
-      t.value :project_name :: STRING AS project_name
-    
-    FROM bronze.prod_address_label_sink_291098491, 
-        LATERAL FLATTEN (
-            input => record_content    
-        ) t
 
-    WHERE split(substr(record_metadata:key::string, 2, len(record_metadata:key::string)-2),'-')[1]::string = 'polygon'
-    AND t.value:l1_label = 'cex' 
-    AND t.value:l2_label = 'hot_wallet'
-  ),  
-  
-  senders AS (
-    -- THIS STATEMENT LOCATES THE KNOWN CEX ADDRESSES IN THE EVENT TABLES
     SELECT
-      dc.blockchain,
-      origin_address as address
-    
-    FROM polygon.udm_events poly
-    
+    SELECT
+        system_created_at,
+        insert_date,
+        blockchain,
+        address,
+        creator,
+        label_type AS l1_label,
+        label_subtype AS l2_label,
+        address_name,
+        project_name
+    FROM
+        {{ source(
+            'crosschain_core',
+            'address_labels'
+        ) }}
+    WHERE
+        blockchain = 'polygon'
+        AND l1_label = 'cex'
+        AND l2_label = 'hot_wallet'
+),
+possible_sats AS (
+    -- THIS STATEMENT LOCATES POTENTIAL SATELLITE WALLETS BASED ON DEPOSIT BEHAVIOR
+    SELECT
+        DISTINCT *
+    FROM
+        (
+            SELECT
+                DISTINCT dc.system_created_at,
+                dc.insert_date,
+                dc.blockchain,
+                xfer.from_address AS address,
+                dc.creator,
+                dc.address_name,
+                dc.project_name,
+                dc.l1_label,
+                'deposit_wallet' AS l2_label,
+                COUNT(
+                    DISTINCT project_name
+                ) over(
+                    PARTITION BY dc.blockchain,
+                    xfer.from_address
+                ) AS project_count -- how many projects has each from address sent to
+            FROM
+                {{ source(
+                    'polygon_core',
+                    'fact_token_transfers'
+                ) }}
+                xfer
+                JOIN distributor_cex dc
+                ON dc.address = xfer.to_address
+            WHERE
+                raw_amount > 0
+
+{% if is_incremental() %}
+AND block_timestamp > CURRENT_DATE - 10
+{% endif %}
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+UNION
+SELECT
+    DISTINCT dc.system_created_at,
+    dc.insert_date,
+    dc.blockchain,
+    tr.from_address AS address,
+    dc.creator,
+    dc.address_name,
+    dc.project_name,
+    dc.l1_label,
+    'deposit_wallet' AS l2_label,
+    COUNT(
+        DISTINCT project_name
+    ) over(
+        PARTITION BY dc.blockchain,
+        tr.from_address
+    ) AS project_count
+FROM
+    {{ source(
+        'polygon_core',
+        'fact_traces'
+    ) }}
+    tr
     JOIN distributor_cex dc
-    ON dc.address = poly.origin_address
-    
-    WHERE block_timestamp >= current_date - 365
-    AND block_timestamp < current_date
-    GROUP BY dc.blockchain, origin_address
-  ),   
-  
-  possible_sats AS (
-    -- THIS STATEMENT LOCATES POTENTIAL SATELLITE WALLETS BASED ON BEHAVIOR
+    ON dc.address = tr.to_address
+WHERE
+    tx_status = 'SUCCESS'
+    AND eth_value > 0
+
+{% if is_incremental() %}
+AND block_timestamp > CURRENT_DATE - 10
+{% endif %}
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+)
+),
+real_sats AS (
     SELECT
-      dc.system_created_at, 
-      dc.insert_date,
-      senders.blockchain,
-      senders.address,
-      dc.creator, 
-      dc.address_name,
-      dc.project_name,
-      dc.l1_label,
-      'deposit_wallet' as l2_label,
-      count(project_name) over(partition by senders.blockchain, senders.address) as project_count
-    
-    FROM polygon.transactions e
-    
-    JOIN senders
-    ON senders.address = e.from_address
-    
+        from_address,
+        COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
+    FROM
+        {{ source(
+            'polygon_core',
+            'fact_token_transfers'
+        ) }}
+        xfer
+        LEFT OUTER JOIN distributor_cex dc
+        ON dc.address = xfer.to_address
+    WHERE
+        from_address IN (
+            SELECT
+                address
+            FROM
+                possible_sats
+        )
+        AND raw_amount > 0
+
+{% if is_incremental() %}
+AND block_timestamp > CURRENT_DATE - 10
+{% endif %}
+GROUP BY
+    from_address
+UNION
+SELECT
+    from_address,
+    COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
+FROM
+    {{ source(
+        'polygon_core',
+        'fact_traces'
+    ) }}
+    tr
     LEFT OUTER JOIN distributor_cex dc
-    ON dc.address = e.to_address
-    
-    WHERE block_timestamp >= current_date - 365
-    AND block_timestamp < current_date
-    GROUP BY 1,2,3,4,5,6,7,8, 9
-  ),  
-  
-  exclusive_sats AS (
-   (SELECT address FROM possible_sats WHERE project_count = 1 GROUP BY 1)
-   EXCEPT
-   (SELECT address FROM possible_sats WHERE project_name IS NULL AND project_count = 1 GROUP BY 1)
-  )
-  
-  SELECT
-    system_created_at, 
-    insert_date, 
+    ON dc.address = tr.to_address
+WHERE
+    from_address IN (
+        SELECT
+            address
+        FROM
+            possible_sats
+    )
+    AND tx_status = 'SUCCESS'
+    AND eth_value > 0
+
+{% if is_incremental() %}
+AND block_timestamp > CURRENT_DATE - 10
+{% endif %}
+GROUP BY
+    from_address
+),
+exclusive_sats AS (
+    SELECT
+        from_address AS address
+    FROM
+        real_sats
+    WHERE
+        project_count = 1
+    GROUP BY
+        1
+),
+final_base AS(
+    SELECT
+        system_created_at,
+        insert_date,
+        blockchain,
+        e.address,
+        creator,
+        l1_label,
+        l2_label,
+        project_name,
+        CONCAT(
+            project_name,
+            ' deposit_wallet'
+        ) AS address_name
+    FROM
+        exclusive_sats e
+        JOIN possible_sats p
+        ON e.address = p.address
+)
+SELECT
+    system_created_at,
+    insert_date,
     blockchain,
-    e.address,
-    creator, 
+    address,
+    creator,
     l1_label,
     l2_label,
-    project_name,
-    concat(project_name, ' deposit_wallet') as address_name
-  FROM
-   exclusive_sats e
-  JOIN
-   possible_sats p
-  ON
-   e.address = p.address
-);
-
--- WE NOW HAVE "TODAYS" SATS
--- WE NEED TO REMOVE ANYTHING THAT IS CLASSIFIED AS SOMETHING ELSE
-
-DELETE FROM poly_address_labels_staging l  
-USING crosschain.address_labels t
-
-WHERE l.address = t.address
-AND t.insert_date :: date >= current_date - 365
-AND t.insert_date :: date < current_date
-AND l.l2_label = 'deposit_wallet'; 
-
-INSERT INTO silver_crosschain.address_labels (system_created_at, insert_date, blockchain, address, creator, l1_label, l2_label, address_name, project_name)
-SELECT * FROM deposit_wallet_poly.poly_address_labels_staging
+    address_name,
+    project_name
+FROM
+    final_base
+WHERE
+    address NOT IN (
+        SELECT
+            DISTINCT address
+        FROM
+            {{ source(
+                'crosschain_core',
+                'address_labels'
+            ) }}
+        WHERE
+            blockchain = 'polygon'
+    )

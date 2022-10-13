@@ -31,6 +31,8 @@ sources:
     schema: core
     tables:
       - name: fact_transactions
+      - name: fact_token_transfers
+      - name: fact_traces
       - name: ez_nft_sales
       - name: ez_current_balances
   - name: ethereum_silver
@@ -47,6 +49,11 @@ sources:
     tables:
       - name: godmode_nft_minters
       - name: optimism_delegates
+  - name: crosschain_core
+    database: crosschain
+    schema: core
+    tables:
+      - name: address_labels
   - name: ethereum_silver_nft
     database: ethereum
     schema: silver_nft
@@ -58,6 +65,11 @@ sources:
       - name: rarible_sales
       - name: seaport_sales
       - name: x2y2_sales
+  - name: algorand_core
+    database: algorand
+    schema: core
+    tables:
+      - name: ez_transfer
   - name: arbitrum_silver
     database: arbitrum
     schema: silver
@@ -65,6 +77,12 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+  - name: arbitrum_core
+    database: arbitrum
+    schema: core
+    tables:
+      - name: fact_token_transfers
+      - name: fact_traces
   - name: avalanche_silver
     database: avalanche
     schema: silver
@@ -72,6 +90,12 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+  - name: avalanche_core
+    database: avalanche
+    schema: core
+    tables:
+      - name: fact_token_transfers
+      - name: fact_traces
   - name: polygon_silver
     database: polygon
     schema: silver
@@ -79,6 +103,12 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+  - name: polygon_core
+    database: polygon
+    schema: core
+    tables:
+      - name: fact_token_transfers
+      - name: fact_traces
   - name: optimism_silver
     database: optimism
     schema: silver
@@ -86,6 +116,12 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+  - name: optimism_core
+    database: optimism
+    schema: core
+    tables:
+      - name: fact_token_transfers
+      - name: fact_traces
   - name: bsc_silver
     database: bsc
     schema: silver
@@ -93,12 +129,28 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+  - name: bsc_core
+    database: bsc
+    schema: core
+    tables:
+      - name: fact_token_transfers
+      - name: fact_traces
   - name: thorchain
     database: flipside_prod_db
     schema: thorchain
     tables:
       - name: swaps
       - name: liquidity_actions
+  - name: flow_core
+    database: flow
+    schema: core
+    tables:
+      - name: ez_token_transfers
+  - name: solana_core
+    database: solana
+    schema: core
+    tables:
+      - name: fact_transfers
   - name: bronze_streamline
     database: streamline
     schema: crosschain
