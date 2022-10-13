@@ -8,7 +8,6 @@ WITH distributor_cex AS (
     -- THIS STATEMENT FINDS KNOWN CEX LABELS WITHIN THE BRONZE ADDRESS LABELS TABLE
 
     SELECT
-    SELECT
         system_created_at,
         insert_date,
         blockchain,
@@ -101,7 +100,7 @@ FROM
     ON dc.address = tr.to_address
 WHERE
     tx_status = 'SUCCESS'
-    AND eth_value > 0
+    AND matic_value > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -164,7 +163,7 @@ WHERE
             possible_sats
     )
     AND tx_status = 'SUCCESS'
-    AND eth_value > 0
+    AND matic_value > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10

@@ -100,7 +100,7 @@ FROM
     ON dc.address = tr.to_address
 WHERE
     tx_status = 'SUCCESS'
-    AND eth_value > 0
+    AND bnb_value > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -163,7 +163,7 @@ WHERE
             possible_sats
     )
     AND tx_status = 'SUCCESS'
-    AND eth_value > 0
+    AND bnb_value > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
