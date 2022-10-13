@@ -173,7 +173,7 @@ GROUP BY
 ),
 exclusive_sats AS (
     SELECT
-        from_address AS address
+        DISTINCT from_address AS address
     FROM
         real_sats
     WHERE
@@ -183,7 +183,7 @@ exclusive_sats AS (
 ),
 final_base AS(
     SELECT
-        system_created_at,
+        DISTINCT system_created_at,
         insert_date,
         blockchain,
         e.address,
@@ -201,7 +201,7 @@ final_base AS(
         ON e.address = p.address
 )
 SELECT
-    system_created_at,
+    DISTINCT system_created_at,
     insert_date,
     blockchain,
     address,

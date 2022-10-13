@@ -104,7 +104,7 @@ GROUP BY
 ),
 exclusive_sats AS (
   SELECT
-    sender AS address
+    DISTINCT sender AS address
   FROM
     real_sats
   WHERE
@@ -114,7 +114,7 @@ exclusive_sats AS (
 ),
 final_base AS(
   SELECT
-    system_created_at,
+    DISTINCT system_created_at,
     insert_date,
     blockchain,
     e.address,
@@ -132,7 +132,7 @@ final_base AS(
     ON e.address = p.address
 )
 SELECT
-  system_created_at,
+  DISTINCT system_created_at,
   insert_date,
   blockchain,
   address,
@@ -155,5 +155,3 @@ WHERE
     WHERE
       blockchain = 'flow'
   )
-
-
