@@ -219,10 +219,7 @@ WHERE
         SELECT
             DISTINCT address
         FROM
-            {{ source(
-                'crosschain_dev_silver_crosschain',
-                'address_labels'
-            ) }}
+            {{ ref('silver_crosschain__address_labels') }}
         WHERE
             blockchain = 'arbitrum'
     )
