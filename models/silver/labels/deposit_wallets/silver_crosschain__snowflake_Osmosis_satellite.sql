@@ -23,7 +23,7 @@ WITH distributor_cex AS (
             'address_labels'
         ) }}
     WHERE
-        blockchain = 'algorand'
+        blockchain = 'osmosis'
         AND l1_label = 'cex'
         AND l2_label = 'hot_wallet'
 ),
@@ -37,7 +37,7 @@ possible_sats AS (
                 DISTINCT dc.system_created_at,
                 dc.insert_date,
                 dc.blockchain,
-                xfer.asset_sender AS address,
+                xfer.sender AS address,
                 dc.creator,
                 dc.address_name,
                 dc.project_name,
@@ -47,12 +47,12 @@ possible_sats AS (
                     DISTINCT project_name
                 ) over(
                     PARTITION BY dc.blockchain,
-                    xfer.asset_sender
+                    xfer.sender
                 ) AS project_count -- how many projects has each from address sent to
             FROM
                 {{ source(
-                    'algorand_core',
-                    'ez_transfer'
+                    'osmosis_core',
+                    'fact_transfers'
                 ) }}
                 xfer
                 JOIN distributor_cex dc
@@ -77,19 +77,19 @@ GROUP BY
 ),
 real_sats AS (
     SELECT
-        asset_sender,
+        sender,
         COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
     FROM
         {{ source(
-            'algorand_core',
-            'ez_transfer'
+            'osmosis_core',
+            'fact_transfers'
         ) }}
         xfer
         LEFT OUTER JOIN distributor_cex dc
         ON dc.address = xfer.receiver
     WHERE
         amount > 0
-        AND asset_sender IN (
+        AND sender IN (
             SELECT
                 address
             FROM
@@ -100,12 +100,11 @@ real_sats AS (
 AND block_timestamp > CURRENT_DATE - 10
 {% endif %}
 GROUP BY
-    asset_sender
+    sender
 ),
 exclusive_sats AS (
     SELECT
-distinct
-        asset_sender AS address
+        DISTINCT sender AS address
     FROM
         real_sats
     WHERE
@@ -133,8 +132,7 @@ final_base AS(
         ON e.address = p.address
 )
 SELECT
-distinct 
-    system_created_at,
+    DISTINCT system_created_at,
     insert_date,
     blockchain,
     address,
@@ -155,7 +153,5 @@ WHERE
                 'address_labels'
             ) }}
         WHERE
-            blockchain = 'algorand'
+            blockchain = 'osmosis'
     )
-
-

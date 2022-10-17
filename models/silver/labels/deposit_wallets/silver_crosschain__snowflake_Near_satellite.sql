@@ -23,7 +23,7 @@ WITH distributor_cex AS (
             'address_labels'
         ) }}
     WHERE
-        blockchain = 'algorand'
+        blockchain = 'near'
         AND l1_label = 'cex'
         AND l2_label = 'hot_wallet'
 ),
@@ -37,7 +37,7 @@ possible_sats AS (
                 DISTINCT dc.system_created_at,
                 dc.insert_date,
                 dc.blockchain,
-                xfer.asset_sender AS address,
+                xfer.TX_SIGNER AS address,
                 dc.creator,
                 dc.address_name,
                 dc.project_name,
@@ -47,18 +47,18 @@ possible_sats AS (
                     DISTINCT project_name
                 ) over(
                     PARTITION BY dc.blockchain,
-                    xfer.asset_sender
+                    xfer.TX_SIGNER
                 ) AS project_count -- how many projects has each from address sent to
             FROM
                 {{ source(
-                    'algorand_core',
-                    'ez_transfer'
+                    'near_core',
+                    'fact_transfers'
                 ) }}
                 xfer
                 JOIN distributor_cex dc
-                ON dc.address = xfer.receiver
+                ON dc.address = xfer.TX_RECEIVER
             WHERE
-                amount > 0
+                deposit > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -77,19 +77,19 @@ GROUP BY
 ),
 real_sats AS (
     SELECT
-        asset_sender,
+        TX_SIGNER,
         COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
     FROM
         {{ source(
-            'algorand_core',
-            'ez_transfer'
+            'near_core',
+            'fact_transfers'
         ) }}
         xfer
         LEFT OUTER JOIN distributor_cex dc
-        ON dc.address = xfer.receiver
+        ON dc.address = xfer.TX_RECEIVER
     WHERE
-        amount > 0
-        AND asset_sender IN (
+        deposit > 0
+        AND TX_SIGNER IN (
             SELECT
                 address
             FROM
@@ -100,12 +100,11 @@ real_sats AS (
 AND block_timestamp > CURRENT_DATE - 10
 {% endif %}
 GROUP BY
-    asset_sender
+    TX_SIGNER
 ),
 exclusive_sats AS (
     SELECT
-distinct
-        asset_sender AS address
+        DISTINCT TX_SIGNER AS address
     FROM
         real_sats
     WHERE
@@ -133,8 +132,7 @@ final_base AS(
         ON e.address = p.address
 )
 SELECT
-distinct 
-    system_created_at,
+    DISTINCT system_created_at,
     insert_date,
     blockchain,
     address,
@@ -155,7 +153,5 @@ WHERE
                 'address_labels'
             ) }}
         WHERE
-            blockchain = 'algorand'
+            blockchain = 'near'
     )
-
-

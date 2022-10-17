@@ -151,6 +151,16 @@ sources:
     schema: core
     tables:
       - name: fact_transfers
+  - name: near_core
+    database: near
+    schema: core
+    tables:
+      - name: fact_transfers
+  - name: osmosis_core
+    database: osmosis
+    schema: core
+    tables:
+      - name: fact_transfers
   - name: bronze_streamline
     database: streamline
     schema: crosschain
