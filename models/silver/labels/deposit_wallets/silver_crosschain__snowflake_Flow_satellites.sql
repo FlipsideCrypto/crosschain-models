@@ -148,10 +148,7 @@ WHERE
     SELECT
       DISTINCT address
     FROM
-      {{ source(
-        'crosschain_core',
-        'address_labels'
-      ) }}
+      {{ ref('silver_crosschain__address_labels') }}
     WHERE
       blockchain = 'flow'
   )
