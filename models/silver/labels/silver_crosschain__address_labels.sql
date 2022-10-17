@@ -394,3 +394,20 @@ SELECT
     NULL AS delete_flag
 FROM 
     {{ ref('silver_crosschain__snowflake_Near_satellite') }}
+
+
+UNION ALL 
+
+SELECT 
+    system_created_at, 
+    insert_date, 
+    blockchain, 
+    address, 
+    creator, 
+    l1_label AS label_type, 
+    l2_label AS label_subtype, 
+    address_name, 
+    project_name, 
+    NULL AS delete_flag
+FROM 
+    {{ ref('silver_crosschain__snowflake_Osmosis_satellite') }}

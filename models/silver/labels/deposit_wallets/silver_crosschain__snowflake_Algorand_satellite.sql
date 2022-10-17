@@ -158,4 +158,3 @@ WHERE
             blockchain = 'algorand'
     )
 
-

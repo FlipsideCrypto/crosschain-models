@@ -155,3 +155,4 @@ WHERE
         WHERE
             blockchain = 'osmosis'
     )
+
