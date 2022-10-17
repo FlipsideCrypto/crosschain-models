@@ -149,7 +149,7 @@ WHERE
       DISTINCT address
     FROM
       {{ source(
-        'crosschain_core',
+        'crosschain_dev_silver_crosschain',
         'address_labels'
       ) }}
     WHERE

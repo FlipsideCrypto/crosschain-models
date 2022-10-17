@@ -26,6 +26,11 @@ sources:
     schema: silver
     tables:
       - name: dates_table
+  - name: crosschain_dev_silver_crosschain
+    database: crosschain_dev
+    schema: silver_crosschain
+    tables:
+      - name: address_labels
   - name: ethereum_core
     database: ethereum
     schema: core

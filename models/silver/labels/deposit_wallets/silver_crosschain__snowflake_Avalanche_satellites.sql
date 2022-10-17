@@ -120,7 +120,7 @@ GROUP BY
 real_sats AS (
     SELECT
         from_address,
-        COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
+        COALESCE(project_name, 'blunts') AS project_names
     FROM
         {{ source(
             'avalanche_core',
@@ -141,12 +141,10 @@ real_sats AS (
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
 {% endif %}
-GROUP BY
-    from_address
 UNION
 SELECT
     from_address,
-    COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
+    COALESCE(project_name, 'blunts') AS project_names
 FROM
     {{ source(
         'avalanche_core',
@@ -168,14 +166,18 @@ WHERE
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
 {% endif %}
-GROUP BY
-    from_address
+),
+project_counts as (
+    select distinct from_address, 
+    count(distinct project_names) as project_count
+    from real_sats
+    group by from_address
 ),
 exclusive_sats AS (
     SELECT
         DISTINCT from_address AS address
     FROM
-        real_sats
+        project_counts
     WHERE
         project_count = 1
     GROUP BY
@@ -218,7 +220,7 @@ WHERE
             DISTINCT address
         FROM
             {{ source(
-                'crosschain_core',
+                'crosschain_dev_silver_crosschain',
                 'address_labels'
             ) }}
         WHERE
