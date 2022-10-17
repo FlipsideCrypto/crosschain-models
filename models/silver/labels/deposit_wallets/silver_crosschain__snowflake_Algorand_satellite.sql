@@ -115,8 +115,8 @@ distinct
 ),
 final_base AS(
     SELECT
-        system_created_at,
-        insert_date,
+        DISTINCT CURRENT_TIMESTAMP AS system_created_at,
+        CURRENT_TIMESTAMP AS insert_date,
         blockchain,
         e.address,
         creator,
