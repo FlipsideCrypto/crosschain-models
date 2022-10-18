@@ -5,7 +5,7 @@
   tags = ['snowflake', 'crosschain', 'labels', 'silver_crosschain__address_labels']
 ) }}
 
-WITH base_tables AS (
+WITH subset_table AS (
 
   SELECT
     *,
