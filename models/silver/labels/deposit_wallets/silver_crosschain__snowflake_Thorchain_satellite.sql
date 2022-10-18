@@ -20,7 +20,7 @@ WITH distributor_cex AS (
     FROM
         {{ ref('silver_crosschain__address_labels') }}
     WHERE
-        blockchain = 'optimism'
+        blockchain = 'thorchain'
         AND l1_label = 'cex'
         AND l2_label = 'hot_wallet'
 ),
@@ -48,56 +48,14 @@ possible_sats AS (
                 ) AS project_count -- how many projects has each from address sent to
             FROM
                 {{ source(
-                    'optimism_core',
-                    'fact_token_transfers'
+                    'thorchain',
+                    'transfers'
                 ) }}
                 xfer
                 JOIN distributor_cex dc
                 ON dc.address = xfer.to_address
             WHERE
-                raw_amount > 0
-
-{% if is_incremental() %}
-AND block_timestamp > CURRENT_DATE - 10
-{% endif %}
-GROUP BY
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9
-UNION
-SELECT
-    DISTINCT dc.system_created_at,
-    dc.insert_date,
-    dc.blockchain,
-    tr.from_address AS address,
-    dc.creator,
-    dc.address_name,
-    dc.project_name,
-    dc.l1_label,
-    'deposit_wallet' AS l2_label,
-    COUNT(
-        DISTINCT project_name
-    ) over(
-        PARTITION BY dc.blockchain,
-        tr.from_address
-    ) AS project_count
-FROM
-    {{ source(
-        'optimism_core',
-        'fact_traces'
-    ) }}
-    tr
-    JOIN distributor_cex dc
-    ON dc.address = tr.to_address
-WHERE
-    tx_status = 'SUCCESS'
-    AND eth_value > 0
+                rune_amount > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -117,64 +75,36 @@ GROUP BY
 real_sats AS (
     SELECT
         from_address,
-        COALESCE(project_name, 'blunts') AS project_names
+        COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
     FROM
         {{ source(
-            'optimism_core',
-            'fact_token_transfers'
+            'thorchain',
+            'transfers'
         ) }}
         xfer
         LEFT OUTER JOIN distributor_cex dc
         ON dc.address = xfer.to_address
     WHERE
-        from_address IN (
+        rune_amount > 0
+        AND from_address IN (
             SELECT
                 address
             FROM
                 possible_sats
         )
-        AND raw_amount > 0
+        and to_address != 'thor1dheycdevq39qlkxs2a6wuuzyn4aqxhve4qxtxt'
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
 {% endif %}
-UNION
-SELECT
-    from_address,
-    COALESCE(project_name, 'blunts') AS project_names
-FROM
-    {{ source(
-        'optimism_core',
-        'fact_traces'
-    ) }}
-    tr
-    LEFT OUTER JOIN distributor_cex dc
-    ON dc.address = tr.to_address
-WHERE
-    from_address IN (
-        SELECT
-            address
-        FROM
-            possible_sats
-    )
-    AND tx_status = 'SUCCESS'
-    AND eth_value > 0
-
-{% if is_incremental() %}
-AND block_timestamp > CURRENT_DATE - 10
-{% endif %}
-),
-project_counts as (
-    select distinct from_address, 
-    count(distinct project_names) as project_count
-    from real_sats
-    group by from_address
+GROUP BY
+    from_address
 ),
 exclusive_sats AS (
     SELECT
         DISTINCT from_address AS address
     FROM
-        project_counts
+        real_sats
     WHERE
         project_count = 1
     GROUP BY
@@ -218,5 +148,5 @@ WHERE
         FROM
             {{ ref('silver_crosschain__address_labels') }}
         WHERE
-            blockchain = 'optimism'
+            blockchain = 'thorchain'
     )

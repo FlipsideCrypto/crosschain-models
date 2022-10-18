@@ -146,6 +146,12 @@ sources:
     tables:
       - name: swaps
       - name: liquidity_actions
+      - name: transfers
+  - name: thorchain_core
+    database: thorchain
+    schema: core
+    tables:
+      - name: fact_transfers
   - name: flow_core
     database: flow
     schema: core
@@ -153,6 +159,16 @@ sources:
       - name: ez_token_transfers
   - name: solana_core
     database: solana
+    schema: core
+    tables:
+      - name: fact_transfers
+  - name: near_core
+    database: near
+    schema: core
+    tables:
+      - name: fact_transfers
+  - name: osmosis_core
+    database: osmosis
     schema: core
     tables:
       - name: fact_transfers
