@@ -5,7 +5,7 @@
   tags = ['snowflake', 'crosschain', 'labels', 'silver_crosschain__address_labels']
 ) }}
 
-WITH base_tables AS (
+WITH subset_table AS (
 
   SELECT
     *,
@@ -70,6 +70,58 @@ AND (
     {{ this }}
 )
 {% endif %}
+),
+clean_table AS (
+  SELECT
+    *,
+    SPLIT(
+      record_metadata :key :: STRING,
+      '-'
+    ) [1] :: STRING AS blockchain,
+    TO_TIMESTAMP(
+      SPLIT(
+        record_metadata :key :: STRING,
+        '-'
+      ) [2] :: INT
+    ) AS insert_date
+  FROM
+    {{ source(
+      'bronze',
+      'prod_address_label_sink_291098491'
+    ) }}
+  WHERE
+    ARRAY_SIZE(
+      SPLIT(
+        record_metadata :key :: STRING,
+        '-'
+      )
+    ) = 3
+    AND SPLIT(
+      record_metadata :key :: STRING,
+      '-'
+    ) [0] = 'labels'
+
+{% if is_incremental() %}
+AND (
+  record_metadata :CreateTime :: INT / 1000
+) :: TIMESTAMP :: DATE >= (
+  SELECT
+    DATEADD('day', -1, MAX(system_created_at :: DATE))
+  FROM
+    {{ this }}
+)
+{% endif %}
+),
+base_tables AS (
+  SELECT
+    *
+  FROM
+    subset_table
+  UNION
+  SELECT
+    *
+  FROM
+    clean_table
 ),
 delete_table AS (
   SELECT
@@ -143,87 +195,74 @@ WHERE
   )
   AND project_name IS NOT NULL
   AND address_name IS NOT NULL
-  AND l1_label <> 'project'
-
-
--- contract creations 
-
-UNION ALL 
-
-SELECT 
-    system_created_at, 
-    insert_date, 
-    blockchain, 
-    address, 
-    creator, 
-    l1_label AS label_type, 
-    l2_label AS label_subtype, 
-    address_name, 
-    project_name, 
-    NULL AS delete_flag
-FROM 
-    {{ ref('silver_crosschain__labels_contracts') }}
-
-UNION ALL 
-
-SELECT 
-    system_created_at, 
-    insert_date, 
-    blockchain, 
-    address, 
-    creator, 
-    l1_label AS label_type, 
-    l2_label AS label_subtype, 
-    address_name, 
-    project_name, 
-    NULL AS delete_flag
-FROM 
-    {{ ref('silver_crosschain__labels_contracts_avalanche') }}
-
-UNION ALL 
-
-SELECT 
-    system_created_at, 
-    insert_date, 
-    blockchain, 
-    address, 
-    creator, 
-    l1_label AS label_type, 
-    l2_label AS label_subtype, 
-    address_name, 
-    project_name, 
-    NULL AS delete_flag
-FROM 
-    {{ ref('silver_crosschain__labels_contracts_bsc') }}
-
-UNION ALL 
-
-SELECT 
-    system_created_at, 
-    insert_date, 
-    blockchain, 
-    address, 
-    creator, 
-    l1_label AS label_type, 
-    l2_label AS label_subtype, 
-    address_name, 
-    project_name, 
-    NULL AS delete_flag
-FROM 
-    {{ ref('silver_crosschain__labels_contracts_optimism') }}
-
-UNION ALL 
-
-SELECT 
-    system_created_at, 
-    insert_date, 
-    blockchain, 
-    address, 
-    creator, 
-    l1_label AS label_type, 
-    l2_label AS label_subtype, 
-    address_name, 
-    project_name, 
-    NULL AS delete_flag
-FROM 
-    {{ ref('silver_crosschain__labels_contracts_polygon') }}
+  AND l1_label <> 'project' -- contract creations
+UNION ALL
+SELECT
+  system_created_at,
+  insert_date,
+  blockchain,
+  address,
+  creator,
+  l1_label AS label_type,
+  l2_label AS label_subtype,
+  address_name,
+  project_name,
+  NULL AS delete_flag
+FROM
+  {{ ref('silver_crosschain__labels_contracts') }}
+UNION ALL
+SELECT
+  system_created_at,
+  insert_date,
+  blockchain,
+  address,
+  creator,
+  l1_label AS label_type,
+  l2_label AS label_subtype,
+  address_name,
+  project_name,
+  NULL AS delete_flag
+FROM
+  {{ ref('silver_crosschain__labels_contracts_avalanche') }}
+UNION ALL
+SELECT
+  system_created_at,
+  insert_date,
+  blockchain,
+  address,
+  creator,
+  l1_label AS label_type,
+  l2_label AS label_subtype,
+  address_name,
+  project_name,
+  NULL AS delete_flag
+FROM
+  {{ ref('silver_crosschain__labels_contracts_bsc') }}
+UNION ALL
+SELECT
+  system_created_at,
+  insert_date,
+  blockchain,
+  address,
+  creator,
+  l1_label AS label_type,
+  l2_label AS label_subtype,
+  address_name,
+  project_name,
+  NULL AS delete_flag
+FROM
+  {{ ref('silver_crosschain__labels_contracts_optimism') }}
+UNION ALL
+SELECT
+  system_created_at,
+  insert_date,
+  blockchain,
+  address,
+  creator,
+  l1_label AS label_type,
+  l2_label AS label_subtype,
+  address_name,
+  project_name,
+  NULL AS delete_flag
+FROM
+  {{ ref('silver_crosschain__labels_contracts_polygon') }}
