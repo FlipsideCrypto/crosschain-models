@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver_crosschain__snowflake_Osmosis_satellite
+  - name: silver_crosschain__snowflake_Thorchain_satellite
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

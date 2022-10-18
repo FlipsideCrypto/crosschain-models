@@ -13,15 +13,12 @@ WITH distributor_cex AS (
         blockchain,
         address,
         creator,
-        label_type AS l1_label,
-        label_subtype AS l2_label,
+        l1_label,
+        l2_label,
         address_name,
         project_name
     FROM
-        {{ source(
-            'crosschain_core',
-            'address_labels'
-        ) }}
+        {{ ref('silver_crosschain__address_labels') }}
     WHERE
         blockchain = 'near'
         AND l1_label = 'cex'
@@ -152,4 +149,3 @@ WHERE
         WHERE
             blockchain = 'near'
     )
-

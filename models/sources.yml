@@ -146,6 +146,12 @@ sources:
     tables:
       - name: swaps
       - name: liquidity_actions
+      - name: transfers
+  - name: thorchain_core
+    database: thorchain
+    schema: core
+    tables:
+      - name: fact_transfers
   - name: flow_core
     database: flow
     schema: core
