@@ -44,7 +44,7 @@ base_labels AS (
                 DISTINCT address
             FROM
                 {{ source(
-                    'legacy_silver_crosschain',
+                    'crosschain_core',
                     'address_labels'
                 ) }}
             WHERE
@@ -68,13 +68,13 @@ base_legacy_labels AS (
             system_created_at, 
             insert_date, 
             address, 
-            l1_label,
-            l2_label,
+            label_type as l1_label,
+            label_subtype as l2_label,
             address_name,
             project_name
     FROM
         {{ source(
-            'legacy_silver_crosschain',
+            'crosschain_core',
             'address_labels'
         ) }}
     WHERE
