@@ -1,6 +1,7 @@
 version: 2
 models:
-  - name: core__nft_fair_market_value
+  - name: core__dim_nft_fair_market_value
+    description: A table showing the fair market value of an NFT based on NFT Deal Score
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
