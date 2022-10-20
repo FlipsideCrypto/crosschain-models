@@ -4,8 +4,8 @@
 
 SELECT 
     collection
-    , mint
-    , token_id
+    , mint :: STRING AS mint
+    , token_id :: INT AS token_id
     , deal_score_rank :: INT AS deal_score_rank
     , rarity_rank :: INT AS rarity_rank
     , floor_price :: FLOAT AS floor_price
