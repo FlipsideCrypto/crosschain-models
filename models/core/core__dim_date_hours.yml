@@ -1,0 +1,7 @@
+version: 2
+models:
+  - name: core__dim_date_hours
+    description: Hold rows for each hour from 2017 to current timestamp (UTC)
+    columns:
+      - name: DATE_HOUR
+        description: Specific hour of a given date
