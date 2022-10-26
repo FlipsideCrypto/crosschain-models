@@ -6,7 +6,6 @@
 ) }}
 
 WITH subset_table AS (
-
   SELECT
     *,
     SPLIT(
@@ -71,6 +70,7 @@ AND (
 )
 {% endif %}
 ),
+
 clean_table AS (
   SELECT
     *,
