@@ -1,0 +1,17 @@
+version: 2
+models:
+  - name: silver_crosschain__snowflake_Algorand_satellite
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCKCHAIN
+            - CREATOR
+            - ADDRESS
+    columns:
+      - name: ADDRESS
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - STRING
+                - VARCHAR 
