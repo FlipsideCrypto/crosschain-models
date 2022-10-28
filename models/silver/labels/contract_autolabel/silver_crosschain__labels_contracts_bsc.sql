@@ -17,18 +17,18 @@ max_date AS (
     FROM
         {{ this }}
 ),
-{% endif %} 
+{% endif %}
 
 base_labels AS (
     SELECT
-        tx_hash, 
-        block_number, 
-        block_timestamp, 
-        tx_status, 
-        from_address, 
-        to_address,  
-        type, 
-        identifier, 
+        tx_hash,
+        block_number,
+        block_timestamp,
+        tx_status,
+        from_address,
+        to_address,
+        TYPE,
+        identifier,
         _inserted_timestamp
     FROM
         {{ source(
@@ -36,7 +36,10 @@ base_labels AS (
             'traces'
         ) }}
     WHERE
-        type in ('CREATE', 'CREATE2')
+        TYPE IN (
+            'CREATE',
+            'CREATE2'
+        )
         AND tx_status = 'SUCCESS'
         AND to_address IS NOT NULL
         AND to_address NOT IN (
@@ -51,27 +54,26 @@ base_labels AS (
                 blockchain = 'bsc'
         )
 
-    {% if is_incremental() %}
-    AND _inserted_timestamp >= (
-        SELECT
-            MAX(
-                _inserted_timestamp
-            )
-        FROM
-            {{ this }}
-    )
-    {% endif %}
-), 
+{% if is_incremental() %}
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(
+            _inserted_timestamp
+        )
+    FROM
+        {{ this }}
+)
+{% endif %}
+),
 base_legacy_labels AS (
     SELECT
-        DISTINCT 
-            system_created_at, 
-            insert_date, 
-            address, 
-            label_type as l1_label,
-            label_subtype as l2_label,
-            address_name,
-            project_name
+        DISTINCT system_created_at,
+        insert_date,
+        address,
+        label_type AS l1_label,
+        label_subtype AS l2_label,
+        address_name,
+        project_name
     FROM
         {{ source(
             'crosschain_core',
@@ -79,11 +81,11 @@ base_legacy_labels AS (
         ) }}
     WHERE
         blockchain = 'bsc'
-), 
+),
 base_transacts AS (
     SELECT
-        b.system_created_at, 
-        b.insert_date, 
+        b.system_created_at,
+        b.insert_date,
         A.tx_hash,
         A.block_timestamp,
         A.from_address,
@@ -92,20 +94,20 @@ base_transacts AS (
         b.l1_label,
         b.l2_label,
         b.address_name,
-        b.project_name, 
+        b.project_name,
         A._inserted_timestamp
     FROM
-       base_labels A
-INNER JOIN base_legacy_labels b
-ON A.from_address = b.address
-WHERE
-    b.l1_label != 'flotsam'
+        base_labels A
+        INNER JOIN base_legacy_labels b
+        ON A.from_address = b.address
+    WHERE
+        b.l1_label != 'flotsam'
 ),
 base_logs AS (
     SELECT
         DISTINCT tx_hash,
         contract_name,
-        event_name, 
+        event_name,
         _inserted_timestamp
     FROM
         {{ source(
@@ -119,37 +121,37 @@ base_logs AS (
             FROM
                 base_transacts
         )
-    AND (
-        event_name IN (
-            'NewOracle',
-            'NewSwapPool',
-            'PairCreated',
-            'LogNewWallet',
-            'LogUserAdded'
-        )
-        OR event_name ILIKE '%pool%'
-        OR event_name ILIKE '%create%'
-    )
-    AND event_name != 'SetTokenCreated'
-    AND event_name != 'PoolUpdate'
-    AND contract_name IS NOT NULL
-    AND event_name IS NOT NULL
-
-    {% if is_incremental() %}
-    AND _inserted_timestamp >= (
-        SELECT
-            MAX(
-                _inserted_timestamp
+        AND (
+            event_name IN (
+                'NewOracle',
+                'NewSwapPool',
+                'PairCreated',
+                'LogNewWallet',
+                'LogUserAdded'
             )
-        FROM
-            {{ this }}
-    )
-    {% endif %}
-), 
+            OR event_name ILIKE '%pool%'
+            OR event_name ILIKE '%create%'
+        )
+        AND event_name != 'SetTokenCreated'
+        AND event_name != 'PoolUpdate'
+        AND contract_name IS NOT NULL
+        AND event_name IS NOT NULL
+
+{% if is_incremental() %}
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(
+            _inserted_timestamp
+        )
+    FROM
+        {{ this }}
+)
+{% endif %}
+),
 final_base AS (
     SELECT
-        A.system_created_at, 
-        A.insert_date, 
+        A.system_created_at,
+        A.insert_date,
         A.tx_hash,
         A.block_timestamp,
         A.from_address,
@@ -172,6 +174,7 @@ final_base AS (
             WHEN C.event_name IN ('NewOracle') THEN 'oracle'
             WHEN A.l1_label = 'dapp'
             AND A.l2_label = 'governance' THEN 'governance'
+            WHEN A.address_name ILIKE '%pool deployer%' THEN 'pool'
             ELSE 'general_contract'
         END AS l2_label_fixed,
         A.address_name,
@@ -207,6 +210,10 @@ final_base AS (
             )
             WHEN A.address_name = ' registry'
             AND A.project_name = 'opensea' THEN 'opensea: proxy registry'
+            WHEN A.address_name ILIKE '%pool deployer%' THEN CONCAT(
+                A.project_name,
+                ': pool'
+            )
             ELSE CONCAT(
                 A.project_name,
                 ': general contract'
@@ -214,7 +221,7 @@ final_base AS (
         END AS address_name_fixed,
         A.project_name,
         C.contract_name,
-        C.event_name, 
+        C.event_name,
         A._inserted_timestamp
     FROM
         base_transacts A
@@ -222,16 +229,15 @@ final_base AS (
         ON A.tx_hash = C.tx_hash
 )
 SELECT
-    DISTINCT 
-    system_created_at, 
-    insert_date, 
+    DISTINCT system_created_at,
+    insert_date,
     'bsc' AS blockchain,
     to_address AS address,
     'flipside' AS creator,
     l1_label,
     l2_label_fixed AS l2_label,
     address_name_fixed AS address_name,
-    project_name, 
+    project_name,
     _inserted_timestamp
 FROM
     final_base qualify(ROW_NUMBER() over(PARTITION BY address
