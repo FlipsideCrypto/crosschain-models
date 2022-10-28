@@ -172,6 +172,7 @@ final_base AS (
             WHEN C.event_name IN ('NewOracle') THEN 'oracle'
             WHEN A.l1_label = 'dapp'
             AND A.l2_label = 'governance' THEN 'governance'
+            WHEN A.address_name ILIKE '%pool deployer%' THEN 'pool'
             ELSE 'general_contract'
         END AS l2_label_fixed,
         A.address_name,
@@ -207,6 +208,10 @@ final_base AS (
             )
             WHEN A.address_name = ' registry'
             AND A.project_name = 'opensea' THEN 'opensea: proxy registry'
+            WHEN A.address_name ILIKE '%pool deployer%' THEN CONCAT(
+                A.project_name,
+                ': pool'
+            )
             ELSE CONCAT(
                 A.project_name,
                 ': general contract'
