@@ -40,6 +40,7 @@ sources:
       - name: fact_traces
       - name: ez_nft_sales
       - name: ez_current_balances
+      - name: ez_dex_swaps
   - name: ethereum_silver
     database: ethereum
     schema: silver
@@ -186,3 +187,59 @@ sources:
     schema: bronze
     tables: 
       - name: prod_address_label_sink_291098491
+  - name: Harmony_db
+    database: HARMONY
+    schema: SUSHI
+    tables:
+      - name: EZ_SUSHI_SWAPS
+  - name: polygon
+    database: POLYGON
+    schema: SUSHI
+    tables:
+      - name: EZ_SWAPS
+      - name: EZ_LENDING
+      - name: EZ_BORROWING  
+  - name: Arbitrum
+    database: ARBITRUM
+    schema: SUSHI
+    tables:
+      - name: EZ_SWAPS
+      - name: EZ_LENDING
+      - name: EZ_BORROWING 
+
+  - name: Avalanche
+    database: AVALANCHE
+    schema: SUSHI
+    tables:
+      - name: EZ_SWAPS
+      - name: EZ_LENDING
+      - name: EZ_BORROWING  
+  
+  - name: BSC
+    database: BSC
+    schema: SUSHI
+    tables:
+      - name: EZ_SWAPS
+      - name: EZ_LENDING
+      - name: EZ_BORROWING  
+
+  - name: Optimism
+    database: OPTIMISM
+    schema: SUSHI
+    tables:
+      - name: EZ_SWAPS
+
+  - name: Gnosis  
+    database: GNOSIS
+    schema: SUSHI
+    tables:
+      - name: EZ_SWAPS
+      - name: EZ_LENDING
+      - name: EZ_BORROWING  
+  - name: ethereum_db_sushi
+    database: ethereum
+    schema: sushi
+    tables:
+      - name: dim_distributor_reward_schedule
+      - name: ez_lending
+      - name: ez_borrowing
