@@ -31,6 +31,22 @@ sources:
     schema: silver_crosschain
     tables:
       - name: address_labels
+  - name: crosschain_silver_crosschain
+    database: crosschain
+    schema: silver_crosschain
+    tables:
+      - name: snowflake_algorand_satellite
+      - name: snowflake_arbitrum_satellites
+      - name: snowflake_avalanche_satellites
+      - name: snowflake_bsc_satellites
+      - name: snowflake_eth_satellites
+      - name: snowflake_flow_satellites
+      - name: snowflake_near_satellites
+      - name: snowflake_optimism_satellites
+      - name: snowflake_osmosis_satellites
+      - name: snowflake_polygon_satellites
+      - name: snowflake_sol_satellites
+      - name: snowflake_thorchain_satellites
   - name: ethereum_core
     database: ethereum
     schema: core
@@ -39,6 +55,7 @@ sources:
       - name: fact_token_transfers
       - name: fact_traces
       - name: ez_nft_sales
+      - name: ez_nft_transfers
       - name: ez_current_balances
   - name: ethereum_silver
     database: ethereum
