@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: core__ENS
+  - name: core__ez_ENS
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
