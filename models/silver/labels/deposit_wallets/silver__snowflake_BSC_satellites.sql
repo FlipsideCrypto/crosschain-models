@@ -18,9 +18,9 @@ WITH distributor_cex AS (
         address_name,
         project_name
     FROM
-        {{ ref('silver_crosschain__address_labels') }}
+        {{ ref('silver__address_labels') }}
     WHERE
-        blockchain = 'avalanche'
+        blockchain = 'bsc'
         AND l1_label = 'cex'
         AND l2_label = 'hot_wallet'
 ),
@@ -48,7 +48,7 @@ possible_sats AS (
                 ) AS project_count -- how many projects has each from address sent to
             FROM
                 {{ source(
-                    'avalanche_core',
+                    'bsc_core',
                     'fact_token_transfers'
                 ) }}
                 xfer
@@ -89,7 +89,7 @@ SELECT
     ) AS project_count
 FROM
     {{ source(
-        'avalanche_core',
+        'bsc_core',
         'fact_traces'
     ) }}
     tr
@@ -97,7 +97,7 @@ FROM
     ON dc.address = tr.to_address
 WHERE
     tx_status = 'SUCCESS'
-    AND avax_value > 0
+    AND bnb_value > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -120,7 +120,7 @@ real_sats AS (
         COALESCE(project_name, 'blunts') AS project_names
     FROM
         {{ source(
-            'avalanche_core',
+            'bsc_core',
             'fact_token_transfers'
         ) }}
         xfer
@@ -144,7 +144,7 @@ SELECT
     COALESCE(project_name, 'blunts') AS project_names
 FROM
     {{ source(
-        'avalanche_core',
+        'bsc_core',
         'fact_traces'
     ) }}
     tr
@@ -158,7 +158,7 @@ WHERE
             possible_sats
     )
     AND tx_status = 'SUCCESS'
-    AND avax_value > 0
+    AND bnb_value > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -216,7 +216,7 @@ WHERE
         SELECT
             DISTINCT address
         FROM
-            {{ ref('silver_crosschain__address_labels') }}
+            {{ ref('silver__address_labels') }}
         WHERE
-            blockchain = 'avalanche'
+            blockchain = 'bsc'
     )

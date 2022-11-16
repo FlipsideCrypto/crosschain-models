@@ -18,7 +18,7 @@ WITH distributor_cex AS (
     address_name,
     project_name
   FROM
-    {{ ref('silver_crosschain__address_labels') }}
+    {{ ref('silver__address_labels') }}
   WHERE
     blockchain = 'flow'
     AND l1_label = 'cex'
@@ -145,7 +145,7 @@ WHERE
     SELECT
       DISTINCT address
     FROM
-      {{ ref('silver_crosschain__address_labels') }}
+      {{ ref('silver__address_labels') }}
     WHERE
       blockchain = 'flow'
   )

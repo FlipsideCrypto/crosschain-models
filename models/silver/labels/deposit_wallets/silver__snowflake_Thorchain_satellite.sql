@@ -18,9 +18,9 @@ WITH distributor_cex AS (
         address_name,
         project_name
     FROM
-        {{ ref('silver_crosschain__address_labels') }}
+        {{ ref('silver__address_labels') }}
     WHERE
-        blockchain = 'near'
+        blockchain = 'thorchain'
         AND l1_label = 'cex'
         AND l2_label = 'hot_wallet'
 ),
@@ -34,7 +34,7 @@ possible_sats AS (
                 DISTINCT dc.system_created_at,
                 dc.insert_date,
                 dc.blockchain,
-                xfer.TX_SIGNER AS address,
+                xfer.from_address AS address,
                 dc.creator,
                 dc.address_name,
                 dc.project_name,
@@ -44,18 +44,18 @@ possible_sats AS (
                     DISTINCT project_name
                 ) over(
                     PARTITION BY dc.blockchain,
-                    xfer.TX_SIGNER
+                    xfer.from_address
                 ) AS project_count -- how many projects has each from address sent to
             FROM
                 {{ source(
-                    'near_core',
-                    'fact_transfers'
+                    'thorchain',
+                    'transfers'
                 ) }}
                 xfer
                 JOIN distributor_cex dc
-                ON dc.address = xfer.TX_RECEIVER
+                ON dc.address = xfer.to_address
             WHERE
-                deposit > 0
+                rune_amount > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -74,34 +74,35 @@ GROUP BY
 ),
 real_sats AS (
     SELECT
-        TX_SIGNER,
+        from_address,
         COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
     FROM
         {{ source(
-            'near_core',
-            'fact_transfers'
+            'thorchain',
+            'transfers'
         ) }}
         xfer
         LEFT OUTER JOIN distributor_cex dc
-        ON dc.address = xfer.TX_RECEIVER
+        ON dc.address = xfer.to_address
     WHERE
-        deposit > 0
-        AND TX_SIGNER IN (
+        rune_amount > 0
+        AND from_address IN (
             SELECT
                 address
             FROM
                 possible_sats
         )
+        and to_address != 'thor1dheycdevq39qlkxs2a6wuuzyn4aqxhve4qxtxt'
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
 {% endif %}
 GROUP BY
-    TX_SIGNER
+    from_address
 ),
 exclusive_sats AS (
     SELECT
-        DISTINCT TX_SIGNER AS address
+        DISTINCT from_address AS address
     FROM
         real_sats
     WHERE
@@ -145,7 +146,7 @@ WHERE
         SELECT
             DISTINCT address
         FROM
-            {{ ref('silver_crosschain__address_labels') }}
+            {{ ref('silver__address_labels') }}
         WHERE
-            blockchain = 'near'
+            blockchain = 'thorchain'
     )
