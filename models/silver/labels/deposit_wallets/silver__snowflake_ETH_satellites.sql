@@ -18,9 +18,9 @@ WITH distributor_cex AS (
         address_name,
         project_name
     FROM
-        {{ ref('silver_crosschain__address_labels') }}
+        {{ ref('silver__address_labels') }}
     WHERE
-        blockchain = 'algorand'
+        blockchain = 'ethereum'
         AND l1_label = 'cex'
         AND l2_label = 'hot_wallet'
 ),
@@ -34,7 +34,7 @@ possible_sats AS (
                 DISTINCT dc.system_created_at,
                 dc.insert_date,
                 dc.blockchain,
-                xfer.asset_sender AS address,
+                xfer.from_address AS address,
                 dc.creator,
                 dc.address_name,
                 dc.project_name,
@@ -44,18 +44,60 @@ possible_sats AS (
                     DISTINCT project_name
                 ) over(
                     PARTITION BY dc.blockchain,
-                    xfer.asset_sender
+                    xfer.from_address
                 ) AS project_count -- how many projects has each from address sent to
             FROM
                 {{ source(
-                    'algorand_core',
-                    'ez_transfer'
+                    'ethereum_core',
+                    'fact_token_transfers'
                 ) }}
                 xfer
                 JOIN distributor_cex dc
-                ON dc.address = xfer.receiver
+                ON dc.address = xfer.to_address
             WHERE
-                amount > 0
+                raw_amount > 0
+
+{% if is_incremental() %}
+AND block_timestamp > CURRENT_DATE - 10
+{% endif %}
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+UNION
+SELECT
+    DISTINCT dc.system_created_at,
+    dc.insert_date,
+    dc.blockchain,
+    tr.from_address AS address,
+    dc.creator,
+    dc.address_name,
+    dc.project_name,
+    dc.l1_label,
+    'deposit_wallet' AS l2_label,
+    COUNT(
+        DISTINCT project_name
+    ) over(
+        PARTITION BY dc.blockchain,
+        tr.from_address
+    ) AS project_count
+FROM
+    {{ source(
+        'ethereum_core',
+        'fact_traces'
+    ) }}
+    tr
+    JOIN distributor_cex dc
+    ON dc.address = tr.to_address
+WHERE
+    tx_status = 'SUCCESS'
+    AND eth_value > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -74,37 +116,65 @@ GROUP BY
 ),
 real_sats AS (
     SELECT
-        asset_sender,
-        COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
+        from_address,
+        COALESCE(project_name, 'blunts') AS project_names
     FROM
         {{ source(
-            'algorand_core',
-            'ez_transfer'
+            'ethereum_core',
+            'fact_token_transfers'
         ) }}
         xfer
         LEFT OUTER JOIN distributor_cex dc
-        ON dc.address = xfer.receiver
+        ON dc.address = xfer.to_address
     WHERE
-        amount > 0
-        AND asset_sender IN (
+        from_address IN (
             SELECT
                 address
             FROM
                 possible_sats
         )
+        AND raw_amount > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
 {% endif %}
-GROUP BY
-    asset_sender
+UNION
+SELECT
+    from_address,
+    COALESCE(project_name, 'blunts') AS project_names
+FROM
+    {{ source(
+        'ethereum_core',
+        'fact_traces'
+    ) }}
+    tr
+    LEFT OUTER JOIN distributor_cex dc
+    ON dc.address = tr.to_address
+WHERE
+    from_address IN (
+        SELECT
+            address
+        FROM
+            possible_sats
+    )
+    AND tx_status = 'SUCCESS'
+    AND eth_value > 0
+
+{% if is_incremental() %}
+AND block_timestamp > CURRENT_DATE - 10
+{% endif %}
+),
+project_counts as (
+    select distinct from_address, 
+    count(distinct project_names) as project_count
+    from real_sats
+    group by from_address
 ),
 exclusive_sats AS (
     SELECT
-distinct
-        asset_sender AS address
+        DISTINCT from_address AS address
     FROM
-        real_sats
+        project_counts
     WHERE
         project_count = 1
     GROUP BY
@@ -126,12 +196,11 @@ final_base AS(
         ) AS address_name
     FROM
         exclusive_sats e
-        JOIN possible_sats p
+        LEFT JOIN possible_sats p
         ON e.address = p.address
 )
 SELECT
-distinct 
-    system_created_at,
+    DISTINCT system_created_at,
     insert_date,
     blockchain,
     address,
@@ -147,7 +216,7 @@ WHERE
         SELECT
             DISTINCT address
         FROM
-            {{ ref('silver_crosschain__address_labels') }}
+            {{ ref('silver__address_labels') }}
         WHERE
-            blockchain = 'algorand'
+            blockchain = 'ethereum'
     )

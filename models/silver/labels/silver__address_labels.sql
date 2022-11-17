@@ -2,7 +2,7 @@
   materialized = 'incremental',
   unique_key = "CONCAT_WS('-', blockchain, address, creator)",
   incremental_strategy = 'delete+insert',
-  tags = ['snowflake', 'crosschain', 'labels', 'silver_crosschain__address_labels']
+  tags = ['snowflake', 'crosschain', 'labels', 'silver__address_labels']
 ) }}
 
 WITH subset_table AS (
@@ -209,7 +209,7 @@ SELECT
   project_name,
   NULL AS delete_flag
 FROM
-  {{ ref('silver_crosschain__labels_contracts') }}
+  {{ ref('silver__labels_contracts') }}
 UNION ALL
 SELECT
   system_created_at,
@@ -223,7 +223,7 @@ SELECT
   project_name,
   NULL AS delete_flag
 FROM
-  {{ ref('silver_crosschain__labels_contracts_avalanche') }}
+  {{ ref('silver__labels_contracts_avalanche') }}
 UNION ALL
 SELECT
   system_created_at,
@@ -237,7 +237,7 @@ SELECT
   project_name,
   NULL AS delete_flag
 FROM
-  {{ ref('silver_crosschain__labels_contracts_bsc') }}
+  {{ ref('silver__labels_contracts_bsc') }}
 UNION ALL
 SELECT
   system_created_at,
@@ -251,7 +251,7 @@ SELECT
   project_name,
   NULL AS delete_flag
 FROM
-  {{ ref('silver_crosschain__labels_contracts_optimism') }}
+  {{ ref('silver__labels_contracts_optimism') }}
 UNION ALL
 SELECT
   system_created_at,
@@ -265,4 +265,4 @@ SELECT
   project_name,
   NULL AS delete_flag
 FROM
-  {{ ref('silver_crosschain__labels_contracts_polygon') }}
+  {{ ref('silver__labels_contracts_polygon') }}

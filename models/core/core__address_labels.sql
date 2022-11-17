@@ -14,7 +14,7 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__address_labels') }}
+    {{ ref('silver__address_labels') }}
     -- deposit wallet algos
 UNION ALL
 SELECT
@@ -28,7 +28,7 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__snowflake_Algorand_satellite') }}
+    {{ ref('silver__snowflake_Algorand_satellite') }}
 UNION ALL
 SELECT
     system_created_at,
@@ -41,7 +41,7 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__snowflake_Arbitrum_satellites') }}
+    {{ ref('silver__snowflake_Arbitrum_satellites') }}
 UNION ALL
 SELECT
     system_created_at,
@@ -54,7 +54,7 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__snowflake_Avalanche_satellites') }}
+    {{ ref('silver__snowflake_Avalanche_satellites') }}
 UNION ALL
 SELECT
     system_created_at,
@@ -67,7 +67,7 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__snowflake_BSC_satellites') }}
+    {{ ref('silver__snowflake_BSC_satellites') }}
 UNION ALL
 SELECT
     system_created_at,
@@ -80,7 +80,7 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__snowflake_ETH_satellites') }}
+    {{ ref('silver__snowflake_ETH_satellites') }}
 UNION ALL
 SELECT
     system_created_at,
@@ -93,7 +93,7 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__snowflake_Flow_satellites') }}
+    {{ ref('silver__snowflake_Flow_satellites') }}
 UNION ALL
 SELECT
     system_created_at,
@@ -106,7 +106,7 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__snowflake_Near_satellite') }}
+    {{ ref('silver__snowflake_Near_satellite') }}
 UNION ALL
 SELECT
     system_created_at,
@@ -119,7 +119,7 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__snowflake_Optimism_satellites') }}
+    {{ ref('silver__snowflake_Optimism_satellites') }}
 UNION ALL
 SELECT
     system_created_at,
@@ -132,7 +132,7 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__snowflake_Osmosis_satellite') }}
+    {{ ref('silver__snowflake_Osmosis_satellite') }}
 UNION ALL
 SELECT
     system_created_at,
@@ -145,7 +145,7 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__snowflake_Polygon_satellites') }}
+    {{ ref('silver__snowflake_Polygon_satellites') }}
 UNION ALL
 SELECT
     system_created_at,
@@ -158,7 +158,7 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__snowflake_SOL_satellites') }}
+    {{ ref('silver__snowflake_SOL_satellites') }}
 UNION ALL
 SELECT
     system_created_at,
@@ -171,4 +171,4 @@ SELECT
     address_name,
     project_name
 FROM
-    {{ ref('silver_crosschain__snowflake_Thorchain_satellite') }}
+    {{ ref('silver__snowflake_Thorchain_satellite') }}
