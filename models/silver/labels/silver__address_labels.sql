@@ -123,26 +123,6 @@ base_tables AS (
   FROM
     clean_table
 ),
-delete_table AS (
-  SELECT
-    CASE
-      WHEN blockchain IN (
-        'algorand',
-        'solana'
-      ) THEN t.value :address :: STRING
-      ELSE LOWER(
-        t.value :address :: STRING
-      )
-    END AS address,
-    t.value :delete :: STRING AS delete_flag
-  FROM
-    base_tables,
-    LATERAL FLATTEN(
-      input => record_content
-    ) t
-  WHERE
-    delete_flag = 'true'
-),
 flat_table AS (
   SELECT
     (
@@ -169,7 +149,8 @@ flat_table AS (
     base_tables,
     LATERAL FLATTEN(
       input => record_content
-    ) t qualify(ROW_NUMBER() over(PARTITION BY blockchain, address, creator
+    ) t 
+  qualify(ROW_NUMBER() over(PARTITION BY blockchain, address, creator
   ORDER BY
     insert_date DESC)) = 1
 )
@@ -179,90 +160,15 @@ SELECT
   blockchain,
   address,
   creator,
-  l1_label,
-  l2_label,
+  l1_label as label_type,
+  l2_label as label_subtype,
   address_name,
   project_name,
   delete_flag
 FROM
   flat_table
 WHERE
-  address NOT IN (
-    SELECT
-      address
-    FROM
-      delete_table
-  )
-  AND project_name IS NOT NULL
+  project_name IS NOT NULL
   AND address_name IS NOT NULL
   AND l1_label <> 'project' -- contract creations
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag
-FROM
-  {{ ref('silver__labels_contracts') }}
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag
-FROM
-  {{ ref('silver__labels_contracts_avalanche') }}
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag
-FROM
-  {{ ref('silver__labels_contracts_bsc') }}
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag
-FROM
-  {{ ref('silver__labels_contracts_optimism') }}
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag
-FROM
-  {{ ref('silver__labels_contracts_polygon') }}
+

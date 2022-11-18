@@ -23,6 +23,7 @@ WITH distributor_cex AS (
         blockchain = 'osmosis'
         AND l1_label = 'cex'
         AND l2_label = 'hot_wallet'
+        and delete_flag is null
 ),
 possible_sats AS (
     -- THIS STATEMENT LOCATES POTENTIAL SATELLITE WALLETS BASED ON DEPOSIT BEHAVIOR
@@ -148,4 +149,5 @@ WHERE
            {{ ref('silver__address_labels') }}
         WHERE
             blockchain = 'osmosis'
+            and delete_flag is null
     )
