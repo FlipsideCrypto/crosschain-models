@@ -13,8 +13,8 @@ WITH distributor_cex AS (
     blockchain,
     address,
     creator,
-    l1_label,
-    l2_label,
+        label_type as l1_label,
+        label_subtype as l2_label,
     address_name,
     project_name
   FROM
