@@ -355,3 +355,51 @@ FROM
         'crosschain_silver',
         'optimism_delegates'
     )}}
+UNION
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_chainlink_oracle') }}
+UNION
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_chainlink_oracle_arbitrum') }}
+UNION
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_chainlink_oracle_avalanche') }}
+UNION
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_chainlink_oracle_polygon') }}
