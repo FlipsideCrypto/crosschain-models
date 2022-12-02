@@ -1,0 +1,23 @@
+version: 2
+models:
+  - name: silver__coin_market_cap_cryptocurrency_info
+    columns:
+      - name: CMC_ID
+        description: unique id from cmc
+        tests:
+          - not_null
+          - unique
+      - name: NAME
+        description: name of asset
+        tests:
+          - not_null
+      - name: SYMBOL
+        description: symbol of asset
+        tests:
+          - not_null
+      - name: METADATA
+        description: add data returned from the api
+      - name: _INSERTED_TIMESTAMP
+        description: Time the record was inserted into snowflake
+        tests:
+          - not_null
