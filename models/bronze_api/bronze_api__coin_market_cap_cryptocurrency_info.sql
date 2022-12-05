@@ -34,7 +34,8 @@ WITH base AS (
                     FROM
                         (
                             SELECT
-                                DISTINCT id :: INT id
+                                DISTINCT id :: INT id,
+                                CURRENT_DATE() :: DATE run_date
                             FROM
                                 {{ ref('silver__asset_metadata_coin_market_cap') }}
 
@@ -51,7 +52,8 @@ WHERE
 {% if is_incremental() %}
 EXCEPT
 SELECT
-    cmc_id
+    cmc_id,
+    _inserted_timestamp :: DATE
 FROM
     silver.coin_market_cap_cryptocurrency_info
 {% endif %}
