@@ -2,11 +2,7 @@ version: 2
 models:
   - name: defi__ez_borrowing
     description: 'This is a table that shows all the events across various blockchains and various platforms that are related to Borrowing or repaying the loan'
-
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - _LOG_ID
+    
     columns:
       - name: BLOCK_NUMBER
         description: '{{ doc("cross_chain_block_number") }}'
