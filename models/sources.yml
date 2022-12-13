@@ -51,6 +51,7 @@ sources:
     tables:
       - name: godmode_nft_minters
       - name: optimism_delegates
+      - name: osmosis_developer_vesting_receivers
   - name: crosschain_core
     database: crosschain
     schema: core
