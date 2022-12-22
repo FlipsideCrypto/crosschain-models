@@ -5,22 +5,22 @@
 ) }}
 
 SELECT
-    chain,
+    pool AS pool_id,
     project AS protocol,
     symbol,
+    chain,
     CASE
         WHEN rewardtokens ILIKE 'none' THEN NULL
         ELSE LOWER(rewardtokens)
     END AS reward_tokens,
-    pool AS pool_id,
-    stablecoin AS is_stablecoin,
-    ilrisk,
-    exposure AS exposure_type,
-    poolmeta AS pool_metadata,
     CASE
         WHEN underlyingtokens ILIKE 'none' THEN NULL
         ELSE LOWER(underlyingtokens)
-    END AS underlying_tokens
+    END AS underlying_tokens,
+    stablecoin AS is_stablecoin,
+    ilrisk,
+    exposure AS exposure_type,
+    poolmeta AS pool_metadata
 FROM
     {{ source(
         'crosschain_dev_silver',
