@@ -4,10 +4,10 @@ models:
     description: This table contains dimensional information about the bridges listed on Defillama.
 
     columns:
-      - name: BRIDGE
-        description: Name of the bridge.
       - name: BRIDGE_ID
         description: Unique identifier of the bridge.
+      - name: BRIDGE
+        description: Name of the bridge.
       - name: CHAINS
         description: Array of the various chains or networks that the bridge interacts with.
       - name: DESTINATION_CHAIN

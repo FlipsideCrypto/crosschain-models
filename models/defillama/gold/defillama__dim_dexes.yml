@@ -4,10 +4,10 @@ models:
     description: This table contains dimensional information about the decentralized exchanges (DEX) listed on Defillama.
 
     columns:
-      - name: DEX
-        description: Name of the dex.
       - name: DEX_SLUG
         description: Unique identifier of the dex.
+      - name: DEX
+        description: Name of the dex.
       - name: CATEGORY
         description: The category of protocol the decentralized exhange belongs to (e.g. Dexes, Options, Yield, Derivatives etc.).
       - name: CHAINS

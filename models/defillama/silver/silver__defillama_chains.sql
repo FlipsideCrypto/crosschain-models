@@ -13,8 +13,8 @@ SELECT
 )
 
 SELECT
-    VALUE:name::STRING AS chain,
     VALUE:chainId::STRING AS chain_id,
+    VALUE:name::STRING AS chain,
     VALUE:tokenSymbol::STRING AS token_symbol,
     _inserted_timestamp
 FROM chain_base,

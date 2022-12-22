@@ -5,8 +5,8 @@
 ) }}
 
 SELECT
-    dex,
     dex_slug,
+    dex,
     category,
     chains 
 FROM {{ ref('silver__defillama_dexes') }}

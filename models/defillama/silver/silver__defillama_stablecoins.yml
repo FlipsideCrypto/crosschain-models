@@ -1,17 +1,23 @@
 version: 2
 models:
-  - name: silver__defillama_chains
+  - name: silver__defillama_stablecoins
     tests:
       - dbt_utils.unique_combination_of_columns:
             combination_of_columns:
-              - CHAIN
+              - STABLECOIN_ID
     
     columns:
-      - name: CHAIN_ID
-      - name: CHAIN
+      - name: STABLECOIN_ID
         tests: 
           - not null
-      - name: TOKEN_SYMBOL
+      - name: STABLECOIN
+        tests:
+          - not null
+      - name: SYMBOL
+      - name: PEG_TYPE
+      - name: PEG_MECHANISM
+      - name: PRICE_SOURCE
+      - name: CHAINS
       - name: _INSERTED_TIMESTAMP
         tests:
           - not null

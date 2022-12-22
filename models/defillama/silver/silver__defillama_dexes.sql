@@ -16,8 +16,8 @@ SELECT
 )
     
 SELECT
-    VALUE:name::STRING AS dex,
     VALUE:module::STRING AS dex_slug,
+    VALUE:name::STRING AS dex,
     VALUE:category::STRING AS category,
     VALUE:chains AS chains,
     _inserted_timestamp
@@ -33,8 +33,8 @@ WHERE dex_slug NOT IN (
 {% endif %}
 UNION
 SELECT
-    VALUE:name::STRING AS dex,
     VALUE:module::STRING AS dex_slug,
+    VALUE:name::STRING AS dex,
     VALUE:category::STRING AS category,
     VALUE:chains AS chains,
     _inserted_timestamp

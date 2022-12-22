@@ -7,11 +7,11 @@ models:
               - DEX_SLUG
     
     columns:
-      - name: DEX
-        tests: 
-          - not null
       - name: DEX_SLUG
         tests:
+          - not null
+      - name: DEX
+        tests: 
           - not null
       - name: CATEGORY
       - name: CHAINS

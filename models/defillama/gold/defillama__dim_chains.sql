@@ -5,7 +5,7 @@
 ) }}
 
 SELECT
-    chain,
     chain_id,
+    chain,
     token_symbol
 FROM {{ ref('silver__defillama_chains') }}

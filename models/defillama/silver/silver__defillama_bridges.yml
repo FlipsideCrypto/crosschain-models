@@ -7,11 +7,11 @@ models:
               - BRIDGE_ID
     
     columns:
-      - name: BRIDGE
-        tests: 
-          - not null
       - name: BRIDGE_ID
         tests:
+          - not null
+      - name: BRIDGE
+        tests: 
           - not null
       - name: CHAINS
       - name: DESTINATION_CHAIN

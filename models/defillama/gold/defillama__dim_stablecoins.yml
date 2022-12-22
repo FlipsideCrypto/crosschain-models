@@ -1,0 +1,20 @@
+version: 2
+models:
+  - name: defillama__dim_stablecoins
+    description: This table contains dimensional information about the stablecoins listed on Defillama.
+
+    columns:
+      - name: STABLECOIN_ID
+        description: Unique identifier of the stablecoin.
+      - name: STABLECOIN
+        description: Name of the stablecoin.
+      - name: SYMBOL
+        description: Symbol of the stablecoin.
+      - name: PEG_TYPE
+        description: Type of asset that the stablecoin is pegged to.
+      - name: PEG_MECHANISM
+        description: The method used for the stablecoin peg (e.g. algorithmic, crypto-backed etc.).
+      - name: PRICE_SOURCE
+        description: The source of the prices listed on Defillama.
+      - name: CHAINS
+        description: Array of the various chains or networks that the stablecoin is deployed on.

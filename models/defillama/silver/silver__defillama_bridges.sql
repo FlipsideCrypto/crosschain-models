@@ -13,8 +13,8 @@ SELECT
 )
 
 SELECT
-    VALUE:name::STRING AS bridge,
     VALUE:id::STRING AS bridge_id,
+    VALUE:name::STRING AS bridge,
     VALUE:chains AS chains,
     CASE 
         WHEN VALUE:destinationChain::STRING ilike 'false' OR VALUE:destinationChain::STRING = '-' THEN NULL 
