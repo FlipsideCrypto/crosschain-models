@@ -1,0 +1,23 @@
+version: 2
+models:
+  - name: silver__defillama_bridges
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+            combination_of_columns:
+              - BRIDGE_ID
+    
+    columns:
+      - name: BRIDGE
+        tests: 
+          - not null
+      - name: BRIDGE_ID
+        tests:
+          - not null
+      - name: CHAINS
+      - name: DESTINATION_CHAIN
+      - name: _INSERTED_TIMESTAMP
+        tests:
+          - not null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - TIMESTAMP_NTZ
