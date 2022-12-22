@@ -1,0 +1,14 @@
+version: 2
+models:
+  - name: defillama__dim_dexes
+    description: This table contains dimensional information about the decentralized exchanges (DEX) listed on Defillama.
+
+    columns:
+      - name: DEX
+        description: Name of the dex.
+      - name: DEX_SLUG
+        description: Unique identifier of the dex.
+      - name: CATEGORY
+        description: The category of protocol the decentralized exhange belongs to (e.g. Dexes, Options, Yield, Derivatives etc.).
+      - name: CHAINS
+        description: Array of the various chains or networks that the dex is deployed on.
