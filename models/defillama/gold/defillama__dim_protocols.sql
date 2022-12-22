@@ -15,6 +15,5 @@ SELECT
     chains,
     category,
     num_audits,
-    audit_note,
-    _inserted_timestamp
+    audit_note
 FROM {{ ref('silver__defillama_protocols') }}

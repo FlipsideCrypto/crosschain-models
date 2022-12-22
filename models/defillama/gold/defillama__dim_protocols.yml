@@ -26,5 +26,3 @@ models:
         description: Number of audits the protocol has undergone.
       - name: AUDIT_NOTE
         description: Notes on the audits of the protocol.
-      - name: _INSERTED_TIMESTAMP
-        description: Timestamp of when the record was inserted into the table.

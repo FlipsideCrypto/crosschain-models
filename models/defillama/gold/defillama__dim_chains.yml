@@ -1,0 +1,12 @@
+version: 2
+models:
+  - name: defillama__dim_chains
+    description: This table contains dimensional information about the blockchains and networks listed on Defillama.
+
+    columns:
+      - name: CHAIN
+        description: Name of the blockchain.
+      - name: CHAIN_ID
+        description: Unique identifier of the chain.
+      - name: TOKEN_SYMBOL
+        description: Symbol for the primary token of the chain.
