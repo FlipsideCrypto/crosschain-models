@@ -23,6 +23,14 @@ SELECT
     _inserted_timestamp
 FROM base,
     LATERAL FLATTEN (input=> dex_read:data:protocols)
+{% if is_incremental() %}
+WHERE dex_slug NOT IN (
+    SELECT
+        DISTINCT dex_slug
+    FROM
+        {{ this }}
+)
+{% endif %}
 UNION
 SELECT
     VALUE:name::STRING AS dex,
