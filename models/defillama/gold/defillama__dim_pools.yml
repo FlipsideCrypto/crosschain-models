@@ -1,0 +1,26 @@
+version: 2
+models:
+  - name: defillama__dim_pools
+    description: This table contains dimensional information about DeFi pools listed on DefiLlama.
+    
+    columns:
+      - name: CHAIN
+        description: The chain the pool is located on.
+      - name: PROTOCOL
+        description: The protocol the pool is part of.
+      - name: SYMBOL
+        description: The symbol of the pool.
+      - name: REWARD_TOKENS
+        description: The addresses of the tokens rewarded by the pool.
+      - name: POOL_ID
+        description: The unique identifier for each pool.
+      - name: IS_STABLECOIN
+        description: Boolean column displaying whether the pool contains a stablecoin or not.
+      - name: ILRISK
+        description: Boolean column displaying whether the pool has explicit illiquidity risk.
+      - name: EXPOSURE_TYPE
+        description: The type of exposure of the pool.
+      - name: POOL_METADATA
+        description: Metadata of the pool.
+      - name: UNDERLYING_TOKENS
+        description: The underlying tokens that make up the pool.

@@ -26,6 +26,7 @@ sources:
     schema: silver
     tables:
       - name: dates_table
+      - name: defillama_api_pools_20221219_154038
   - name: ethereum_core
     database: ethereum
     schema: core
@@ -52,6 +53,7 @@ sources:
       - name: godmode_nft_minters
       - name: optimism_delegates
       - name: osmosis_developer_vesting_receivers
+      - name: defillama_api_pools_20221219_154038
   - name: crosschain_core
     database: crosschain
     schema: core

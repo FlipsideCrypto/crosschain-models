@@ -1,0 +1,30 @@
+version: 2
+models:
+  - name: silver__defillama_protocols
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+            combination_of_columns:
+              - PROTOCOL_ID
+    
+    columns:
+      - name: PROTOCOL_ID
+        tests: 
+          - not null
+      - name: PROTOCOL_SLUG
+        tests: 
+          - not null
+      - name: PROTOCOL
+      - name: ADDRESS
+      - name: SYMBOL
+      - name: DESCRIPTION
+      - name: CHAIN
+      - name: NUM_AUDITS
+      - name: AUDIT_NOTE
+      - name: CATEGORY
+      - name: CHAINS
+      - name: _INSERTED_TIMESTAMP
+        tests:
+          - not null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - TIMESTAMP_NTZ

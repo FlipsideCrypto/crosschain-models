@@ -1,0 +1,30 @@
+version: 2
+models:
+  - name: defillama__dim_protocols
+    description: This table contains dimensional information about the protocols listed on Defillama.
+
+    columns:
+      - name: PROTOCOL_ID
+        description: Unique identifier for the protocol.
+      - name: PROTOCOL_SLUG
+        description: Slug for the protocol.
+      - name: PROTOCOL
+        description: Name of the protocol.
+      - name: ADDRESS
+        description: Contract address of the protocol.
+      - name: SYMBOL
+        description: Symbol for the protocol.
+      - name: DESCRIPTION
+        description: Description of the protocol.
+      - name: CHAIN
+        description: Chain the protocol is operating on.
+      - name: CHAINS
+        description: Chains the protocol is available on.
+      - name: CATEGORY
+        description: Category the protocol belongs to.
+      - name: NUM_AUDITS
+        description: Number of audits the protocol has undergone.
+      - name: AUDIT_NOTE
+        description: Notes on the audits of the protocol.
+      - name: _INSERTED_TIMESTAMP
+        description: Timestamp of when the record was inserted into the table.
