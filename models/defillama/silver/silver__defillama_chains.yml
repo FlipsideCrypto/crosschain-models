@@ -10,11 +10,11 @@ models:
       - name: CHAIN_ID
       - name: CHAIN
         tests: 
-          - not null
+          - not_null
       - name: TOKEN_SYMBOL
       - name: _INSERTED_TIMESTAMP
         tests:
-          - not null
+          - not_null
           - dbt_expectations.expect_column_values_to_be_in_type_list:
               column_type_list:
                 - TIMESTAMP_NTZ

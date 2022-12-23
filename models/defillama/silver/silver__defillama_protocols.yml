@@ -9,10 +9,10 @@ models:
     columns:
       - name: PROTOCOL_ID
         tests: 
-          - not null
+          - not_null
       - name: PROTOCOL_SLUG
         tests: 
-          - not null
+          - not_null
       - name: PROTOCOL
       - name: ADDRESS
       - name: SYMBOL
@@ -24,7 +24,7 @@ models:
       - name: CHAINS
       - name: _INSERTED_TIMESTAMP
         tests:
-          - not null
+          - not_null
           - dbt_expectations.expect_column_values_to_be_in_type_list:
               column_type_list:
                 - TIMESTAMP_NTZ

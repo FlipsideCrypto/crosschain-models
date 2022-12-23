@@ -9,10 +9,10 @@ models:
     columns:
       - name: STABLECOIN_ID
         tests: 
-          - not null
+          - not_null
       - name: STABLECOIN
         tests:
-          - not null
+          - not_null
       - name: SYMBOL
       - name: PEG_TYPE
       - name: PEG_MECHANISM
@@ -20,7 +20,7 @@ models:
       - name: CHAINS
       - name: _INSERTED_TIMESTAMP
         tests:
-          - not null
+          - not_null
           - dbt_expectations.expect_column_values_to_be_in_type_list:
               column_type_list:
                 - TIMESTAMP_NTZ

@@ -9,15 +9,15 @@ models:
     columns:
       - name: DEX_SLUG
         tests:
-          - not null
+          - not_null
       - name: DEX
         tests: 
-          - not null
+          - not_null
       - name: CATEGORY
       - name: CHAINS
       - name: _INSERTED_TIMESTAMP
         tests:
-          - not null
+          - not_null
           - dbt_expectations.expect_column_values_to_be_in_type_list:
               column_type_list:
                 - TIMESTAMP_NTZ
