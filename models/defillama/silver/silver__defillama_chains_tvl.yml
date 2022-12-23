@@ -1,0 +1,21 @@
+version: 2
+models:
+  - name: silver__defillama_chains_tvl
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+            combination_of_columns:
+              - CHAIN
+              - TIMESTAMP
+    
+    columns:
+      - name: TIMESTAMP
+      - name: TVL_USD
+      - name: _INSERTED_TIMESTAMP
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - TIMESTAMP_NTZ
+      - name: ID
+        tests:
+          - not_null
