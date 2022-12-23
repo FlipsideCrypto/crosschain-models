@@ -8,6 +8,9 @@ models:
               - TIMESTAMP
     
     columns:
+      - name: CHAIN
+        tests:
+          - not_null
       - name: TIMESTAMP
       - name: TVL_USD
       - name: _INSERTED_TIMESTAMP

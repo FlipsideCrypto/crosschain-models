@@ -1,0 +1,12 @@
+version: 2
+models:
+  - name: defillama__fact_chains_tvl
+    description: This table contains historical TVL (Total Value Locked) for the chains listed on Defillama in `dim_chains`.
+
+    columns:
+      - name: CHAIN
+        description: Name of the blockchain.
+      - name: TVL_USD
+        description: Total Value Locked on the blockchain denominated in USD.
+      - name: DATE
+        description: Date associated with the reported TVL.
