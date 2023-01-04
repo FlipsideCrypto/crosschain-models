@@ -13,3 +13,4 @@ logs/
 .history/
 **/.DS_Store
 .vscode/
+dbt-env/
