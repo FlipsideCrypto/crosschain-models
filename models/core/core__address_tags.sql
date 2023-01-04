@@ -299,6 +299,21 @@ SELECT
     address,
     tag_name,
     tag_type,
+    start_date :: date,
+    null as end_date,
+    '2022-12-13' :: TIMESTAMP AS tag_created_at
+FROM
+    {{ source(
+        'crosschain_silver',
+        'osmosis_developer_vesting_receivers'
+    ) }}
+UNION
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
     start_date,
     end_date,
     tag_created_at

@@ -51,6 +51,7 @@ sources:
     tables:
       - name: godmode_nft_minters
       - name: optimism_delegates
+      - name: osmosis_developer_vesting_receivers
   - name: crosschain_core
     database: crosschain
     schema: core
@@ -183,6 +184,7 @@ sources:
     schema: bronze
     tables: 
       - name: prod_address_label_sink_291098491
+      - name: prod_data_science_uploads_1748940988
   - name: Harmony_db
     database: HARMONY
     schema: SUSHI
