@@ -45,6 +45,7 @@ jobs:
     with:
       dbt_command: ${{ inputs.dbt_command }}
       environment: workflow_${{ inputs.environment }}
+      warehouse: ${{ inputs.warehouse }}
     secrets: inherit 
 # jobs:
 #   run_dbt_jobs:
