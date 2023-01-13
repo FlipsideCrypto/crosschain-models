@@ -305,7 +305,9 @@ FROM
 ),
 nft_purchases_transfers AS (
     SELECT
-        DISTINCT nft_to_address AS buyer_address,
+        DISTINCT 
+        tx_hash,
+        nft_to_address AS buyer_address,
         tokenid,
         MAX(block_timestamp) AS block_timestamp,
         MAX(event_index) AS event_index
@@ -328,10 +330,13 @@ OR project_name = 'ens' and tokenid in (select distinct tokenid from full_names)
 {% endif %}
 GROUP BY
     1,
-    2
+    2,
+    3
 UNION
 SELECT
-    DISTINCT buyer_address,
+    DISTINCT 
+    tx_hash,
+    buyer_address,
     tokenid,
     MAX(block_timestamp) AS block_timestamp,
     NULL AS event_index
@@ -354,7 +359,8 @@ OR project_name = 'ens' and tokenid in (select distinct tokenid from full_names)
 {% endif %}
 GROUP BY
     1,
-    2
+    2,
+    3
 ),
 most_recent_p_t AS (
     SELECT
