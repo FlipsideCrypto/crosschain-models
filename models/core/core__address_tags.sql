@@ -427,6 +427,6 @@ SELECT
     tag_type,
     start_date,
     end_date,
-    tag_created_at
+    '2022-01-18' :: timestamp as tag_created_at
 FROM
     {{ ref('silver__aave_balancer_addresses') }}
