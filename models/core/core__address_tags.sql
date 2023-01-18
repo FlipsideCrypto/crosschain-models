@@ -425,8 +425,8 @@ SELECT
     LOWER(address) as address,
     tag_name,
     tag_type,
-    start_date,
-    end_date,
-    '2022-01-18' :: timestamp as tag_created_at
+    start_date :: date,
+    null as end_date,
+    '2022-01-18' :: TIMESTAMP as tag_created_at
 FROM
     {{ ref('silver__aave_balancer_addresses') }}
