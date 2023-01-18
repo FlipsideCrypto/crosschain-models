@@ -72,9 +72,6 @@ $$
             snowflake.execute({sqlText: `GRANT OWNERSHIP ON TASK ${DESTINATION_DB_NAME}.${schema}.${task_name} to role ${ROLE_NAME} REVOKE CURRENT GRANTS;`});
         }
 
-        snowflake.execute({sqlText: `GRANT OWNERSHIP ON TASK ${DESTINATION_DB_NAME}.silver.run_sp_bulk_get_coin_gecko_prices TO ROLE ${ROLE_NAME};`})
-        snowflake.execute({sqlText: `GRANT OWNERSHIP ON TASK ${DESTINATION_DB_NAME}.silver.run_sp_bulk_get_coin_market_cap_prices TO ROLE ${ROLE_NAME};`})
-
         snowflake.execute({sqlText: `GRANT OWNERSHIP ON DATABASE ${DESTINATION_DB_NAME} TO ROLE ${ROLE_NAME};`})
         snowflake.execute({sqlText: `COMMIT;`});
     } catch (err) {
