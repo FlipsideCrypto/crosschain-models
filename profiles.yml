@@ -1,0 +1,29 @@
+crosschain:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('ACCOUNT') }}"
+      user: "{{ env_var('USER') }}"
+      password: "{{ env_var('PASSWORD') }}"
+      role: "{{ env_var('ROLE') }}"
+      schema: "{{ env_var('SCHEMA') }}"
+      region: "{{ env_var('REGION') }}"
+      database: "{{ env_var('DATABASE') }}"
+      warehouse: "{{ env_var('WAREHOUSE') }}"
+      threads: 8
+      client_session_keep_alive: False
+    prod:
+      type: snowflake
+      account: "{{ env_var('ACCOUNT') }}"
+      user: "{{ env_var('USER') }}"
+      password: "{{ env_var('PASSWORD') }}"
+      role: "{{ env_var('ROLE') }}"
+      schema: "{{ env_var('SCHEMA') }}"
+      region: "{{ env_var('REGION') }}"
+      database: "{{ env_var('DATABASE') }}"
+      warehouse: "{{ env_var('WAREHOUSE') }}"
+      threads: 8
+      client_session_keep_alive: False
+  config:
+    send_anonymous_usage_stats: False
