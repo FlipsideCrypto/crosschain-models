@@ -8,7 +8,7 @@ on:
     - cron: '0 */1 * * *'
     
 env:
-  DBT_PROFILES_DIR: ./
+  DBT_PROFILES_DIR: "${{ secrets.DBT_PROFILES_DIR }}"
 
   ACCOUNT: "${{ secrets.ACCOUNT }}"
   ROLE: "${{ secrets.ROLE }}"
@@ -24,8 +24,7 @@ jobs:
   called_workflow_template:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
-      dbt_command: |
-              ["dbt run -s models/silver/hourly_prices+"]
+      dbt_command: ["dbt run -s models/silver/hourly_prices+"]
       environment: workflow_${{ inputs.environment }}
       warehouse: ${{ inputs.warehouse }}
     secrets: inherit 
