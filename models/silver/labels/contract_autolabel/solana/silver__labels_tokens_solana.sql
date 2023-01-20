@@ -12,8 +12,8 @@ WITH base_labels AS (
         block_id,
         block_timestamp,
         succeeded,
-        instruction :parsed :info :authority :: STRING AS from_address,
-        instruction :parsed :info :programAccount :: STRING AS to_address,
+        instruction :parsed :info :mintAuthority :: STRING AS from_address,
+        instruction :parsed :info :mint :: STRING AS to_address,
         event_type,
         program_id,
         _inserted_timestamp
@@ -24,8 +24,7 @@ WITH base_labels AS (
         ) }}
         e
     WHERE
-        e.program_id = 'BPFLoaderUpgradeab1e11111111111111111111111'
-        AND e.event_type = 'deployWithMaxDataLen'
+        event_type = 'initializeMint'
         AND succeeded = 'TRUE'
         AND to_address NOT IN (
             SELECT
@@ -94,10 +93,10 @@ SELECT
     to_address AS address,
     'flipside' AS creator,
     l1_label,
-    'general_contract' AS l2_label,
+    'token_contract' AS l2_label,
     CONCAT(
         project_name,
-        ': general contract'
+        ': token contract'
     ) AS address_name,
     project_name,
     _inserted_timestamp
