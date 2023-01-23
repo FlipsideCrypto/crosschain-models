@@ -24,7 +24,7 @@ jobs:
   called_workflow_template:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
-      dbt_command: ["dbt run -s models/silver/hourly_prices+"]
+      dbt_command: "[\"dbt run -s models/silver/hourly_prices+\"]"
       environment: workflow_prod
       warehouse: DBT_CLOUD
     secrets: inherit 
