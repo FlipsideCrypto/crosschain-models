@@ -22,7 +22,6 @@
     WHERE 
         key = '@type'
         AND value :: STRING = '/cosmwasm.wasm.v1.MsgExecuteContract'
-        AND tx_id = '6EA075EE8C10773BE5AA307950ABC5BCFE8D31B68F0A5E33160C4E79247A07FB'
         AND this :contract :: STRING = 'osmo1xk0s8xgktn9x5vwcgtjdxqzadg88fgn33p8u9cnpdxwemvxscvast52cdd'
     
     {% if is_incremental() %}
