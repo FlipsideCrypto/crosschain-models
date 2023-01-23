@@ -418,3 +418,15 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_chainlink_oracle_polygon') }}
+UNION
+SELECT
+    blockchain,
+    creator,
+    LOWER(address) as address,
+    tag_name,
+    tag_type,
+    start_date :: date,
+    null as end_date,
+    '2022-01-18' :: TIMESTAMP as tag_created_at
+FROM
+    {{ ref('silver__aave_balancer_addresses') }}
