@@ -25,7 +25,7 @@ jobs:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
       dbt_command: ["dbt run -s models/silver/hourly_prices+"]
-      environment: workflow_${{ inputs.environment }}
-      warehouse: ${{ inputs.warehouse }}
+      environment: workflow_prod
+      warehouse: ${{ secrets.WAREHOUSE }}
     secrets: inherit 
           

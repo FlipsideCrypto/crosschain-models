@@ -25,7 +25,7 @@ jobs:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
       dbt_command: ["dbt run -m models/bronze_api/bronze_api__coin_market_cap_cryptocurrency_info.sql+"]
-      environment: workflow_${{ inputs.environment }}
-      warehouse: ${{ inputs.warehouse }}
+      environment: workflow_prod
+      warehouse: ${{ secrets.WAREHOUSE }}
     secrets: inherit 
 
