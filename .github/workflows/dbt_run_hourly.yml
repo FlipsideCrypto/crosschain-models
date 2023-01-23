@@ -26,6 +26,6 @@ jobs:
     with:
       dbt_command: ["dbt run -s models/silver/hourly_prices+"]
       environment: workflow_prod
-      warehouse: "${{ secrets.WAREHOUSE }}"
+      warehouse: "${{ env.WAREHOUSE }}"
     secrets: inherit 
           
