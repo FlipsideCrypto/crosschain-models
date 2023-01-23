@@ -45,6 +45,7 @@ sources:
       - name: traces
       - name: transactions
       - name: labels
+      - name: abis
   - name: crosschain_silver
     database: crosschain
     schema: silver
