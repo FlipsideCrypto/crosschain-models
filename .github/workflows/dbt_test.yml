@@ -23,8 +23,8 @@ jobs:
   called_workflow_template:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
-      dbt_command: ["dbt test -s ./models"]
+      dbt_command: "[\"dbt test -s ./models\"]"
       environment: workflow_prod
-      warehouse: ${{ secrets.WAREHOUSE }}
+      warehouse: ${{ vars.WAREHOUSE }}
     secrets: inherit 
           

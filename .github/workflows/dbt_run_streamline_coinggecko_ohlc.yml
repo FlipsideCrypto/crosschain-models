@@ -23,7 +23,7 @@ jobs:
   called_workflow_template:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
-      dbt_command: ["dbt run-operation stage_external_sources -t prod --vars \"ext_full_refresh: true\" --args \"select: crosschain_external.asset_ohlc_coin_gecko_api\""]
+      dbt_command: "[\"dbt run-operation stage_external_sources -t prod --vars \\\"ext_full_refresh: true\\\" --args \\\"select: crosschain_external.asset_ohlc_coin_gecko_api\\\"\"]"
       environment: workflow_prod
       warehouse: ${{ secrets.WAREHOUSE }}
     secrets: inherit 
