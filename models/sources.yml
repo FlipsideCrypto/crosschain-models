@@ -167,6 +167,11 @@ sources:
     schema: core
     tables:
       - name: fact_transfers
+  - name: osmosis_silver
+    database: osmosis
+    schema: silver
+    tables: 
+      - name: transactions
   - name: osmosis_core
     database: osmosis
     schema: core
