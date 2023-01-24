@@ -1,11 +1,10 @@
-name: dbt_run_scheduled
-run-name: dbt_run_scheduled
+name: dbt_run_streamline_market_asset
+run-name: dbt_run_streamline_market_asset
 
 on:
   workflow_dispatch:
   schedule:
-    # Runs "every hour" (see https://crontab.guru)
-    - cron: '0 */1 * * *'
+    - cron: '30 1 * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ secrets.DBT_PROFILES_DIR }}"
@@ -24,7 +23,8 @@ jobs:
   called_workflow_template:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
-      dbt_command: "[\"dbt run -s models/silver/hourly_prices+\"]"
+      dbt_command: "[\"dbt run-operation run_sp_bulk_get_coin_market_cap_asset_metadata\",
+                \"dbt run-operation run_sp_bulk_get_coin_gecko_asset_metadata\"]"
       environment: workflow_prod
       warehouse: ${{ vars.WAREHOUSE }}
     secrets: inherit 

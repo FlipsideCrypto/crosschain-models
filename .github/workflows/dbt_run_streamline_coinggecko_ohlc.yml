@@ -1,11 +1,10 @@
-name: dbt_run_scheduled
-run-name: dbt_run_scheduled
+name: dbt_run_streamline_coinggecko_ohlc
+run-name: dbt_run_streamline_coinggecko_ohlc
 
 on:
   workflow_dispatch:
   schedule:
-    # Runs "every hour" (see https://crontab.guru)
-    - cron: '0 */1 * * *'
+    - cron: '0 1 * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ secrets.DBT_PROFILES_DIR }}"
@@ -24,7 +23,7 @@ jobs:
   called_workflow_template:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
-      dbt_command: "[\"dbt run -s models/silver/hourly_prices+\"]"
+      dbt_command: "[\"dbt run-operation stage_external_sources -t prod --vars \\\"ext_full_refresh: true\\\" --args \\\"select: crosschain_external.asset_ohlc_coin_gecko_api\\\"\"]"
       environment: workflow_prod
       warehouse: ${{ vars.WAREHOUSE }}
     secrets: inherit 

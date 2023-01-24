@@ -430,3 +430,16 @@ SELECT
     '2022-01-18' :: TIMESTAMP as tag_created_at
 FROM
     {{ ref('silver__aave_balancer_addresses') }}
+UNION 
+SELECT 
+    blockchain, 
+    creator, 
+    address, 
+    tag_name, 
+    tag_type, 
+    start_date, 
+    end_date,
+    tag_created_at
+FROM  
+    {{ ref('silver__tags_icns') }}
+    
