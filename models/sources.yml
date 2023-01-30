@@ -162,6 +162,11 @@ sources:
     schema: core
     tables:
       - name: fact_transfers
+  - name: solana_silver
+    database: solana
+    schema: silver
+    tables:
+      - name: events
   - name: near_core
     database: near
     schema: core
