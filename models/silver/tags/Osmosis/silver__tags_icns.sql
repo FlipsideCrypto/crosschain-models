@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "CONCAT_WS('-', address, start_date)",
+    unique_key = "CONCAT_WS('-', address, start_date, tag_name)",
     incremental_strategy = 'delete+insert',
 ) }}
 
@@ -23,6 +23,7 @@
         key = '@type'
         AND value :: STRING = '/cosmwasm.wasm.v1.MsgExecuteContract'
         AND this :contract :: STRING = 'osmo1xk0s8xgktn9x5vwcgtjdxqzadg88fgn33p8u9cnpdxwemvxscvast52cdd'
+        AND this :msg :set_record :adr36_info :signer_bech32_address :: STRING IS NOT NULL
     
     {% if is_incremental() %}
 AND _inserted_timestamp >= (
@@ -34,3 +35,7 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
+
+ qualify(ROW_NUMBER() over(PARTITION BY address, start_date, tag_name
+  ORDER BY
+    _inserted_timestamp DESC)) = 1 
