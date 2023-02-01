@@ -3,8 +3,7 @@
     unique_key = "address",
     incremental_strategy = 'delete+insert',
     tags = ['snowflake', 'crosschain', 'labels'],
-    post_hook= ["delete from {{this}} a using {{ ref('silver__address_labels') }} b where a.blockchain = b.blockchain and a.address = b.address ", 
-              "delete from {{this}} a using {{ ref('silver__contract_autolabels') }} b where a.blockchain = b.blockchain and a.address = b.address "]
+    post_hook = ["delete from {{this}} a using {{ ref('silver__address_labels') }} b where a.blockchain = b.blockchain and a.address = b.address ", "delete from {{this}} a using {{ ref('silver__contract_autolabels') }} b where a.blockchain = b.blockchain and a.address = b.address "]
 ) }}
 
 WITH tokens AS (
@@ -14,7 +13,10 @@ WITH tokens AS (
         'token' AS l1_label,
         'token_contract' AS l2_label
     FROM
-        ethereum.silver.logs
+        {{ source(
+            'ethereum_silver',
+            'logs'
+        ) }}
     WHERE
         PUBLIC.udf_hex_to_int(SUBSTR(DATA, 3, 64)) :: FLOAT IS NOT NULL
         AND topics [0] :: STRING = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
@@ -26,7 +28,10 @@ nfts AS (
         'nft' AS l1_label,
         'nf_token_contract' AS l2_label
     FROM
-        ethereum.silver.logs
+        {{ source(
+            'ethereum_silver',
+            'logs'
+        ) }}
     WHERE
         PUBLIC.udf_hex_to_int(SUBSTR(DATA, 3, 64)) :: FLOAT IS NULL
         AND topics [0] :: STRING = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
@@ -53,7 +58,10 @@ SELECT
     NULL AS delete_flag,
     _inserted_timestamp
 FROM
-    ethereum.silver.contracts A
+    {{ source(
+        'ethereum_silver',
+        'contracts'
+    ) }} A
     LEFT JOIN tokens t
     ON A.address = t.address
     LEFT JOIN nfts n
@@ -61,13 +69,14 @@ FROM
 WHERE
     label_type IS NOT NULL
     AND project_name IS NOT NULL
-    {% if is_incremental() %}
-    AND _inserted_timestamp >= (
-        SELECT
-            MAX(
-                _inserted_timestamp
-            )
-        FROM
-            {{ this }}
-    )
-    {% endif %}
+
+{% if is_incremental() %}
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(
+            _inserted_timestamp
+        )
+    FROM
+        {{ this }}
+)
+{% endif %}

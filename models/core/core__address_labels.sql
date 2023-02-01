@@ -43,4 +43,17 @@ SELECT
   project_name
 FROM
   {{ ref('silver__contract_autolabels') }}
+UNION ALL
+SELECT
+  system_created_at,
+  insert_date,
+  blockchain,
+  address,
+  creator,
+  label_type,
+  label_subtype,
+  address_name,
+  project_name
+FROM
+  {{ ref('silver__labels_eth_contracts_table') }}
 
