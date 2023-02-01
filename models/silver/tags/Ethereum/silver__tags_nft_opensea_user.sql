@@ -18,7 +18,7 @@ WITH opensea_buyer AS (
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(ingested_at) AS ingested_at,
+        MIN(_INSERTED_TIMESTAMP) AS ingested_at,
         'opensea' AS source
     FROM
         {{ source(
@@ -28,7 +28,7 @@ WITH opensea_buyer AS (
 
 {% if is_incremental() %}
 WHERE
-    ingested_at > (
+    _INSERTED_TIMESTAMP > (
         SELECT
             MAX(ingested_at)
         FROM
@@ -52,7 +52,7 @@ opensea_seller AS (
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(ingested_at) AS ingested_at,
+        MIN(_INSERTED_TIMESTAMP) AS ingested_at,
         'opensea' AS source
     FROM
         {{ source(
@@ -62,7 +62,7 @@ opensea_seller AS (
 
 {% if is_incremental() %}
 WHERE
-    ingested_at > (
+    _INSERTED_TIMESTAMP > (
         SELECT
             MAX(ingested_at)
         FROM
