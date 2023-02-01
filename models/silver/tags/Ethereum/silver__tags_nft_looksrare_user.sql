@@ -18,7 +18,7 @@ WITH buyers AS (
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(ingested_at) AS ingested_at
+        MIN(_INSERTED_TIMESTAMP) AS ingested_at
     FROM
         {{ source(
             'ethereum_silver_nft',
@@ -27,7 +27,7 @@ WITH buyers AS (
 
 {% if is_incremental() %}
 WHERE
-    ingested_at > (
+    _INSERTED_TIMESTAMP > (
         SELECT
             MAX(ingested_at)
         FROM
@@ -49,7 +49,7 @@ sellers AS (
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(ingested_at) AS ingested_at
+        MIN(_INSERTED_TIMESTAMP) AS ingested_at
     FROM
         {{ source(
             'ethereum_silver_nft',
@@ -58,7 +58,7 @@ sellers AS (
 
 {% if is_incremental() %}
 WHERE
-    ingested_at > (
+    _INSERTED_TIMESTAMP > (
         SELECT
             MAX(ingested_at)
         FROM
