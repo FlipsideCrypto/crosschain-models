@@ -442,4 +442,27 @@ SELECT
     tag_created_at
 FROM  
     {{ ref('silver__tags_icns') }}
-    
+UNION 
+SELECT 
+    blockchain, 
+    creator, 
+    address, 
+    tag_name, 
+    tag_type, 
+    start_date :: date,
+    null as end_date,
+    '2022-02-09' :: TIMESTAMP as tag_created_at
+FROM  
+    {{ ref('silver__optimism_airdrop2_tags') }}
+UNION 
+SELECT 
+    blockchain, 
+    creator, 
+    address, 
+    tag_name, 
+    tag_type, 
+    start_date :: date,
+    null as end_date,
+    '2022-02-09' :: TIMESTAMP as tag_created_at
+FROM  
+    {{ ref('silver__optimism_airdrop1_tags') }}
