@@ -69,6 +69,8 @@ FROM
 WHERE
     label_type IS NOT NULL
     AND project_name IS NOT NULL
+    and project_name != ''
+    and project_name != ' '
 
 {% if is_incremental() %}
 AND _inserted_timestamp >= (
