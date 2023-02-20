@@ -11,3 +11,14 @@ FROM
         'ethereum_silver',
         'abis'
     ) }}
+union all
+
+SELECT
+    contract_address,
+    abi_hash,
+    'polygon' AS blockchain
+FROM
+    {{ source(
+        'polygon_silver',
+        'abis'
+    ) }}
