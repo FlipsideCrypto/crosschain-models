@@ -3,7 +3,7 @@
 execute immediate 'create or replace task streamline.bulk_get_coin_gecko_ohlc
     warehouse = dbt_cloud_crosschain
     allow_overlapping_execution = false
-    schedule = \'USING CRON 15,25,35,45 0 * * * UTC\'
+    schedule = \'USING CRON 15 0 * * * UTC\'
 as
 BEGIN
     call streamline.refresh_external_table_by_recent_date(\'asset_metadata_coin_gecko_api\');
