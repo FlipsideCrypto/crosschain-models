@@ -109,6 +109,7 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+      - name: abis
   - name: polygon_core
     database: polygon
     schema: core
