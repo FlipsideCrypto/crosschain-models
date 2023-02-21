@@ -1,10 +1,10 @@
-name: dbt_run_streamline_coinggecko_ohlc
-run-name: dbt_run_streamline_coinggecko_ohlc
+name: dbt_run_streamline_coin_market_cap_ohlc
+run-name: dbt_run_streamline_coin_market_cap_ohlc
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: '15,30,45 * * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ secrets.DBT_PROFILES_DIR }}"
@@ -23,8 +23,7 @@ jobs:
   called_workflow_template:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
-      dbt_command: >
-        dbt run-operation stage_external_sources -t prod --vars "ext_full_refresh: true" --args "select: crosschain_external.asset_ohlc_coin_gecko_api"
+      dbt_command: dbt run-operation run_get_coin_market_cap_hourly_ohlc
       environment: workflow_prod
       warehouse: ${{ vars.WAREHOUSE }}
     secrets: inherit 
