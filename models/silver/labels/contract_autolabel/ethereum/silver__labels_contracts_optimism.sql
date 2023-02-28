@@ -5,20 +5,24 @@
     tags = ['snowflake', 'crosschain', 'labels']
 ) }}
 
-WITH
-
-{% if is_incremental() %}
-max_date AS (
+WITH base_legacy_labels AS (
 
     SELECT
-        MAX(
-            _inserted_timestamp
-        ) _inserted_timestamp
+        DISTINCT system_created_at,
+        insert_date,
+        address,
+        label_type AS l1_label,
+        label_subtype AS l2_label,
+        address_name,
+        project_name
     FROM
-        {{ this }}
+        {{ source(
+            'crosschain_core',
+            'address_labels'
+        ) }}
+    WHERE
+        blockchain = 'optimism'
 ),
-{% endif %}
-
 base_labels AS (
     SELECT
         tx_hash,
@@ -46,41 +50,14 @@ base_labels AS (
             SELECT
                 DISTINCT address
             FROM
-                {{ source(
-                    'crosschain_core',
-                    'address_labels'
-                ) }}
-            WHERE
-                blockchain = 'optimism'
+                base_legacy_labels
         )
-
-{% if is_incremental() %}
-AND _inserted_timestamp >= (
-    SELECT
-        MAX(
-            _inserted_timestamp
+        AND from_address IN (
+            SELECT
+                DISTINCT address
+            FROM
+                base_legacy_labels
         )
-    FROM
-        {{ this }}
-)
-{% endif %}
-),
-base_legacy_labels AS (
-    SELECT
-        DISTINCT system_created_at,
-        insert_date,
-        address,
-        label_type AS l1_label,
-        label_subtype AS l2_label,
-        address_name,
-        project_name
-    FROM
-        {{ source(
-            'crosschain_core',
-            'address_labels'
-        ) }}
-    WHERE
-        blockchain = 'optimism'
 ),
 base_transacts AS (
     SELECT
@@ -136,17 +113,12 @@ base_logs AS (
         AND event_name != 'PoolUpdate'
         AND contract_name IS NOT NULL
         AND event_name IS NOT NULL
-
-{% if is_incremental() %}
-AND _inserted_timestamp >= (
-    SELECT
-        MAX(
-            _inserted_timestamp
+        AND tx_hash IN (
+            SELECT
+                DISTINCT tx_hash
+            FROM
+                base_transacts
         )
-    FROM
-        {{ this }}
-)
-{% endif %}
 ),
 final_base AS (
     SELECT
