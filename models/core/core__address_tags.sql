@@ -449,9 +449,9 @@ SELECT
     address, 
     tag_name, 
     tag_type, 
-    start_date :: date,
+    '2023-02-09' :: TIMESTAMP as start_date,
     null as end_date,
-    '2022-02-09' :: TIMESTAMP as tag_created_at
+    '2023-02-09' :: TIMESTAMP as tag_created_at
 FROM  
     {{ ref('silver__optimism_airdrop2_tags') }}
 UNION 
@@ -461,8 +461,8 @@ SELECT
     address, 
     tag_name, 
     tag_type, 
-    start_date :: date,
+    '2022-06-01' :: TIMESTAMP as start_date,
     null as end_date,
-    '2022-02-09' :: TIMESTAMP as tag_created_at
+    '2022-06-01' :: TIMESTAMP as tag_created_at
 FROM  
     {{ ref('silver__optimism_airdrop1_tags') }}
