@@ -1,0 +1,69 @@
+version: 2
+models:
+  - name: cosmos__fact_validators
+    description: Contains validator metadata for assets on the Osmosis blockchain. This table was sourced from an API and may not contain every token.
+    columns:
+      - name: ADDRESS
+        description: "{{ doc('address') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: BLOCKCHAIN
+        description: The name of the blockchain
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: CREATOR
+        description: "{{ doc('creator') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: LABEL_TYPE
+        description: "{{ doc('label_type') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: LABEL_SUBTYPE
+        description: "{{ doc('label_subtype') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: LABEL 
+        description: "{{ doc('label') }}" 
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: PROJECT_NAME
+        description: "{{ doc('project_name') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: ACCOUNT_ADDRESS
+        description: The osmosis address of the user / entity that operates the validator. 
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: DELEGATOR_SHARES
+        description: The number of tokens staked to the validator. 
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: JAILED
+        description: FALSE when a validator is not jailed, TRUE when a validator is jailed
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: MAX_CHANGE_RATE
+        description: The maximum rate at which a validator can change their commission per day. 
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: MAX_RATE
+        description: The maximum commission rate that the validator can charge
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: MIN_SELF_DELEGATION
+        description: The minimum number of OSMO tokens that the operator must be staking with their own validator
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: RANK
+        description: The rank of the validator in the validator set. Rank is determined by the number of OSMO tokens staked to the validator
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: MISSED_BLOCKS
+        description: The number of blocks the validator has been down for during it's lifetime. 
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: RAW_METADATA
+        description: "{{ doc('raw_metadata') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist

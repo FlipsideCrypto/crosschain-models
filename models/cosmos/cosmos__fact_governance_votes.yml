@@ -1,0 +1,40 @@
+version: 2
+models:
+  - name: cosmos__fact_governance_votes
+    columns:
+      - name: BLOCKCHAIN
+        description: The name of the blockchain
+        tests:
+          - not_null
+      - name: BLOCK_ID
+        description: "{{ doc('block_id') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: BLOCK_TIMESTAMP
+        description: "{{ doc('block_timestamp') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TX_ID
+        description: "{{ doc('tx_id') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: TX_SUCCEEDED
+        description: "{{ doc('tx_succeeded') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: VOTER
+        description: "{{ doc('voter') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: PROPOSAL_ID
+        description: "{{ doc('proposal_id') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: VOTE_OPTION
+        description: "{{ doc('vote_option') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: MEMO
+        description: "{{ doc('memo') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist

@@ -1,0 +1,67 @@
+version: 2
+models:
+  - name: cosmos__fact_transactions
+    description: Records of transactions that have occurred on Axelar, Osmosis, and Cosmos
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCKCHAIN
+            - TX_ID
+    columns:
+      - name: BLOCKCHAIN
+        description: The name of the blockchain
+        tests:
+          - not_null
+      - name: BLOCK_ID
+        description: "{{ doc('block_id') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: BLOCK_TIMESTAMP
+        description: "{{ doc('block_timestamp') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TX_ID
+        description: "{{ doc('tx_id') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: TX_FROM
+        description: "{{ doc('tx_from') }}"
+        tests: 
+          - not_null: 
+              where: TX_SUCCEEDED = 'TRUE'
+      - name: TX_SUCCEEDED
+        description: "{{ doc('tx_succeeded') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: CODESPACE
+        description: "{{ doc('codespace') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+      - name: FEE
+        description: "{{ doc('fee') }}"
+        tests: 
+          - not_null
+      - name: FEE_DENOM
+        description: "{{ doc('fee_denom') }}"
+        tests: 
+          - not_null
+      - name: GAS_USED
+        description: "{{ doc('gas_used') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist  
+      - name: GAS_WANTED
+        description: "{{ doc('gas_wanted') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist  
+      - name: TX_CODE
+        description: "{{ doc('tx_code') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist 
+      - name: TX_LOG
+        description: "{{ doc('tx_log') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist 
+      - name: MSGS
+        description: "The underlying json from the messages or events within the transactions"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
