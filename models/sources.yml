@@ -37,6 +37,7 @@ sources:
       - name: ez_nft_transfers
       - name: ez_current_balances
       - name: ez_dex_swaps
+      - name: dim_contracts
   - name: ethereum_silver
     database: ethereum
     schema: silver
