@@ -8,11 +8,11 @@
 WITH all_providers AS (
 
 SELECT
-    'coingecko' AS provider,
     recorded_hour AS hour,
     LOWER(token_address) AS token_address,
-    symbol,
-    platform,
+    REGEXP_REPLACE(symbol,'[^a-zA-Z0-9/-]+') AS symbol,
+    REGEXP_REPLACE(platform,'[^a-zA-Z0-9/-]+') AS platform,
+    'coingecko' AS provider,
     close AS price,
     imputed AS is_imputed,
     _inserted_timestamp
@@ -31,11 +31,11 @@ WHERE _inserted_timestamp > (
 UNION ALL
 
 SELECT
-    'coinmarketcap' AS provider,
     recorded_hour AS hour,
-    lower(token_address) as token_address,
-    symbol,
-    platform,
+    LOWER(token_address) AS token_address,
+    REGEXP_REPLACE(symbol,'[^a-zA-Z0-9/-]+') AS symbol,
+    REGEXP_REPLACE(platform,'[^a-zA-Z0-9/-]+') AS platform,
+    'coinmarketcap' AS provider,
     close AS price,
     imputed AS is_imputed,
     _inserted_timestamp
@@ -55,14 +55,17 @@ WHERE _inserted_timestamp > (
 SELECT
     hour,
     token_address,
-    COALESCE(c.symbol :: VARIANT, p.symbol) AS symbol,
+    CASE 
+        WHEN LEN(c.symbol) > 0 THEN NULL
+        ELSE UPPER(COALESCE(c.symbol,p.symbol)) 
+    END AS symbol,
     platform,
+    provider,
     c.decimals,
     price,
     is_imputed,
     _inserted_timestamp,
-    {{ dbt_utils.surrogate_key( ['hour', 'token_address'] ) }} AS _unique_key
-FROM final p
+    {{ dbt_utils.surrogate_key( ['hour','token_address','COALESCE(c.symbol,p.symbol)','platform','provider'] ) }} AS _unique_key
+FROM all_providers p
 LEFT JOIN {{ source('ethereum_core','dim_contracts') }} c 
     ON LOWER(c.address) = LOWER(p.token_address)
-QUALIFY(ROW_NUMBER() OVER(PARTITION BY hour, token_address ORDER BY priority ASC)) = 1
