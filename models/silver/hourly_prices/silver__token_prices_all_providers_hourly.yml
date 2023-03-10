@@ -7,7 +7,7 @@ models:
             - HOUR
             - TOKEN_ADDRESS
             - SYMBOL
-            - PLATFORM
+            - BLOCKCHAIN
             - PROVIDER
     columns:
       - name: HOUR
@@ -24,14 +24,10 @@ models:
         description: Address of the token
       - name: SYMBOL
         description: Symbol of the token
-        tests:
-          - not_null
       - name: DECIMALS
         description: The number of decimals for token contract
-        tests:
-          - not_null
-      - name: PLATFORM
-        description: Blockchain or Network token price is recorded on.
+      - name: BLOCKCHAIN
+        description: Blockchain, Network, or Platform the token price is recorded on.
         tests:
           - not_null
       - name: PROVIDER

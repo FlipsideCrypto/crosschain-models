@@ -50,22 +50,46 @@ WHERE _inserted_timestamp > (
         {{ this }}
     )
 {% endif %}
-)
+),
 
+FINAL AS (
 SELECT
     hour,
     token_address,
+    UPPER(COALESCE(c.symbol,p.symbol)) AS symbol,
     CASE 
-        WHEN LEN(c.symbol) > 0 THEN NULL
-        ELSE UPPER(COALESCE(c.symbol,p.symbol)) 
-    END AS symbol,
-    platform,
+        WHEN platform IN ('arbitrum-nova','arbitrum-one') THEN 'arbitrum'
+        WHEN platform IN ('avalanche') THEN 'avalanche'
+        WHEN platform IN ('binance-smart-chain','binancecoin','bnb') THEN 'bsc'
+        WHEN platform IN ('ethereum','ethereum-classic','ethereumclassic','ethereumpow') THEN 'ethereum'
+        WHEN platform IN ('gnosis','xdai') THEN 'gnosis'
+        WHEN platform IN ('optimism','optimistic-ethereum') THEN 'optimism'
+        WHEN platform IN ('polygon','polygon-pos') THEN 'polygon'
+        ELSE NULL
+    END AS blockchain,
     provider,
     c.decimals,
     price,
     is_imputed,
     _inserted_timestamp,
-    {{ dbt_utils.surrogate_key( ['hour','token_address','COALESCE(c.symbol,p.symbol)','platform','provider'] ) }} AS _unique_key
+    {{ dbt_utils.surrogate_key( ['hour','token_address','COALESCE(c.symbol,p.symbol)','blockchain','provider'] ) }} AS _unique_key
 FROM all_providers p
 LEFT JOIN {{ source('ethereum_core','dim_contracts') }} c 
     ON LOWER(c.address) = LOWER(p.token_address)
+WHERE blockchain IS NOT NULL
+)
+
+SELECT
+    hour,
+    token_address,
+    symbol,
+    blockchain,
+    provider,
+    decimals,
+    price,
+    is_imputed,
+    _inserted_timestamp,
+    _unique_key
+FROM FINAL
+    QUALIFY(ROW_NUMBER() OVER (PARTITION BY hour, token_address, symbol, blockchain, provider 
+ORDER BY _inserted_timestamp DESC)) = 1
