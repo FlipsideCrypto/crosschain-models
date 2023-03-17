@@ -12,5 +12,5 @@ SELECT
     price,
     blockchain
 FROM {{ ref('silver__token_prices_priority_hourly') }}
-LEFT JOIN {{ ref('core_dim_asset_metadata') }} USING (token_address)
+LEFT JOIN {{ ref('core__dim_asset_metadata') }} USING (token_address)
 

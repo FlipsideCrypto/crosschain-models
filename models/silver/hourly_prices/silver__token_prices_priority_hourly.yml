@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver__token_prices_all_providers_hourly
+  - name: silver__token_prices_priority_hourly
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
