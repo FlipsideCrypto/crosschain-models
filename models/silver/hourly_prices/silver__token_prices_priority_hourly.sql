@@ -1,3 +1,10 @@
+{{ config(
+    materialized = 'incremental',
+    unique_key = "_unique_key",
+    incremental_strategy = 'merge',
+    cluster_by = ['hour::DATE'],
+) }}
+
 WITH all_providers AS (
     
 SELECT
@@ -6,7 +13,6 @@ SELECT
     symbol,
     blockchain,
     provider,
-    decimals,
     price,
     is_imputed,
     _inserted_timestamp

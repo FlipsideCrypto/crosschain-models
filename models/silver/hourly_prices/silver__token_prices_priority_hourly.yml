@@ -25,9 +25,6 @@ models:
       - name: SYMBOL
         tests:
           - not_null
-      - name: DECIMALS
-        tests:
-          - not_null
       - name: PRICE
         tests: 
           - not_null

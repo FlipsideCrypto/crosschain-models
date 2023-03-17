@@ -12,7 +12,5 @@ models:
         description: The name of the deployed contract. Please note this is not necessarily unique. 
       - name: DECIMALS
         description: The number of decimal places this contract needs adjusted where token values exist.
-      - name: CONTRACT_METADATA
-        description: This JSON column contains other relevant details for each contract. 
       - name: BLOCKCHAIN
         description: The corresponding blockchain for contract details.

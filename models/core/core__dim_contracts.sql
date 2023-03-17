@@ -10,7 +10,6 @@ SELECT
     symbol,
     NAME,
     decimals,
-    contract_metadata,
     'ethereum' AS blockchain
 FROM
     {{ source(
@@ -18,11 +17,10 @@ FROM
         'contracts') }}
 UNION ALL
 SELECT
-    address,
-    symbol,
-    NAME,
-    decimals,
-    contract_metadata,
+    contract_address AS address,
+    token_symbol AS symbol,
+    token_name AS NAME,
+    token_decimals AS decimals,
     'optimism' AS blockchain
 FROM
     {{ source(
@@ -30,11 +28,10 @@ FROM
         'contracts') }}
 UNION ALL
 SELECT
-    address,
-    symbol,
-    NAME,
-    decimals,
-    contract_metadata,
+    contract_address AS address,
+    token_symbol AS symbol,
+    token_name AS NAME,
+    token_decimals AS decimals,
     'arbitrum' AS blockchain
 FROM
     {{ source(
@@ -42,11 +39,10 @@ FROM
         'contracts') }}
 UNION ALL
 SELECT
-    address,
-    symbol,
-    NAME,
-    decimals,
-    contract_metadata,
+    contract_address AS address,
+    token_symbol AS symbol,
+    token_name AS NAME,
+    token_decimals AS decimals,
     'polygon' AS blockchain
 FROM
     {{ source(
@@ -54,11 +50,10 @@ FROM
         'contracts') }}
 UNION ALL
 SELECT
-    address,
-    symbol,
-    NAME,
-    decimals,
-    contract_metadata,
+    contract_address AS address,
+    token_symbol AS symbol,
+    token_name AS NAME,
+    token_decimals AS decimals,
     'avalanche' AS blockchain
 FROM
     {{ source(
@@ -71,6 +66,5 @@ SELECT
     symbol,
     NAME,
     decimals,
-    contract_metadata,
     blockchain
 FROM base

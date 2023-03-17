@@ -1,8 +1,7 @@
 {{ config(
     materialized = 'incremental',
     unique_key = "_unique_key",
-    incremental_strategy = 'merge',
-    cluster_by = ['hour::DATE'],
+    incremental_strategy = 'merge'
 ) }}
 
 WITH coin_gecko_meta AS (
@@ -62,11 +61,11 @@ legacy_coin_gecko_meta AS (
         LEFT JOIN coin_gecko_meta m
         ON m.id = p.asset_id
     WHERE
-        provider = 'coingecko'
+        p.provider = 'coingecko'
         AND recorded_at :: DATE < '2022-08-24'
 {% if is_incremental() %}
 AND
-    token_address NOT IN (
+    m.token_address NOT IN (
         SELECT 
             DISTINCT token_address
         FROM {{ this }}
@@ -89,11 +88,11 @@ legacy_coin_market_cap_meta AS (
         LEFT JOIN coin_market_cap_meta m
         ON m.id = p.asset_id
     WHERE
-        provider = 'coinmarketcap'
+        p.provider = 'coinmarketcap'
         AND recorded_at :: DATE < '2022-07-20'
 {% if is_incremental() %}
 AND
-    token_address NOT IN (
+    m.token_address NOT IN (
         SELECT 
             DISTINCT token_address
         FROM {{ this }}
@@ -145,7 +144,8 @@ SELECT
     UPPER(COALESCE(c.symbol,f.symbol)) AS symbol,
     c.decimals,
     platform AS blockchain,
-    provider
+    provider,
+     {{ dbt_utils.surrogate_key( ['id','token_address','COALESCE(c.symbol,f.symbol)','blockchain','provider'] ) }} AS _unique_key
 FROM FINAL f 
 LEFT JOIN {{ ref('core__dim_contracts') }} c 
-    ON LOWER(c.address) = LOWER(p.token_address)
+    ON LOWER(c.address) = LOWER(f.token_address)
