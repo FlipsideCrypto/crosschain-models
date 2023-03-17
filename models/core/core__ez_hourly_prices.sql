@@ -8,11 +8,9 @@ SELECT
     hour,
     token_address,
     symbol,
-    blockchain,
-    provider,
+    decimals,
     price,
-    is_imputed
-FROM {{ ref('silver__token_prices_all_providers_hourly') }}
-
-
+    blockchain
+FROM {{ ref('silver__token_prices_priority_hourly') }}
+LEFT JOIN {{ ref('core_dim_asset_metadata') }} USING (token_address)
 

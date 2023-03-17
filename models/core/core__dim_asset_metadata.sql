@@ -1,23 +1,14 @@
 {{ config(
     materialized = 'view',
+    persist_docs ={ "relation": true,
+    "columns": true }
 ) }}
 
 SELECT
-    'coingecko' AS provider,
-    id,
     token_address,
-    NAME,
-    upper(symbol) as symbol,
-    platform
-FROM
-    {{ ref('silver__asset_metadata_coin_gecko') }}
-UNION 
-SELECT
-    'coinmarketcap' AS provider,
     id,
-    token_address,
-    NAME,
-    upper(symbol) as symbol,
-    platform
-FROM
-    {{ ref('silver__asset_metadata_coin_market_cap') }}
+    symbol,
+    decimals,
+    blockchain,
+    provider
+FROM {{ ref('silver__asset_metadata_all_providers') }}

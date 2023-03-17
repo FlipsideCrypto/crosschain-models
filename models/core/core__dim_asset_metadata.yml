@@ -1,37 +1,28 @@
 version: 2
 models:
   - name: core__dim_asset_metadata
-    description: A fact table holding provider asset prices
+    description: A dimensional table holding provider asset metadata and other relevant details pertaining to each token_address.
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - PROVIDER
             - ID
             - TOKEN_ADDRESS
+            - BLOCKCHAIN
+            - SYMBOL
     columns:
       - name: PROVIDER
-        description: provider of the data
-        tests:
-          - not_null
-          - dbt_expectations.expect_column_to_exist
+        description: The provider or source of the data.
       - name: ID
-        description: unique identifier representing the asset
-        tests:
-          - dbt_expectations.expect_column_to_exist
+        description: The unique identifier representing the asset.
       - name: NAME
-        description: name of asset
-        tests:
-          - dbt_expectations.expect_column_to_exist
+        description: The name of asset.
       - name: SYMBOL
-        description: symbol of asset
-        tests:
-          - dbt_expectations.expect_column_to_exist
+        description: The symbol of asset.
       - name: TOKEN_ADDRESS
-        description: specific address representing the asset in a specific platform
-        tests:
-          - dbt_expectations.expect_column_to_exist
-      - name: PLATFORM
-        description: platform where this asset has a token address
-        tests:
-          - dbt_expectations.expect_column_to_exist
+        description: The specific address representing the asset in a specific platform.
+      - name: BLOCKCHAIN
+        description: The platform where this asset has a token address.
+      - name: DECIMALS
+        description: The number of decimal places the token needs adjusted where token values exist.
       

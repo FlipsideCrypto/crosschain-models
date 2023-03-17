@@ -56,7 +56,7 @@ FINAL AS (
 SELECT
     hour,
     token_address,
-    UPPER(COALESCE(c.symbol,p.symbol)) AS symbol,
+    symbol,
     CASE 
         WHEN platform IN ('arbitrum-nova','arbitrum-one') THEN 'arbitrum'
         WHEN platform IN ('avalanche') THEN 'avalanche'
@@ -68,14 +68,11 @@ SELECT
         ELSE NULL
     END AS blockchain,
     provider,
-    c.decimals,
     price,
     is_imputed,
     _inserted_timestamp,
-    {{ dbt_utils.surrogate_key( ['hour','token_address','COALESCE(c.symbol,p.symbol)','blockchain','provider'] ) }} AS _unique_key
+    {{ dbt_utils.surrogate_key( ['hour','token_address','symbol','blockchain','provider'] ) }} AS _unique_key
 FROM all_providers p
-LEFT JOIN {{ source('ethereum_core','dim_contracts') }} c 
-    ON LOWER(c.address) = LOWER(p.token_address)
 WHERE blockchain IS NOT NULL
 )
 
@@ -85,7 +82,6 @@ SELECT
     symbol,
     blockchain,
     provider,
-    decimals,
     price,
     is_imputed,
     _inserted_timestamp,

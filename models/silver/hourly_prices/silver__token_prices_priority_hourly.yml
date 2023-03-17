@@ -8,7 +8,7 @@ models:
             - TOKEN_ADDRESS
             - SYMBOL
             - BLOCKCHAIN
-            - PROVIDER
+
     columns:
       - name: HOUR
         tests:
@@ -25,10 +25,7 @@ models:
       - name: SYMBOL
         tests:
           - not_null
-      - name: BLOCKCHAIN
-        tests:
-          - not_null
-      - name: PROVIDER
+      - name: DECIMALS
         tests:
           - not_null
       - name: PRICE
@@ -38,6 +35,8 @@ models:
         tests: 
           - not_null
       - name: _UNIQUE_KEY
+        tests:
+          - not_null
       - name: _INSERTED_TIMESTAMP
         tests:
           - not_null

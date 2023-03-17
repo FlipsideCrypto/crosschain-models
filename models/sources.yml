@@ -84,6 +84,7 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+      - name: contracts
   - name: arbitrum_core
     database: arbitrum
     schema: core
@@ -98,6 +99,7 @@ sources:
       - name: traces
       - name: transactions
       - name: abis
+      - name: contracts
   - name: avalanche_core
     database: avalanche
     schema: core
@@ -112,6 +114,7 @@ sources:
       - name: traces
       - name: transactions
       - name: abis
+      - name: contracts
   - name: polygon_core
     database: polygon
     schema: core
@@ -125,6 +128,7 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+      - name: contracts
   - name: optimism_core
     database: optimism
     schema: core
