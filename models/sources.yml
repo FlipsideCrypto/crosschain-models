@@ -96,6 +96,7 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+      - name: abis
   - name: avalanche_core
     database: avalanche
     schema: core

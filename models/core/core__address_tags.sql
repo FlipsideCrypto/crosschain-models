@@ -1,5 +1,5 @@
 {{ config(
-    materialized = 'view',
+    materialized = 'view'
 ) }}
 
 SELECT
@@ -13,7 +13,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_contract_address_eth') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -25,7 +25,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_contract_address_avalanche') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -37,7 +37,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_contract_address_bsc') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -49,7 +49,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_contract_address_optimism') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -61,7 +61,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_contract_address_polygon') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -73,7 +73,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_gnosis_safe_address') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -85,7 +85,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_thor_dex_user') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -97,7 +97,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_thor_liquidity_provider') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -109,7 +109,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_active_arbitrum_last_7') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -121,7 +121,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_active_avalanche_last_7') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -133,7 +133,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_active_bsc_last_7') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -145,7 +145,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_active_eth_last_7') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -157,7 +157,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_active_optimism_last_7') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -169,7 +169,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_active_polygon_last_7') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -181,7 +181,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_nft_larva_labs_user') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -193,7 +193,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_nft_looksrare_user') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -205,7 +205,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_nft_nftx_user') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -217,7 +217,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_nft_opensea_user') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -229,7 +229,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_nft_rarible_user') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -241,7 +241,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_nft_x2y2_user') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -253,7 +253,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_wallet_ETH_value') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -265,7 +265,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_wallet_TOKEN_value') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -277,7 +277,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_wallet_value') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -292,7 +292,7 @@ FROM
         'crosschain_silver',
         'godmode_nft_minters'
     ) }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -307,7 +307,7 @@ FROM
         'crosschain_silver',
         'osmosis_developer_vesting_receivers'
     ) }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -319,7 +319,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_cex_user_ETH') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -331,7 +331,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_token_vesting_ETH') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -343,7 +343,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_nft_transactor_ETH') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -355,7 +355,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_airdrop_master_ETH') }}
-UNION 
+UNION ALL
 SELECT 
     blockchain, 
     creator, 
@@ -369,8 +369,8 @@ FROM
     {{ source(
         'crosschain_silver',
         'optimism_delegates'
-    )}}
-UNION
+    )}} 
+UNION  ALL
 SELECT
     blockchain,
     creator,
@@ -382,7 +382,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_chainlink_oracle') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -394,7 +394,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_chainlink_oracle_arbitrum') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -406,7 +406,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_chainlink_oracle_avalanche') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -418,7 +418,7 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_chainlink_oracle_polygon') }}
-UNION
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -430,7 +430,7 @@ SELECT
     '2022-01-18' :: TIMESTAMP as tag_created_at
 FROM
     {{ ref('silver__aave_balancer_addresses') }}
-UNION 
+UNION ALL
 SELECT 
     blockchain, 
     creator, 
@@ -442,7 +442,7 @@ SELECT
     tag_created_at
 FROM  
     {{ ref('silver__tags_icns') }}
-UNION 
+UNION ALL
 SELECT 
     blockchain, 
     creator, 
@@ -454,7 +454,7 @@ SELECT
     '2023-02-09' :: TIMESTAMP as tag_created_at
 FROM  
     {{ ref('silver__optimism_airdrop2_tags') }}
-UNION 
+UNION ALL
 SELECT 
     blockchain, 
     creator, 
