@@ -8,8 +8,6 @@ models:
         description: Hour that the price was recorded at
       - name: TOKEN_ADDRESS
         description: Address of the token
-      - name: SYMBOL
-        description: Symbol of the token
       - name: BLOCKCHAIN
         description: Blockchain, Network, or Platform the token price is recorded on.
       - name: PROVIDER

@@ -6,7 +6,6 @@ models:
           combination_of_columns:
             - HOUR
             - TOKEN_ADDRESS
-            - SYMBOL
             - BLOCKCHAIN
 
     columns:
@@ -20,9 +19,6 @@ models:
                 severity: warn
                 warn_if: ">0"
       - name: TOKEN_ADDRESS
-        tests:
-          - not_null
-      - name: SYMBOL
         tests:
           - not_null
       - name: PRICE

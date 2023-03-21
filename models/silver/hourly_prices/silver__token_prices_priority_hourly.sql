@@ -10,7 +10,6 @@ WITH all_providers AS (
 SELECT
     hour,
     token_address,
-    symbol,
     blockchain,
     provider,
     price,
@@ -32,7 +31,6 @@ FINAL AS (
 SELECT 
     hour,
     token_address,
-    symbol,
     blockchain,
     provider,
     price,
@@ -50,13 +48,12 @@ FROM all_providers
 SELECT
     hour,
     token_address,
-    symbol,
     price,
     blockchain,
     is_imputed,
     _inserted_timestamp,
-    {{ dbt_utils.surrogate_key( ['hour', 'token_address', 'symbol', 'blockchain'] ) }} AS _unique_key
+    {{ dbt_utils.surrogate_key( ['hour', 'token_address', 'blockchain'] ) }} AS _unique_key
 FROM FINAL
-QUALIFY(ROW_NUMBER() OVER(PARTITION BY hour, token_address, symbol, blockchain 
+QUALIFY(ROW_NUMBER() OVER (PARTITION BY hour, token_address, blockchain 
     ORDER BY priority ASC)) = 1
 

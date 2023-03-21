@@ -7,7 +7,6 @@
 SELECT
     hour,
     token_address,
-    symbol,
     blockchain,
     provider,
     price,

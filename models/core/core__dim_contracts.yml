@@ -6,6 +6,8 @@ models:
     columns:
       - name: ADDRESS
         description: The unique address of the deployed contract.
+        tests:
+          - not_null
       - name: SYMBOL
         description: The symbol used to represent this contract. Please note this is not necessarily unique. 
       - name: NAME

@@ -10,8 +10,7 @@ WITH all_providers AS (
 SELECT
     recorded_hour AS hour,
     LOWER(token_address) AS token_address,
-    REGEXP_REPLACE(symbol,'[^a-zA-Z0-9/-]+') AS symbol,
-    REGEXP_REPLACE(platform,'[^a-zA-Z0-9/-]+') AS platform,
+    LOWER(REGEXP_REPLACE(platform,'[^a-zA-Z0-9/-]+')) AS platform,
     'coingecko' AS provider,
     close AS price,
     imputed AS is_imputed,
@@ -33,8 +32,7 @@ UNION ALL
 SELECT
     recorded_hour AS hour,
     LOWER(token_address) AS token_address,
-    REGEXP_REPLACE(symbol,'[^a-zA-Z0-9/-]+') AS symbol,
-    REGEXP_REPLACE(platform,'[^a-zA-Z0-9/-]+') AS platform,
+    LOWER(REGEXP_REPLACE(platform,'[^a-zA-Z0-9/-]+')) AS platform,
     'coinmarketcap' AS provider,
     close AS price,
     imputed AS is_imputed,
@@ -56,7 +54,6 @@ FINAL AS (
 SELECT
     hour,
     token_address,
-    symbol,
     CASE 
         WHEN platform IN ('arbitrum-nova','arbitrum-one') THEN 'arbitrum'
         WHEN platform IN ('avalanche') THEN 'avalanche'
@@ -71,7 +68,7 @@ SELECT
     price,
     is_imputed,
     _inserted_timestamp,
-    {{ dbt_utils.surrogate_key( ['hour','token_address','symbol','blockchain','provider'] ) }} AS _unique_key
+    {{ dbt_utils.surrogate_key( ['hour','token_address','blockchain','provider'] ) }} AS _unique_key
 FROM all_providers p
 WHERE blockchain IS NOT NULL
 )
@@ -79,7 +76,6 @@ WHERE blockchain IS NOT NULL
 SELECT
     hour,
     token_address,
-    symbol,
     blockchain,
     provider,
     price,
@@ -87,5 +83,5 @@ SELECT
     _inserted_timestamp,
     _unique_key
 FROM FINAL
-    QUALIFY(ROW_NUMBER() OVER (PARTITION BY hour, token_address, symbol, blockchain, provider 
+    QUALIFY(ROW_NUMBER() OVER (PARTITION BY hour, token_address, blockchain, provider 
 ORDER BY _inserted_timestamp DESC)) = 1
