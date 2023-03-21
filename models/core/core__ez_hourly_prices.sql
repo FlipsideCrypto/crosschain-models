@@ -4,6 +4,13 @@
     "columns": true }
 ) }}
 
+WITH asset_metadata AS (
+
+    SELECT 
+        *
+    FROM {{ ref('core__dim_asset_metadata') }} 
+)
+
 SELECT
     p.hour,
     p.token_address,
@@ -14,13 +21,13 @@ SELECT
 FROM {{ ref('silver__token_prices_priority_hourly') }} p
 LEFT JOIN (
     SELECT token_address, symbol, decimals
-    FROM {{ ref('silver__asset_metadata_all_providers') }} 
+    FROM asset_metadata
     WHERE provider = 'coingecko'
         ) cg 
     ON p.token_address = cg.token_address
 LEFT JOIN (
     SELECT token_address, symbol, decimals 
-    FROM {{ ref('silver__asset_metadata_all_providers') }} 
+    FROM asset_metadata
     WHERE provider = 'coinmarketcap'
         ) cmc 
     ON p.token_address = cmc.token_address
