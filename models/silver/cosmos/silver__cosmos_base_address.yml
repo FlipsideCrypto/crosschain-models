@@ -1,0 +1,21 @@
+version: 2
+models:
+  - name: silver__cosmos_base_address
+    columns:
+      - name: ADDRESS
+        description: The full address
+        tests:
+          - not_null
+          - unique
+      - name: BLOCKCHAIN
+        description: The name of the blockchain
+        tests:
+          - not_null             
+      - name: ADDRESS_BASE
+        description: The common base address across all chains
+        tests:
+          - not_null  
+      - name: BLOCK_TIMESTAMP
+        description: "{{ doc('block_timestamp') }}"
+        tests:
+          - not_null  

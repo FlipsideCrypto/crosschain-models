@@ -1,0 +1,20 @@
+version: 2
+models:
+  - name: cosmos__dim_base_address
+    columns:
+      - name: BASE_ADDRESS
+        description: The common base address across all chains
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: BLOCKCHAIN
+        description: The name of the blockchain
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: ADDRESS
+        description: The full address
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: BLOCK_TIMESTAMP
+        description: The MAX block_timestamp where this address was found on a tx_from address or part of a transfer
+        tests:
+          - dbt_expectations.expect_column_to_exist
