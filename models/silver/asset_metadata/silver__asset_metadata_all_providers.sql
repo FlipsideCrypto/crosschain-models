@@ -16,7 +16,7 @@ WITH coin_gecko_meta AS (
             'silver__asset_metadata_coin_gecko'
         ) }} 
 {% if is_incremental() %}
-AND
+WHERE
     token_address NOT IN (
         SELECT 
             DISTINCT token_address
@@ -52,7 +52,7 @@ legacy_coin_gecko_meta AS (
         p.asset_id AS id,
         COALESCE(p.symbol,m.symbol) AS symbol,
         LOWER(p.platform :name :: STRING) AS platform,
-        'coingecko' AS provider
+        p.provider
     FROM
         {{ source(
             'legacy_db',
@@ -63,6 +63,8 @@ legacy_coin_gecko_meta AS (
     WHERE
         p.provider = 'coingecko'
         AND recorded_at :: DATE < '2022-08-24'
+        AND token_address IS NOT NULL
+        AND p.platform IS NOT NULL
 {% if is_incremental() %}
 AND
     m.token_address NOT IN (
@@ -79,7 +81,7 @@ legacy_coin_market_cap_meta AS (
         p.asset_id AS id,
         COALESCE(p.symbol,m.symbol) AS symbol,
         LOWER(p.platform :name :: STRING) AS platform,
-        'coinmarketcap' AS provider
+        p.provider
     FROM
         {{ source(
             'legacy_db',
@@ -90,6 +92,8 @@ legacy_coin_market_cap_meta AS (
     WHERE
         p.provider = 'coinmarketcap'
         AND recorded_at :: DATE < '2022-07-20'
+        AND token_address IS NOT NULL
+        AND p.platform IS NOT NULL
 {% if is_incremental() %}
 AND
     m.token_address NOT IN (
@@ -100,7 +104,7 @@ AND
 {% endif %}
 ),
 
-FINAL AS (
+all_sources AS (
     SELECT
         token_address,
         id,
@@ -136,6 +140,20 @@ FINAL AS (
         provider
     FROM
         legacy_coin_market_cap_meta
+),
+
+FINAL AS (
+
+SELECT
+    token_address,
+    id,
+    symbol,
+    platform AS blockchain,
+    provider
+FROM all_sources
+QUALIFY(ROW_NUMBER() OVER (PARTITION BY token_address, id, symbol, blockchain 
+    ORDER BY provider)) = 1
+
 )
 
 SELECT
@@ -143,9 +161,10 @@ SELECT
     id,
     UPPER(COALESCE(c.symbol,f.symbol)) AS symbol,
     c.decimals,
-    platform AS blockchain,
+    f.blockchain,
     provider,
-     {{ dbt_utils.surrogate_key( ['id','token_address','COALESCE(c.symbol,f.symbol)','blockchain','provider'] ) }} AS _unique_key
+     {{ dbt_utils.surrogate_key( 
+        ['id','token_address','COALESCE(c.symbol,f.symbol)','f.blockchain','provider'] ) }} AS _unique_key
 FROM FINAL f 
 LEFT JOIN {{ ref('core__dim_contracts') }} c 
     ON LOWER(c.address) = LOWER(f.token_address)
