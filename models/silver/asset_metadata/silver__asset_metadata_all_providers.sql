@@ -7,8 +7,8 @@
 WITH coin_gecko_meta AS (
     SELECT
         DISTINCT REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*') AS token_address,
-        id,
-        symbol,
+        LOWER(id) AS id,
+        LOWER(symbol) AS symbol,
         LOWER(platform :: STRING) AS platform,
         'coingecko' AS provider
     FROM
@@ -28,8 +28,8 @@ WHERE
 coin_market_cap_meta AS (
     SELECT
         DISTINCT REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*') AS token_address,
-        id,
-        symbol,
+        LOWER(id) AS id,
+        LOWER(symbol) AS symbol,
         LOWER(platform :: STRING) AS platform,
         'coinmarketcap' AS provider
     FROM
@@ -48,9 +48,9 @@ WHERE
 
 legacy_coin_gecko_meta AS (
     SELECT
-        m.token_address,
-        p.asset_id AS id,
-        COALESCE(p.symbol,m.symbol) AS symbol,
+        m.token_address AS token_address,
+        LOWER(p.asset_id) AS id,
+        LOWER(COALESCE(p.symbol,m.symbol)) AS symbol,
         LOWER(p.platform :name :: STRING) AS platform,
         p.provider
     FROM
@@ -63,7 +63,7 @@ legacy_coin_gecko_meta AS (
     WHERE
         p.provider = 'coingecko'
         AND recorded_at :: DATE < '2022-08-24'
-        AND token_address IS NOT NULL
+        AND m.token_address IS NOT NULL
         AND p.platform IS NOT NULL
 {% if is_incremental() %}
 AND
@@ -77,9 +77,9 @@ AND
 
 legacy_coin_market_cap_meta AS (
     SELECT
-        m.token_address,
-        p.asset_id AS id,
-        COALESCE(p.symbol,m.symbol) AS symbol,
+        m.token_address AS token_address,
+        LOWER(p.asset_id) AS id,
+        LOWER(COALESCE(p.symbol,m.symbol)) AS symbol,
         LOWER(p.platform :name :: STRING) AS platform,
         p.provider
     FROM
@@ -92,7 +92,7 @@ legacy_coin_market_cap_meta AS (
     WHERE
         p.provider = 'coinmarketcap'
         AND recorded_at :: DATE < '2022-07-20'
-        AND token_address IS NOT NULL
+        AND m.token_address IS NOT NULL
         AND p.platform IS NOT NULL
 {% if is_incremental() %}
 AND
@@ -106,34 +106,34 @@ AND
 
 all_sources AS (
     SELECT
-        token_address,
+        LOWER(token_address) AS token_address,
         id,
         symbol,
         platform,
         provider
     FROM
         coin_gecko_meta
-    UNION ALL
+    UNION
     SELECT
-        token_address,
+        LOWER(token_address) AS token_address,
         id,
         symbol,
         platform,
         provider
     FROM
         coin_market_cap_meta
-    UNION ALL
+    UNION
     SELECT
-        token_address,
+        LOWER(token_address) AS token_address,
         id,
         symbol,
         platform,
         provider
     FROM
         legacy_coin_gecko_meta
-    UNION ALL
+    UNION
     SELECT
-        token_address,
+        LOWER(token_address) AS token_address,
         id,
         symbol,
         platform,
@@ -148,12 +148,20 @@ SELECT
     token_address,
     id,
     symbol,
-    platform AS blockchain,
+    CASE 
+        WHEN platform IN ('arbitrum-nova','arbitrum-one') THEN 'arbitrum'
+        WHEN platform IN ('avalanche') THEN 'avalanche'
+        WHEN platform IN ('binance-smart-chain','binancecoin','bnb') THEN 'bsc'
+        WHEN platform IN ('ethereum','ethereum-classic','ethereumclassic','ethereumpow') THEN 'ethereum'
+        WHEN platform IN ('gnosis','xdai') THEN 'gnosis'
+        WHEN platform IN ('optimism','optimistic-ethereum') THEN 'optimism'
+        WHEN platform IN ('polygon','polygon-pos') THEN 'polygon'
+        ELSE NULL
+    END AS blockchain,
     provider
 FROM all_sources
-QUALIFY(ROW_NUMBER() OVER (PARTITION BY token_address, id, symbol, blockchain 
-    ORDER BY provider)) = 1
-
+WHERE token_address IS NOT NULL
+    AND blockchain IS NOT NULL
 )
 
 SELECT
@@ -167,4 +175,6 @@ SELECT
         ['id','token_address','COALESCE(c.symbol,f.symbol)','f.blockchain','provider'] ) }} AS _unique_key
 FROM FINAL f 
 LEFT JOIN {{ ref('core__dim_contracts') }} c 
-    ON LOWER(c.address) = LOWER(f.token_address)
+    ON LOWER(c.address) = f.token_address AND c.blockchain = f.blockchain
+QUALIFY(ROW_NUMBER() OVER (PARTITION BY token_address, id, COALESCE(c.symbol,f.symbol), f.blockchain 
+    ORDER BY provider)) = 1

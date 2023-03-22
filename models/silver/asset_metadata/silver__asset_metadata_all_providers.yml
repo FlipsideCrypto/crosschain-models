@@ -26,5 +26,3 @@ models:
         tests:
           - not_null
       - name: DECIMALS
-        tests:
-          - not_null
