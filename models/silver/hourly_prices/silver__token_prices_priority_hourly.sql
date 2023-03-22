@@ -46,9 +46,10 @@ FROM all_providers
 ),
 
 final_priority AS (
+
 SELECT
     hour,
-    token_address,
+    LOWER(token_address) AS token_address,
     price,
     blockchain,
     is_imputed,
@@ -57,26 +58,7 @@ SELECT
 FROM all_prices
 QUALIFY(ROW_NUMBER() OVER (PARTITION BY hour, token_address, blockchain 
     ORDER BY priority ASC)) = 1
-),
-
-asset_metadata AS (
-
-    SELECT 
-        token_address,
-        symbol,
-        decimals,
-        blockchain,
-        provider
-    FROM {{ ref('silver__asset_metadata_all_providers') }}
-    {% if is_incremental() %}
-    WHERE CONCAT(token_address,'-',symbol,'-',blockchain) NOT IN (
-        SELECT
-            CONCAT(token_address,'-',symbol,'-',blockchain)
-        FROM
-            {{ this }}
-        )
-    {% endif %}
-),
+)
 
 SELECT 
     hour,
@@ -90,14 +72,26 @@ SELECT
     _unique_key
 FROM final_priority p
 LEFT JOIN (
-    SELECT *
-    FROM asset_metadata
+    SELECT 
+        token_address,
+        symbol,
+        decimals,
+        blockchain,
+        provider
+    FROM {{ ref('silver__asset_metadata_all_providers') }}
     WHERE provider = 'coingecko'
         ) cg 
     ON p.token_address = cg.token_address AND p.blockchain = cg.blockchain
 LEFT JOIN (
-    SELECT *
-    FROM asset_metadata
+    SELECT
+        token_address,
+        symbol,
+        decimals,
+        blockchain,
+        provider
+    FROM {{ ref('silver__asset_metadata_all_providers') }}
     WHERE provider = 'coinmarketcap'
         ) cmc 
     ON p.token_address = cmc.token_address AND p.blockchain = cmc.blockchain
+QUALIFY(ROW_NUMBER() OVER (PARTITION BY hour, p.token_address, p.blockchain 
+    ORDER BY COALESCE(cg.symbol,cmc.symbol) ASC)) = 1
