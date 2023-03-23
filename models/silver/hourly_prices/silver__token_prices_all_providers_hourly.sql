@@ -58,12 +58,12 @@ SELECT
         WHEN platform IN ('arbitrum-nova','arbitrum-one') THEN 'arbitrum'
         WHEN platform IN ('avalanche') THEN 'avalanche'
         WHEN platform IN ('binance-smart-chain','binancecoin','bnb') THEN 'bsc'
-        WHEN platform IN ('ethereum','ethereum-classic','ethereumclassic','ethereumpow') THEN 'ethereum'
+        WHEN platform IN ('ethereum') THEN 'ethereum'
         WHEN platform IN ('gnosis','xdai') THEN 'gnosis'
         WHEN platform IN ('optimism','optimistic-ethereum') THEN 'optimism'
         WHEN platform IN ('polygon','polygon-pos') THEN 'polygon'
         ELSE NULL
-    END AS blockchain,
+    END AS blockchain, --supported chains only
     provider,
     price,
     is_imputed,
