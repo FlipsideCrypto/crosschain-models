@@ -3,6 +3,7 @@
     unique_key = "_unique_key",
     incremental_strategy = 'merge',
     cluster_by = ['hour::DATE'],
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, hour)"
 ) }}
 
 WITH all_providers AS (
