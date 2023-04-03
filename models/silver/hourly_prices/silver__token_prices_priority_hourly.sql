@@ -3,7 +3,7 @@
     unique_key = "_unique_key",
     incremental_strategy = 'merge',
     cluster_by = ['hour::DATE'],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, hour)"
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, hour, blockchain)"
 ) }}
 
 WITH all_providers AS (
@@ -44,9 +44,7 @@ SELECT
         WHEN provider = 'coinmarketcap' AND is_imputed = TRUE THEN 4
     END AS priority
 FROM all_providers
-),
-
-final_priority AS (
+)
 
 SELECT
     hour,
@@ -59,40 +57,3 @@ SELECT
 FROM all_prices
 QUALIFY(ROW_NUMBER() OVER (PARTITION BY hour, token_address, blockchain 
     ORDER BY priority ASC)) = 1
-)
-
-SELECT 
-    hour,
-    p.token_address,
-    COALESCE(cg.symbol,cmc.symbol) AS symbol,
-    COALESCE(cg.decimals,cmc.decimals) AS decimals,
-    price,
-    p.blockchain,
-    is_imputed,
-    _inserted_timestamp,
-    _unique_key
-FROM final_priority p
-LEFT JOIN (
-    SELECT 
-        token_address,
-        symbol,
-        decimals,
-        blockchain,
-        provider
-    FROM {{ ref('silver__asset_metadata_all_providers') }}
-    WHERE provider = 'coingecko'
-        ) cg 
-    ON p.token_address = cg.token_address AND p.blockchain = cg.blockchain
-LEFT JOIN (
-    SELECT
-        token_address,
-        symbol,
-        decimals,
-        blockchain,
-        provider
-    FROM {{ ref('silver__asset_metadata_all_providers') }}
-    WHERE provider = 'coinmarketcap'
-        ) cmc 
-    ON p.token_address = cmc.token_address AND p.blockchain = cmc.blockchain
-QUALIFY(ROW_NUMBER() OVER (PARTITION BY hour, p.token_address, p.blockchain 
-    ORDER BY COALESCE(cg.symbol,cmc.symbol) ASC)) = 1

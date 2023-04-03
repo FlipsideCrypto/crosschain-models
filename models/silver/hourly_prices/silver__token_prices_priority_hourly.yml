@@ -24,10 +24,6 @@ models:
       - name: PRICE
         tests: 
           - not_null
-      - name: SYMBOL
-        tests:
-          - not_null
-      - name: DECIMALS
       - name: IS_IMPUTED
         tests: 
           - not_null

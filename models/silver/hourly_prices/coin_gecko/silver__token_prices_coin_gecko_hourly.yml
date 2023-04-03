@@ -7,7 +7,7 @@ models:
             - RECORDED_HOUR
             - TOKEN_ADDRESS
             - PLATFORM
-            - SYMBOL
+
     columns:
       - name: RECORDED_HOUR
         description: Hour that the price was recorded at
@@ -22,10 +22,6 @@ models:
               config:
                 severity: warn
                 warn_if: ">100"
-      - name: SYMBOL
-        description: Symbol of the token.
-        tests:
-          - not_null
       - name: PLATFORM
         description: Blockchain or Network token price is recorded on.
         tests:

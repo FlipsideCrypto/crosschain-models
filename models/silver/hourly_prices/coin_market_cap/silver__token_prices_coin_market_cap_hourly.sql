@@ -37,7 +37,6 @@ asset_metadata AS (
     SELECT
         DISTINCT REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*') AS token_address,
         id,
-        symbol,
         LOWER(platform :: STRING) AS platform
     FROM
         {{ ref(
@@ -49,7 +48,6 @@ base_date_hours_address AS (
         date_hour,
         token_address,
         id,
-        symbol,
         platform
     FROM
         date_hours
@@ -63,7 +61,6 @@ base_legacy_prices AS (
         ) AS recorded_hour,
         m.token_address,
         p.asset_id AS id,
-        COALESCE(p.symbol,m.symbol) AS symbol,
         LOWER(p.platform :name :: STRING) AS platform,
         AVG(
             p.price
@@ -93,8 +90,7 @@ GROUP BY
     1,
     2,
     3,
-    4,
-    5
+    4
 ),
 base_prices AS (
     SELECT
@@ -102,7 +98,6 @@ base_prices AS (
         p._inserted_timestamp,
         m.token_address,
         p.id,
-        m.symbol,
         m.platform,
         p.close
     FROM
@@ -129,7 +124,6 @@ prices AS (
         recorded_hour,
         token_address,
         id,
-        symbol,
         platform,
         close
     FROM
@@ -139,7 +133,6 @@ prices AS (
         recorded_hour,
         token_address,
         id,
-        symbol,
         platform,
         close
     FROM
@@ -150,7 +143,6 @@ imputed_prices AS (
         d.date_hour,
         d.token_address,
         d.id,
-        d.symbol,
         d.platform,
         p.close AS hourly_close,
         LAST_VALUE(
@@ -173,7 +165,6 @@ final_prices AS (
         p.date_hour AS recorded_hour,
         p.token_address,
         p.id,
-        p.symbol,
         p.platform,
         COALESCE(
             p.hourly_close,
@@ -193,13 +184,12 @@ SELECT
     f.recorded_hour,
     f.token_address,
     f.platform,
-    f.symbol,
     AVG(f.CLOSE) AS CLOSE,
     CASE
         WHEN (CAST(ARRAY_AGG(imputed) AS STRING)) ILIKE '%true%' THEN TRUE
         ELSE FALSE 
     END AS imputed,
-    {{ dbt_utils.surrogate_key( ['f.recorded_hour','f.token_address','f.platform','f.symbol'] ) }} AS _unique_key,
+    {{ dbt_utils.surrogate_key( ['f.recorded_hour','f.token_address','f.platform'] ) }} AS _unique_key,
     MAX(_inserted_timestamp) AS _inserted_timestamp
 FROM
     final_prices f
@@ -209,15 +199,13 @@ LEFT JOIN base_prices b ON f.recorded_hour = b.recorded_hour
 GROUP BY
     1,
     2,
-    3,
-    4
+    3
 ),
 FINAL AS (
 
 SELECT
     recorded_hour,
     token_address,
-    symbol,
     platform,
     close,
     imputed,
@@ -236,7 +224,6 @@ FROM base_timestamp
 SELECT
     recorded_hour,
     token_address,
-    symbol,
     platform,
     close,
     imputed,

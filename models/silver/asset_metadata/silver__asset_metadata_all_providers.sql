@@ -1,7 +1,8 @@
 {{ config(
     materialized = 'incremental',
     unique_key = "_unique_key",
-    incremental_strategy = 'merge'
+    incremental_strategy = 'merge',
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, blockchain)"
 ) }}
 
 WITH coin_gecko_meta AS (
