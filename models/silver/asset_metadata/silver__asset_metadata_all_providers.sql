@@ -183,5 +183,5 @@ SELECT
         ['token_address','id','symbol','blockchain','provider'] ) }} AS _unique_key,
     _inserted_timestamp
 FROM FINAL
-QUALIFY(ROW_NUMBER() OVER (PARTITION BY token_address, id, symbol, blockchain
-    ORDER BY provider)) = 1
+QUALIFY(ROW_NUMBER() OVER (PARTITION BY token_address, id, symbol, blockchain, provider
+    ORDER BY _inserted_timestamp DESC)) = 1
