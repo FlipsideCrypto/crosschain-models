@@ -1,8 +1,7 @@
 {{ config(
     materialized = 'incremental',
     unique_key = "_unique_key",
-    incremental_strategy = 'merge',
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, blockchain)"
+    incremental_strategy = 'merge'
 ) }}
 
 WITH coin_gecko_meta AS (
@@ -11,7 +10,8 @@ WITH coin_gecko_meta AS (
         LOWER(id) AS id,
         LOWER(symbol) AS symbol,
         LOWER(platform :: STRING) AS platform,
-        'coingecko' AS provider
+        'coingecko' AS provider,
+        _inserted_timestamp
     FROM
         {{ ref(
             'silver__asset_metadata_coin_gecko'
@@ -32,7 +32,8 @@ coin_market_cap_meta AS (
         LOWER(id) AS id,
         LOWER(symbol) AS symbol,
         LOWER(platform :: STRING) AS platform,
-        'coinmarketcap' AS provider
+        'coinmarketcap' AS provider,
+        _inserted_timestamp
     FROM
         {{ ref(
             'silver__asset_metadata_coin_market_cap'
@@ -53,7 +54,8 @@ legacy_coin_gecko_meta AS (
         LOWER(p.asset_id) AS id,
         LOWER(COALESCE(p.symbol,m.symbol)) AS symbol,
         LOWER(p.platform :name :: STRING) AS platform,
-        p.provider
+        p.provider,
+        _inserted_timestamp
     FROM
         {{ source(
             'legacy_db',
@@ -82,7 +84,8 @@ legacy_coin_market_cap_meta AS (
         LOWER(p.asset_id) AS id,
         LOWER(COALESCE(p.symbol,m.symbol)) AS symbol,
         LOWER(p.platform :name :: STRING) AS platform,
-        p.provider
+        p.provider,
+        _inserted_timestamp
     FROM
         {{ source(
             'legacy_db',
@@ -111,7 +114,8 @@ all_sources AS (
         id,
         symbol,
         platform,
-        provider
+        provider,
+        _inserted_timestamp
     FROM
         coin_gecko_meta
     UNION
@@ -120,7 +124,8 @@ all_sources AS (
         id,
         symbol,
         platform,
-        provider
+        provider,
+        _inserted_timestamp
     FROM
         coin_market_cap_meta
     UNION
@@ -129,7 +134,8 @@ all_sources AS (
         id,
         symbol,
         platform,
-        provider
+        provider,
+        _inserted_timestamp
     FROM
         legacy_coin_gecko_meta
     UNION
@@ -138,7 +144,8 @@ all_sources AS (
         id,
         symbol,
         platform,
-        provider
+        provider,
+        _inserted_timestamp
     FROM
         legacy_coin_market_cap_meta
 ),
@@ -159,7 +166,8 @@ SELECT
         WHEN platform IN ('polygon','polygon-pos') THEN 'polygon'
         ELSE NULL
     END AS blockchain, --supported chains only
-    provider
+    provider,
+    _inserted_timestamp
 FROM all_sources
 WHERE token_address IS NOT NULL
     AND blockchain IS NOT NULL
@@ -172,7 +180,8 @@ SELECT
     blockchain,
     provider,
      {{ dbt_utils.surrogate_key( 
-        ['id','token_address','symbol','blockchain','provider'] ) }} AS _unique_key
+        ['token_address','id','symbol','blockchain','provider'] ) }} AS _unique_key,
+    _inserted_timestamp
 FROM FINAL
-QUALIFY(ROW_NUMBER() OVER (PARTITION BY token_address, id, symbol, blockchain 
+QUALIFY(ROW_NUMBER() OVER (PARTITION BY token_address, id, symbol, blockchain
     ORDER BY provider)) = 1

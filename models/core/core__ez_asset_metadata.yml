@@ -1,15 +1,12 @@
 version: 2
 models:
-  - name: core__dim_asset_metadata
-    description: A comprehensive dimensional table holding all provider asset metadata and other relevant details pertaining to each token_address.
+  - name: core__ez_asset_metadata
+    description: A convenience table holding prioritized asset metadata and other relevant details pertaining to each token_address.
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - PROVIDER
-            - ID
             - TOKEN_ADDRESS
             - BLOCKCHAIN
-            - SYMBOL
 
     columns:
       - name: PROVIDER
