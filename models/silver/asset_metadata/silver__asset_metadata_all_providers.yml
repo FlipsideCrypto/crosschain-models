@@ -25,4 +25,3 @@ models:
       - name: BLOCKCHAIN
         tests:
           - not_null
-      - name: DECIMALS

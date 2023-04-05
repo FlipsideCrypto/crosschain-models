@@ -168,14 +168,11 @@ WHERE token_address IS NOT NULL
 SELECT
     token_address,
     id,
-    UPPER(COALESCE(c.symbol,f.symbol)) AS symbol,
-    c.decimals,
-    f.blockchain,
+    symbol,
+    blockchain,
     provider,
      {{ dbt_utils.surrogate_key( 
-        ['id','token_address','COALESCE(c.symbol,f.symbol)','f.blockchain','provider'] ) }} AS _unique_key
-FROM FINAL f 
-LEFT JOIN {{ ref('core__dim_contracts') }} c 
-    ON LOWER(c.address) = f.token_address AND c.blockchain = f.blockchain
-QUALIFY(ROW_NUMBER() OVER (PARTITION BY token_address, id, COALESCE(c.symbol,f.symbol), f.blockchain 
+        ['id','token_address','symbol','blockchain','provider'] ) }} AS _unique_key
+FROM FINAL
+QUALIFY(ROW_NUMBER() OVER (PARTITION BY token_address, id, symbol, blockchain 
     ORDER BY provider)) = 1
