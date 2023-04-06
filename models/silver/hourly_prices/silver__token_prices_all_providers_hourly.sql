@@ -55,7 +55,7 @@ SELECT
     hour,
     token_address,
     CASE 
-        WHEN platform IN ('arbitrum-nova','arbitrum-one') THEN 'arbitrum'
+        WHEN platform IN ('arbitrum-nova','arbitrum-one','arbitrum') THEN 'arbitrum'
         WHEN platform IN ('avalanche') THEN 'avalanche'
         WHEN platform IN ('binance-smart-chain','binancecoin','bnb') THEN 'bsc'
         WHEN platform IN ('ethereum') THEN 'ethereum'
