@@ -1,0 +1,18 @@
+version: 2
+models:
+  - name: core__dim_contracts
+    description: This table contains contract details for contracts deployed on the Ethereum, Optimism, Polygon, Arbitrum, and Avalanche blockchains. 
+
+    columns:
+      - name: ADDRESS
+        description: The unique address of the deployed contract.
+        tests:
+          - not_null
+      - name: SYMBOL
+        description: The symbol used to represent this contract. Please note this is not necessarily unique. 
+      - name: NAME
+        description: The name of the deployed contract. Please note this is not necessarily unique. 
+      - name: DECIMALS
+        description: The number of decimal places this contract needs adjusted where token values exist.
+      - name: BLOCKCHAIN
+        description: The corresponding blockchain for contract details.

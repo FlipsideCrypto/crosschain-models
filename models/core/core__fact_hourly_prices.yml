@@ -1,45 +1,18 @@
 version: 2
 models:
   - name: core__fact_hourly_prices
-    description: A dimension table holding provider specific asset metadata
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - PROVIDER
-            - ID
-            - RECORDED_HOUR
+    description: A comprehensive fact table holding provider and blockchain specific hourly token prices.
+
     columns:
+      - name: HOUR
+        description: Hour that the price was recorded at
+      - name: TOKEN_ADDRESS
+        description: Address of the token
+      - name: BLOCKCHAIN
+        description: Blockchain, Network, or Platform the token price is recorded on.
       - name: PROVIDER
-        description: provider of the data
-        tests:
-          - not_null
-          - dbt_expectations.expect_column_to_exist
-      - name: ID
-        description: unique identifier representing the asset
-        tests:
-          - dbt_expectations.expect_column_to_exist
-          - dbt_expectations.expect_column_values_to_be_in_type_list:
-              column_type_list:
-                - STRING
-                - VARCHAR
-      - name: RECORDED_HOUR
-        description: opening hour of price data
-        tests:
-          - dbt_expectations.expect_column_to_exist
-      - name: OPEN
-        description: open price of asset for hour
-        tests:
-          - dbt_expectations.expect_column_to_exist
-      - name: HIGH
-        description: high price of asset for hour
-        tests:
-          - dbt_expectations.expect_column_to_exist
-      - name: LOW
-        description: low price of asset for hour
-        tests:
-          - dbt_expectations.expect_column_to_exist
-      - name: CLOSE
-        description: close price of asset for hour
-        tests:
-          - dbt_expectations.expect_column_to_exist
-      
+        description: Source of the token price.
+      - name: PRICE
+        description: Closing price of the recorded hour in USD
+      - name: IS_IMPUTED
+        description: Whether the price was imputed from an earlier record (generally used for low trade volume tokens)
