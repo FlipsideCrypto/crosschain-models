@@ -185,6 +185,9 @@ sources:
     schema: silver
     tables: 
       - name: transactions
+      - name: asset_metadata
+      - name: prices_swaps
+      - name: pool_token_prices_usd
   - name: osmosis_core
     database: osmosis
     schema: core
