@@ -142,6 +142,7 @@ sources:
       - name: logs
       - name: traces
       - name: transactions
+      - name: contracts
   - name: bsc_core
     database: bsc
     schema: core

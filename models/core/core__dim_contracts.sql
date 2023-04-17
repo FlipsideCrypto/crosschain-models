@@ -67,6 +67,18 @@ WITH base AS (
         ) }}
     UNION ALL
     SELECT
+        contract_address AS address,
+        token_symbol AS symbol,
+        token_name AS NAME,
+        token_decimals AS decimals,
+        'bsc' AS blockchain
+    FROM
+        {{ source(
+            'bsc_silver',
+            'contracts'
+        ) }}
+    UNION ALL
+    SELECT
         address AS address,
         LOWER(project_name) AS symbol,
         label AS NAME,
