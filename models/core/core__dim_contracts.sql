@@ -77,21 +77,6 @@ WITH base AS (
             'osmosis_silver',
             'asset_metadata'
         ) }}
-    UNION ALL
-    SELECT
-        asset_id :: STRING AS address,
-        NULL AS symbol,
-        asset_name AS NAME,
-        decimals AS decimals,
-        'algorand' AS blockchain
-    FROM
-        {{ source(
-            'algorand_core',
-            'dim_asset'
-        ) }}
-    WHERE
-        asset_id = 0
-        OR is_nft = FALSE
 )
 SELECT
     address,
