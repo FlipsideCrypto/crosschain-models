@@ -99,7 +99,14 @@ FINAL AS (
                 'polygon',
                 'polygon-pos'
             ) THEN 'polygon'
-            WHEN platform = 'cosmos' THEN platform
+            WHEN platform IN (
+                'cosmos',
+                'evmos',
+                'osmosis',
+                'terra',
+                'terra-2'
+            ) THEN 'cosmos'
+            WHEN LOWER(platform) = 'algorand' THEN 'algorand'
             ELSE NULL
         END AS blockchain,
         --supported chains only
@@ -125,6 +132,8 @@ SELECT
     _inserted_timestamp,
     _unique_key
 FROM
-    FINAL qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain, provider
+    FINAL
+WHERE
+    len(token_address) > 0 qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

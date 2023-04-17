@@ -7,11 +7,21 @@
 WITH coin_gecko_meta AS (
 
     SELECT
-        DISTINCT REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*') AS token_address,
+        DISTINCT CASE
+            WHEN token_address ILIKE '^x%'
+            OR token_address ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
+            WHEN id = 'osmosis' THEN 'uosmo'
+            WHEN id = 'algorand' THEN '0'
+            ELSE token_address
+        END AS token_address,
         LOWER(id) AS id,
         LOWER(symbol) AS symbol,
         LOWER(
-            platform :: STRING
+            CASE
+                WHEN id = 'osmosis' THEN 'osmosis'
+                WHEN id = 'algorand' THEN 'algorand'
+                ELSE platform :: STRING
+            END
         ) AS platform,
         'coingecko' AS provider,
         _inserted_timestamp
@@ -22,11 +32,21 @@ WITH coin_gecko_meta AS (
 ),
 coin_market_cap_meta AS (
     SELECT
-        DISTINCT REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*') AS token_address,
+        DISTINCT CASE
+            WHEN token_address ILIKE '^x%'
+            OR token_address ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
+            WHEN id = '12220' THEN 'uosmo'
+            WHEN id = '4030' THEN '0'
+            ELSE token_address
+        END AS token_address,
         LOWER(id) AS id,
         LOWER(symbol) AS symbol,
         LOWER(
-            platform :: STRING
+            CASE
+                WHEN id = '12220' THEN 'osmosis'
+                WHEN id = '4030' THEN 'Algorand'
+                ELSE platform :: STRING
+            END
         ) AS platform,
         'coinmarketcap' AS provider,
         _inserted_timestamp
@@ -448,7 +468,14 @@ FINAL AS (
                 'polygon',
                 'polygon-pos'
             ) THEN 'polygon'
-            WHEN platform = 'cosmos' THEN platform
+            WHEN platform IN (
+                'cosmos',
+                'evmos',
+                'osmosis',
+                'terra',
+                'terra-2'
+            ) THEN 'cosmos'
+            WHEN LOWER(platform) = 'algorand' THEN 'algorand'
             ELSE NULL
         END AS blockchain,
         --supported chains only
@@ -470,7 +497,10 @@ AND token_address || blockchain NOT IN (
 {% endif %}
 )
 SELECT
-    token_address,
+    CASE
+        WHEN token_address ILIKE 'ibc%' THEN token_address
+        ELSE LOWER(token_address)
+    END AS token_address,
     id,
     symbol,
     blockchain,
