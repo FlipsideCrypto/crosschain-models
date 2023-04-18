@@ -36,8 +36,8 @@ AND date_hour :: DATE >= (
 asset_metadata AS (
     SELECT
         DISTINCT CASE
-            WHEN token_address ILIKE '^x%'
-            OR token_address ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
+            WHEN TRIM(token_address) ILIKE '^x%'
+            OR TRIM(token_address) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
             WHEN id = 'osmosis' THEN 'uosmo'
             WHEN id = 'algorand' THEN '0'
             ELSE token_address
@@ -206,7 +206,8 @@ base_timestamp AS (
         ) AS CLOSE,
         CASE
             WHEN (CAST(ARRAY_AGG(imputed) AS STRING)) ILIKE '%true%' THEN TRUE
-            ELSE false end AS imputed,
+            ELSE FALSE
+            END AS imputed,
             {{ dbt_utils.surrogate_key(
                 ['f.recorded_hour','f.token_address','f.platform']
             ) }} AS _unique_key,

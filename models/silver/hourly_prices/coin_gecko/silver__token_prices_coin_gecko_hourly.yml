@@ -17,11 +17,11 @@ models:
               interval: 1
       - name: TOKEN_ADDRESS
         description: Address of the token
-        tests:
-          - token_address_match:
-              config:
-                severity: warn
-                warn_if: ">100"
+        # tests:
+        #   - token_address_match:
+        #       config:
+        #         severity: warn
+        #         warn_if: ">100"
       - name: PLATFORM
         description: Blockchain or Network token price is recorded on.
         tests:

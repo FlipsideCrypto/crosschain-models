@@ -8,8 +8,8 @@ WITH coin_gecko_meta AS (
 
     SELECT
         DISTINCT CASE
-            WHEN token_address ILIKE '^x%'
-            OR token_address ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
+            WHEN TRIM(token_address) ILIKE '^x%'
+            OR TRIM(token_address) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
             WHEN id = 'osmosis' THEN 'uosmo'
             WHEN id = 'algorand' THEN '0'
             ELSE token_address
@@ -33,8 +33,8 @@ WITH coin_gecko_meta AS (
 coin_market_cap_meta AS (
     SELECT
         DISTINCT CASE
-            WHEN token_address ILIKE '^x%'
-            OR token_address ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
+            WHEN TRIM(token_address) ILIKE '^x%'
+            OR TRIM(token_address) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
             WHEN id = '12220' THEN 'uosmo'
             WHEN id = '4030' THEN '0'
             ELSE token_address
@@ -510,6 +510,25 @@ SELECT
     ) }} AS _unique_key,
     _inserted_timestamp
 FROM
-    FINAL qualify(ROW_NUMBER() over (PARTITION BY token_address, id, symbol, blockchain, provider
+    FINAL
+WHERE
+    len(token_address) > 0
+    AND NOT (
+        blockchain IN (
+            'arbitrum',
+            'bsc',
+            'ethereum',
+            'gnosis',
+            'optimism',
+            'polygon'
+        )
+        AND token_address NOT ILIKE '0x%'
+    )
+    AND NOT (
+        blockchain = 'algorand'
+        AND TRY_CAST(
+            token_address AS INT
+        ) IS NULL
+    ) qualify(ROW_NUMBER() over (PARTITION BY token_address, id, symbol, blockchain, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1
