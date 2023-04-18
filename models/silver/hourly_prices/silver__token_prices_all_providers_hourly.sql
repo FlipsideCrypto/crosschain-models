@@ -99,7 +99,14 @@ FINAL AS (
                 'polygon',
                 'polygon-pos'
             ) THEN 'polygon'
-            WHEN platform = 'cosmos' THEN platform
+            WHEN platform IN (
+                'cosmos',
+                'evmos',
+                'osmosis',
+                'terra',
+                'terra-2'
+            ) THEN 'cosmos'
+            WHEN LOWER(platform) = 'algorand' THEN 'algorand'
             ELSE NULL
         END AS blockchain,
         --supported chains only
@@ -125,6 +132,26 @@ SELECT
     _inserted_timestamp,
     _unique_key
 FROM
-    FINAL qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain, provider
+    FINAL --remove weird tokens / bad metadata
+WHERE
+    len(token_address) > 0
+    AND NOT (
+        blockchain IN (
+            'arbitrum',
+            'avalanche',
+            'bsc',
+            'ethereum',
+            'gnosis',
+            'optimism',
+            'polygon'
+        )
+        AND token_address NOT ILIKE '0x%'
+    )
+    AND NOT (
+        blockchain = 'algorand'
+        AND TRY_CAST(
+            token_address AS INT
+        ) IS NULL
+    ) qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1
