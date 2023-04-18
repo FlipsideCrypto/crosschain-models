@@ -138,6 +138,7 @@ WHERE
     AND NOT (
         blockchain IN (
             'arbitrum',
+            'avalanche',
             'bsc',
             'ethereum',
             'gnosis',
