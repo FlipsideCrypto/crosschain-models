@@ -40,32 +40,27 @@ SELECT
     dex._log_id
 FROM
     {{ ref('core__fact_dex_swaps') }}
-    dex {# LEFT JOIN {{ ref('core__ez_hourly_prices') }}
-    am_in
-    ON REPLACE(
-        dex.blockchain,
-        'osmosis',
-        'cosmos'
-    ) = am_in.blockchain
-    AND dex.token_in = am_in.token_address
-    LEFT JOIN {{ ref('core__ez_hourly_prices') }}
-    am_out
-    ON REPLACE(
-        dex.blockchain,
-        'osmosis',
-        'cosmos'
-    ) = am_out.blockchain
-    AND dex.token_out = am_out.token_address #}
+    dex
     LEFT JOIN {{ ref('core__ez_hourly_prices') }}
     p_in
-    ON dex.token_in = p_in.token_address
+    ON REPLACE(
+        dex.blockchain,
+        'osmosis',
+        'cosmos'
+    ) = p_in.blockchain
+    AND dex.token_in = p_in.token_address
     AND DATE_TRUNC(
         'hour',
         dex.block_timestamp
     ) = p_in.hour
     LEFT JOIN {{ ref('core__ez_hourly_prices') }}
     p_out
-    ON dex.token_out = p_out.token_address
+    ON REPLACE(
+        dex.blockchain,
+        'osmosis',
+        'cosmos'
+    ) = p_out.blockchain
+    AND dex.token_out = p_out.token_address
     AND DATE_TRUNC(
         'hour',
         dex.block_timestamp
