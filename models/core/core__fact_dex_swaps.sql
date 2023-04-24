@@ -12,7 +12,7 @@ WITH base AS (
         block_number,
         block_timestamp,
         tx_hash,
-        origin_from_address AS trader,
+        sender AS trader,
         token_in,
         amount_in_unadj AS amount_in_raw,
         token_out,
@@ -30,7 +30,7 @@ WITH base AS (
         block_number,
         block_timestamp,
         tx_hash,
-        origin_from_address AS trader,
+        sender AS trader,
         token_in,
         amount_in_unadj AS amount_in_raw,
         token_out,
@@ -39,6 +39,24 @@ WITH base AS (
     FROM
         {{ source(
             'optimism_silver_dex',
+            'complete_dex_swaps'
+        ) }}
+    UNION ALL
+    SELECT
+        'avalanche' AS blockchain,
+        platform,
+        block_number,
+        block_timestamp,
+        tx_hash,
+        sender AS trader,
+        token_in,
+        amount_in_unadj AS amount_in_raw,
+        token_out,
+        amount_out_unadj AS amount_out_raw,
+        _log_id
+    FROM
+        {{ source(
+            'avalanche_silver_dex',
             'complete_dex_swaps'
         ) }}
     UNION ALL

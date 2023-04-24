@@ -300,3 +300,8 @@ sources:
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+  - name: avalanche_silver_dex
+    database: avalanche
+    schema: silver_dex
+    tables:
+      - name: complete_dex_swaps
