@@ -502,7 +502,7 @@ SELECT
         ELSE LOWER(token_address)
     END AS token_address,
     id,
-    symbol,
+    UPPER(symbol) AS symbol,
     blockchain,
     provider,
     {{ dbt_utils.surrogate_key(
