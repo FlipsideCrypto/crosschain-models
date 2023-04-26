@@ -305,3 +305,8 @@ sources:
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+  - name: polygon_silver_dex
+    database: polygon
+    schema: silver_dex
+    tables:
+      - name: complete_dex_swaps
