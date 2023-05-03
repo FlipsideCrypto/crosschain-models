@@ -9,12 +9,12 @@ WITH display AS (
     SELECT
         DISTINCT tx_hash,
         block_timestamp,
-        event_inputs :displayName :: STRING AS tag_name,
+        decoded_flat :displayName :: STRING AS tag_name,
         _inserted_timestamp
     FROM
         {{ source(
             'ethereum_silver',
-            'logs'
+            'decoded_logs_full'
         ) }}
     WHERE
         contract_address ILIKE '0xDb8e8e2ccb5C033938736aa89Fe4fa1eDfD15a1d'
@@ -33,11 +33,11 @@ register AS (
     SELECT
         DISTINCT tx_hash,
         block_timestamp,
-        event_inputs :adminAddress :: STRING AS address
+        decoded_flat :adminAddress :: STRING AS address
     FROM
         {{ source(
             'ethereum_silver',
-            'logs'
+            'decoded_logs_full'
         ) }}
     WHERE
         contract_address ILIKE '0xDb8e8e2ccb5C033938736aa89Fe4fa1eDfD15a1d'
