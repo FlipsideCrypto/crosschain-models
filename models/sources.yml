@@ -147,6 +147,7 @@ sources:
       - name: traces
       - name: transactions
       - name: contracts
+      - name: abis
   - name: bsc_core
     database: bsc
     schema: core

@@ -34,3 +34,15 @@ FROM
         'avalanche_silver',
         'abis'
     ) }}
+
+union all
+
+SELECT
+    contract_address,
+    abi_hash,
+    'bsc' AS blockchain
+FROM
+    {{ source(
+        'bsc_silver',
+        'abis'
+    ) }}
