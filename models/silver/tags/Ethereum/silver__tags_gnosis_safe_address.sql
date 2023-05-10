@@ -7,7 +7,7 @@
 SELECT
     DISTINCT 'ethereum' AS blockchain,
     'flipside' AS creator,
-    event_inputs :instantiation :: STRING AS address,
+    decoded_flat :instantiation :: STRING AS address,
     'gnosis safe address' AS tag_name,
     'contract' AS tag_type,
     DATE_TRUNC(
@@ -20,7 +20,7 @@ SELECT
 FROM
     {{ source(
         'ethereum_silver',
-        'logs'
+        'decoded_logs_full'
     ) }}
 WHERE
     event_name = 'ContractInstantiation'
