@@ -19,12 +19,12 @@
 
 WITH t1 AS (
     SELECT
-        DISTINCT event_inputs :to :: STRING AS wallets,
+        DISTINCT decoded_flat :to :: STRING AS wallets,
         x.block_timestamp,
-        event_inputs :value /(pow(10, 18)) AS tokens_claimed,
+        decoded_flat :value /(pow(10, 18)) AS tokens_claimed,
         price AS token_price_usd
     FROM
-        ethereum.core.fact_event_logs x
+        ethereum.silver.decoded_logs_full x
         JOIN ethereum.core.fact_hourly_token_prices y
         ON x.contract_address = y.token_address
         AND TRUNC(
