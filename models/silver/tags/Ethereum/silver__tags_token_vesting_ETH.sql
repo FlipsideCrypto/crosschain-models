@@ -9,85 +9,99 @@ WITH base_table AS (
 
     SELECT
         CASE
-            WHEN event_name = 'VestClaimed' THEN event_inputs :beneficiary
-            WHEN event_name = 'VestingClaimed' THEN event_inputs :"_beneficiary"
-            WHEN event_name = 'VestedTokenRedeemed' THEN event_inputs :"_to"
+            WHEN event_name = 'VestClaimed' THEN decoded_flat :beneficiary
+            WHEN event_name = 'VestingClaimed' THEN decoded_flat :investor
+            WHEN event_name = 'VestedTokenRedeemed' THEN decoded_flat :"_to"
             WHEN event_name = 'VestingMemberAdded' THEN origin_from_address
             WHEN event_name IN (
                 'VestingTransfer',
                 'VestTransfer'
-            ) THEN event_inputs :to
+            ) THEN decoded_flat :to
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND event_inputs :recipient IS NOT NULL THEN event_inputs :recipient
+            AND decoded_flat :recipient IS NOT NULL THEN decoded_flat :recipient
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND event_inputs :recipient IS NULL
-            AND event_inputs :"_address" IS NOT NULL THEN event_inputs :"_address"
+            AND decoded_flat :recipient IS NULL
+            AND decoded_flat :"_address" IS NOT NULL THEN decoded_flat :"_address"
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND event_inputs :recipient IS NULL
-            AND event_inputs :"_address" IS NULL
-            AND event_inputs :address IS NOT NULL THEN event_inputs :address
+            AND decoded_flat :recipient IS NULL
+            AND decoded_flat :"_address" IS NULL
+            AND decoded_flat :address IS NOT NULL THEN decoded_flat :address
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND event_inputs :recipient IS NULL
-            AND event_inputs :"_address" IS NULL
-            AND event_inputs :address IS NULL
-            AND event_inputs :"_recipient" IS NOT NULL THEN event_inputs :"_recipient"
+            AND decoded_flat :recipient IS NULL
+            AND decoded_flat :"_address" IS NULL
+            AND decoded_flat :address IS NULL
+            AND decoded_flat :"_recipient" IS NOT NULL THEN decoded_flat :"_recipient"
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND event_inputs :recipient IS NULL
-            AND event_inputs :"_address" IS NULL
-            AND event_inputs :address IS NULL
-            AND event_inputs :"_recipient" IS NULL
-            AND event_inputs :to IS NOT NULL THEN event_inputs :to
+            AND decoded_flat :recipient IS NULL
+            AND decoded_flat :"_address" IS NULL
+            AND decoded_flat :address IS NULL
+            AND decoded_flat :"_recipient" IS NULL
+            AND decoded_flat :to IS NOT NULL THEN decoded_flat :to
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND event_inputs :recipient IS NULL
-            AND event_inputs :"_address" IS NULL
-            AND event_inputs :address IS NULL
-            AND event_inputs :"_recipient" IS NULL
-            AND event_inputs :to IS NULL
-            AND event_inputs :ethereumAddress IS NOT NULL THEN event_inputs :ethereumAddress
+            AND decoded_flat :recipient IS NULL
+            AND decoded_flat :"_address" IS NULL
+            AND decoded_flat :address IS NULL
+            AND decoded_flat :"_recipient" IS NULL
+            AND decoded_flat :to IS NULL
+            AND decoded_flat :ethereumAddress IS NOT NULL THEN decoded_flat :ethereumAddress
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND event_inputs :recipient IS NULL
-            AND event_inputs :"_address" IS NULL
-            AND event_inputs :address IS NULL
-            AND event_inputs :"_recipient" IS NULL
-            AND event_inputs :to IS NULL
-            AND event_inputs :ethereumAddress IS NULL
-            AND event_inputs :account IS NOT NULL THEN event_inputs :account
-            ELSE event_inputs :"_to"
+            AND decoded_flat :recipient IS NULL
+            AND decoded_flat :"_address" IS NULL
+            AND decoded_flat :address IS NULL
+            AND decoded_flat :"_recipient" IS NULL
+            AND decoded_flat :to IS NULL
+            AND decoded_flat :ethereumAddress IS NULL
+            AND decoded_flat :account IS NOT NULL THEN decoded_flat :account
+            WHEN event_name IN (
+                'Unlocked',
+                'Vesting',
+                'VestedRewardClaimed',
+                'VestedAmountClaimed'
+            )
+            AND decoded_flat :recipient IS NULL
+            AND decoded_flat :"_address" IS NULL
+            AND decoded_flat :address IS NULL
+            AND decoded_flat :"_recipient" IS NULL
+            AND decoded_flat :to IS NULL
+            AND decoded_flat :ethereumAddress IS NULL
+            AND decoded_flat :account IS NULL 
+            and decoded_flat :delegate is not null THEN decoded_flat :delegate
+            ELSE decoded_flat :"_to"
         END AS wallets,
         MIN(_INSERTED_TIMESTAMP) AS _INSERTED_TIMESTAMP,
         MIN(
@@ -96,7 +110,7 @@ WITH base_table AS (
     FROM
         {{ source(
             'ethereum_silver',
-            'logs'
+            'decoded_logs_full'
         ) }}
     WHERE
         event_name IN (
