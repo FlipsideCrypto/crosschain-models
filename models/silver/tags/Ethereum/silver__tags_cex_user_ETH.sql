@@ -32,7 +32,7 @@ WITH from_cex AS (
                 ) }}
             WHERE
                 blockchain = 'ethereum'
-                AND l1_label = 'cex'
+                AND label_type = 'cex'
         ) b
         ON A.from_address = b.address
     WHERE
@@ -76,7 +76,7 @@ to_cex AS (
                 ) }}
             WHERE
                 blockchain = 'ethereum'
-                AND l1_label = 'cex'
+                AND label_type = 'cex'
         ) b
         ON A.to_address = b.address
     WHERE
