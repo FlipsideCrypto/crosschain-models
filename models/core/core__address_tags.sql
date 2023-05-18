@@ -466,3 +466,15 @@ SELECT
     '2022-06-01' :: TIMESTAMP as tag_created_at
 FROM  
     {{ ref('silver__optimism_airdrop1_tags') }}
+UNION ALL
+SELECT 
+    blockchain, 
+    creator, 
+    lower(address), 
+    tag_name, 
+    tag_type, 
+    start_date :: date as start_date,
+    null as end_date,
+    '2023-05-18' :: TIMESTAMP as tag_created_at
+FROM  
+    {{ ref('silver__dydx_delegates') }}
