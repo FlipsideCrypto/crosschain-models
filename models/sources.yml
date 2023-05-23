@@ -314,3 +314,9 @@ sources:
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+  - name: solana_silver
+    database: solana
+    schema: silver
+    tables:
+      - name: token_metadata
+      - name: solscan_tokens
