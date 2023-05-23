@@ -365,6 +365,64 @@ ibc_am AS (
             'asset_metadata'
         ) }}
 ),
+solana_cg AS(
+    SELECT
+        A.token_address,
+        LOWER(
+            A.id
+        ) AS id,
+        LOWER(
+            A.symbol
+        ) AS symbol,
+        'solana' AS platform,
+        'coingecko' AS provider,
+        A._inserted_timestamp
+    FROM
+        {{ ref(
+            'silver__asset_metadata_coin_gecko'
+        ) }} A
+        INNER JOIN {{ source(
+            'solana_silver',
+            'token_metadata'
+        ) }} b
+        on LOWER(A.token_address) = LOWER(b.token_address)
+),
+solana_cmc AS(
+    SELECT
+        A.token_address,
+        LOWER(
+            A.id
+        ) AS id,
+        LOWER(
+            A.symbol
+        ) AS symbol,
+        'solana' AS platform,
+        'coinmarketcap' AS provider,
+        A._inserted_timestamp
+    FROM
+        {{ ref(
+            'silver__asset_metadata_coin_market_cap'
+        ) }} A
+        INNER JOIN {{ source(
+            'solana_silver',
+            'token_metadata'
+        ) }} b
+        on A.id = b.coin_market_cap_id
+),
+solana_solscan AS (
+    SELECT
+        token_address,
+        LOWER(COALESCE(coingecko_id, token_address)) AS id,
+        symbol,
+        'solana' AS platform,
+        'solscan' AS provider,
+        _inserted_timestamp
+    FROM
+        {{ source(
+            'solana_silver',
+            'solscan_tokens'
+        ) }}
+),
 all_sources AS (
     SELECT
         LOWER(token_address) AS token_address,
@@ -437,6 +495,36 @@ all_sources AS (
         _inserted_timestamp
     FROM
         ibc_am
+    UNION
+    SELECT
+        LOWER(token_address) AS token_address,
+        id,
+        symbol,
+        platform,
+        provider,
+        _inserted_timestamp
+    FROM
+        solana_cg
+    UNION
+    SELECT
+        LOWER(token_address) AS token_address,
+        id,
+        symbol,
+        platform,
+        provider,
+        _inserted_timestamp
+    FROM
+        solana_cmc
+    UNION
+    SELECT
+        LOWER(token_address) as token_address,
+        LOWER(id) as id,
+        symbol,
+        platform,
+        provider,
+        _inserted_timestamp
+    FROM
+        solana_solscan
 ),
 FINAL AS (
     SELECT
@@ -476,6 +564,7 @@ FINAL AS (
                 'terra-2'
             ) THEN 'cosmos'
             WHEN LOWER(platform) = 'algorand' THEN 'algorand'
+            WHEN LOWER(platform) = 'solana' THEN 'solana'
             ELSE NULL
         END AS blockchain,
         --supported chains only
