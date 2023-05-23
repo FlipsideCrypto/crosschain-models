@@ -43,7 +43,7 @@ sources:
     schema: silver
     tables:
       - name: logs
-      - name: decoded_logs_full
+      - name: decoded_logs
       - name: traces
       - name: transactions
       - name: labels
@@ -98,7 +98,7 @@ sources:
     schema: silver
     tables:
       - name: logs
-      - name: decoded_logs_full
+      - name: decoded_logs
       - name: traces
       - name: transactions
       - name: abis
@@ -114,7 +114,7 @@ sources:
     schema: silver
     tables:
       - name: logs
-      - name: decoded_logs_full
+      - name: decoded_logs
       - name: traces
       - name: transactions
       - name: abis

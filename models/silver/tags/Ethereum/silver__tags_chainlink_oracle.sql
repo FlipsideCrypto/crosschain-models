@@ -14,7 +14,7 @@ WITH display AS (
     FROM
         {{ source(
             'ethereum_silver',
-            'decoded_logs_full'
+            'decoded_logs'
         ) }}
     WHERE
         contract_address ILIKE '0xDb8e8e2ccb5C033938736aa89Fe4fa1eDfD15a1d'
@@ -37,7 +37,7 @@ register AS (
     FROM
         {{ source(
             'ethereum_silver',
-            'decoded_logs_full'
+            'decoded_logs'
         ) }}
     WHERE
         contract_address ILIKE '0xDb8e8e2ccb5C033938736aa89Fe4fa1eDfD15a1d'
