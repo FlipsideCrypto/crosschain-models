@@ -31,7 +31,7 @@ register_names AS (
     FROM
         {{ source(
             'ethereum_silver',
-            'decoded_logs_full'
+            'decoded_logs'
         ) }}
     WHERE
         contract_address = '0x283af0b28c62c092c9727f1ee09c02ca627eb7f5'
@@ -64,7 +64,7 @@ renew_names AS (
     FROM
         {{ source(
             'ethereum_silver',
-            'decoded_logs_full'
+            'decoded_logs'
         ) }}
     WHERE
         contract_address = '0x283af0b28c62c092c9727f1ee09c02ca627eb7f5'
@@ -91,7 +91,7 @@ node_names AS (
     FROM
         {{ source(
             'ethereum_silver',
-            'decoded_logs_full'
+            'decoded_logs'
         ) }}
     WHERE
         contract_address = '0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e'
@@ -182,7 +182,7 @@ legacy_names AS (
             FROM
                 {{ source(
                     'ethereum_silver',
-                    'decoded_logs_full'
+                    'decoded_logs'
                 ) }}
             WHERE
                 contract_address IN (
@@ -223,7 +223,7 @@ SELECT
 FROM
     {{ source(
         'ethereum_silver',
-        'decoded_logs_full'
+        'decoded_logs'
     ) }}
 WHERE
     contract_address IN (
@@ -628,7 +628,7 @@ FROM
     x
     JOIN {{ source(
         'ethereum_silver',
-        'decoded_logs_full'
+        'decoded_logs'
     ) }}
     y
     ON x.tx_hash = y.tx_hash

@@ -88,7 +88,7 @@ base_logs AS (
     FROM
         {{ source(
             'avalanche_silver',
-            'decoded_logs_full'
+            'decoded_logs'
         ) }}
     WHERE
         tx_hash IN (

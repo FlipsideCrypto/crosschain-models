@@ -110,7 +110,7 @@ WITH base_table AS (
     FROM
         {{ source(
             'ethereum_silver',
-            'decoded_logs_full'
+            'decoded_logs'
         ) }}
     WHERE
         event_name IN (

@@ -88,7 +88,7 @@ base_logs AS (
     FROM
         {{ source(
             'ethereum_silver',
-            'decoded_logs_full'
+            'decoded_logs'
         ) }}
     WHERE
         tx_hash IN (
