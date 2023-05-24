@@ -47,6 +47,7 @@ asset_metadata AS (
             CASE
                 WHEN id = 'osmosis' THEN 'osmosis'
                 WHEN id = 'algorand' THEN 'algorand'
+                WHEN id = 'solana' THEN 'solana'
                 ELSE platform :: STRING
             END
         ) AS platform
@@ -212,36 +213,18 @@ base_timestamp AS (
                 ['f.recorded_hour','f.token_address','f.platform']
             ) }} AS _unique_key,
             MAX(_inserted_timestamp) AS _inserted_timestamp
-            FROM
-                final_prices f
-                LEFT JOIN base_prices b
-                ON f.recorded_hour = b.recorded_hour
-                AND f.token_address = b.token_address
-                AND f.platform = b.platform
-            GROUP BY
-                1,
-                2,
-                3
-        ),
-        FINAL AS (
-            SELECT
-                recorded_hour,
-                token_address,
-                platform,
-                CLOSE,
-                imputed,
-                _unique_key,
-                _inserted_timestamp,
-                LAST_VALUE(
-                    _inserted_timestamp ignore nulls
-                ) over (
-                    PARTITION BY token_address
-                    ORDER BY
-                        recorded_hour rows unbounded preceding
-                ) AS imputed_timestamp
-            FROM
-                base_timestamp
-        )
+        FROM
+            final_prices f
+            LEFT JOIN base_prices b
+            ON f.recorded_hour = b.recorded_hour
+            AND f.token_address = b.token_address
+            AND f.platform = b.platform
+        GROUP BY
+            1,
+            2,
+            3
+),
+FINAL AS (
     SELECT
         recorded_hour,
         token_address,
@@ -249,12 +232,30 @@ base_timestamp AS (
         CLOSE,
         imputed,
         _unique_key,
-        CASE
-            WHEN imputed_timestamp IS NULL THEN '2022-08-23'
-            ELSE COALESCE(
-                _inserted_timestamp,
-                imputed_timestamp
-            )
-        END AS _inserted_timestamp
+        _inserted_timestamp,
+        LAST_VALUE(
+            _inserted_timestamp ignore nulls
+        ) over (
+            PARTITION BY token_address
+            ORDER BY
+                recorded_hour rows unbounded preceding
+        ) AS imputed_timestamp
     FROM
-        FINAL
+        base_timestamp
+)
+SELECT
+    recorded_hour,
+    token_address,
+    platform,
+    CLOSE,
+    imputed,
+    _unique_key,
+    CASE
+        WHEN imputed_timestamp IS NULL THEN '2022-08-23'
+        ELSE COALESCE(
+            _inserted_timestamp,
+            imputed_timestamp
+        )
+    END AS _inserted_timestamp
+FROM
+    FINAL

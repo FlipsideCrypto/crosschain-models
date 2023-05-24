@@ -89,6 +89,18 @@ WITH base AS (
             'osmosis_silver',
             'asset_metadata'
         ) }}
+    UNION ALL
+    SELECT
+        token_address AS address,
+        LOWER(symbol) AS symbol,
+        token_name AS NAME,
+        decimals,
+        'solana' AS blockchain
+    FROM
+        {{ source(
+            'solana_silver',
+            'token_metadata'
+        ) }}
 )
 SELECT
     address,

@@ -35,7 +35,8 @@ models:
                         ,'solana'
                         ,'terra'
                         ,'terra_classic'
-                        ,'thorchain']
+                        ,'thorchain'
+                        ,'evmos']
       - name: CREATOR
         description: The name of the creator of the label
         tests:

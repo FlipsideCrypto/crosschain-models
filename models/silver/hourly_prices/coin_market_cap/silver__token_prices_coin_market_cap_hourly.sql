@@ -218,26 +218,8 @@ base_timestamp AS (
                 1,
                 2,
                 3
-        ),
-        FINAL AS (
-            SELECT
-                recorded_hour,
-                token_address,
-                platform,
-                CLOSE,
-                imputed,
-                _unique_key,
-                _inserted_timestamp,
-                LAST_VALUE(
-                    _inserted_timestamp ignore nulls
-                ) over (
-                    PARTITION BY token_address
-                    ORDER BY
-                        recorded_hour rows unbounded preceding
-                ) AS imputed_timestamp
-            FROM
-                base_timestamp
-        )
+ ),
+FINAL AS (
     SELECT
         recorded_hour,
         token_address,
@@ -245,12 +227,30 @@ base_timestamp AS (
         CLOSE,
         imputed,
         _unique_key,
-        CASE
-            WHEN imputed_timestamp IS NULL THEN '2022-07-19'
-            ELSE COALESCE(
-                _inserted_timestamp,
-                imputed_timestamp
-            )
-        END AS _inserted_timestamp
+        _inserted_timestamp,
+        LAST_VALUE(
+            _inserted_timestamp ignore nulls
+        ) over (
+            PARTITION BY token_address
+            ORDER BY
+                recorded_hour rows unbounded preceding
+        ) AS imputed_timestamp
     FROM
-        FINAL
+        base_timestamp
+        )
+SELECT
+    recorded_hour,
+    token_address,
+    platform,
+    CLOSE,
+    imputed,
+    _unique_key,
+    CASE
+        WHEN imputed_timestamp IS NULL THEN '2022-07-19'
+        ELSE COALESCE(
+            _inserted_timestamp,
+            imputed_timestamp
+        )
+    END AS _inserted_timestamp
+FROM
+    FINAL
