@@ -6,29 +6,35 @@
 
 WITH coin_gecko_meta AS (
 
-    SELECT
+   SELECT
         DISTINCT CASE
-            WHEN TRIM(token_address) ILIKE '^x%'
-            OR TRIM(token_address) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
+            WHEN TRIM(a.token_address) ILIKE '^x%'
+            OR TRIM(a.token_address) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(a.token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
             WHEN id = 'osmosis' THEN 'uosmo'
             WHEN id = 'algorand' THEN '0'
-            ELSE token_address
+            ELSE a.token_address
         END AS token_address,
         LOWER(id) AS id,
-        LOWER(symbol) AS symbol,
+        LOWER(a.symbol) AS symbol,
         LOWER(
             CASE
                 WHEN id = 'osmosis' THEN 'osmosis'
                 WHEN id = 'algorand' THEN 'algorand'
+                WHEN b.token_address IS NOT NULL THEN 'solana'
                 ELSE platform :: STRING
             END
         ) AS platform,
         'coingecko' AS provider,
-        _inserted_timestamp
+        a._inserted_timestamp
     FROM
-        {{ ref(
+            {{ ref(
             'silver__asset_metadata_coin_gecko'
-        ) }}
+        ) }} a
+    left join {{ source(
+            'solana_silver',
+            'token_metadata'
+        ) }} b
+    on LOWER(A.token_address) = LOWER(b.token_address)
 ),
 coin_market_cap_meta AS (
     SELECT
@@ -365,28 +371,6 @@ ibc_am AS (
             'asset_metadata'
         ) }}
 ),
-solana_cg AS(
-    SELECT
-        A.token_address,
-        LOWER(
-            A.id
-        ) AS id,
-        LOWER(
-            A.symbol
-        ) AS symbol,
-        'solana' AS platform,
-        'coingecko' AS provider,
-        A._inserted_timestamp
-    FROM
-        {{ ref(
-            'silver__asset_metadata_coin_gecko'
-        ) }} A
-        INNER JOIN {{ source(
-            'solana_silver',
-            'token_metadata'
-        ) }} b
-        on LOWER(A.token_address) = LOWER(b.token_address)
-),
 solana_cmc AS(
     SELECT
         A.token_address,
@@ -495,16 +479,6 @@ all_sources AS (
         _inserted_timestamp
     FROM
         ibc_am
-    UNION
-    SELECT
-        LOWER(token_address) AS token_address,
-        id,
-        symbol,
-        platform,
-        provider,
-        _inserted_timestamp
-    FROM
-        solana_cg
     UNION
     SELECT
         LOWER(token_address) AS token_address,
