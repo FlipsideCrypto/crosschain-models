@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: core__fact_dex_swaps
-    description: A comprehensive fact table holding blockchain and platform specific decentralized exchange swaps. This table only contains dex swaps from Ethereum, Optimism, and Osmosis.
+    description: A comprehensive fact table holding blockchain and platform specific decentralized exchange swaps. This table contains dex swaps from Ethereum, Optimism, Polygon, BSC, Avalanche and Osmosis.
 
     columns:
       - name: BLOCKCHAIN
