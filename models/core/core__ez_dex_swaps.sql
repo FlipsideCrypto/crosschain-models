@@ -15,6 +15,7 @@ SELECT
     p_in.symbol AS symbol_in,
     dex.amount_in_raw,
     CASE
+        WHEN dex.blockchain = 'solana' THEN dex.amount_in_raw
         WHEN p_in.decimals IS NOT NULL THEN dex.amount_in_raw / power(
             10,
             p_in.decimals
@@ -28,6 +29,7 @@ SELECT
     p_out.symbol AS symbol_out,
     dex.amount_out_raw,
     CASE
+        WHEN dex.blockchain = 'solana' THEN dex.amount_out_raw
         WHEN p_out.decimals IS NOT NULL THEN dex.amount_out_raw / power(
             10,
             p_out.decimals

@@ -99,6 +99,24 @@ WITH base AS (
             'osmosis_silver',
             'swaps'
         ) }}
+    UNION ALL
+    SELECT
+        'solana' AS blockchain,
+        swap_program as platform,
+        block_id as block_number,
+        block_timestamp,
+        tx_id as tx_hash,
+        swapper AS trader,
+        lower(swap_from_mint) as token_in,
+        swap_from_amount AS amount_in_raw,
+        lower(swap_to_mint) as token_out,
+        swap_to_amount AS amount_out_raw,
+        _log_id
+    from  {{ source(
+            'solana_core',
+            'fact_swaps'
+        ) }}
+    where succeeded
 )
 SELECT
     blockchain,
