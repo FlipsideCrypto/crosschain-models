@@ -79,6 +79,24 @@ WITH base AS (
         ) }}
     UNION ALL
     SELECT
+        'bsc' AS blockchain,
+        platform,
+        block_number,
+        block_timestamp,
+        tx_hash,
+        origin_from_address AS trader,
+        token_in,
+        amount_in_unadj AS amount_in_raw,
+        token_out,
+        amount_out_unadj AS amount_out_raw,
+        _log_id
+    FROM
+        {{ source(
+            'bsc_silver_dex',
+            'complete_dex_swaps'
+        ) }}
+    UNION ALL
+    SELECT
         'osmosis' AS blockchain,
         'osmosis' platform,
         block_id AS block_number,
