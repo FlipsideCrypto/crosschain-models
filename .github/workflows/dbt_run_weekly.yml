@@ -1,0 +1,30 @@
+name: dbt_run_scheduled_weekly
+run-name: dbt_run_scheduled_weekly
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Runs 05:00 weekly on Monday (see https://crontab.guru)
+    - cron: '0 5 * * 1'
+    
+env:
+  DBT_PROFILES_DIR: "${{ secrets.DBT_PROFILES_DIR }}"
+
+  ACCOUNT: "${{ secrets.ACCOUNT }}"
+  ROLE: "${{ secrets.ROLE }}"
+  USER: "${{ secrets.USER }}"
+  PASSWORD: "${{ secrets.PASSWORD }}"
+  REGION: "${{ secrets.REGION }}"
+  DATABASE: "${{ secrets.DATABASE }}"
+  WAREHOUSE: "${{ secrets.WAREHOUSE }}"
+  SCHEMA: "${{ secrets.SCHEMA }}"
+
+
+jobs:
+  called_workflow_template:
+    uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
+    with:
+      dbt_command: dbt run -m models/silver/labels/silver__deposit_wallets.sql models/silver/labels/deposit_wallets --full-refresh
+      environment: workflow_prod
+      warehouse: ${{ vars.WAREHOUSE }}
+    secrets: inherit 
