@@ -120,21 +120,40 @@ WITH base AS (
     UNION ALL
     SELECT
         'solana' AS blockchain,
-        swap_program as platform,
-        block_id as block_number,
+        swap_program AS platform,
+        block_id AS block_number,
         block_timestamp,
-        tx_id as tx_hash,
+        tx_id AS tx_hash,
         swapper AS trader,
-        lower(swap_from_mint) as token_in,
+        LOWER(swap_from_mint) AS token_in,
         swap_from_amount AS amount_in_raw,
-        lower(swap_to_mint) as token_out,
+        LOWER(swap_to_mint) AS token_out,
         swap_to_amount AS amount_out_raw,
         _log_id
-    from  {{ source(
+    FROM
+        {{ source(
             'solana_core',
             'fact_swaps'
         ) }}
-    where succeeded
+    WHERE
+        succeeded
+    UNION ALL
+    SELECT
+        'near' AS blockchain,
+        platform,
+        block_id AS block_number,
+        block_timestamp,
+        tx_hash,
+        trader,
+        token_in,
+        amount_in_raw,
+        token_out,
+        amount_out_raw,
+        swap_id AS _log_id
+    from {{ source(
+        'near_silver',
+        'dex_swaps_s3'
+    ) }}
 )
 SELECT
     blockchain,
