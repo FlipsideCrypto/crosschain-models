@@ -6,6 +6,7 @@ models:
           combination_of_columns:
             - ADDRESS
             - START_DATE
+            - TAG_NAME
     columns:
       - name: ADDRESS
         tests:
