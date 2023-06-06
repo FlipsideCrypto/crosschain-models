@@ -187,6 +187,12 @@ sources:
     schema: core
     tables:
       - name: fact_transfers
+      - name: ez_dex_swaps
+  - name: near_silver
+    database: near
+    schema: silver
+    tables:
+      - name: dex_swaps_s3
   - name: osmosis_silver
     database: osmosis
     schema: silver
