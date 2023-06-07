@@ -91,3 +91,4 @@ SELECT
     A.*
 FROM
     final_table A
+
