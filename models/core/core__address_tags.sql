@@ -252,6 +252,30 @@ SELECT
     end_date,
     tag_created_at
 FROM
+    {{ ref('silver__tags_nft_blur_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_nft_sudoswap_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
     {{ ref('silver__tags_wallet_ETH_value') }}
 UNION ALL
 SELECT
