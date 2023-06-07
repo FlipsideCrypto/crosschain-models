@@ -73,6 +73,8 @@ sources:
       - name: rarible_sales
       - name: seaport_sales
       - name: x2y2_sales
+      - name: blur_sales
+      - name: sudoswap_sales
   - name: algorand_core
     database: algorand
     schema: core
