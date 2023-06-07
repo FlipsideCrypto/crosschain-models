@@ -1,0 +1,19 @@
+version: 2
+models:
+  - name: silver__tags_token_standard
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ADDRESS
+            - START_DATE
+            - TAG_NAME
+    columns:
+      - name: ADDRESS
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - STRING
+                - VARCHAR
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: 0[xX][0-9a-fA-F]+
