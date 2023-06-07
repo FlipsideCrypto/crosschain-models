@@ -502,3 +502,15 @@ SELECT
     '2023-05-18' :: TIMESTAMP as tag_created_at
 FROM  
     {{ ref('silver__dydx_delegates') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard') }}
