@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "CONCAT_WS('-', address, start_date, tag_name)",
+    unique_key = "CONCAT_WS('-', address, start_date)",
     incremental_strategy = 'delete+insert',
 ) }}
 
@@ -8,14 +8,7 @@ SELECT
     DISTINCT 'ethereum' AS blockchain,
     'flipside' AS creator,
     contract_address AS address,
-    CASE
-        WHEN topics [0] = '0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62' THEN 'erc-1155'
-        WHEN (
-            topics [0] = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
-            AND topics [3] IS NOT NULL
-        ) THEN 'erc-721'
-        ELSE 'erc-20'
-    END AS tag_name,
+    'erc-4626' AS tag_name,
     'token standard' AS tag_type,
     MIN(
         block_timestamp :: DATE
@@ -26,14 +19,14 @@ SELECT
 FROM
     {{ source(
         'ethereum_silver',
-        'decoded_logs'
+        'logs'
     ) }}
 WHERE
     topics [0] IN (
-        '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
-        '0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62'
+        '0xdcbc1c05240f31ff3ad067ef1ee35ce4997762752e3a095284754544f4c709d7',
+        --4626 Deposit
+        '0xfbde797d201c681b91056529119e0b02407c7bb96a4a2c75c01fc9667232c8db' -- 4626 Withdraw
     )
-    AND decoded_flat :from = '0x0000000000000000000000000000000000000000'
 
 {% if is_incremental() %}
 AND _INSERTED_TIMESTAMP > (
@@ -50,8 +43,6 @@ AND contract_address NOT IN (
 )
 {% endif %}
 GROUP BY
-    1,
-    2,
-    3,
-    4,
-    5
+    contract_address
+HAVING
+    COUNT(DISTINCT(topics [0])) = 2
