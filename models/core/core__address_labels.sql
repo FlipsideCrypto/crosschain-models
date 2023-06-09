@@ -9,7 +9,7 @@ SELECT
     blockchain,
     address,
     creator,
-    label_type,
+    case when label_type = 'layer2' then 'bridge' else label_type end as label_type,
     label_subtype,
     address_name,
     project_name
@@ -24,7 +24,7 @@ SELECT
     blockchain,
     address,
     creator,
-    label_type,
+    case when label_type = 'layer2' then 'bridge' else label_type end as label_type,
     label_subtype,
     address_name,
     project_name
@@ -37,7 +37,7 @@ SELECT
   blockchain,
   address,
   creator,
-  label_type,
+  case when label_type = 'layer2' then 'bridge' else label_type end as label_type,
   label_subtype,
   address_name,
   project_name
@@ -50,7 +50,7 @@ SELECT
   blockchain,
   address,
   creator,
-  label_type,
+  case when label_type = 'layer2' then 'bridge' else label_type end as label_type,
   label_subtype,
   address_name,
   project_name
