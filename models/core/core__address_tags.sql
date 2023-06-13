@@ -550,3 +550,27 @@ SELECT
     tag_created_at
 FROM
     {{ ref('silver__tags_token_standard_erc4626') }}
+UNION ALL
+SELECT 
+    blockchain, 
+    creator, 
+    lower(address), 
+    tag_name, 
+    tag_type, 
+    start_date :: date as start_date,
+    null as end_date,
+    '2023-06-13' :: TIMESTAMP as tag_created_at
+FROM  
+    {{ ref('silver__fund_address_tags') }}
+UNION ALL
+SELECT 
+    blockchain, 
+    creator, 
+    lower(address), 
+    tag_name, 
+    tag_type, 
+    start_date :: date as start_date,
+    null as end_date,
+    '2023-06-13' :: TIMESTAMP as tag_created_at
+FROM  
+    {{ ref('silver__influencer_address_tags') }}
