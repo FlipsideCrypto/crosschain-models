@@ -1,0 +1,22 @@
+version: 2
+models:
+  - name: core__dim_evm_event_abis
+    description: This table contains the individual event abis for each all contracts that we have ABIs for. Proxies are rolled up to their implementation.
+
+    columns:
+      - name: BLOCKCHAIN
+        description: The blockchain that the event abi is for.
+      - name: PARENT_CONTRACT_ADDRESS
+        description: The address of the contract that the event abi is for.
+      - name: EVENT_NAME
+        description: The name of the event.
+      - name: ABI
+        description: The abi of the event.
+      - name: SIMPLE_EVENT_NAME
+        description: The name of the event along with its parameters.
+      - name: EVENT_SIGNATURE
+        description: The keccak256 signature of the simple event name. This can be used to filter for events in the logs table on topics[0].
+      - name: START_BLOCK
+        description: The block number of the creation of the contract containing the event. This could be from a proxy or an implementation.
+      - name: END_BLOCK
+        description: The block number before a similar event was created in the contract. This could be from a proxy or an implementation.
