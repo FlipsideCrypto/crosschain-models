@@ -35,7 +35,7 @@ FROM
         'Harmony_db',
         'EZ_SUSHI_SWAPS'
     ) }} 
-
+ 
 Union all
 
 
