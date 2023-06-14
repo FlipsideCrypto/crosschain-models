@@ -156,6 +156,7 @@ sources:
       - name: contracts
       - name: abis
       - name: complete_event_abis
+      - name: decoded_logs
   - name: gnosis_silver
     database: gnosis
     schema: silver
