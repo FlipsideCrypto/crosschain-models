@@ -49,6 +49,7 @@ sources:
       - name: labels
       - name: abis
       - name: contracts
+      - name: complete_event_abis
   - name: crosschain_silver
     database: crosschain
     schema: silver
@@ -89,6 +90,7 @@ sources:
       - name: traces
       - name: transactions
       - name: contracts
+      - name: complete_event_abis
   - name: arbitrum_core
     database: arbitrum
     schema: core
@@ -105,6 +107,7 @@ sources:
       - name: transactions
       - name: abis
       - name: contracts
+      - name: complete_event_abis
   - name: avalanche_core
     database: avalanche
     schema: core
@@ -121,6 +124,7 @@ sources:
       - name: transactions
       - name: abis
       - name: contracts
+      - name: complete_event_abis
   - name: polygon_core
     database: polygon
     schema: core
@@ -135,6 +139,7 @@ sources:
       - name: traces
       - name: transactions
       - name: contracts
+      - name: complete_event_abis
   - name: optimism_core
     database: optimism
     schema: core
@@ -150,6 +155,12 @@ sources:
       - name: transactions
       - name: contracts
       - name: abis
+      - name: complete_event_abis
+  - name: gnosis_silver
+    database: gnosis
+    schema: silver
+    tables:
+      - name: complete_event_abis
   - name: bsc_core
     database: bsc
     schema: core
