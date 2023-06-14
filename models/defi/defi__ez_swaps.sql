@@ -2,7 +2,8 @@
     materialized = 'view',
     tags = ['snowflake', 'crosschain','swaps'],
     persist_docs ={ "relation": true,
-    "columns": true }
+    "columns": true },
+    enabled = false
 ) }}
 
 -- Harmony/sushi
@@ -34,7 +35,7 @@ FROM
         'Harmony_db',
         'EZ_SUSHI_SWAPS'
     ) }} 
-
+ 
 Union all
 
 

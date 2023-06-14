@@ -2,7 +2,8 @@
     materialized = 'view',
     tags = ['snowflake', 'crosschain','lending'],
     persist_docs ={ "relation": true,
-    "columns": true }
+    "columns": true },
+    enabled = false,
 ) }}
 
 -- Ethereum/sushi

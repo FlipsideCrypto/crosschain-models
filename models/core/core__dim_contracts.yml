@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: core__dim_contracts
-    description: This table contains contract details for contracts deployed on the Ethereum, Optimism, Polygon, Arbitrum, and Avalanche blockchains. 
+    description: This table contains contract details for contracts deployed on the Ethereum, Optimism, Polygon, BSC, Arbitrum, Avalanche, Osmosis and Solana blockchains. 
 
     columns:
       - name: ADDRESS
