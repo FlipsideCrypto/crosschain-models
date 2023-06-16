@@ -97,6 +97,7 @@ sources:
     tables:
       - name: fact_token_transfers
       - name: fact_traces
+      - name: dim_contracts
   - name: avalanche_silver
     database: avalanche
     schema: silver
@@ -114,6 +115,7 @@ sources:
     tables:
       - name: fact_token_transfers
       - name: fact_traces
+      - name: dim_contracts
   - name: polygon_silver
     database: polygon
     schema: silver
@@ -131,6 +133,7 @@ sources:
     tables:
       - name: fact_token_transfers
       - name: fact_traces
+      - name: dim_contracts
   - name: optimism_silver
     database: optimism
     schema: silver
@@ -146,6 +149,7 @@ sources:
     tables:
       - name: fact_token_transfers
       - name: fact_traces
+      - name: dim_contracts
   - name: bsc_silver
     database: bsc
     schema: silver
@@ -169,6 +173,7 @@ sources:
     tables:
       - name: fact_token_transfers
       - name: fact_traces
+      - name: dim_contracts
   - name: thorchain
     database: flipside_prod_db
     schema: thorchain

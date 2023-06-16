@@ -1,0 +1,16 @@
+version: 2
+models:
+  - name: core__dim_evm_contracts
+    description: This table contains all contracts that we have names for across supported EVM blockchains.
+
+    columns:
+      - name: BLOCKCHAIN
+        description: The blockchain that the event abi is for.
+      - name: ADDRESS
+        description: The address of the contract.
+      - name: SYMBOL
+        description: The symbol of the contract.
+      - name: NAME
+        description: The name of the contract.
+      - name: DECIMALS
+        description: The number of decimals for the contract.
