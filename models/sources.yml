@@ -162,6 +162,7 @@ sources:
     schema: silver
     tables:
       - name: complete_event_abis
+      - name: contracts
   - name: bsc_core
     database: bsc
     schema: core
