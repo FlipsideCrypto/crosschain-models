@@ -285,3 +285,24 @@ sources:
       - name: token_metadata
       - name: solscan_tokens
       - name: events
+  - name: avalanche_observ
+    database: avalanche
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: logs_completeness
+      - name: receipts_completeness
+      - name: traces_completeness
+      - name: transactions_completeness
+  - name: cosmos_observ
+    database: cosmos
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+  - name: osmosis_observ
+    database: osmosis
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
