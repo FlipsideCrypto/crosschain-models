@@ -8,16 +8,13 @@
 WITH base_legacy_labels AS (
 
     SELECT
-        test_name,
-        min_block,
-        max_block,
-        min_block_timestamp,
-        max_block_timestamp,
-        blocks_tested,
-        blocks_impacted_count,
-        blocks_impacted_array,
-        test_failure_details,
-        test_timestamp
+        DISTINCT system_created_at,
+        insert_date,
+        address,
+        label_type AS l1_label,
+        label_subtype AS l2_label,
+        address_name,
+        project_name
     FROM
         {{ source(
             'crosschain_core',
