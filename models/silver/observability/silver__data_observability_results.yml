@@ -1,0 +1,30 @@
+version: 2
+models:
+  - name: silver__data_observability_results
+    columns:
+      - name: BLOCKCHAIN
+        description: The name of the blockchain
+        tests:
+          - not_null
+      - name: TEST_NAME
+        description: The name of the test
+        tests:
+          - not_null
+      - name: MIN_BLOCK
+        description: The lowest block in the test
+      - name: MAX_BLOCK
+        description: The highest block in the test
+      - name: MIN_BLOCK_TIMESTAMP
+        description: The lowest block timestamp in the test
+      - name: MAX_BLOCK_TIMESTAMP
+        description: The highest block timestamp in the test
+      - name: BLOCKS_TESTED
+        description: Count of blocks in the test
+      - name: BLOCKS_IMPACTED_COUNT
+        description: Count of block gaps in the test
+      - name: BLOCKS_IMPACTED_ARRAY
+        description: Array of affected blocks
+      - name: TEST_TIMESTAMP
+        description: When the test was run
+
+     
