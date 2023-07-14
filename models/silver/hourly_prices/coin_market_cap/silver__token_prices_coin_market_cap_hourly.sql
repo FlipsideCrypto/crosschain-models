@@ -192,7 +192,7 @@ final_prices AS (
     WHERE
         CLOSE IS NOT NULL
         AND token_address IS NOT NULL 
-        AND LEN(token_address) <> 0
+        AND LEN(token_address) <> 0 
 ),
 base_timestamp AS (
     SELECT
