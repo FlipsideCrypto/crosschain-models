@@ -347,3 +347,12 @@ sources:
       - name: receipts_completeness
       - name: traces_completeness
       - name: transactions_completeness
+  - name: optimism_observ
+    database: optimism
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: logs_completeness
+      - name: receipts_completeness
+      - name: traces_completeness
+      - name: transactions_completeness
