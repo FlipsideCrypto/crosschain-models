@@ -9,12 +9,12 @@ WITH display AS (
     SELECT
         DISTINCT tx_hash,
         block_timestamp,
-        event_inputs :displayName :: STRING AS tag_name,
+        decoded_flat :displayName :: STRING AS tag_name,
         _inserted_timestamp
     FROM
         {{ source(
             'arbitrum_silver',
-            'logs'
+            'decoded_logs'
         ) }}
     WHERE
         contract_address ILIKE '0x4F3AF332A30973106Fe146Af0B4220bBBeA748eC'
@@ -33,11 +33,11 @@ register AS (
     SELECT
         DISTINCT tx_hash,
         block_timestamp,
-        event_inputs :adminAddress :: STRING AS address
+        decoded_flat :adminAddress :: STRING AS address
     FROM
         {{ source(
             'arbitrum_silver',
-            'logs'
+            'decoded_logs'
         ) }}
     WHERE
         contract_address ILIKE '0x4F3AF332A30973106Fe146Af0B4220bBBeA748eC'
