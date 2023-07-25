@@ -2,47 +2,32 @@
     materialized = 'view'
 ) }}
 
-SELECT
-    contract_address,
-    abi_hash,
-    'ethereum' AS blockchain
-FROM
-    {{ source(
-        'ethereum_silver',
-        'abis'
-    ) }}
-union all
 
-SELECT
-    contract_address,
-    abi_hash,
-    'polygon' AS blockchain
-FROM
-    {{ source(
-        'polygon_silver',
-        'abis'
-    ) }}
 
-union all
+{% set models = [
+    ('ethereum', source('ethereum_silver', 'abis')),
+    ('polygon', source('polygon_silver', 'abis')),
+    ('avalanche', source('avalanche_silver', 'abis')),
+    ('bsc', source('bsc_silver', 'abis')),
+    ('arbitrum', source('arbitrum_silver', 'abis')),
+    ('optimism', source('optimism_silver', 'abis')),
+    ('base', source('base_silver', 'abis')),
+    ('gnosis', source('gnosis_silver', 'abis'))
+]
+%}
 
-SELECT
-    contract_address,
-    abi_hash,
-    'avalanche' AS blockchain
-FROM
-    {{ source(
-        'avalanche_silver',
-        'abis'
-    ) }}
-
-union all
-
-SELECT
-    contract_address,
-    abi_hash,
-    'bsc' AS blockchain
-FROM
-    {{ source(
-        'bsc_silver',
-        'abis'
-    ) }}
+SELECT *
+FROM (
+        {% for models in models %}
+        SELECT
+        contract_address,
+        abi_hash,
+        '{{ models[0] }}' AS blockchain
+        FROM {{ models[1] }}
+        {% if not loop.last %}
+        {% if is_incremental() %}
+        {% endif %}
+        UNION ALL
+        {% endif %}
+        {% endfor %}
+    )

@@ -33,6 +33,11 @@
     ('optimism', source('optimism_observ', 'receipts_completeness')),
     ('optimism', source('optimism_observ', 'traces_completeness')),
     ('optimism', source('optimism_observ', 'transactions_completeness')),
+    ('base', source('base_observ', 'blocks_completeness')),
+    ('base', source('base_observ', 'logs_completeness')),
+    ('base', source('base_observ', 'receipts_completeness')),
+    ('base', source('base_observ', 'traces_completeness')),
+    ('base', source('base_observ', 'transactions_completeness')),
     ('cosmos', source('cosmos_observ', 'blocks_completeness')),
     ('cosmos', source('cosmos_observ', 'transactions_completeness')),
     ('osmosis', source('osmosis_observ', 'blocks_completeness')),
@@ -60,4 +65,4 @@ FROM (
         UNION ALL
         {% endif %}
         {% endfor %}
-        )
+    )
