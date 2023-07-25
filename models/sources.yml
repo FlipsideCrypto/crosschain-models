@@ -141,6 +141,7 @@ sources:
       - name: transactions
       - name: contracts
       - name: complete_event_abis
+      - name: decoded_logs
   - name: optimism_core
     database: optimism
     schema: core

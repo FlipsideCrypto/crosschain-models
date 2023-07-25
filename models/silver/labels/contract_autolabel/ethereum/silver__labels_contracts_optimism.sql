@@ -83,13 +83,12 @@ base_transacts AS (
 base_logs AS (
     SELECT
         DISTINCT tx_hash,
-        contract_name,
         event_name,
         _inserted_timestamp
     FROM
         {{ source(
             'optimism_silver',
-            'logs'
+            'decoded_logs'
         ) }}
     WHERE
         tx_hash IN (
@@ -111,7 +110,6 @@ base_logs AS (
         )
         AND event_name != 'SetTokenCreated'
         AND event_name != 'PoolUpdate'
-        AND contract_name IS NOT NULL
         AND event_name IS NOT NULL
         AND tx_hash IN (
             SELECT
@@ -192,7 +190,6 @@ final_base AS (
             )
         END AS address_name_fixed,
         A.project_name,
-        C.contract_name,
         C.event_name,
         A._inserted_timestamp
     FROM
