@@ -92,6 +92,7 @@ sources:
       - name: contracts
       - name: complete_event_abis
       - name: decoded_logs
+      - name: abis
   - name: arbitrum_core
     database: arbitrum
     schema: core
@@ -142,6 +143,7 @@ sources:
       - name: contracts
       - name: complete_event_abis
       - name: decoded_logs
+      - name: abis
   - name: optimism_core
     database: optimism
     schema: core
@@ -164,6 +166,7 @@ sources:
     schema: silver
     tables:
       - name: complete_event_abis
+      - name: abis
   - name: bsc_core
     database: bsc
     schema: core
@@ -358,3 +361,17 @@ sources:
       - name: receipts_completeness
       - name: traces_completeness
       - name: transactions_completeness
+  - name: base_observ
+    database: base
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: logs_completeness
+      - name: receipts_completeness
+      - name: traces_completeness
+      - name: transactions_completeness
+  - name: base_silver
+    database: base
+    schema: silver
+    tables:
+      - name: abis
