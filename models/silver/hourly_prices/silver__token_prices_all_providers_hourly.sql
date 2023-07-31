@@ -20,9 +20,9 @@ WITH all_providers AS (
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) :: DATE - 1
         FROM
             {{ this }}
     )
@@ -41,9 +41,9 @@ FROM
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) :: DATE - 1
         FROM
             {{ this }}
     )
@@ -62,9 +62,9 @@ FROM
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) :: DATE - 1
         FROM
             {{ this }}
     )
