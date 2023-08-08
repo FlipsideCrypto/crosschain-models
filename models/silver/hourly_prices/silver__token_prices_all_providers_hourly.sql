@@ -99,6 +99,7 @@ FINAL AS (
                 'polygon',
                 'polygon-pos'
             ) THEN 'polygon'
+            WHEN LOWER(platform) IN ('base') THEN 'base'
             WHEN platform IN (
                 'cosmos',
                 'evmos',
@@ -137,14 +138,15 @@ FROM
 WHERE
     len(token_address) > 0
     AND NOT (
-        blockchain IN (
+        LOWER(blockchain) IN (
             'arbitrum',
             'avalanche',
             'bsc',
             'ethereum',
             'gnosis',
             'optimism',
-            'polygon'
+            'polygon',
+            'base'
         )
         AND token_address NOT ILIKE '0x%'
     )
