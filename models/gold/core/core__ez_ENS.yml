@@ -1,4 +1,4 @@
 version: 2
 models:
   - name: core__ez_ENS
-    description: Deprecating soon! This is a notice that we're replacing this table with `ens__ez_ens_domains`. Please migrate queries to the new table by 9/11/23. There will be no column changes or any other changes of any kind.
+    description: Deprecating soon! This is a notice that we're replacing this table with `ens__ez_ens_domains`. Please migrate queries to the new table by 9/14/23. There will be no column changes or any other changes of any kind.
