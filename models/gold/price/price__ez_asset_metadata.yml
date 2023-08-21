@@ -9,8 +9,6 @@ models:
             - BLOCKCHAIN
 
     columns:
-      - name: PROVIDER
-        description: The provider or source of the data.
       - name: ID
         description: The unique identifier representing the asset.
       - name: NAME
