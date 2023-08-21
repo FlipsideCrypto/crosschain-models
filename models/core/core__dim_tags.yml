@@ -1,0 +1,21 @@
+version: 2
+models:
+  - name: core__dim_tags
+    description: Holds data for our address tags.
+    columns:
+      - name: BLOCKCHAIN
+        description: The blockchain that the address belongs to.
+      - name: CREATOR
+        description: Who created the tag. 'flipside' for official flipside tags. 
+      - name: ADDRESS
+        description: The address of the contract or wallet the tag describes.
+      - name: TAG_NAME
+        description: Tag name (sub-category).
+      - name: TAG_TYPE
+        description: Tag type (high-level category).
+      - name: START_DATE
+        description: Date the tag first applies. For tags that are permanent, this might be the date the address had its first behavior that warrants its tag, or the addresses' first transaction.
+      - name: END_DATE
+        description: Date the tag no longer applies (for tags that are permanent or currently active, end_date can be NULL).
+      - name: TAG_CREATED_AT
+        description: Date the tag was added to our data.

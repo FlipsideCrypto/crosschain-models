@@ -1,24 +1,4 @@
 version: 2
 models:
   - name: core__ez_hourly_prices
-    description: A convenience table for determining token prices by address and blockchain.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - HOUR
-            - TOKEN_ADDRESS
-            - BLOCKCHAIN
-
-    columns:
-      - name: HOUR
-        description: Hour that the price was recorded at
-      - name: TOKEN_ADDRESS
-        description: Address of the token
-      - name: SYMBOL
-        description: Symbol of the token
-      - name: DECIMALS
-        description: The number of decimals for token contract
-      - name: BLOCKCHAIN
-        description: Blockchain, Network, or Platform the token price is recorded on.
-      - name: PRICE
-        description: Closing price of the recorded hour in USD
+    description: Deprecating soon! This is a notice that we're replacing this table with `price__ez_hourly_token_prices`. Please migrate queries to the new table by 9/11/23. There will be no column changes or any other changes of any kind.

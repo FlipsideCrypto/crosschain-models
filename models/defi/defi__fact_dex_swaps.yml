@@ -1,0 +1,49 @@
+version: 2
+models:
+  - name: defi__fact_dex_swaps
+    description: A comprehensive fact table holding blockchain and platform specific decentralized exchange swaps. This table contains dex swaps from Ethereum, Optimism, Polygon, BSC, Avalanche, Osmosis, Solana and Near.
+
+    columns:
+      - name: BLOCKCHAIN
+        description: Blockchain, Network, or Platform the token price is recorded on.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: PLATFORM
+        description: The name of the dex or swap platform
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: BLOCK_NUMBER
+        description: Also known as block height. The block number, which indicates the length of the blockchain, increases after the addition of each new block. 
+        tests:
+          - dbt_expectations.expect_column_to_exist          
+      - name: BLOCK_TIMESTAMP
+        description: The date and time at which the block was produced.  
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TX_HASH
+        description: Transaction hash is a unique 66-character identifier that is generated when a transaction is executed. 
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TRADER
+        description: The address that initiated the swap.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TOKEN_IN
+        description: The address of the token sent for swap.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: AMOUNT_IN_RAW
+        description: The unadjusted amount of tokens put into the swap.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TOKEN_OUT
+        description: The address of the token being swapped to.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: AMOUNT_OUT_RAW
+        description: The unadjusted amount of tokens taken out of or received from the swap.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: _LOG_ID
+        tests:
+          - dbt_expectations.expect_column_to_exist
