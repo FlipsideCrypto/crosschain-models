@@ -58,6 +58,7 @@ sources:
       - name: optimism_delegates
       - name: osmosis_developer_vesting_receivers
       - name: aave_balancer_addresses
+      - name: uniswap_verified_token_tags
   - name: crosschain_core
     database: crosschain
     schema: core
