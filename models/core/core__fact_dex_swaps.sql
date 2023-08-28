@@ -158,9 +158,9 @@ WITH base AS (
         tx_id AS tx_hash,
         trader AS trader,
         from_currency AS token_in,
-        from_amount AS amount_in,
+        from_amount AS amount_in_raw,
         to_currency AS token_out,
-        to_amount amount_out,
+        to_amount AS amount_out_raw,
         CONCAT(
             tx_id,
             '-',

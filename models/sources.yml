@@ -162,12 +162,6 @@ sources:
       - name: abis
       - name: complete_event_abis
       - name: decoded_logs
-  - name: gnosis_silver
-    database: gnosis
-    schema: silver
-    tables:
-      - name: complete_event_abis
-      - name: abis
   - name: bsc_core
     database: bsc
     schema: core
@@ -376,11 +370,19 @@ sources:
     schema: silver
     tables:
       - name: abis
+      - name: contracts
   - name: base_silver_dex
     database: base
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+  - name: gnosis_silver
+    database: gnosis
+    schema: silver
+    tables:
+      - name: complete_event_abis
+      - name: abis
+      - name: contracts
   - name: gnosis_silver_dex
     database: gnosis
     schema: silver_dex
