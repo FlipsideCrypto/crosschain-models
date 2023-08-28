@@ -381,3 +381,12 @@ sources:
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+  - name: gnosis_observ
+    database: gnosis
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: logs_completeness
+      - name: receipts_completeness
+      - name: traces_completeness
+      - name: transactions_completeness
