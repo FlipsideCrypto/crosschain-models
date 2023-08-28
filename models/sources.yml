@@ -381,6 +381,11 @@ sources:
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+  - name: gnosis_silver_dex
+    database: gnosis
+    schema: silver_dex
+    tables:
+      - name: complete_dex_swaps
   - name: gnosis_observ
     database: gnosis
     schema: silver_observability
