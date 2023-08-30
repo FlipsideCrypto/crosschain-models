@@ -371,6 +371,7 @@ sources:
     tables:
       - name: abis
       - name: contracts
+      - name: traces
   - name: base_silver_dex
     database: base
     schema: silver_dex
@@ -383,6 +384,7 @@ sources:
       - name: complete_event_abis
       - name: abis
       - name: contracts
+      - name: traces
   - name: gnosis_silver_dex
     database: gnosis
     schema: silver_dex
