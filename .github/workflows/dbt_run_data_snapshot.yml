@@ -1,11 +1,11 @@
-name: dbt_run_scheduled_daily
-run-name: dbt_run_scheduled_daily
+name: dbt_run_data_snapshot
+run-name: dbt_run_data_snapshot
 
 on:
   workflow_dispatch:
   schedule:
-    # Runs 02:00 daily (see https://crontab.guru)
-    - cron: '0 2 * * *'
+    # Runs every 10 mins (see https://crontab.guru)
+    - cron: '*/10 * * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ secrets.DBT_PROFILES_DIR }}"
@@ -24,7 +24,7 @@ jobs:
   called_workflow_template:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
-      dbt_command: dbt run -s ./models --exclude models/silver/hourly_prices+ models/bronze_api models/silver/utilities models/silver/observability/silver__data_delay.sql
+      dbt_command: dbt run -m models/silver/observability/silver__data_delay.sql
       environment: workflow_prod
       warehouse: ${{ vars.WAREHOUSE }}
     secrets: inherit 
