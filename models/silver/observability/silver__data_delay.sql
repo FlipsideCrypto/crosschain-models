@@ -121,6 +121,7 @@ SELECT
     max_timestamp,
     chain AS blockchain,
     delay,
+    'traces' AS test_table,
     CURRENT_TIMESTAMP AS test_timestamp
 FROM
     base
