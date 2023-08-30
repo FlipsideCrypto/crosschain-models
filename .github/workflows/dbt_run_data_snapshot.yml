@@ -4,8 +4,8 @@ run-name: dbt_run_data_snapshot
 on:
   workflow_dispatch:
   schedule:
-    # Runs every 10 mins (see https://crontab.guru)
-    - cron: '*/10 * * * *'
+    # Runs every 5 mins (see https://crontab.guru)
+    - cron: '*/5 * * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ secrets.DBT_PROFILES_DIR }}"
