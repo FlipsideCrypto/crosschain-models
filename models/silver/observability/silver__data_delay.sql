@@ -1,6 +1,7 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['blockchain','test_timestamp']
+    unique_key = ['blockchain','test_timestamp'],
+    full_refresh = false
 ) }}
 
 WITH base AS (
