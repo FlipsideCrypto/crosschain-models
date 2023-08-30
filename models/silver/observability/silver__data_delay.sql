@@ -7,7 +7,7 @@ WITH base AS (
 
     SELECT
         MAX(block_timestamp) AS max_timestamp,
-        'arb' AS chain,
+        'arbitrum' AS chain,
         DATEDIFF(
             'minutes',
             max_timestamp,
@@ -35,7 +35,7 @@ WITH base AS (
     UNION
     SELECT
         MAX(block_timestamp) AS max_timestamp,
-        'eth' AS chain,
+        'ethereum' AS chain,
         DATEDIFF(
             'minutes',
             max_timestamp,
@@ -49,7 +49,7 @@ WITH base AS (
     UNION
     SELECT
         MAX(block_timestamp) AS max_timestamp,
-        'poly' AS chain,
+        'polygon' AS chain,
         DATEDIFF(
             'minutes',
             max_timestamp,
@@ -91,7 +91,7 @@ WITH base AS (
     UNION
     SELECT
         MAX(block_timestamp) AS max_timestamp,
-        'avax' AS chain,
+        'avalanche' AS chain,
         DATEDIFF(
             'minutes',
             max_timestamp,
@@ -105,7 +105,7 @@ WITH base AS (
     UNION
     SELECT
         MAX(block_timestamp) AS max_timestamp,
-        'op' AS chain,
+        'optimism' AS chain,
         DATEDIFF(
             'minutes',
             max_timestamp,
