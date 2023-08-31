@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: core__address_tags
+  - name: core__dim_tags
     description: Holds data for our address tags.
     columns:
       - name: BLOCKCHAIN

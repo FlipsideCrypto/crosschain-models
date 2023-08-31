@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: core__ez_hourly_prices
+  - name: price__ez_hourly_token_prices
     description: A convenience table for determining token prices by address and blockchain.
     tests:
       - dbt_utils.unique_combination_of_columns:

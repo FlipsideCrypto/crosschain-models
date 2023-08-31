@@ -1,12 +1,8 @@
 version: 2
 models:
-  - name: core__ez_dex_swaps
+  - name: defi__fact_dex_swaps
     description: A comprehensive fact table holding blockchain and platform specific decentralized exchange swaps. This table contains dex swaps from Ethereum, Optimism, Polygon, BSC, Avalanche, Osmosis, Solana and Near.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - BLOCKCHAIN
-            - _LOG_ID
+
     columns:
       - name: BLOCKCHAIN
         description: Blockchain, Network, or Platform the token price is recorded on.
@@ -17,9 +13,9 @@ models:
         tests:
           - dbt_expectations.expect_column_to_exist
       - name: BLOCK_NUMBER
-        description: Also known as block height. The block number, which indicates the length of the blockchain, increases after the addition of each new block.      
+        description: Also known as block height. The block number, which indicates the length of the blockchain, increases after the addition of each new block. 
         tests:
-          - dbt_expectations.expect_column_to_exist     
+          - dbt_expectations.expect_column_to_exist          
       - name: BLOCK_TIMESTAMP
         description: The date and time at which the block was produced.  
         tests:
@@ -36,40 +32,16 @@ models:
         description: The address of the token sent for swap.
         tests:
           - dbt_expectations.expect_column_to_exist
-      - name: SYMBOL_IN
-        description: The symbol of the token sent for swap.
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: AMOUNT_IN_RAW
         description: The unadjusted amount of tokens put into the swap.
-        tests:
-          - dbt_expectations.expect_column_to_exist
-      - name: AMOUNT_IN
-        description: The decimal adjusted amount of tokens put into the swap.
-        tests:
-          - dbt_expectations.expect_column_to_exist
-      - name: AMOUNT_IN_USD
-        description: The amount of tokens put into the swap converted to USD using the price of the token.
         tests:
           - dbt_expectations.expect_column_to_exist
       - name: TOKEN_OUT
         description: The address of the token being swapped to.
         tests:
           - dbt_expectations.expect_column_to_exist
-      - name: SYMBOL_OUT
-        description: The symbol of the token being swapped to.
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: AMOUNT_OUT_RAW
         description: The unadjusted amount of tokens taken out of or received from the swap.
-        tests:
-          - dbt_expectations.expect_column_to_exist
-      - name: AMOUNT_OUT
-        description: The decimal adjusted amount of tokens taken out of or received from the swap.
-        tests:
-          - dbt_expectations.expect_column_to_exist
-      - name: AMOUNT_OUT_USD
-        description: The amount of tokens taken out of or received from the swap converted to USD using the price of the token.
         tests:
           - dbt_expectations.expect_column_to_exist
       - name: _LOG_ID

@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: core__fact_hourly_prices
+  - name: price__fact_hourly_token_prices
     description: A comprehensive fact table holding provider and blockchain specific hourly token prices.
 
     columns:
