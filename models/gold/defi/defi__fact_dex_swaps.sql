@@ -133,6 +133,24 @@ WITH base AS (
         ) }}
     UNION ALL
     SELECT
+        'gnosis' AS blockchain,
+        platform,
+        block_number,
+        block_timestamp,
+        tx_hash,
+        origin_from_address AS trader,
+        token_in,
+        amount_in_unadj AS amount_in_raw,
+        token_out,
+        amount_out_unadj AS amount_out_raw,
+        _log_id
+    FROM
+        {{ source(
+            'gnosis_silver_dex',
+            'complete_dex_swaps'
+        ) }}
+    UNION ALL
+    SELECT
         'osmosis' AS blockchain,
         'osmosis' platform,
         block_id AS block_number,
@@ -140,9 +158,9 @@ WITH base AS (
         tx_id AS tx_hash,
         trader AS trader,
         from_currency AS token_in,
-        from_amount AS amount_in,
+        from_amount AS amount_in_raw,
         to_currency AS token_out,
-        to_amount amount_out,
+        to_amount AS amount_out_raw,
         CONCAT(
             tx_id,
             '-',

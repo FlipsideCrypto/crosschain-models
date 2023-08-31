@@ -79,6 +79,30 @@ WITH base AS (
         ) }}
     UNION ALL
     SELECT
+        contract_address AS address,
+        token_symbol AS symbol,
+        token_name AS NAME,
+        token_decimals AS decimals,
+        'base' AS blockchain
+    FROM
+        {{ source(
+            'base_silver',
+            'contracts'
+        ) }}
+    UNION ALL
+    SELECT
+        contract_address AS address,
+        token_symbol AS symbol,
+        token_name AS NAME,
+        token_decimals AS decimals,
+        'gnosis' AS blockchain
+    FROM
+        {{ source(
+            'gnosis_silver',
+            'contracts'
+        ) }}
+    UNION ALL
+    SELECT
         address AS address,
         LOWER(project_name) AS symbol,
         label AS NAME,

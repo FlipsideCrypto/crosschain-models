@@ -58,6 +58,7 @@ sources:
       - name: optimism_delegates
       - name: osmosis_developer_vesting_receivers
       - name: aave_balancer_addresses
+      - name: uniswap_verified_token_tags
   - name: crosschain_core
     database: crosschain
     schema: core
@@ -161,12 +162,6 @@ sources:
       - name: abis
       - name: complete_event_abis
       - name: decoded_logs
-  - name: gnosis_silver
-    database: gnosis
-    schema: silver
-    tables:
-      - name: complete_event_abis
-      - name: abis
   - name: bsc_core
     database: bsc
     schema: core
@@ -375,8 +370,32 @@ sources:
     schema: silver
     tables:
       - name: abis
+      - name: contracts
+      - name: traces
   - name: base_silver_dex
     database: base
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+  - name: gnosis_silver
+    database: gnosis
+    schema: silver
+    tables:
+      - name: complete_event_abis
+      - name: abis
+      - name: contracts
+      - name: traces
+  - name: gnosis_silver_dex
+    database: gnosis
+    schema: silver_dex
+    tables:
+      - name: complete_dex_swaps
+  - name: gnosis_observ
+    database: gnosis
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: logs_completeness
+      - name: receipts_completeness
+      - name: traces_completeness
+      - name: transactions_completeness
