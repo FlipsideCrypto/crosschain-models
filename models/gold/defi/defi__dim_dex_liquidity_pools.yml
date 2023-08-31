@@ -1,0 +1,53 @@
+version: 2
+models:
+  - name: defi__dim_dex_liquidity_pools
+    description: A comprehensive dim table holding blockchain and platform specific decentralized exchange pools. This table contains dex swaps from Ethereum, Optimism, Polygon, BSC, BASE, Gnosis, and Arbitrum.
+
+    columns:
+      - name: BLOCKCHAIN
+        description: Blockchain, Network, or Platform the token price is recorded on.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: CREATION_BLOCK
+        description: The block number of when this pool was created.
+        tests:
+          - dbt_expectations.expect_column_to_exist          
+      - name: BLOCK_TIMESTAMP
+        description: The block timestamp of when this pool was created.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: CREATION_TX
+        description: The transaction where this contract was created.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: PLATFORM
+        description: The protocol or platform that the liquidity pool belongs to or swap occurred on.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: factory_address
+        description: The address that created or deployed this pool, where available.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: POOL_ADDRESS
+        description: The contract address for the liquidity pool.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: POOL_NAME
+        description: The name of the liquidity pool, where available. In some cases, the pool name is a concatenation of symbols or token addresses.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TOKENS
+        description: The address for the token included in the liquidity pool, as a JSON object
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: symbols
+        description: The symbol for the token included in the liquidity pool, as a JSON object, where available.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: decimals
+        description: The number of decimals for the token included in the liquidity pool, as a JSON object, where available.
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: _id
+        tests:
+          - dbt_expectations.expect_column_to_exist
