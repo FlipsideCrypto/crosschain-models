@@ -17,8 +17,7 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals,
-        _id
+        decimals
     FROM
         {{ source(
             'ethereum_silver_dex',
@@ -36,8 +35,7 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals,
-        _id
+        decimals
     FROM
         {{ source(
             'optimism_silver_dex',
@@ -55,8 +53,7 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals,
-        _id
+        decimals
     FROM
         {{ source(
             'avalanche_silver_dex',
@@ -74,8 +71,7 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals,
-        _id
+        decimals
     FROM
         {{ source(
             'polygon_silver_dex',
@@ -93,8 +89,7 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals,
-        _id
+        decimals
     FROM
         {{ source(
             'bsc_silver_dex',
@@ -112,8 +107,7 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals,
-        _id
+        decimals
     FROM
         {{ source(
             'arbitrum_silver_dex',
@@ -131,8 +125,7 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals,
-        _id
+        decimals
     FROM
         {{ source(
             'base_silver_dex',
@@ -150,8 +143,7 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals,
-        _id
+        decimals
     FROM
         {{ source(
             'gnosis_silver_dex',
@@ -160,16 +152,15 @@ WITH base AS (
 )
 SELECT
     blockchain,
+    platform,
     block_number as creation_block,
     block_timestamp as creation_time,
     tx_hash as creation_tx,
-    platform,
     contract_address as factory_address,
     pool_address,
     pool_name,
     tokens,
     symbols,
-    decimals,
-    _id
+    decimals
 FROM
     base
