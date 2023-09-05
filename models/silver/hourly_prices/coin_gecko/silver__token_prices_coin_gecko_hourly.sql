@@ -82,8 +82,8 @@ base_legacy_prices AS (
         ) AS CLOSE --returns single price if multiple prices within the 59th minute
     FROM
         {{ source(
-            'legacy_db',
-            'prices_v2'
+            'bronze',
+            'legacy_prices'
         ) }}
         p
         LEFT JOIN asset_metadata m
@@ -207,24 +207,41 @@ base_timestamp AS (
         ) AS CLOSE,
         CASE
             WHEN (CAST(ARRAY_AGG(imputed) AS STRING)) ILIKE '%true%' THEN TRUE
-            ELSE FALSE
-            END AS imputed,
+            ELSE FALSEEND AS imputed,
             {{ dbt_utils.surrogate_key(
                 ['f.recorded_hour','f.token_address','f.platform']
             ) }} AS _unique_key,
             MAX(_inserted_timestamp) AS _inserted_timestamp
-        FROM
-            final_prices f
-            LEFT JOIN base_prices b
-            ON f.recorded_hour = b.recorded_hour
-            AND f.token_address = b.token_address
-            AND f.platform = b.platform
-        GROUP BY
-            1,
-            2,
-            3
-),
-FINAL AS (
+            FROM
+                final_prices f
+                LEFT JOIN base_prices b
+                ON f.recorded_hour = b.recorded_hour
+                AND f.token_address = b.token_address
+                AND f.platform = b.platform
+            GROUP BY
+                1,
+                2,
+                3
+        ),
+        FINAL AS (
+            SELECT
+                recorded_hour,
+                token_address,
+                platform,
+                CLOSE,
+                imputed,
+                _unique_key,
+                _inserted_timestamp,
+                LAST_VALUE(
+                    _inserted_timestamp ignore nulls
+                ) over (
+                    PARTITION BY token_address
+                    ORDER BY
+                        recorded_hour rows unbounded preceding
+                ) AS imputed_timestamp
+            FROM
+                base_timestamp
+        )
     SELECT
         recorded_hour,
         token_address,
@@ -232,30 +249,12 @@ FINAL AS (
         CLOSE,
         imputed,
         _unique_key,
-        _inserted_timestamp,
-        LAST_VALUE(
-            _inserted_timestamp ignore nulls
-        ) over (
-            PARTITION BY token_address
-            ORDER BY
-                recorded_hour rows unbounded preceding
-        ) AS imputed_timestamp
+        CASE
+            WHEN imputed_timestamp IS NULL THEN '2022-08-23'
+            ELSE COALESCE(
+                _inserted_timestamp,
+                imputed_timestamp
+            )
+        END AS _inserted_timestamp
     FROM
-        base_timestamp
-)
-SELECT
-    recorded_hour,
-    token_address,
-    platform,
-    CLOSE,
-    imputed,
-    _unique_key,
-    CASE
-        WHEN imputed_timestamp IS NULL THEN '2022-08-23'
-        ELSE COALESCE(
-            _inserted_timestamp,
-            imputed_timestamp
-        )
-    END AS _inserted_timestamp
-FROM
-    FINAL
+        FINAL

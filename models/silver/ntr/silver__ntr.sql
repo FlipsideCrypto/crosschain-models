@@ -36,7 +36,7 @@ FROM
                 FROM
                     {{ source(
                         'bronze',
-                        'prod_data_science_uploads_1748940988'
+                        'data_science_uploads'
                     ) }}
                 WHERE
                     TRIM(

@@ -9,13 +9,13 @@ WITH cte_date (date_rec) AS (
     FROM
         {% if target.name == 'prod' %}
             {{ source(
-                'legacy_db',
-                'hours'
+                'bronze',
+                'legacy_hours'
             ) }}
         {% else %}
             {{ source(
-                'legacy_dev_db',
-                'hours'
+                'bronze_dev',
+                'legacy_hours'
             ) }}
         {% endif %}
     WHERE
@@ -32,13 +32,13 @@ symbols AS (
     FROM
         {% if target.name == 'prod' %}
             {{ source(
-                'legacy_db',
-                'prices_v2'
+                'bronze',
+                'legacy_prices'
             ) }}
         {% else %}
             {{ source(
-                'legacy_dev_db',
-                'prices_v2'
+                'bronze_dev',
+                'legacy_prices'
             ) }}
         {% endif %}
     WHERE
@@ -65,15 +65,17 @@ recorded AS (
     FROM
         {% if target.name == 'prod' %}
             {{ source(
-                'legacy_db',
-                'prices_v2'
+                'bronze',
+                'legacy_prices'
             ) }}
         {% else %}
             {{ source(
-                'legacy_dev_db',
-                'prices_v2'
+                'bronze_dev',
+                'legacy_prices'
             ) }}
-        {% endif %} p
+        {% endif %}
+
+        p
     WHERE
         recorded_at >= CURRENT_DATE - 1
         AND recorded_at <= DATEADD(
