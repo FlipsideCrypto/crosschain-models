@@ -9,13 +9,13 @@ WITH hours AS (
     FROM
         {% if target.name == 'prod' %}
             {{ source(
-                'legacy_db',
-                'hours'
+                'bronze',
+                'legacy_hours'
             ) }}
         {% else %}
             {{ source(
-                'legacy_dev_db',
-                'hours'
+                'bronze_dev',
+                'legacy_hours'
             ) }}
         {% endif %}
     WHERE

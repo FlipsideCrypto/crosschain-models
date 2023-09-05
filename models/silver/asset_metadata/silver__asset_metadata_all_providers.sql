@@ -6,16 +6,22 @@
 
 WITH coin_gecko_meta AS (
 
-   SELECT
+    SELECT
         DISTINCT CASE
-            WHEN TRIM(a.token_address) ILIKE '^x%'
-            OR TRIM(a.token_address) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(a.token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
+            WHEN TRIM(
+                A.token_address
+            ) ILIKE '^x%'
+            OR TRIM(
+                A.token_address
+            ) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(A.token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
             WHEN id = 'osmosis' THEN 'uosmo'
             WHEN id = 'algorand' THEN '0'
-            ELSE a.token_address
+            ELSE A.token_address
         END AS token_address,
         LOWER(id) AS id,
-        LOWER(a.symbol) AS symbol,
+        LOWER(
+            A.symbol
+        ) AS symbol,
         LOWER(
             CASE
                 WHEN id = 'osmosis' THEN 'osmosis'
@@ -25,16 +31,21 @@ WITH coin_gecko_meta AS (
             END
         ) AS platform,
         'coingecko' AS provider,
-        a._inserted_timestamp
+        A._inserted_timestamp
     FROM
-            {{ ref(
+        {{ ref(
             'silver__asset_metadata_coin_gecko'
-        ) }} a
-    left join {{ source(
+        ) }} A
+        LEFT JOIN {{ source(
             'solana_silver',
             'token_metadata'
-        ) }} b
-    on LOWER(A.token_address) = LOWER(b.token_address)
+        ) }}
+        b
+        ON LOWER(
+            A.token_address
+        ) = LOWER(
+            b.token_address
+        )
 ),
 coin_market_cap_meta AS (
     SELECT
@@ -75,8 +86,8 @@ legacy_coin_gecko_meta AS (
         _inserted_timestamp
     FROM
         {{ source(
-            'legacy_db',
-            'prices_v2'
+            'bronze',
+            'legacy_prices'
         ) }}
         p
         LEFT JOIN coin_gecko_meta m
@@ -101,8 +112,8 @@ legacy_coin_market_cap_meta AS (
         _inserted_timestamp
     FROM
         {{ source(
-            'legacy_db',
-            'prices_v2'
+            'bronze',
+            'legacy_prices'
         ) }}
         p
         LEFT JOIN coin_market_cap_meta m
@@ -390,8 +401,9 @@ solana_cmc AS(
         INNER JOIN {{ source(
             'solana_silver',
             'token_metadata'
-        ) }} b
-        on A.id = b.coin_market_cap_id
+        ) }}
+        b
+        ON A.id = b.coin_market_cap_id
 ),
 solana_solscan AS (
     SELECT
@@ -491,8 +503,8 @@ all_sources AS (
         solana_cmc
     UNION
     SELECT
-        LOWER(token_address) as token_address,
-        LOWER(id) as id,
+        LOWER(token_address) AS token_address,
+        LOWER(id) AS id,
         symbol,
         platform,
         provider,
@@ -577,19 +589,8 @@ FROM
     FINAL
 WHERE
     len(token_address) > 0
-    AND NOT (
-        LOWER(blockchain) IN (
-            'arbitrum',
-            'avalanche',
-            'bsc',
-            'ethereum',
-            'gnosis',
-            'optimism',
-            'polygon',
-            'base'
-        )
-        AND token_address NOT ILIKE '0x%'
-    )
+    AND NOT (LOWER(blockchain) IN ('arbitrum', 'avalanche', 'bsc', 'ethereum', 'gnosis', 'optimism', 'polygon', 'base')
+    AND token_address NOT ILIKE '0x%')
     AND NOT (
         blockchain = 'algorand'
         AND TRY_CAST(

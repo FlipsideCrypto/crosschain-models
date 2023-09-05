@@ -1,26 +1,6 @@
 version: 2
 
 sources:
-  - name: legacy_db
-    database: flipside_prod_db
-    schema: silver
-    tables:
-      - name: prices_v2
-      - name: market_asset_metadata
-      - name: hours
-  - name: legacy_silver_crosschain
-    database: flipside_prod_db
-    schema: silver_crosschain
-    tables:
-      - name: ntr
-      - name: address_labels
-  - name: legacy_dev_db
-    database: flipside_dev_db
-    schema: silver
-    tables:
-      - name: prices_v2
-      - name: market_asset_metadata
-      - name: hours
   - name: crosschain_dev_silver
     database: crosschain_dev
     schema: silver
@@ -248,11 +228,23 @@ sources:
       - name: asset_historical_hourly_market_data_coin_gecko_api
       - name: asset_ohlc_coin_gecko_api
   - name: bronze
-    database: flipside_prod_db
+    database: crosschain
     schema: bronze
     tables: 
-      - name: prod_address_label_sink_291098491
-      - name: prod_data_science_uploads_1748940988
+      - name: address_labels
+      - name: data_science_uploads
+      - name: legacy_prices
+      - name: legacy_market_asset_metadata
+      - name: legacy_hours
+  - name: bronze_dev
+    database: crosschain_dev
+    schema: bronze
+    tables: 
+      - name: address_labels
+      - name: data_science_uploads
+      - name: legacy_prices
+      - name: legacy_market_asset_metadata
+      - name: legacy_hours
   - name: ethereum_silver_dex
     database: ethereum
     schema: silver_dex

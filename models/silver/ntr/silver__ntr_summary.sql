@@ -5,6 +5,7 @@
 ) }}
 
 WITH core_values AS (
+
     SELECT
         A.blockchain,
         A.symbol,
@@ -15,31 +16,32 @@ WITH core_values AS (
                 DISTINCT blockchain,
                 symbol
             FROM
-                {{ source(
-                    'legacy_silver_crosschain',
-                    'ntr'
-                ) }}
-            where blockchain != 'algoana'
+                {{ ref('silver__ntr') }}
+            WHERE
+                blockchain != 'algoana'
             ORDER BY
                 blockchain,
                 symbol
         ) A
         CROSS JOIN (
             SELECT
-                DISTINCT date_trunc('day', hour) AS xfer_date
+                DISTINCT DATE_TRUNC(
+                    'day',
+                    HOUR
+                ) AS xfer_date
             FROM
                 {{ source(
-                    'legacy_db',
-                    'hours'
+                    'bronze',
+                    'legacy_hours'
                 ) }}
-            where xfer_date >= (SELECT
-                    MIN(xfer_date)
-                FROM
-                    {{ source(
-                        'legacy_silver_crosschain',
-                        'ntr'
-                    ) }})
-                and xfer_date <= current_date
+            WHERE
+                xfer_date >= (
+                    SELECT
+                        MIN(xfer_date)
+                    FROM
+                        {{ ref('silver__ntr') }}
+                )
+                AND xfer_date <= CURRENT_DATE
         ) b
     ORDER BY
         A.blockchain,
@@ -84,12 +86,10 @@ base AS (
             END
         ) / COUNT(*) AS prop_did_bounty
     FROM
-        {{ source(
-            'legacy_silver_crosschain',
-            'ntr'
-        ) }}
+        {{ ref('silver__ntr') }}
     WHERE
-        reward > 0 and blockchain != 'algoana'
+        reward > 0
+        AND blockchain != 'algoana'
     GROUP BY
         blockchain,
         symbol,
@@ -142,79 +142,79 @@ ff_base AS(
     FROM
         joined_base
 ),
-final_upload as (
-SELECT
-    blockchain,
-    symbol,
-    xfer_date,
-    MIN(reward) over (
-        PARTITION BY blockchain,
+final_upload AS (
+    SELECT
+        blockchain,
         symbol,
-        grp
-    ) AS reward,
-    MIN(hodl) over (
-        PARTITION BY blockchain,
+        xfer_date,
+        MIN(reward) over (
+            PARTITION BY blockchain,
+            symbol,
+            grp
+        ) AS reward,
+        MIN(hodl) over (
+            PARTITION BY blockchain,
+            symbol,
+            grp
+        ) AS hodl,
+        MIN(unlabeled_transfer) over (
+            PARTITION BY blockchain,
+            symbol,
+            grp
+        ) AS unlabeled_transfer,
+        MIN(stake) over (
+            PARTITION BY blockchain,
+            symbol,
+            grp
+        ) AS stake,
+        MIN(cex_deposit) over (
+            PARTITION BY blockchain,
+            symbol,
+            grp
+        ) AS cex_deposit,
+        MIN(nft_buy) over (
+            PARTITION BY blockchain,
+            symbol,
+            grp
+        ) AS nft_buy,
+        MIN(dex_swap) over (
+            PARTITION BY blockchain,
+            symbol,
+            grp
+        ) AS dex_swap,
+        MIN(bridge) over (
+            PARTITION BY blockchain,
+            symbol,
+            grp
+        ) AS bridge,
+        MIN(prop_first_is_bounty) over (
+            PARTITION BY blockchain,
+            symbol,
+            grp
+        ) AS prop_first_is_bounty,
+        MIN(prop_did_hunt) over (
+            PARTITION BY blockchain,
+            symbol,
+            grp
+        ) AS prop_did_hunt,
+        MIN(prop_did_new_user) over (
+            PARTITION BY blockchain,
+            symbol,
+            grp
+        ) AS prop_did_new_user,
+        MIN(prop_did_bounty) over (
+            PARTITION BY blockchain,
+            symbol,
+            grp
+        ) AS prop_did_bounty
+    FROM
+        ff_base
+    ORDER BY
+        blockchain,
         symbol,
-        grp
-    ) AS hodl,
-    MIN(unlabeled_transfer) over (
-        PARTITION BY blockchain,
-        symbol,
-        grp
-    ) AS unlabeled_transfer,
-    MIN(stake) over (
-        PARTITION BY blockchain,
-        symbol,
-        grp
-    ) AS stake,
-    MIN(cex_deposit) over (
-        PARTITION BY blockchain,
-        symbol,
-        grp
-    ) AS cex_deposit,
-    MIN(nft_buy) over (
-        PARTITION BY blockchain,
-        symbol,
-        grp
-    ) AS nft_buy,
-    MIN(dex_swap) over (
-        PARTITION BY blockchain,
-        symbol,
-        grp
-    ) AS dex_swap,
-    MIN(bridge) over (
-        PARTITION BY blockchain,
-        symbol,
-        grp
-    ) AS bridge,
-    MIN(prop_first_is_bounty) over (
-        PARTITION BY blockchain,
-        symbol,
-        grp
-    ) AS prop_first_is_bounty,
-    MIN(prop_did_hunt) over (
-        PARTITION BY blockchain,
-        symbol,
-        grp
-    ) AS prop_did_hunt,
-    MIN(prop_did_new_user) over (
-        PARTITION BY blockchain,
-        symbol,
-        grp
-    ) AS prop_did_new_user,
-    MIN(prop_did_bounty) over (
-        PARTITION BY blockchain,
-        symbol,
-        grp
-    ) AS prop_did_bounty
-FROM
-    ff_base
-ORDER BY
-    blockchain,
-    symbol,
-    xfer_date
+        xfer_date
 )
-select 
+SELECT
     blockchain,
     symbol,
     xfer_date,
@@ -230,6 +230,11 @@ select
     prop_did_hunt,
     prop_did_new_user,
     prop_did_bounty
-    from final_upload
-    where reward is not null
-    order by blockchain, symbol, xfer_date
+FROM
+    final_upload
+WHERE
+    reward IS NOT NULL
+ORDER BY
+    blockchain,
+    symbol,
+    xfer_date

@@ -34,7 +34,7 @@ WITH subset_table AS (
   FROM
     {{ source(
       'bronze',
-      'prod_address_label_sink_291098491'
+      'address_labels'
     ) }}
   WHERE
     ARRAY_SIZE(
@@ -87,7 +87,7 @@ clean_table AS (
   FROM
     {{ source(
       'bronze',
-      'prod_address_label_sink_291098491'
+      'address_labels'
     ) }}
   WHERE
     ARRAY_SIZE(
@@ -149,8 +149,7 @@ flat_table AS (
     base_tables,
     LATERAL FLATTEN(
       input => record_content
-    ) t 
-  qualify(ROW_NUMBER() over(PARTITION BY blockchain, address, creator
+    ) t qualify(ROW_NUMBER() over(PARTITION BY blockchain, address, creator
   ORDER BY
     insert_date DESC)) = 1
 )
@@ -160,8 +159,8 @@ SELECT
   blockchain,
   address,
   creator,
-  l1_label as label_type,
-  l2_label as label_subtype,
+  l1_label AS label_type,
+  l2_label AS label_subtype,
   address_name,
   project_name,
   delete_flag
@@ -171,4 +170,3 @@ WHERE
   project_name IS NOT NULL
   AND address_name IS NOT NULL
   AND l1_label <> 'project' -- contract creations
-
