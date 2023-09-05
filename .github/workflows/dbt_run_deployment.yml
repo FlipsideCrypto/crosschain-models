@@ -1,19 +1,11 @@
-name: dbt_run_adhoc
-run-name: dbt_run_adhoc
+name: dbt_run_deployment
+run-name: dbt_run_deployment
 
 on:
   workflow_dispatch:
     branches:
       - "main"
     inputs:
-      environment:
-        type: choice 
-        description: DBT Run Environment
-        required: true
-        options:
-          - dev
-          - prod
-        default: dev
       warehouse:
         type: choice 
         description: Snowflake warehouse
@@ -22,6 +14,7 @@ on:
           - DBT
           - DBT_CLOUD
           - DBT_EMERGENCY
+        default: DBT
       dbt_command:
         type: string
         description: 'DBT Run Command'
@@ -39,12 +32,15 @@ env:
   WAREHOUSE: "${{ inputs.WAREHOUSE }}"
   SCHEMA: "${{ vars.SCHEMA }}"
 
+concurrency:
+  group: ${{ github.workflow }}
+
 jobs:
   called_workflow_template:
-    uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
+    uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_deployment_template.yml@main
     with:
-      dbt_command: ${{ inputs.dbt_command }}
-      environment: workflow_${{ inputs.environment }}
-      warehouse: ${{ inputs.warehouse }}
+      dbt_command: |
+         ${{ inputs.dbt_command }}
+      environment: workflow_prod
+      warehouse: ${{ inputs.WAREHOUSE }}
     secrets: inherit 
-  
