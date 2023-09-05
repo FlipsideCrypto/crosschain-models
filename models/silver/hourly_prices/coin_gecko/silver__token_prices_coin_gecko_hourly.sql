@@ -207,7 +207,7 @@ base_timestamp AS (
         ) AS CLOSE,
         CASE
             WHEN (CAST(ARRAY_AGG(imputed) AS STRING)) ILIKE '%true%' THEN TRUE
-            ELSE FALSEEND AS imputed,
+            ELSE FALSE END AS imputed,
             {{ dbt_utils.surrogate_key(
                 ['f.recorded_hour','f.token_address','f.platform']
             ) }} AS _unique_key,
