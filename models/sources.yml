@@ -258,31 +258,37 @@ sources:
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
   - name: optimism_silver_dex
     database: optimism
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
   - name: avalanche_silver_dex
     database: avalanche
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
   - name: polygon_silver_dex
     database: polygon
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
   - name: bsc_silver_dex
     database: bsc
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
   - name: arbitrum_silver_dex
     database: arbitrum
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
   - name: solana_silver
     database: solana
     schema: silver
@@ -377,6 +383,7 @@ sources:
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
   - name: gnosis_silver
     database: gnosis
     schema: silver
@@ -390,6 +397,7 @@ sources:
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
   - name: gnosis_observ
     database: gnosis
     schema: silver_observability

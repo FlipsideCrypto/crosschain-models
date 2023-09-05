@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: defi__ez_dex_swaps
-    description: A comprehensive fact table holding blockchain and platform specific decentralized exchange swaps. This table contains dex swaps from Ethereum, Optimism, Polygon, BSC, Avalanche, Osmosis, Solana and Near.
+    description: A comprehensive fact table holding blockchain and platform specific decentralized exchange swaps. This table contains dex swaps from Ethereum, Optimism, Polygon, BSC, Avalanche, Osmosis, Solana, Near, BASE, Gnosis, and Arbitrum.
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

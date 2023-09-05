@@ -1,0 +1,28 @@
+version: 2
+models:
+  - name: defi__dim_dex_liquidity_pools
+    description: A comprehensive dim table holding blockchain and platform specific decentralized exchange pools. This table contains liquidity pools from Ethereum, Optimism, Polygon, BSC, BASE, Gnosis, and Arbitrum.
+
+    columns:
+      - name: BLOCKCHAIN
+        description: Blockchain, Network, or Platform the token price is recorded on.
+      - name: PLATFORM
+        description: The protocol or platform that the liquidity pool belongs to or swap occurred on.
+      - name: CREATION_BLOCK
+        description: The block number of when this pool was created.          
+      - name: CREATION_TIME
+        description: The block timestamp of when this pool was created.
+      - name: CREATION_TX
+        description: The transaction where this contract was created.
+      - name: factory_address
+        description: The address that created or deployed this pool, where available.
+      - name: POOL_ADDRESS
+        description: The contract address for the liquidity pool.
+      - name: POOL_NAME
+        description: The name of the liquidity pool, where available. In some cases, the pool name is a concatenation of symbols or token addresses.
+      - name: TOKENS
+        description: The address for the token included in the liquidity pool, as a JSON object
+      - name: SYMBOLS
+        description: The symbol for the token included in the liquidity pool, as a JSON object, where available.
+      - name: DECIMALS
+        description: The number of decimals for the token included in the liquidity pool, as a JSON object, where available.
