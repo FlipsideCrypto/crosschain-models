@@ -49,7 +49,6 @@
             let segments = current_endpoint.split('/');
             let lastSegment = segments[segments.length - 1];
             endpoint_url = current_endpoint.replace('{owner}', current_repo_owner).replace('{repo}', current_repo_name);
-            
             var create_temp_table_command = `
                 CREATE OR REPLACE TEMPORARY TABLE response_data AS 
                 WITH api_call AS (
@@ -62,7 +61,7 @@
                         VALUE AS data,
                         'github' AS provider,
                         _request_timestamp AS _inserted_timestamp,
-                        concat_ws('-', DATE_PART(epoch_second, _request_timestamp), '${current_repo_name}', '${current_endpoint}') AS _res_id
+                        concat_ws('-', DATE_PART(epoch_second, _request_timestamp), '${current_repo_name}', '${endpoint_url}') AS _res_id
                     FROM api_call
                 )
                 SELECT
@@ -74,9 +73,7 @@
                 flatten_res;
             `;
 
-            // Execute the first command
-            var statement1 = snowflake.createStatement({sqlText: create_temp_table_command.replace('{owner}', current_repo_owner).replace('{repo}', current_repo_name).replace('{lastSegment}', lastSegment)});
-            statement1.execute();
+            snowflake.execute({sqlText: create_temp_table_command.replace('{endpoint_url}', endpoint_url).replace('{repo}', current_repo_name)});
 
             // Second command: Insert data into the target table from the temporary table
             var insert_command = `
@@ -100,9 +97,8 @@
                 FROM response_data;
             `;
 
-            // Execute the second command
-            var statement2 = snowflake.createStatement({sqlText: insert_command.replace('{owner}', current_repo_owner).replace('{repo}', current_repo_name).replace('{lastSegment}', lastSegment)});
-            statement2.execute();
+            snowflake.execute({sqlText: insert_command.replace('{current_repo_owner}', current_repo_owner).replace('{current_repo_name}', current_repo_name).replace('{lastSegment}', lastSegment)});
+
 
         };
     };
