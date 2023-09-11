@@ -1,22 +1,24 @@
 {% macro create_github_repo_data() %}
-{% set create_table %}
-CREATE SCHEMA IF NOT EXISTS {{ target.database }}.bronze_api;
+  {% set create_table %}
+  CREATE SCHEMA IF NOT EXISTS {{ target.database }}.bronze_api;
 
-CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.github_repo_data(
-    repo_name STRING,
-    endpoint_name STRING,
-    data VARIANT,
-    _inserted_timestamp TIMESTAMP_NTZ,
-    _res_id STRING
-);
-{% endset %}
-{% do run_query(create_table) %}
-{% set query %}
-CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_repo_data() RETURNS VARIANT LANGUAGE SQL AS $$
-BEGIN
-    let base_url := 'https://api.github.com';
-    let repos := ARRAY_CONSTRUCT['CADigitalNexus/Wikis'];
-    let endpoints := ARRAY_CONSTRUCT[
+  CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.github_repo_data(
+      repo_owner STRING,
+      repo_name STRING,
+      endpoint_name STRING,
+      data VARIANT,
+      provider STRING,
+      _inserted_timestamp TIMESTAMP_NTZ,
+      _res_id STRING
+  );
+  {% endset %}
+  {% do run_query(create_table) %}
+  
+  {% set query %}
+  CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_repo_data() RETURNS VARIANT LANGUAGE SQL AS $$
+  BEGIN
+    let repos := ARRAY_CONSTRUCT('CADigitalNexus/Wikis');  -- Replace with your repository specifications
+    let endpoints := ARRAY_CONSTRUCT(
         '/repos/{owner}/{repo}/community/profile',
         '/repos/{owner}/{repo}/stats/code_frequency',
         '/repos/{owner}/{repo}/stats/commit_activity',
@@ -30,49 +32,66 @@ BEGIN
         '/repos/{owner}/{repo}/commits',
         '/repos/{owner}/{repo}/releases',
         '/repos/{owner}/{repo}/forks'
-    ];
-    let counter:= 0;
-    let repo_counter:= 0;
-    let endpoint_counter:= 0;
-    let total_repos := ARRAY_SIZE(repos);
-    let total_endpoints := ARRAY_SIZE(endpoints);
+    );
+    let repo_counter := 0;
+    let endpoint_counter := 0;
+    
+    let current_repo_full := '';
+    let current_repo_owner := '';
+    let current_repo_name := '';
+    let current_endpoint := '';
+    let endpoint_url := '';
 
-    REPEAT
-        -- Extract current repo and endpoint
-        let current_repo = repos[repo_counter + 1];
-        let current_endpoint = endpoints[endpoint_counter + 1];
-        let endpoint_url = base_url || REPLACE(REPLACE(current_endpoint, '{owner}', SPLIT_PART(current_repo, '/', 1)), '{repo}', SPLIT_PART(current_repo, '/', 2));
-        let response = livequery.live.udf_api('GET', endpoint_url, { "Authorization": "Bearer YOUR_GITHUB_TOKEN" });
+    FOR repo_counter := 1 TO ARRAY_SIZE(repos) DO
+        current_repo_full := repos[repo_counter];
+        current_repo_owner := SPLIT_PART(current_repo_full, '/', 1);
+        current_repo_name := SPLIT_PART(current_repo_full, '/', 2);
+        
+        FOR endpoint_counter = 1 TO ARRAY_SIZE(endpoints) DO
+            current_endpoint := endpoints[endpoint_counter];
+            endpoint_url := REPLACE(REPLACE(current_endpoint, '{owner}', current_repo_owner), '{repo}', current_repo_name); 
+            
+            -- Fetch and flatten the data
+            CREATE OR REPLACE TEMPORARY TABLE response_data AS 
+            WITH api_call AS (
+                SELECT 
+                    ethereum.streamline.udf_api('GET', endpoint_url, {}, { "Authorization": "Bearer YOUR_GITHUB_TOKEN" }) AS res,
+                    CURRENT_TIMESTAMP AS _request_timestamp
+            ),
+            flatten_res AS (
+                SELECT 
+                    VALUE AS data,
+                    'github' AS provider,
+                    _request_timestamp AS _inserted_timestamp,
+                    concat_ws('-', DATE_PART(epoch_second, _request_timestamp), current_repo_name, current_endpoint) AS _res_id
+                FROM api_call
+                -- Adjust the LATERAL FLATTEN part if needed, based on the structure of the returned data
+            )
 
-        -- Insert the result into the bronze_api.github_repo_data table
-        INSERT INTO {{ target.database }}.bronze_api.github_repo_data(
-            repo_name,
-            endpoint_name,
-            data,
-            _inserted_timestamp,
-            _res_id
-        )
-        VALUES (
-            current_repo,
-            current_endpoint,
-            response,
-            CURRENT_TIMESTAMP,
-            current_repo || '-' || current_endpoint
-        );
+            INSERT INTO {{ target.database }}.bronze_api.github_repo_data(
+                repo_owner,
+                repo_name,
+                endpoint_name,
+                data,
+                provider,
+                _inserted_timestamp,
+                _res_id
+            )
+            SELECT
+                current_repo_owner,
+                current_repo_name,
+                current_endpoint,
+                data,
+                provider,
+                _inserted_timestamp,
+                _res_id
+            FROM flatten_res;
 
-        -- Update counters
-        endpoint_counter:= endpoint_counter + 1;
-        IF endpoint_counter = total_endpoints THEN
-            endpoint_counter := 0;
-            repo_counter:= repo_counter + 1;
-        END IF;
-        counter:= counter + 1;
+        END FOR;
+    END FOR;
 
-    UNTIL repo_counter = total_repos
-    END REPEAT;
-
-    RETURN 'Success';
-END;$$ 
-{% endset %}
-{% do run_query(query) %}
+    RETURN 'Data fetched for all endpoints and repos';
+  END;$$ 
+  {% endset %}
+  {% do run_query(query) %}
 {% endmacro %}
