@@ -163,7 +163,7 @@ imputed_prices AS (
         LAST_VALUE(
             p.close ignore nulls
         ) over (
-            PARTITION BY d.token_address
+            PARTITION BY d.token_address, d.id, d.platform
             ORDER BY
                 d.date_hour rows unbounded preceding
         ) AS imputed_close
@@ -235,7 +235,7 @@ base_timestamp AS (
                 LAST_VALUE(
                     _inserted_timestamp ignore nulls
                 ) over (
-                    PARTITION BY token_address
+                    PARTITION BY token_address, platform
                     ORDER BY
                         recorded_hour rows unbounded preceding
                 ) AS imputed_timestamp
