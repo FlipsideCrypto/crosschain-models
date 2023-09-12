@@ -399,3 +399,27 @@ sources:
       - name: receipts_completeness
       - name: traces_completeness
       - name: transactions_completeness
+  - name: axelar_observ
+    database: axelar
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+  - name: evmos_observ
+    database: evmos
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+  - name: terra_observ
+    database: terra
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+  - name: sei_observ
+    database: sei
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
