@@ -46,7 +46,15 @@
     ('cosmos', source('cosmos_observ', 'blocks_completeness')),
     ('cosmos', source('cosmos_observ', 'transactions_completeness')),
     ('osmosis', source('osmosis_observ', 'blocks_completeness')),
-    ('osmosis', source('osmosis_observ', 'transactions_completeness'))
+    ('osmosis', source('osmosis_observ', 'transactions_completeness')),
+    ('axelar', source('axelar_observ', 'blocks_completeness')),
+    ('axelar', source('axelar_observ', 'transactions_completeness')),
+    ('evmos', source('evmos_observ', 'blocks_completeness')),
+    ('evmos', source('evmos_observ', 'transactions_completeness')),
+    ('terra', source('terra_observ', 'blocks_completeness')),
+    ('terra', source('terra_observ', 'transactions_completeness')),
+    ('sei', source('sei_observ', 'blocks_completeness')),
+    ('sei', source('sei_observ', 'transactions_completeness'))
 ]
 %}
 SELECT *
