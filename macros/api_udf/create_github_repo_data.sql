@@ -2,41 +2,51 @@
   {% set create_table %}
   CREATE SCHEMA IF NOT EXISTS {{ target.database }}.bronze_api;
   CREATE OR REPLACE TABLE {{ target.database }}.bronze_api.github_repo_data(
-      repo_owner STRING,
-      repo_name STRING,
-      endpoint_name STRING,
-      data VARIANT,
-      provider STRING,
-      _inserted_timestamp TIMESTAMP_NTZ,
-      _res_id STRING
+    repo_owner STRING,
+    repo_name STRING,
+    endpoint_name STRING,
+    data VARIANT,
+    provider STRING,
+    frequency_type STRING,
+    _inserted_timestamp TIMESTAMP_NTZ,
+    _res_id STRING
   );
   {% endset %}
   {% do run_query(create_table) %}
   
   {% set query %}
-  CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_repo_data() RETURNS VARIANT LANGUAGE javascript EXECUTE AS CALLER AS $$
+  CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_repo_data("fetch_frequency" STRING) RETURNS VARIANT LANGUAGE javascript EXECUTE AS CALLER AS $$
 
     function logMessage(message) {
        let logSql = `SELECT SYSTEM$LOG('${message}')`;
        snowflake.execute({sqlText: logSql});
     }
 
+
     let repos = ['CADigitalNexus/Wikis'];  // Replace with your repository specifications
-    let endpoints = [
-        '/repos/{owner}/{repo}/community/profile',
-        '/repos/{owner}/{repo}/stats/code_frequency',
-        '/repos/{owner}/{repo}/stats/commit_activity',
-        '/repos/{owner}/{repo}/stats/contributors',
-        '/repos/{owner}/{repo}/stats/participation',
-        '/repos/{owner}/{repo}/stats/punch_card',
-        '/repos/{owner}/{repo}/pulls',
-        '/repos/{owner}/{repo}/issues',
-        '/repos/{owner}/{repo}/stargazers',
-        '/repos/{owner}/{repo}/subscribers',
-        '/repos/{owner}/{repo}/commits',
-        '/repos/{owner}/{repo}/releases',
-        '/repos/{owner}/{repo}/forks'
-    ];    
+    
+    let endpointMapping = {
+        'daily': [
+            '/repos/{owner}/{repo}/pulls',
+            '/repos/{owner}/{repo}/issues',
+            '/repos/{owner}/{repo}/stargazers',
+            '/repos/{owner}/{repo}/subscribers',
+            '/repos/{owner}/{repo}/commits',
+            '/repos/{owner}/{repo}/releases',
+            '/repos/{owner}/{repo}/forks'
+        ],
+        'weekly': [
+            '/repos/{owner}/{repo}/stats/code_frequency',
+            '/repos/{owner}/{repo}/stats/contributors',
+            '/repos/{owner}/{repo}/stats/participation',
+            '/repos/{owner}/{repo}/stats/punch_card'
+        ],
+        'last_year': [
+            '/repos/{owner}/{repo}/stats/commit_activity'
+        ]
+    };
+
+    let endpoints = endpointMapping[fetch_frequency];
     let current_repo_full = '';
     let current_repo_owner = '';
     let current_repo_name = '';
@@ -59,7 +69,7 @@
                 CREATE OR REPLACE TEMPORARY TABLE response_data AS 
                 WITH api_call AS (
                     SELECT 
-                        ethereum.streamline.udf_api('GET', '${endpoint_url}', { 'Authorization': '${GITHUB_TOKEN} ', 'Accept': 'application/vnd.github.v3+json' },{}) AS res,
+                        ethereum.streamline.udf_api('GET', '${endpoint_url}', { 'Authorization': 'token ', 'Accept': 'application/vnd.github.v3+json' },{}) AS res,
                         CURRENT_TIMESTAMP AS _request_timestamp
                 ),
                 flatten_res AS (
@@ -89,6 +99,7 @@
                     endpoint_name,
                     data,
                     provider,
+                    frequency_type,
                     _inserted_timestamp,
                     _res_id
                 )
@@ -98,6 +109,7 @@
                     '${lastSegment}' as endpoint_name,
                     data,
                     provider,
+                    '${fetch_frequency}' AS frequency_type,
                     _inserted_timestamp,
                     _res_id
                 FROM response_data;
@@ -111,3 +123,5 @@
   {% endset %}
   {% do run_query(query) %}
 {% endmacro %}
+
+
