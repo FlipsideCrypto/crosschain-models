@@ -235,7 +235,7 @@ base_timestamp AS (
                 LAST_VALUE(
                     _inserted_timestamp ignore nulls
                 ) over (
-                    PARTITION BY token_address
+                    PARTITION BY token_address, platform
                     ORDER BY
                         recorded_hour rows unbounded preceding
                 ) AS imputed_timestamp
