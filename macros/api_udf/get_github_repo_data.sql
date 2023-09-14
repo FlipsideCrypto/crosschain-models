@@ -6,8 +6,7 @@
 CREATE TABLE IF NOT EXISTS  {{temp_table}} AS 
 SELECT repo_url,
     0 AS is_queried
-FROM {{ target.database }}.silver.near_github_repos
-LIMIT 20;
+FROM {{ target.database }}.silver.near_github_repos;
 {% endset %}
 
 {% do run_query(create_repos_temp) %}
@@ -17,7 +16,7 @@ SELECT
     repo_url
 FROM {{temp_table}}
 WHERE is_queried = 0 
-LIMIT 1;
+LIMIT 100;
 {% endset %}
 
 {% do log( get_batch ,"warn") %}  
@@ -34,38 +33,20 @@ LIMIT 1;
     
     {% set repos_query_result = run_query(sql) %}
     
-    {% do log( repos_query_result ,"warn") %}  
     {% set response = repos_query_result.columns[0].values()[0] %}
 
-    {% do log( response  ,"warn") %}  
-    {% do log( 'completed' ,"warn") %}  
-    {% do log( response == 'completed' ,"warn") %}  
-    {% do log( response == 0 ,"warn") %} 
 
-    {% set update_list = repos_list if response == "completed" else repos_list[:response|int] %}
+    {% set update_list = repos_list if 'completed' in response else repos_list[:response|int] %}
     
-    {% do log( "--------","warn") %}  
-
-    {% do log( update_list ,"warn") %}  
-
-
-    {% do log( "--------","warn") %}  
-    
-    {% do log( update_list ,"warn") %}  
     {% set set_repos_temp %}
         UPDATE {{temp_table}}
         SET is_queried = 1
         WHERE repo_url IN ('{{ update_list|join("', '") }}');
     {% endset %}
 
-    {% do log( set_repos_temp ,"warn") %}    
     {% do run_query(set_repos_temp) %}
 
-    {% do log( update_list ,"warn") %}
-    {% do log( repos_list ,"warn") %}
-
     {% if update_list !=  repos_list%}
-        {% do log( "Sleeping" ,"warn") %}
         {% do run_query("SELECT SYSTEM$WAIT(3600);") %}
     {% endif %}
 

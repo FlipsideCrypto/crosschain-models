@@ -138,7 +138,7 @@
 
         };
     };
-    return 0;
+    return 'completed';
   $$ 
   {% endset %}
   {% do run_query(query) %}
