@@ -1,7 +1,7 @@
 {% macro create_github_repo_data() %}
   {% set create_table %}
   CREATE SCHEMA IF NOT EXISTS {{ target.database }}.bronze_api;
-  CREATE OR REPLACE TABLE {{ target.database }}.bronze_api.github_repo_data(
+  CREATE  TABLE IF NOT EXISTS  {{ target.database }}.bronze_api.github_repo_data(
     repo_owner STRING,
     repo_name STRING,
     endpoint_name STRING,
@@ -15,16 +15,15 @@
   {% do run_query(create_table) %}
   
   {% set query %}
-  CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_repo_data("fetch_frequency" STRING) RETURNS VARIANT LANGUAGE javascript EXECUTE AS CALLER AS $$
+  CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_repo_data("fetch_frequency" STRING, "repos_list" ARRAY ) RETURNS VARIANT LANGUAGE javascript EXECUTE AS CALLER AS $$
+
 
     function logMessage(message) {
        let logSql = `SELECT SYSTEM$LOG('${message}')`;
        snowflake.execute({sqlText: logSql});
     }
+    let repos = repos_list;  // Replace with your repository specifications
 
-
-    let repos = ['CADigitalNexus/Wikis'];  // Replace with your repository specifications
-    
     let endpointMapping = {
         'daily': [
             '/repos/{owner}/{repo}/pulls',
@@ -65,6 +64,7 @@
             let segments = current_endpoint.split('/');
             let lastSegment = segments[segments.length - 1];
             endpoint_url = base_url + current_endpoint.replace('{owner}', current_repo_owner).replace('{repo}', current_repo_name);
+            
             var create_temp_table_command = `
                 CREATE OR REPLACE TEMPORARY TABLE response_data AS 
                 WITH api_call AS (
@@ -76,6 +76,7 @@
                     SELECT 
                         res AS data,
                         'github' AS provider,
+                        GET(data:headers, 'X-RateLimit-Remaining')::INTEGER as rate_limit_remaining,
                         _request_timestamp AS _inserted_timestamp,
                         concat_ws('-', DATE_PART(epoch_second, _request_timestamp), '${current_repo_name}', '${endpoint_url}') AS _res_id
                     FROM api_call
@@ -83,6 +84,7 @@
                 SELECT
                     data,
                     provider,
+                    rate_limit_remaining,
                     _inserted_timestamp,
                     _res_id
                 FROM
@@ -90,6 +92,24 @@
             `;
 
             snowflake.execute({sqlText: create_temp_table_command.replace('{endpoint_url}', endpoint_url).replace('{repo}', current_repo_name)});
+
+            // Check the limit rate
+            // Check what if the responds its wrong, what happends?
+
+            var get_rate_limit_command = `
+                SELECT
+                    rate_limit_remaining
+                FROM
+                    response_data
+            `;
+
+            var rate_limit_result = snowflake.execute({sqlText: get_rate_limit_command});
+            rate_limit_result.next()
+            var rate_limit_remaining = rate_limit_result.getColumnValue(1);
+
+            if(rate_limit_remaining < endpoints.length - endpoint_counter) { 
+                return repo_counter;
+            }
 
             // Second command: Insert data into the target table from the temporary table
             var insert_command = `
@@ -118,7 +138,7 @@
 
         };
     };
-    return 'Data fetched for all endpoints and repos';
+    return 0;
   $$ 
   {% endset %}
   {% do run_query(query) %}
