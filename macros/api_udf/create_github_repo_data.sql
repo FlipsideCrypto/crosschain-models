@@ -69,7 +69,7 @@
                 CREATE OR REPLACE TEMPORARY TABLE response_data AS 
                 WITH api_call AS (
                     SELECT 
-                        ethereum.streamline.udf_api('GET', '${endpoint_url}', { 'Authorization': 'token ', 'Accept': 'application/vnd.github.v3+json' },{}) AS res,
+                        ethereum.streamline.udf_api('GET', '${endpoint_url}', { 'Authorization': 'token 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', 'Accept': 'application/vnd.github.v3+json' },{}) AS res,
                         CURRENT_TIMESTAMP AS _request_timestamp
                 ),
                 flatten_res AS (

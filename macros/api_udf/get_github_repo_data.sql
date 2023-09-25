@@ -1,65 +1,54 @@
 {% macro get_github_repo_data() %}
 
-{% set temp_table = target.database ~ ".silver.temp_github_repos" %}
+{% set table_name = target.database ~ ".silver.github_repos" %}
 
-{% set create_repos_temp %}
-CREATE TABLE IF NOT EXISTS  {{temp_table}} AS 
-SELECT repo_url,
-    0 AS is_queried
-FROM {{ target.database }}.silver.near_github_repos;
+{% set create_repos_endpoints_table %}
+CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
+    SELECT 
+        repo_url, 
+        frequency, 
+        CAST(NULL AS TIMESTAMP_NTZ) AS last_time_queried,
+        REPLACE(
+            REPLACE(endpoint, '{owner}', SPLIT_PART(repo_url, '/', 1)), 
+            '{repo}', SPLIT_PART(repo_url, '/', 2)
+        ) AS full_endpoint
+    FROM {{ target.database }}.silver.near_github_repos
+    CROSS JOIN (
+        SELECT 'daily' AS frequency, endpoint FROM VALUES
+            ('/repos/{owner}/{repo}/pulls'),
+            ('/repos/{owner}/{repo}/issues'),
+            ('/repos/{owner}/{repo}/stargazers'),
+            ('/repos/{owner}/{repo}/subscribers'),
+            ('/repos/{owner}/{repo}/commits'),
+            ('/repos/{owner}/{repo}/releases'),
+            ('/repos/{owner}/{repo}/forks')
+        AS t(endpoint)
+        
+        UNION ALL
+        
+        SELECT 'weekly' AS frequency, endpoint FROM VALUES
+            ('/repos/{owner}/{repo}/stats/code_frequency'),
+            ('/repos/{owner}/{repo}/stats/contributors'),
+            ('/repos/{owner}/{repo}/stats/participation'),
+            ('/repos/{owner}/{repo}/stats/punch_card')
+        AS t(endpoint)
+        
+        UNION ALL
+        
+        SELECT 'last_year' AS frequency, endpoint FROM VALUES
+            ('/repos/{owner}/{repo}/stats/commit_activity')
+        AS t(endpoint)
+    ) AS endpoints
+);
+
 {% endset %}
 
-{% do run_query(create_repos_temp) %}
+{% do run_query(create_repos_endpoints_table) %}
 
-{% set get_batch %}
-SELECT 
-    repo_url
-FROM {{temp_table}}
-WHERE is_queried = 0 
-LIMIT 100;
+{% set sql %}
+    CALL {{ target.database }}.bronze_api.geta_github_repo_data('{{ var('frequency', ["last_year"]) | tojson }}', '{{ var('GITHUB_TOKEN', env_var('GITHUB_TOKEN') }}')
 {% endset %}
-
-{% do log( get_batch ,"warn") %}  
-
-{% if execute %}
-{% set repos_list = run_query(get_batch).columns[0].values()|list %}
-{% endif %}
-
-
-{% if repos_list|length > 0 %}    
-    {% set sql %}
-    CALL {{ target.database }}.bronze_api.get_github_repo_data('last_year', {{repos_list}} )
-    {% endset %}
     
-    {% set repos_query_result = run_query(sql) %}
-    
-    {% set response = repos_query_result.columns[0].values()[0] %}
+{% do run_query(sql) %}
 
-
-    {% set update_list = repos_list if 'completed' in response else repos_list[:response|int] %}
-    
-    {% set set_repos_temp %}
-        UPDATE {{temp_table}}
-        SET is_queried = 1
-        WHERE repo_url IN ('{{ update_list|join("', '") }}');
-    {% endset %}
-
-    {% do run_query(set_repos_temp) %}
-
-    {% if update_list !=  repos_list%}
-        {% do run_query("SELECT SYSTEM$WAIT(3600);") %}
-    {% endif %}
-
-    {# Also do something for the TOKEN in github, and move endpoint to all weekly #}
-
-        {% do log( "Recursive call" ,"warn") %}
-        {{ get_github_repo_data() }}
-
-{% endif %}
-  {% set delete_temp_table %}
-    DROP TABLE IF EXISTS {{temp_table}};
-    {% endset %}
-    {% do run_query(delete_temp_table) %}
-    
-    {% do log( "Deleting temp" ,"warn") %}
 {% endmacro %}
