@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.github_repo_data(
     endpoint_name STRING,
     data VARIANT,
     provider STRING,
-    frequency_type STRING,
     _inserted_timestamp TIMESTAMP_NTZ,
     _res_id STRING
 );
@@ -17,7 +16,7 @@ CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.github_repo_data(
 {% do run_query(create_table) %}
 
 {% set query %}
-CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.geta_github_repo_data("fetch_frequency" ARRAY, "token" STRING) 
+CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.geta_github_repo_data("fetch_frequency" STRING, "token" STRING) 
     RETURNS STRING 
     LANGUAGE JAVASCRIPT 
     EXECUTE AS CALLER 
@@ -43,7 +42,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.geta_github_repo_da
                     FROM {{ target.database }}.silver.github_repos
                     WHERE (DATE(last_time_queried) <> CURRENT_DATE OR last_time_queried IS NULL)
                     AND frequency IN ${parsedFrequencyArray}
-                    LIMIT 5000
+                    LIMIT 1000
                 ),
                 flatten_res AS (
                     SELECT 
@@ -78,7 +77,6 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.geta_github_repo_da
                             endpoint_name,
                             data,
                             provider,
-                            frequency_type,
                             _inserted_timestamp,
                             _res_id
                         )
@@ -88,13 +86,12 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.geta_github_repo_da
                             full_endpoint as endpoint_name,
                             data,
                             provider,
-                            '${parsedFrequencyArray}' as frequency_type,
                             _inserted_timestamp,
                             _res_id
                         FROM response_data
                         WHERE rate_limit_remaining > 0;
             `;
-            snowflake.execute({sqlText: insert_command.replace('{fetch_frequency}', parsedFrequencyArray)});
+            snowflake.execute({sqlText: insert_command});
 
             // Update command: Update last_time_queried for the queried endpoints
             var update_command = `

@@ -45,10 +45,26 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
 
 {% do run_query(create_repos_endpoints_table) %}
 
-{% set sql %}
-    CALL {{ target.database }}.bronze_api.geta_github_repo_data('{{ var('frequency', ["last_year"]) | tojson }}', '{{ var('GITHUB_TOKEN', env_var('GITHUB_TOKEN') }}')
+{% set frequency_string = var('frequency', ["last_year"]) | join("','") %}
+
+{% set check_endpoints_query %}
+    SELECT COUNT(*)
+    FROM {{ table_name }}
+    WHERE (DATE(last_time_queried) <> CURRENT_DATE OR last_time_queried IS NULL)
+    AND frequency IN ('{{ frequency_string }}')
 {% endset %}
+
+{% set results = run_query(check_endpoints_query) %}
+
+{% set first_row = results.rows[0] %}
+{% set count_value = first_row[0] %}
+
+{% if count_value > 0 %}
+    {% set sql %}
+    CALL {{ target.database }}.bronze_api.geta_github_repo_data('{{ var('frequency', ["last_year"]) | tojson }}', '{{ var('GITHUB_TOKEN') }}')
+    {% endset %}
     
-{% do run_query(sql) %}
+    {% do run_query(sql) %}
+{% endif %}
 
 {% endmacro %}
