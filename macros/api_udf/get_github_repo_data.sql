@@ -11,7 +11,11 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
         REPLACE(
             REPLACE(endpoint, '{owner}', SPLIT_PART(repo_url, '/', 1)), 
             '{repo}', SPLIT_PART(repo_url, '/', 2)
-        ) AS full_endpoint
+        ) AS full_endpoint,
+            CASE 
+        WHEN ARRAY_SIZE(SPLIT(full_endpoint, '/')) = 6 THEN SPLIT_PART(full_endpoint, '/', 6)
+        ELSE SPLIT_PART(full_endpoint, '/', 5)
+        END as endpoint_github
     FROM {{ target.database }}.silver.near_github_repos
     CROSS JOIN (
         SELECT 'daily' AS frequency, endpoint FROM VALUES
@@ -61,7 +65,7 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
 
 {% if count_value > 0 %}
     {% set sql %}
-    CALL {{ target.database }}.bronze_api.geta_github_repo_data('{{ var('frequency', ["last_year"]) | tojson }}', '{{ var('GITHUB_TOKEN') }}')
+    CALL {{ target.database }}.bronze_api.getc_github_repo_data( {{var('frequency', ['last_year'])}}, '{{ var('GITHUB_TOKEN') }}')
     {% endset %}
     
     {% do run_query(sql) %}
