@@ -54,7 +54,27 @@
     ('terra', source('terra_observ', 'blocks_completeness')),
     ('terra', source('terra_observ', 'transactions_completeness')),
     ('sei', source('sei_observ', 'blocks_completeness')),
-    ('sei', source('sei_observ', 'transactions_completeness'))
+    ('sei', source('sei_observ', 'transactions_completeness')),
+
+    ('aurora', source('aurora_observ', 'blocks_completeness')),
+    ('aurora', source('aurora_observ', 'logs_completeness')),
+    ('aurora', source('aurora_observ', 'receipts_completeness')),
+    ('aurora', source('aurora_observ', 'transactions_completeness')),
+
+    ('bitcoin', source('bitcoin_observ', 'blocks_completeness')),
+    ('bitcoin', source('bitcoin_observ', 'inputs_completeness')),
+    ('bitcoin', source('bitcoin_observ', 'outputs_completeness')),
+    ('bitcoin', source('bitcoin_observ', 'txs_completeness')),
+
+    ('flow', source('flow_observ', 'blocks_completeness')),
+    ('flow', source('flow_observ', 'txs_completeness')),
+
+    ('near', source('near_observ', 'blocks_completeness')),
+    ('near', source('near_observ', 'chunks_completeness')),
+    ('near', source('near_observ', 'logs_completeness')),
+
+    ('solana', source('solana_observ', 'blocks_completeness')),
+    ('solana', source('solana_observ', 'transactions_completeness'))
 ]
 %}
 SELECT *
