@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.github_repo_data(
     repo_owner STRING,
     repo_name STRING,
     endpoint_name STRING,
-    type STRING,
     data VARIANT,
     provider STRING,
     endpoint_github STRING,
