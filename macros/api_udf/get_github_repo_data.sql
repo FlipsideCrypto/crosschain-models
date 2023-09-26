@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
 
 {% if count_value > 0 %}
     {% set sql %}
-    CALL {{ target.database }}.bronze_api.getc_github_repo_data( {{var('frequency', ['last_year'])}}, '{{ var('GITHUB_TOKEN') }}')
+    CALL {{ target.database }}.bronze_api.get_github_api_repo_data( {{var('frequency')}}, '{{ var('GITHUB_TOKEN') }}')
     {% endset %}
     
     {% do run_query(sql) %}

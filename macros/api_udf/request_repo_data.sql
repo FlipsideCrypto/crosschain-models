@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.github_repo_data(
 {% do run_query(create_table) %}
 
 {% set query %}
-CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.getc_github_repo_data(fetch_frequency ARRAY, token STRING) 
+CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo_data(fetch_frequency ARRAY, token STRING) 
     RETURNS STRING 
     LANGUAGE JAVASCRIPT 
     EXECUTE AS CALLER 
@@ -45,7 +45,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.getc_github_repo_da
                 FROM CROSSCHAIN_DEV.silver.github_repos
                 WHERE (DATE(last_time_queried) <> CURRENT_DATE OR last_time_queried IS NULL)
                 AND frequency IN ${parsedFrequencyArray}
-                LIMIT 10
+                LIMIT 4000
             )
             SELECT count(*)
             FROM subset`});
