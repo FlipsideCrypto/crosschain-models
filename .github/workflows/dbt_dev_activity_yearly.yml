@@ -19,11 +19,21 @@ env:
   SCHEMA: "${{ vars.SCHEMA }}"
 
 jobs:
-  called_workflow_template:
-    uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
-    with:
-      dbt_command: |
+  dbt:
+    runs-on: ubuntu-latest
+    environment:
+      name: workflow_prod
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v1
+        with:
+          python-version: "3.7.x"
+
+      - name: install dependencies
+        run: |
+          pip3 install dbt-snowflake==${{ env.DBT_VERSION }} cli_passthrough requests click
+          dbt deps
+
+      - name: Run DBT Jobs
+        run: |
         dbt run-operation get_github_repo_data --args "{GITHUB_TOKEN: '${{ secrets.GB_TOKEN }}', frequency: ['last_year']}"
-      environment: workflow_prod
-      warehouse: ${{ vars.WAREHOUSE }}
-    secrets: inherit
