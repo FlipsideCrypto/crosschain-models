@@ -22,7 +22,7 @@ jobs:
   called_workflow_template:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
-      dbt_command: dbt run-operation get_github_repo_data --vars 'GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}, frequency: ["daily", "weekly"]'
+      dbt_command: dbt run-operation get_github_repo_data --vars '{GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}, frequency: ["daily", "weekly"]}'
       environment: workflow_prod
       warehouse: ${{ vars.WAREHOUSE }}
     secrets: inherit

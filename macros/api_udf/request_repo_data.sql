@@ -41,7 +41,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         var row_count = 0;
         var res = snowflake.execute({sqlText: `WITH subset as (
                 SELECT *
-                FROM CROSSCHAIN_DEV.silver.github_repos
+                FROM {{ target.database }}.silver.github_repos
                 WHERE (DATE(last_time_queried) <> CURRENT_DATE OR last_time_queried IS NULL)
                 AND frequency IN ${parsedFrequencyArray}
                 LIMIT 4
@@ -55,7 +55,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         
         for(let i = 0; i < call_groups; i++) {
             var create_temp_table_command = `
-                CREATE OR REPLACE TEMPORARY TABLE CROSSCHAIN_DEV.bronze_api.response_data AS 
+                CREATE OR REPLACE TEMPORARY TABLE {{ target.database }}.bronze_api.response_data AS 
                 WITH api_call AS (
                     SELECT 
                         livequery_dev.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '${TOKEN}'), 'Accept': 'application/vnd.github+json' },{}) AS res,
@@ -63,7 +63,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                         repo_url,
                         full_endpoint,
                         endpoint_github
-                    FROM CROSSCHAIN_DEV.silver.github_repos
+                    FROM {{ target.database }}.silver.github_repos
                     WHERE (DATE(last_time_queried) <> CURRENT_DATE OR last_time_queried IS NULL)
                     AND frequency IN ${parsedFrequencyArray}
                     LIMIT 100
@@ -95,7 +95,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             snowflake.execute({sqlText: create_temp_table_command});
             // Second command: Insert data into the target table from the temporary table
             var insert_command = `
-                INSERT INTO CROSSCHAIN_DEV.bronze_api.github_repo_data(
+                INSERT INTO {{ target.database }}.bronze_api.github_repo_data(
                             repo_owner,
                             repo_name,
                             endpoint_name,
@@ -114,15 +114,15 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                             endpoint_github,
                             _inserted_timestamp,
                             _res_id
-                        FROM CROSSCHAIN_DEV.bronze_api.response_data
+                        FROM {{ target.database }}.bronze_api.response_data
                         WHERE rate_limit_remaining > 0;
             `;
             snowflake.execute({sqlText: insert_command});
             // Update command: Update last_time_queried for the queried endpoints
             var update_command = `
-                UPDATE CROSSCHAIN_DEV.silver.github_repos
+                UPDATE {{ target.database }}.silver.github_repos
                 SET last_time_queried = CURRENT_TIMESTAMP
-                WHERE full_endpoint IN (SELECT full_endpoint FROM CROSSCHAIN_DEV.bronze_api.response_data WHERE rate_limit_remaining > 0);
+                WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE rate_limit_remaining > 0);
             `;
             snowflake.execute({sqlText: update_command});
         }
