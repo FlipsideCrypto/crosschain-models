@@ -1,0 +1,34 @@
+version: 2
+models:
+  - name: silver__github_activity
+    columns:
+      - name: repo_owner
+        description: Owner of the repository
+        tests:
+          - not_null
+      - name: repo_name
+        description: Name of the repository
+        tests:
+          - not_null
+      - name: endpoint_name
+        description: Name of the endpoint used to fetch data
+      - name: data
+        description: Data fetched from the endpoint
+        tests:
+          - data_null_percentage:
+              threshold: 0.50 # Warn if more than 50% of data values from the last run are null
+              column_name: data
+              config:
+                severity: warn
+                warn_if: ">0"
+      - name: provider
+        description: Provider of the data
+      - name: endpoint_github
+        description: GitHub endpoint information
+      - name: _inserted_timestamp
+        description: Timestamp when the data was inserted
+      - name: _res_id
+        description: Unique identifier for the record
+        tests:
+          - unique
+          - not_null

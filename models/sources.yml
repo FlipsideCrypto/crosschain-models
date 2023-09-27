@@ -185,7 +185,7 @@ sources:
   - name: osmosis_silver
     database: osmosis
     schema: silver
-    tables: 
+    tables:
       - name: transactions
       - name: asset_metadata
       - name: prices_swaps
@@ -230,7 +230,7 @@ sources:
   - name: bronze
     database: crosschain
     schema: bronze
-    tables: 
+    tables:
       - name: address_labels
       - name: data_science_uploads
       - name: legacy_prices
@@ -239,7 +239,7 @@ sources:
   - name: bronze_dev
     database: crosschain_dev
     schema: bronze
-    tables: 
+    tables:
       - name: address_labels
       - name: data_science_uploads
       - name: legacy_prices
@@ -399,6 +399,10 @@ sources:
       - name: receipts_completeness
       - name: traces_completeness
       - name: transactions_completeness
+  - name: github
+    schema: bronze_api
+    tables:
+      - name: github_repo_data
   - name: axelar_observ
     database: axelar
     schema: silver_observability
