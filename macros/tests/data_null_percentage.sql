@@ -10,7 +10,7 @@ WITH source_data AS (
     FROM
         {{ model }}
     WHERE 
-        _inserted_timestamp = (SELECT MAX(_inserted_timestamp) FROM {{ model }})
+        _inserted_timestamp::DATE = (SELECT MAX(_inserted_timestamp::DATE) FROM {{ model }})
 )
 
 , null_counts AS (
