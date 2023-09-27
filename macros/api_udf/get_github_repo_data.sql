@@ -1,4 +1,4 @@
-{% macro get_github_repo_data() %}
+{% macro get_github_repo_data(frequency, GITHUB_TOKEN) %}
 
 {% set table_name = target.database ~ ".silver.github_repos" %}
 
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
 
 {% do run_query(create_repos_endpoints_table) %}
 
-{% set frequency_string = var('frequency', ["last_year"]) | join("','") %}
+{% set frequency_string = frequency | join("','") %}
 
 {% set check_endpoints_query %}
     SELECT COUNT(*)
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
 
 {% if count_value > 0 %}
     {% set sql %}
-    CALL {{ target.database }}.bronze_api.get_github_api_repo_data( {{var('frequency')}}, '{{ var('GITHUB_TOKEN') }}')
+    CALL {{ target.database }}.bronze_api.get_github_api_repo_data( {{frequency}}, '{{ GITHUB_TOKEN }}')
     {% endset %}
     
     {% do run_query(sql) %}

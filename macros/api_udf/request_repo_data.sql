@@ -23,35 +23,22 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
     EXECUTE AS CALLER 
     AS $$
 
-
-    function sleep(milliseconds) {
-        var start = new Date().getTime();
-        for (var i = 0; i < 1e7; i++) {
-            if ((new Date().getTime() - start) > milliseconds) {
-                break;
-            }
-        }
-    }
-
-    function logMessage(message) {
-       let logSql = `SELECT SYSTEM$LOG('${message}')`;
-       snowflake.execute({sqlText: logSql});
-    }
         let parsedFrequencyArray = `('${FETCH_FREQUENCY.join("', '")}')`;
         var row_count = 0;
+        var batch_num = 100;
         var res = snowflake.execute({sqlText: `WITH subset as (
                 SELECT *
                 FROM {{ target.database }}.silver.github_repos
                 WHERE (DATE(last_time_queried) <> CURRENT_DATE OR last_time_queried IS NULL)
                 AND frequency IN ${parsedFrequencyArray}
-                LIMIT 4
+                LIMIT 4000
             )
             SELECT count(*)
             FROM subset`});
         res.next()
         row_count = res.getColumnValue(1);
         
-        call_groups = Math.ceil(row_count/100)
+        call_groups = Math.ceil(row_count/batch_num)
         
         for(let i = 0; i < call_groups; i++) {
             var create_temp_table_command = `
@@ -66,7 +53,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                     FROM {{ target.database }}.silver.github_repos
                     WHERE (DATE(last_time_queried) <> CURRENT_DATE OR last_time_queried IS NULL)
                     AND frequency IN ${parsedFrequencyArray}
-                    LIMIT 100
+                    LIMIT ${batch_num}
                 ),
                 flatten_res AS (
                     SELECT 

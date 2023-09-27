@@ -18,3 +18,12 @@ FROM
         'bronze_api',
         'github_repo_data'
     ) }}
+{% if is_incremental() %}
+WHERE
+    _inserted_timestamp > (
+        SELECT
+            MAX(_inserted_timestamp)
+        FROM
+            {{ this }}
+    )
+{% endif %}
