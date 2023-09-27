@@ -1,8 +1,16 @@
+{% test data_null_percentage(
+        model,
+        column_name,
+        threshold
+) %}
+
 WITH source_data AS (
     SELECT
         {{ column_name }} AS data_col
     FROM
         {{ model }}
+    WHERE 
+        _inserted_timestamp = (SELECT MAX(_inserted_timestamp) FROM {{ model }})
 )
 
 , null_counts AS (
@@ -22,3 +30,4 @@ FROM
 WHERE
     1.0 * null_rows / total_rows > {{ threshold }}
 
+{% endtest %}

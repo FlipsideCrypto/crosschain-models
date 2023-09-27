@@ -15,7 +15,7 @@ SELECT
     _res_id
 FROM
     {{ source(
-        'bronze_api',
+        'github',
         'github_repo_data'
     ) }}
 {% if is_incremental() %}

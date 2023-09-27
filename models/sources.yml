@@ -399,7 +399,7 @@ sources:
       - name: receipts_completeness
       - name: traces_completeness
       - name: transactions_completeness
-  - name: github_activity
+  - name: github
     schema: bronze_api
     tables:
       - name: github_repo_data
