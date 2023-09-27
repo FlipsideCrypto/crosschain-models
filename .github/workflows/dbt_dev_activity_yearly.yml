@@ -36,4 +36,4 @@ jobs:
 
       - name: Run DBT Jobs
         run: |
-        dbt run-operation get_github_repo_data --args "{GITHUB_TOKEN: '${{ secrets.GB_TOKEN }}', frequency: ['last_year']}"
+          dbt run-operation get_github_repo_data --args "{GITHUB_TOKEN: '${{ secrets.GB_TOKEN }}', frequency: ['last_year']}"
