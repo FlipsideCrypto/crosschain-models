@@ -44,7 +44,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                 FROM CROSSCHAIN_DEV.silver.github_repos
                 WHERE (DATE(last_time_queried) <> CURRENT_DATE OR last_time_queried IS NULL)
                 AND frequency IN ${parsedFrequencyArray}
-                LIMIT 4000
+                LIMIT 4
             )
             SELECT count(*)
             FROM subset`});
@@ -72,10 +72,10 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                     SELECT 
                         repo_url,
                         full_endpoint,
-                        res AS data,
+                        res:data AS data,
                         'github' AS provider,
                         endpoint_github,
-                        GET(data:headers, 'X-RateLimit-Remaining')::INTEGER as rate_limit_remaining,
+                        GET(res:headers, 'X-RateLimit-Remaining')::INTEGER as rate_limit_remaining,
                         _request_timestamp AS _inserted_timestamp,
                         CONCAT_WS('-', DATE_PART(epoch_second, _request_timestamp), SPLIT_PART(repo_url, '/', 2), full_endpoint) AS _res_id
                     FROM api_call
