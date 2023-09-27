@@ -46,7 +46,35 @@
     ('cosmos', source('cosmos_observ', 'blocks_completeness')),
     ('cosmos', source('cosmos_observ', 'transactions_completeness')),
     ('osmosis', source('osmosis_observ', 'blocks_completeness')),
-    ('osmosis', source('osmosis_observ', 'transactions_completeness'))
+    ('osmosis', source('osmosis_observ', 'transactions_completeness')),
+    ('axelar', source('axelar_observ', 'blocks_completeness')),
+    ('axelar', source('axelar_observ', 'transactions_completeness')),
+    ('evmos', source('evmos_observ', 'blocks_completeness')),
+    ('evmos', source('evmos_observ', 'transactions_completeness')),
+    ('terra', source('terra_observ', 'blocks_completeness')),
+    ('terra', source('terra_observ', 'transactions_completeness')),
+    ('sei', source('sei_observ', 'blocks_completeness')),
+    ('sei', source('sei_observ', 'transactions_completeness')),
+
+    ('aurora', source('aurora_observ', 'blocks_completeness')),
+    ('aurora', source('aurora_observ', 'logs_completeness')),
+    ('aurora', source('aurora_observ', 'receipts_completeness')),
+    ('aurora', source('aurora_observ', 'transactions_completeness')),
+
+    ('bitcoin', source('bitcoin_observ', 'blocks_completeness')),
+    ('bitcoin', source('bitcoin_observ', 'inputs_completeness')),
+    ('bitcoin', source('bitcoin_observ', 'outputs_completeness')),
+    ('bitcoin', source('bitcoin_observ', 'txs_completeness')),
+
+    ('flow', source('flow_observ', 'blocks_completeness')),
+    ('flow', source('flow_observ', 'txs_completeness')),
+
+    ('near', source('near_observ', 'blocks_completeness')),
+    ('near', source('near_observ', 'chunks_completeness')),
+    ('near', source('near_observ', 'logs_completeness')),
+
+    ('solana', source('solana_observ', 'blocks_completeness')),
+    ('solana', source('solana_observ', 'transactions_completeness'))
 ]
 %}
 SELECT *

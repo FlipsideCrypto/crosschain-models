@@ -403,3 +403,62 @@ sources:
     schema: bronze_api
     tables:
       - name: github_repo_data
+  - name: axelar_observ
+    database: axelar
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+  - name: evmos_observ
+    database: evmos
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+  - name: terra_observ
+    database: terra
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+  - name: sei_observ
+    database: sei
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+  - name: aurora_observ
+    database: aurora
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: logs_completeness
+      - name: receipts_completeness
+      - name: transactions_completeness
+  - name: bitcoin_observ
+    database: bitcoin
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: inputs_completeness
+      - name: outputs_completeness
+      - name: txs_completeness
+  - name: flow_observ
+    database: flow
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: txs_completeness
+  - name: near_observ
+    database: near
+    schema: silver_observability
+    tables: 
+      - name: blocks_completeness
+      - name: chunks_completeness
+      - name: logs_completeness
+  - name: solana_observ
+    database: solana
+    schema: silver_observability
+    tables: 
+      - name: blocks_completeness
+      - name: transactions_completeness
