@@ -2,6 +2,10 @@ version: 2
 models:
   - name: silver__github_activity
     columns:
+      - name: project_name
+        description: Name of the project
+        tests:
+          - not_null
       - name: repo_owner
         description: Owner of the repository
         tests:
