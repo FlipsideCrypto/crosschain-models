@@ -6,6 +6,7 @@
 ) }}
 
 SELECT
+    project_name,
     repo_owner,
     repo_name,
     endpoint_name,
