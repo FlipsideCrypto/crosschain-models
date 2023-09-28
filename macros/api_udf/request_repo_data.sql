@@ -3,6 +3,7 @@
 {% set create_table %}
 CREATE SCHEMA IF NOT EXISTS {{ target.database }}.bronze_api;
 CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.github_repo_data(
+    project_name STRING,
     repo_owner STRING,
     repo_name STRING,
     endpoint_name STRING,
@@ -44,7 +45,8 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             var create_temp_table_command = `
                 CREATE OR REPLACE TEMPORARY TABLE {{ target.database }}.bronze_api.response_data AS 
                 WITH api_call AS (
-                    SELECT 
+                    SELECT
+                        project_name,
                         livequery_dev.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '${TOKEN}'), 'Accept': 'application/vnd.github+json' },{}) AS res,
                         CURRENT_TIMESTAMP AS _request_timestamp,
                         repo_url,
@@ -56,7 +58,8 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                     LIMIT ${batch_num}
                 ),
                 flatten_res AS (
-                    SELECT 
+                    SELECT
+                        project_name, 
                         repo_url,
                         full_endpoint,
                         res:data AS data,
@@ -68,6 +71,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                     FROM api_call
                 )
                 SELECT
+                    project_name,
                     repo_url,
                     full_endpoint,
                     data,
@@ -83,6 +87,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             // Second command: Insert data into the target table from the temporary table
             var insert_command = `
                 INSERT INTO {{ target.database }}.bronze_api.github_repo_data(
+                            project_name,
                             repo_owner,
                             repo_name,
                             endpoint_name,
@@ -93,6 +98,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                             _res_id
                         )
                         SELECT
+                            project_name,
                             SPLIT_PART(repo_url, '/', 1) as repo_owner,
                             SPLIT_PART(repo_url, '/', 2) as repo_name,
                             full_endpoint as endpoint_name,

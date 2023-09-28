@@ -5,6 +5,7 @@
 {% set create_repos_endpoints_table %}
 CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
     SELECT 
+        'near' AS project_name,
         repo_url, 
         frequency, 
         CAST(NULL AS TIMESTAMP_NTZ) AS last_time_queried,
