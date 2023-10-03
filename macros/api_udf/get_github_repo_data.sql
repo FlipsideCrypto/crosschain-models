@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
         ) AS full_endpoint,
             CASE 
         WHEN ARRAY_SIZE(SPLIT(full_endpoint, '/')) = 6 THEN SPLIT_PART(full_endpoint, '/', 6)
-        ELSE SPLIT_PART(full_endpoint, '/', 5)
+        WHEN ARRAY_SIZE(SPLIT(full_endpoint, '/')) = 5 THEN SPLIT_PART(full_endpoint, '/', 5)
+        ELSE 'GENERAL'
         END as endpoint_github
     FROM {{ target.database }}.silver.near_github_repos
     CROSS JOIN (
@@ -34,8 +35,8 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
         SELECT 'weekly' AS frequency, endpoint FROM VALUES
             ('/repos/{owner}/{repo}/stats/code_frequency'),
             ('/repos/{owner}/{repo}/stats/participation'),
-            --('/repos/{owner}/{repo}/stats/contributors'),
-            --('/repos/{owner}/{repo}/stats/punch_card')
+            ('/repos/{owner}/{repo}')
+            --('/repos/{owner}/{repo}/stats/contributors'), -- Could be super long no pagination
         AS t(endpoint)
         
         UNION ALL
