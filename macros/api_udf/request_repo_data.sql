@@ -30,7 +30,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         var res = snowflake.execute({sqlText: `WITH subset as (
                 SELECT *
                 FROM {{ target.database }}.silver.github_repos
-                WHERE (DATE(last_time_queried) <> sysdate()::DATE OR last_time_queried IS NULL)
+                WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
                 AND frequency IN ${parsedFrequencyArray}
                 LIMIT 4000
             )
@@ -54,7 +54,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                         full_endpoint,
                         endpoint_github
                     FROM {{ target.database }}.silver.github_repos
-                    WHERE (DATE(last_time_queried) <> CURRENT_DATE OR last_time_queried IS NULL)
+                    WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
                     AND frequency IN ${parsedFrequencyArray}
                     LIMIT ${batch_num}
                 ),
