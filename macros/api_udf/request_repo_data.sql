@@ -26,7 +26,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
 
         let parsedFrequencyArray = `('${FETCH_FREQUENCY.join("', '")}')`;
         var row_count = 0;
-        var batch_num = 10;
+        var batch_num = 100;
         var res = snowflake.execute({sqlText: `WITH subset as (
                 SELECT *
                 FROM {{ target.database }}.silver.github_repos
