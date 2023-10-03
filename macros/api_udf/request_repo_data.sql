@@ -48,7 +48,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                     SELECT
                         project_name,
                         livequery_dev.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
-                        CURRENT_TIMESTAMP AS _request_timestamp,
+                        SYSDATE() AS _request_timestamp,
                         repo_url,
                         full_endpoint,
                         endpoint_github
@@ -116,7 +116,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             // Update command: Update last_time_queried for the queried endpoints
             var update_command = `
                 UPDATE {{ target.database }}.silver.github_repos
-                SET last_time_queried = CURRENT_TIMESTAMP
+                SET last_time_queried = SYSDATE()
                 WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE rate_limit_remaining > 0);
             `;
             snowflake.execute({sqlText: update_command});
