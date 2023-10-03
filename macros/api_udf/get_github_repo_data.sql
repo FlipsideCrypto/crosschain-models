@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
 {% set check_endpoints_query %}
     SELECT COUNT(*)
     FROM {{ table_name }}
-    WHERE (DATE(last_time_queried) <> CURRENT_DATE OR last_time_queried IS NULL)
+    WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
     AND frequency IN ('{{ frequency_string }}')
 {% endset %}
 
