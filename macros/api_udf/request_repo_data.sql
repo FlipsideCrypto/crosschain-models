@@ -30,7 +30,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         var res = snowflake.execute({sqlText: `WITH subset as (
                 SELECT *
                 FROM {{ target.database }}.silver.github_repos
-                WHERE (DATE(last_time_queried) <> CURRENT_DATE OR last_time_queried IS NULL)
+                WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
                 AND frequency IN ${parsedFrequencyArray}
                 LIMIT 4000
             )
@@ -43,17 +43,17 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         
         for(let i = 0; i < call_groups; i++) {
             var create_temp_table_command = `
-                CREATE OR REPLACE TEMPORARY TABLE {{ target.database }}.bronze_api.response_data AS 
+                CREATE OR REPLACE TEMPORARY TABLE {{ target.database }}.bronze_api.response_data AS
                 WITH api_call AS (
                     SELECT
                         project_name,
                         livequery_dev.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
-                        CURRENT_TIMESTAMP AS _request_timestamp,
+                        SYSDATE() AS _request_timestamp,
                         repo_url,
                         full_endpoint,
                         endpoint_github
                     FROM {{ target.database }}.silver.github_repos
-                    WHERE (DATE(last_time_queried) <> CURRENT_DATE OR last_time_queried IS NULL)
+                    WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
                     AND frequency IN ${parsedFrequencyArray}
                     LIMIT ${batch_num}
                 ),
@@ -83,8 +83,10 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                 FROM
                 flatten_res;
             `;
+
             snowflake.execute({sqlText: create_temp_table_command});
             // Second command: Insert data into the target table from the temporary table
+            
             var insert_command = `
                 INSERT INTO {{ target.database }}.bronze_api.github_repo_data(
                             project_name,
@@ -114,7 +116,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             // Update command: Update last_time_queried for the queried endpoints
             var update_command = `
                 UPDATE {{ target.database }}.silver.github_repos
-                SET last_time_queried = CURRENT_TIMESTAMP
+                SET last_time_queried = SYSDATE()
                 WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE rate_limit_remaining > 0);
             `;
             snowflake.execute({sqlText: update_command});
