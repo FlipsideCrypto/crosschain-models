@@ -13,9 +13,10 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
             REPLACE(endpoint, '{owner}', SPLIT_PART(repo_url, '/', 1)), 
             '{repo}', SPLIT_PART(repo_url, '/', 2)
         ) AS full_endpoint,
-            CASE 
-        WHEN ARRAY_SIZE(SPLIT(full_endpoint, '/')) = 6 THEN SPLIT_PART(full_endpoint, '/', 6)
-        ELSE SPLIT_PART(full_endpoint, '/', 5)
+        CASE 
+            WHEN ARRAY_SIZE(SPLIT(full_endpoint, '/')) = 6 THEN SPLIT_PART(full_endpoint, '/', 6)
+            WHEN ARRAY_SIZE(SPLIT(full_endpoint, '/')) = 5 THEN SPLIT_PART(full_endpoint, '/', 5)
+            ELSE 'GENERAL'
         END as endpoint_github
     FROM {{ target.database }}.silver.near_github_repos
     CROSS JOIN (
@@ -35,7 +36,7 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
             ('/repos/{owner}/{repo}/stats/code_frequency'),
             ('/repos/{owner}/{repo}/stats/contributors'),
             ('/repos/{owner}/{repo}/stats/participation'),
-            ('/repos/{owner}/{repo}/stats/punch_card')
+            ('/repos/{owner}/{repo}')
         AS t(endpoint)
         
         UNION ALL
