@@ -44,7 +44,6 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         for(let i = 0; i < call_groups; i++) {
             var create_temp_table_command = `
                 CREATE OR REPLACE TEMPORARY TABLE {{ target.database }}.bronze_api.response_data AS
-                SET LIVEQUERY_CONTEXT = '{"userId":"DBT_CLOUD_CROSSCHAIN"}'; 
                 WITH api_call AS (
                     SELECT
                         project_name,
