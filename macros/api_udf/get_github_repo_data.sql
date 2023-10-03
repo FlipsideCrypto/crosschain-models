@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
         CASE 
             WHEN ARRAY_SIZE(SPLIT(full_endpoint, '/')) = 6 THEN SPLIT_PART(full_endpoint, '/', 6)
             WHEN ARRAY_SIZE(SPLIT(full_endpoint, '/')) = 5 THEN SPLIT_PART(full_endpoint, '/', 5)
-            ELSE 'GENERAL'
+            ELSE 'general'
         END as endpoint_github
     FROM {{ target.database }}.silver.near_github_repos
     CROSS JOIN (
