@@ -20,9 +20,9 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
         END as endpoint_github
     FROM {{ target.database }}.silver.near_github_repos
     CROSS JOIN (
-        SELECT 'daily' AS frequency, endpoint FROM VALUES -- per pagination
-            ('/repos/{owner}/{repo}/pulls'), 
-            ('/repos/{owner}/{repo}/issues'), 
+        SELECT 'daily' AS frequency, endpoint FROM VALUES
+            ('/repos/{owner}/{repo}/pulls'),
+            ('/repos/{owner}/{repo}/issues'),
             ('/repos/{owner}/{repo}/stargazers'),
             ('/repos/{owner}/{repo}/subscribers'),
             ('/repos/{owner}/{repo}/commits'),
@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
         
         SELECT 'weekly' AS frequency, endpoint FROM VALUES
             ('/repos/{owner}/{repo}/stats/code_frequency'),
+            ('/repos/{owner}/{repo}/stats/contributors'),
             ('/repos/{owner}/{repo}/stats/participation'),
             ('/repos/{owner}/{repo}')
-            ('/repos/{owner}/{repo}/stats/contributors'),
         AS t(endpoint)
         
         UNION ALL
