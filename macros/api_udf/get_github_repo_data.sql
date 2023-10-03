@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
             ('/repos/{owner}/{repo}/stats/code_frequency'),
             ('/repos/{owner}/{repo}/stats/participation'),
             ('/repos/{owner}/{repo}')
-            --('/repos/{owner}/{repo}/stats/contributors'), -- Could be super long no pagination
+            ('/repos/{owner}/{repo}/stats/contributors'),
         AS t(endpoint)
         
         UNION ALL
