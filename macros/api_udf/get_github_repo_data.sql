@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
         AS t(endpoint)   
         UNION ALL
         
-        SELECT 'essensial' AS frequency, endpoint FROM VALUES
+        SELECT 'core' AS frequency, endpoint FROM VALUES
             ('/repos/{owner}/{repo}/stats/contributors'),
             ('/repos/{owner}/{repo}')
         AS t(endpoint)
