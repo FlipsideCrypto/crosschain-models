@@ -40,10 +40,15 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
         UNION ALL
         
         SELECT 'core' AS frequency, endpoint FROM VALUES
-            ('/repos/{owner}/{repo}/stats/contributors'),
             ('/repos/{owner}/{repo}')
         AS t(endpoint)
         
+        UNION ALL
+        
+        SELECT 'contributors' AS frequency, endpoint FROM VALUES
+            ('/repos/{owner}/{repo}/stats/contributors')
+        AS t(endpoint)
+
         UNION ALL
         
         SELECT 'last_year' AS frequency, endpoint FROM VALUES
