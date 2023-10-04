@@ -133,7 +133,9 @@ flat_table AS (
     CASE
       WHEN blockchain IN (
         'algorand',
-        'solana'
+        'solana',
+        'bitcoin', 
+        'cosmos'
       ) THEN t.value :address :: STRING
       ELSE LOWER(
         t.value :address :: STRING
