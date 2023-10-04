@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
     SELECT 
         'near' AS project_name,
         repo_url, 
-        frequency, 
+        frequency,
+        0 AS retries,
         CAST(NULL AS TIMESTAMP_NTZ) AS last_time_queried,
         REPLACE(
             REPLACE(endpoint, '{owner}', SPLIT_PART(repo_url, '/', 1)), 
@@ -34,8 +35,12 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
         
         SELECT 'weekly' AS frequency, endpoint FROM VALUES
             ('/repos/{owner}/{repo}/stats/code_frequency'),
-            ('/repos/{owner}/{repo}/stats/contributors'),
             ('/repos/{owner}/{repo}/stats/participation'),
+        AS t(endpoint)   
+        UNION ALL
+        
+        SELECT 'essensial' AS frequency, endpoint FROM VALUES
+            ('/repos/{owner}/{repo}/stats/contributors'),
             ('/repos/{owner}/{repo}')
         AS t(endpoint)
         

@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                     FROM {{ target.database }}.silver.github_repos
                     WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
                     AND frequency IN ${parsedFrequencyArray}
+                    ORDER BY retries ASC
                     LIMIT ${batch_num}
                 ),
                 flatten_res AS (
@@ -63,6 +64,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                         repo_url,
                         full_endpoint,
                         res:data AS data,
+                        res:status_code AS status_code,
                         'github' AS provider,
                         endpoint_github,
                         GET(res:headers, 'X-RateLimit-Remaining')::INTEGER as rate_limit_remaining,
@@ -75,6 +77,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                     repo_url,
                     full_endpoint,
                     data,
+                    status_code,
                     provider,
                     endpoint_github,
                     rate_limit_remaining,
@@ -110,16 +113,23 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                             _inserted_timestamp,
                             _res_id
                         FROM {{ target.database }}.bronze_api.response_data
-                        WHERE rate_limit_remaining > 0;
+                        WHERE rate_limit_remaining > 0 and status_code = 200;
             `;
             snowflake.execute({sqlText: insert_command});
             // Update command: Update last_time_queried for the queried endpoints
             var update_command = `
                 UPDATE {{ target.database }}.silver.github_repos
                 SET last_time_queried = SYSDATE()
-                WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE rate_limit_remaining > 0);
+                WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE rate_limit_remaining > 0 and status_code = 200);
             `;
             snowflake.execute({sqlText: update_command});
+
+            var update_retries_command = `
+                UPDATE {{ target.database }}.silver.github_repos
+                SET retries = retries + 1 
+                WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE status_code = 202);
+            `;
+            snowflake.execute({sqlText: update_retries_command});
         }
     return 'Success';
 

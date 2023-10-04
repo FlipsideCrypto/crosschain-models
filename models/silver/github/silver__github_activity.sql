@@ -1,7 +1,7 @@
 {{ config(
     materialized = 'incremental',
     unique_key = ['_res_id'],
-    cluster_by = ['_inserted_timestamp::DATE']
+    cluster_by = ['_inserted_timestamp::DATE'],
 ) }}
 
 SELECT
