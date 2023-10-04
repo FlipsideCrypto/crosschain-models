@@ -32,7 +32,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                 FROM {{ target.database }}.silver.github_repos
                 WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
                 AND frequency IN ${parsedFrequencyArray}
-                LIMIT 4000
+                LIMIT 5000
             )
             SELECT count(*)
             FROM subset`});
@@ -126,7 +126,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
 
             var update_retries_command = `
                 UPDATE {{ target.database }}.silver.github_repos
-                SET retries = retries + 1 
+                SET retries = retries + 1
                 WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE status_code = 202);
             `;
             snowflake.execute({sqlText: update_retries_command});
