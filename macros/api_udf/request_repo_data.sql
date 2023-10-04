@@ -32,7 +32,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                 FROM {{ target.database }}.silver.github_repos
                 WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
                 AND frequency IN ${parsedFrequencyArray}
-                LIMIT 5000
+                LIMIT  5000
             )
             SELECT count(*)
             FROM subset`});
