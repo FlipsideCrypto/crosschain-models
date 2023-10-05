@@ -200,7 +200,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         var reset_retries_command = `
             UPDATE {{ target.database }}.silver.github_repos
             SET retries = 0
-            WHERE DATE(last_time_queried) = SYSDATE()::DATE;
+            WHERE DATE(last_time_queried) = SYSDATE()::DATE AND frequency IN ${parsedFrequencyArray};
         `;
 
 
