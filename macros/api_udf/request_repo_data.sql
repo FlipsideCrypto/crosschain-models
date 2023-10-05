@@ -26,7 +26,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
 
         let parsedFrequencyArray = `('${FETCH_FREQUENCY.join("', '")}')`;
         
-        for(let i = 0; i < 1000; i++) {
+        for(let i = 0; i < 100; i++) {
 
             var create_temp_table_command = `
                 CREATE OR REPLACE TEMPORARY TABLE {{ target.database }}.bronze_api.response_data AS
@@ -34,7 +34,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             `;
 
             
-            var numLambdas = 10;
+            var numLambdas = 50;
 
             for (let i = 0; i < numLambdas; i++) {
                 create_temp_table_command += `
@@ -49,7 +49,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                         FROM {{ target.database }}.silver.github_repos
                         WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
                         AND frequency IN ${parsedFrequencyArray}
-                        ORDER BY retries DESC
+                        ORDER BY full_endpoint, retries DESC
                         LIMIT 1 OFFSET ${i}
                     )
                 `;
@@ -116,7 +116,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                             _inserted_timestamp,
                             _res_id
                         FROM {{ target.database }}.bronze_api.response_data
-                        WHERE rate_limit_remaining > 0 and status_code in ( 200, 404 );
+                        WHERE rate_limit_remaining > 0 and status_code != 202;
             `;
             snowflake.execute({sqlText: insert_command});
             // Update command: Update last_time_queried for the queried endpoints
