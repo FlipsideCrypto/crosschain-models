@@ -25,23 +25,8 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
     AS $$
 
         let parsedFrequencyArray = `('${FETCH_FREQUENCY.join("', '")}')`;
-        var row_count = 0;
-        var batch_num = 1;
-        var res = snowflake.execute({sqlText: `WITH subset as (
-                SELECT *
-                FROM {{ target.database }}.silver.github_repos
-                WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
-                AND frequency IN ${parsedFrequencyArray}
-                LIMIT  5000
-            )
-            SELECT count(*)
-            FROM subset`});
-        res.next()
-        row_count = res.getColumnValue(1);
         
-        call_groups = Math.ceil(row_count/batch_num)
-        
-        for(let i = 0; i < call_groups; i++) {
+        for(let i = 0; i < 1000; i++) {
             var create_temp_table_command = `
                 CREATE OR REPLACE TEMPORARY TABLE {{ target.database }}.bronze_api.response_data AS
                 WITH api_call AS (
@@ -55,8 +40,69 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                     FROM {{ target.database }}.silver.github_repos
                     WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
                     AND frequency IN ${parsedFrequencyArray}
-                    ORDER BY retries ASC
-                    LIMIT ${batch_num}
+                    ORDER BY retries DESC
+                    LIMIT 1
+
+                    UNION ALL
+
+                    SELECT
+                        project_name,
+                        livequery_dev.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
+                        SYSDATE() AS _request_timestamp,
+                        repo_url,
+                        full_endpoint,
+                        endpoint_github
+                    FROM {{ target.database }}.silver.github_repos
+                    WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
+                    AND frequency IN ${parsedFrequencyArray}
+                    ORDER BY retries DESC
+                    LIMIT 1
+
+                    UNION ALL
+
+                    SELECT
+                        project_name,
+                        livequery_dev.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
+                        SYSDATE() AS _request_timestamp,
+                        repo_url,
+                        full_endpoint,
+                        endpoint_github
+                    FROM {{ target.database }}.silver.github_repos
+                    WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
+                    AND frequency IN ${parsedFrequencyArray}
+                    ORDER BY retries DESC
+                    LIMIT 1
+
+                    UNION ALL
+
+                    SELECT
+                        project_name,
+                        livequery_dev.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
+                        SYSDATE() AS _request_timestamp,
+                        repo_url,
+                        full_endpoint,
+                        endpoint_github
+                    FROM {{ target.database }}.silver.github_repos
+                    WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
+                    AND frequency IN ${parsedFrequencyArray}
+                    ORDER BY retries DESC
+                    LIMIT 1
+
+                    UNION ALL
+
+                    SELECT
+                        project_name,
+                        livequery_dev.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
+                        SYSDATE() AS _request_timestamp,
+                        repo_url,
+                        full_endpoint,
+                        endpoint_github
+                    FROM {{ target.database }}.silver.github_repos
+                    WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
+                    AND frequency IN ${parsedFrequencyArray}
+                    ORDER BY retries DESC
+                    LIMIT 1
+
                 ),
                 flatten_res AS (
                     SELECT
@@ -130,7 +176,34 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                 WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE status_code = 202);
             `;
             snowflake.execute({sqlText: update_retries_command});
+
+            var avg_retries_query = `
+                SELECT AVG(retries) as avg_retries
+                FROM {{ target.database }}.silver.github_repos
+                WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE status_code = 202);
+            `;
+            var result_set = snowflake.execute({sqlText: avg_retries_query});
+            result_set.next();
+            var avg_retries = result_set.getColumnValue(1);
+
+            // system wait based on average retries
+            var wait_time = 20 * avg_retries;  // Adjust this formula as needed
+            var wait_command = `
+                CALL system$wait(${wait_time});
+            `;
+
+            snowflake.execute({sqlText: wait_command});
         }
+
+        // reset retries to 0 when im done
+
+        var reset_retries_command = `
+            UPDATE {{ target.database }}.silver.github_repos
+            SET retries = 0
+            WHERE DATE(last_time_queried) = SYSDATE()::DATE;
+        `;
+
+
     return 'Success';
 
 $$;
