@@ -27,9 +27,17 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         let parsedFrequencyArray = `('${FETCH_FREQUENCY.join("', '")}')`;
         
         for(let i = 0; i < 1000; i++) {
+
             var create_temp_table_command = `
                 CREATE OR REPLACE TEMPORARY TABLE {{ target.database }}.bronze_api.response_data AS
                 WITH api_call AS (
+            `;
+
+            
+            var numLambdas = 10;
+
+            for (let i = 0; i < numLambdas; i++) {
+                create_temp_table_command += `
                     SELECT * FROM (
                         SELECT
                             project_name,
@@ -42,76 +50,16 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                         WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
                         AND frequency IN ${parsedFrequencyArray}
                         ORDER BY retries DESC
-                        LIMIT 1 OFFSET 0
-                        )
-
-                    UNION ALL
-
-                    SELECT * FROM (
-                        SELECT
-                            project_name,
-                            livequery_dev.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
-                            SYSDATE() AS _request_timestamp,
-                            repo_url,
-                            full_endpoint,
-                            endpoint_github
-                        FROM {{ target.database }}.silver.github_repos
-                        WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
-                        AND frequency IN ${parsedFrequencyArray}
-                        ORDER BY retries DESC
-                        LIMIT 1 OFFSET 1
+                        LIMIT 1 OFFSET ${i}
                     )
+                `;
 
-                    UNION ALL
+                if (i < numLambdas - 1) {
+                    create_temp_table_command += `  UNION ALL `;
+                }
+            }
 
-                    SELECT * FROM (
-                        SELECT
-                            project_name,
-                            livequery_dev.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
-                            SYSDATE() AS _request_timestamp,
-                            repo_url,
-                            full_endpoint,
-                            endpoint_github
-                        FROM {{ target.database }}.silver.github_repos
-                        WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
-                        AND frequency IN ${parsedFrequencyArray}
-                        ORDER BY retries DESC
-                        LIMIT 1 OFFSET 2
-                    )
-
-                    UNION ALL
-
-                    SELECT * FROM (
-                            SELECT
-                            project_name,
-                            livequery_dev.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
-                            SYSDATE() AS _request_timestamp,
-                            repo_url,
-                            full_endpoint,
-                            endpoint_github
-                        FROM {{ target.database }}.silver.github_repos
-                        WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
-                        AND frequency IN ${parsedFrequencyArray}
-                        ORDER BY retries DESC
-                        LIMIT 1 OFFSET 3
-                    )
-
-                    UNION ALL
-
-                    SELECT * FROM ( 
-                        SELECT
-                            project_name,
-                            livequery_dev.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
-                            SYSDATE() AS _request_timestamp,
-                            repo_url,
-                            full_endpoint,
-                            endpoint_github
-                        FROM {{ target.database }}.silver.github_repos
-                        WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
-                        AND frequency IN ${parsedFrequencyArray}
-                        ORDER BY retries DESC
-                        LIMIT 1 OFFSET 4
-                    )
+            create_temp_table_command += `
                 ),
                 flatten_res AS (
                     SELECT
@@ -168,7 +116,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                             _inserted_timestamp,
                             _res_id
                         FROM {{ target.database }}.bronze_api.response_data
-                        WHERE rate_limit_remaining > 0 and status_code = 200;
+                        WHERE rate_limit_remaining > 0 and status_code in ( 200, 404 );
             `;
             snowflake.execute({sqlText: insert_command});
             // Update command: Update last_time_queried for the queried endpoints
@@ -176,7 +124,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                 UPDATE {{ target.database }}.silver.github_repos
                 SET last_time_queried = SYSDATE(),
                 retries = 0
-                WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE rate_limit_remaining > 0 and status_code = 200);
+                WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE rate_limit_remaining > 0 and status_code != 202);
             `;
             snowflake.execute({sqlText: update_command});
 
@@ -186,23 +134,41 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                 WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE status_code = 202);
             `;
             snowflake.execute({sqlText: update_retries_command});
+            
 
-            var avg_retries_query = `
-                SELECT AVG(retries) as avg_retries
-                FROM {{ target.database }}.silver.github_repos
-                WHERE full_endpoint IN (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE status_code = 202);
-            `;
-            var result_set = snowflake.execute({sqlText: avg_retries_query});
-            result_set.next();
-            var avg_retries = result_set.getColumnValue(1);
+        // Check if there are any rows with non-zero retries
+        var check_retries_query = `
+            SELECT COUNT(*) as count_rows
+            FROM {{ target.database }}.silver.github_repos
+            WHERE retries > 0
+        `;
+        var result_set_check = snowflake.execute({sqlText: check_retries_query});
+        result_set_check.next();
+        var count_rows_with_retries = result_set_check.getColumnValue(1);
 
-            // system wait based on average retries
-            var wait_time = Math.round(20 * avg_retries);  // Adjust this formula as needed
-            var wait_command = `
-                CALL system$wait(${wait_time});
-            `;
+        if (count_rows_with_retries > 0) {
+                // Fetch the retries value of the first row ordered by retries DESC
+                var retries_query = `
+                    SELECT retries
+                    FROM {{ target.database }}.silver.github_repos
+                    ORDER BY retries DESC
+                    LIMIT 1
+                `;
+                var result_set = snowflake.execute({sqlText: retries_query});
+                result_set.next();
+                var retries = result_set.getColumnValue(1);
 
-            snowflake.execute({sqlText: wait_command});
+                // Determine the wait time based on the retries value
+                // For example, if you want to wait 10 seconds for each retry:
+                var wait_time = Math.round(10 * retries);
+
+                var wait_command = `
+                    CALL system$wait(${wait_time});
+                `;
+
+
+                snowflake.execute({sqlText: wait_command});
+            }
         }
 
         // reset retries to 0 when im done
