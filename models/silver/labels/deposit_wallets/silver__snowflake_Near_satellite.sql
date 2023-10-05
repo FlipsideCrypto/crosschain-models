@@ -13,8 +13,8 @@ WITH distributor_cex AS (
         blockchain,
         address,
         creator,
-        label_type as l1_label,
-        label_subtype as l2_label,
+        label_type AS l1_label,
+        label_subtype AS l2_label,
         address_name,
         project_name
     FROM
@@ -23,7 +23,7 @@ WITH distributor_cex AS (
         blockchain = 'near'
         AND l1_label = 'cex'
         AND l2_label = 'hot_wallet'
-        and delete_flag is null
+        AND delete_flag IS NULL
 ),
 possible_sats AS (
     -- THIS STATEMENT LOCATES POTENTIAL SATELLITE WALLETS BASED ON DEPOSIT BEHAVIOR
@@ -35,7 +35,7 @@ possible_sats AS (
                 DISTINCT dc.system_created_at,
                 dc.insert_date,
                 dc.blockchain,
-                xfer.TX_SIGNER AS address,
+                xfer.tx_signer AS address,
                 dc.creator,
                 dc.address_name,
                 dc.project_name,
@@ -45,7 +45,7 @@ possible_sats AS (
                     DISTINCT project_name
                 ) over(
                     PARTITION BY dc.blockchain,
-                    xfer.TX_SIGNER
+                    xfer.tx_signer
                 ) AS project_count -- how many projects has each from address sent to
             FROM
                 {{ source(
@@ -54,7 +54,7 @@ possible_sats AS (
                 ) }}
                 xfer
                 JOIN distributor_cex dc
-                ON dc.address = xfer.TX_RECEIVER
+                ON dc.address = xfer.tx_receiver
             WHERE
                 deposit > 0
 
@@ -75,7 +75,7 @@ GROUP BY
 ),
 real_sats AS (
     SELECT
-        TX_SIGNER,
+        tx_signer,
         COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
     FROM
         {{ source(
@@ -84,10 +84,10 @@ real_sats AS (
         ) }}
         xfer
         LEFT OUTER JOIN distributor_cex dc
-        ON dc.address = xfer.TX_RECEIVER
+        ON dc.address = xfer.tx_receiver
     WHERE
         deposit > 0
-        AND TX_SIGNER IN (
+        AND tx_signer IN (
             SELECT
                 address
             FROM
@@ -98,11 +98,11 @@ real_sats AS (
 AND block_timestamp > CURRENT_DATE - 10
 {% endif %}
 GROUP BY
-    TX_SIGNER
+    tx_signer
 ),
 exclusive_sats AS (
     SELECT
-        DISTINCT TX_SIGNER AS address
+        DISTINCT tx_signer AS address
     FROM
         real_sats
     WHERE
@@ -130,24 +130,20 @@ final_base AS(
         ON e.address = p.address
 )
 SELECT
-    DISTINCT system_created_at,
-    insert_date,
-    blockchain,
-    address,
-    creator,
-    l1_label,
-    l2_label,
-    address_name,
-    project_name
+    DISTINCT f.system_created_at,
+    f.insert_date,
+    f.blockchain,
+    f.address,
+    f.creator,
+    f.l1_label,
+    f.l2_label,
+    f.address_name,
+    f.project_name
 FROM
-    final_base
+    final_base f
+    LEFT JOIN {{ ref('silver__address_labels') }} A
+    ON f.address = A.address
+    AND A.blockchain = 'near'
+    AND A.delete_flag IS NULL
 WHERE
-    address NOT IN (
-        SELECT
-            DISTINCT address
-        FROM
-            {{ ref('silver__address_labels') }}
-        WHERE
-            blockchain = 'near'
-            and delete_flag is null
-    )
+    A.address IS NULL
