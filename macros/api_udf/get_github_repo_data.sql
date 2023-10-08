@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS {{ table_name }} AS (
         'near' AS project_name,
         repo_url, 
         frequency,
-        0 AS retries,
+        0 :: INT AS retries,
         CAST(NULL AS TIMESTAMP_NTZ) AS last_time_queried,
         REPLACE(
             REPLACE(endpoint, '{owner}', SPLIT_PART(repo_url, '/', 1)), 
