@@ -35,6 +35,9 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
     AS $$
 
         let parsedFrequencyArray = `('${FETCH_FREQUENCY.join("', '")}')`;
+        const MIN_BATCH_SIZE = 10;  
+        const MAX_BATCH_SIZE = 100;
+
         var row_count = 0;
         var batch_num = 100;
         var max_calls = 5000;
@@ -50,9 +53,6 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             FROM subset`});
         res.next()
         row_count = res.getColumnValue(1);
-
-        const MIN_BATCH_SIZE = 10;  
-        const MAX_BATCH_SIZE = 100;
 
         batch_num = Math.max(MIN_BATCH_SIZE, Math.min(MAX_BATCH_SIZE, Math.round(row_count * 0.10)));
 
@@ -157,7 +157,6 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             `;
             snowflake.execute({sqlText: update_command});
 
-
             var check_retries_command = `
                 SELECT COUNT(*) 
                 FROM {{ target.database }}.silver.github_repos 
@@ -216,12 +215,13 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
 
 
                 snowflake.execute({sqlText: wait_command});
-
-            if (count_rows_with_retries = 0) {
-                break;
             }
+            
+            else if (count_rows_with_retries = 0) {
+                    break;
+                }
 
-            }
+
 
         var log_message = `INSERT INTO {{ target.database }}.bronze_api.log_messages (log_level, message) VALUES ('INFO', 'Starting iteration ${i} of ${call_groups}')`;
         snowflake.execute({sqlText: log_message});
