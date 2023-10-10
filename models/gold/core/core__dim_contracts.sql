@@ -11,6 +11,10 @@ WITH base AS (
         symbol,
         NAME,
         decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
         'ethereum' AS blockchain
     FROM
         {{ source(
@@ -23,6 +27,10 @@ WITH base AS (
         symbol,
         NAME,
         decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
         'optimism' AS blockchain
     FROM
         {{ source(
@@ -35,6 +43,10 @@ WITH base AS (
         symbol,
         NAME,
         decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
         'arbitrum' AS blockchain
     FROM
         {{ source(
@@ -47,6 +59,10 @@ WITH base AS (
         symbol,
         NAME,
         decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
         'polygon' AS blockchain
     FROM
         {{ source(
@@ -59,6 +75,10 @@ WITH base AS (
         symbol,
         NAME,
         decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
         'avalanche' AS blockchain
     FROM
         {{ source(
@@ -71,6 +91,10 @@ WITH base AS (
         symbol,
         NAME,
         decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
         'bsc' AS blockchain
     FROM
         {{ source(
@@ -83,6 +107,10 @@ WITH base AS (
         symbol,
         NAME,
         decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
         'base' AS blockchain
     FROM
         {{ source(
@@ -95,6 +123,10 @@ WITH base AS (
         symbol,
         NAME,
         decimals,
+        NULL AS created_block_number,
+        NULL AS created_block_timestamp,
+        NULL AS created_tx_hash,
+        NULL AS creator_address,
         'gnosis' AS blockchain
     FROM
         {{ source(
@@ -107,6 +139,10 @@ WITH base AS (
         LOWER(project_name) AS symbol,
         label AS NAME,
         DECIMAL AS decimals,
+        NULL AS created_block_number,
+        NULL AS created_block_timestamp,
+        NULL AS created_tx_hash,
+        NULL AS creator_address,
         'cosmos' AS blockchain
     FROM
         {{ source(
@@ -119,6 +155,10 @@ WITH base AS (
         LOWER(symbol) AS symbol,
         token_name AS NAME,
         decimals,
+        NULL AS created_block_number,
+        NULL AS created_block_timestamp,
+        NULL AS created_tx_hash,
+        NULL AS creator_address,
         'solana' AS blockchain
     FROM
         {{ source(
@@ -131,6 +171,10 @@ SELECT
     symbol,
     NAME,
     decimals,
+    created_block_number,
+    created_block_timestamp,
+    created_tx_hash,
+    creator_address,
     blockchain
 FROM
     base
