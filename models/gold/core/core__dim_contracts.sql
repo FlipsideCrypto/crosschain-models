@@ -14,104 +14,104 @@ WITH base AS (
         'ethereum' AS blockchain
     FROM
         {{ source(
-            'ethereum_silver',
-            'contracts'
+            'ethereum_core',
+            'dim_contracts'
         ) }}
     UNION ALL
     SELECT
-        contract_address AS address,
-        token_symbol AS symbol,
-        token_name AS NAME,
-        token_decimals AS decimals,
+        address,
+        symbol,
+        NAME,
+        decimals,
         'optimism' AS blockchain
     FROM
         {{ source(
-            'optimism_silver',
-            'contracts'
+            'optimism_core',
+            'dim_contracts'
         ) }}
     UNION ALL
     SELECT
-        contract_address AS address,
-        token_symbol AS symbol,
-        token_name AS NAME,
-        token_decimals AS decimals,
+        address,
+        symbol,
+        NAME,
+        decimals,
         'arbitrum' AS blockchain
     FROM
         {{ source(
-            'arbitrum_silver',
-            'contracts'
+            'arbitrum_core',
+            'dim_contracts'
         ) }}
     UNION ALL
     SELECT
-        contract_address AS address,
-        token_symbol AS symbol,
-        token_name AS NAME,
-        token_decimals AS decimals,
+        address,
+        symbol,
+        NAME,
+        decimals,
         'polygon' AS blockchain
     FROM
         {{ source(
-            'polygon_silver',
-            'contracts'
+            'polygon_core',
+            'dim_contracts'
         ) }}
     UNION ALL
     SELECT
-        contract_address AS address,
-        token_symbol AS symbol,
-        token_name AS NAME,
-        token_decimals AS decimals,
+        address,
+        symbol,
+        NAME,
+        decimals,
         'avalanche' AS blockchain
     FROM
         {{ source(
-            'avalanche_silver',
-            'contracts'
+            'avalanche_core',
+            'dim_contracts'
         ) }}
     UNION ALL
     SELECT
-        contract_address AS address,
-        token_symbol AS symbol,
-        token_name AS NAME,
-        token_decimals AS decimals,
+        address,
+        symbol,
+        NAME,
+        decimals,
         'bsc' AS blockchain
     FROM
         {{ source(
-            'bsc_silver',
-            'contracts'
+            'bsc_core',
+            'dim_contracts'
         ) }}
     UNION ALL
     SELECT
-        contract_address AS address,
-        token_symbol AS symbol,
-        token_name AS NAME,
-        token_decimals AS decimals,
+        address,
+        symbol,
+        NAME,
+        decimals,
         'base' AS blockchain
     FROM
         {{ source(
-            'base_silver',
-            'contracts'
+            'base_core',
+            'dim_contracts'
         ) }}
     UNION ALL
     SELECT
-        contract_address AS address,
-        token_symbol AS symbol,
-        token_name AS NAME,
-        token_decimals AS decimals,
+        address,
+        symbol,
+        NAME,
+        decimals,
         'gnosis' AS blockchain
     FROM
         {{ source(
-            'gnosis_silver',
-            'contracts'
+            'gnosis_core',
+            'dim_contracts'
         ) }}
     UNION ALL
     SELECT
-        address AS address,
+        address,
         LOWER(project_name) AS symbol,
         label AS NAME,
         DECIMAL AS decimals,
         'cosmos' AS blockchain
     FROM
         {{ source(
-            'osmosis_silver',
-            'asset_metadata'
+            'osmosis_core',
+            'dim_tokens'
         ) }}
     UNION ALL
     SELECT
@@ -122,8 +122,8 @@ WITH base AS (
         'solana' AS blockchain
     FROM
         {{ source(
-            'solana_silver',
-            'token_metadata'
+            'solana_core',
+            'dim_tokens'
         ) }}
 )
 SELECT

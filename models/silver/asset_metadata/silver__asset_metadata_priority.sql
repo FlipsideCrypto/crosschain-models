@@ -11,17 +11,23 @@ SELECT
     symbol,
     blockchain,
     provider,
-     {{ dbt_utils.surrogate_key( 
-        ['token_address','blockchain','provider'] ) }} AS _unique_key,
+    {{ dbt_utils.generate_surrogate_key(
+        ['token_address','blockchain','provider']
+    ) }} AS _unique_key,
     _inserted_timestamp
-FROM {{ ref('silver__asset_metadata_all_providers')}}
+FROM
+    {{ ref('silver__asset_metadata_all_providers') }}
+
 {% if is_incremental() %}
-WHERE _inserted_timestamp > (
-    SELECT
-        MAX(_inserted_timestamp)
-    FROM
-        {{ this }}
+WHERE
+    _inserted_timestamp > (
+        SELECT
+            MAX(_inserted_timestamp)
+        FROM
+            {{ this }}
     )
 {% endif %}
-QUALIFY(ROW_NUMBER() OVER (PARTITION BY token_address, blockchain, provider
-    ORDER BY _inserted_timestamp DESC)) = 1
+
+qualify(ROW_NUMBER() over (PARTITION BY token_address, blockchain, provider
+ORDER BY
+    _inserted_timestamp DESC)) = 1
