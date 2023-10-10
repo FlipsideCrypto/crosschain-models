@@ -116,7 +116,7 @@ FINAL AS (
         price,
         is_imputed,
         _inserted_timestamp,
-        {{ dbt_utils.surrogate_key(
+        {{ dbt_utils.generate_surrogate_key(
             ['hour','token_address','blockchain','provider']
         ) }} AS _unique_key
     FROM
@@ -137,19 +137,8 @@ FROM
     FINAL --remove weird tokens / bad metadata
 WHERE
     len(token_address) > 0
-    AND NOT (
-        LOWER(blockchain) IN (
-            'arbitrum',
-            'avalanche',
-            'bsc',
-            'ethereum',
-            'gnosis',
-            'optimism',
-            'polygon',
-            'base'
-        )
-        AND token_address NOT ILIKE '0x%'
-    )
+    AND NOT (LOWER(blockchain) IN ('arbitrum', 'avalanche', 'bsc', 'ethereum', 'gnosis', 'optimism', 'polygon', 'base')
+    AND token_address NOT ILIKE '0x%')
     AND NOT (
         blockchain = 'algorand'
         AND TRY_CAST(

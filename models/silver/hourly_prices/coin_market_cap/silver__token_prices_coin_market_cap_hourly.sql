@@ -162,7 +162,9 @@ imputed_prices AS (
         LAST_VALUE(
             p.close ignore nulls
         ) over (
-            PARTITION BY d.token_address, d.id, d.platform
+            PARTITION BY d.token_address,
+            d.id,
+            d.platform
             ORDER BY
                 d.date_hour rows unbounded preceding
         ) AS imputed_close
@@ -205,7 +207,7 @@ base_timestamp AS (
         CASE
             WHEN (CAST(ARRAY_AGG(imputed) AS STRING)) ILIKE '%true%' THEN TRUE
             ELSE FALSE END AS imputed,
-            {{ dbt_utils.surrogate_key(
+            {{ dbt_utils.generate_surrogate_key(
                 ['f.recorded_hour','f.token_address','f.platform']
             ) }} AS _unique_key,
             MAX(_inserted_timestamp) AS _inserted_timestamp
@@ -232,7 +234,8 @@ base_timestamp AS (
                 LAST_VALUE(
                     _inserted_timestamp ignore nulls
                 ) over (
-                    PARTITION BY token_address, platform
+                    PARTITION BY token_address,
+                    platform
                     ORDER BY
                         recorded_hour rows unbounded preceding
                 ) AS imputed_timestamp

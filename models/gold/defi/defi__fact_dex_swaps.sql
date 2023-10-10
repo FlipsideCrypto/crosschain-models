@@ -20,8 +20,8 @@ WITH base AS (
         _log_id
     FROM
         {{ source(
-            'ethereum_silver_dex',
-            'complete_dex_swaps'
+            'ethereum_defi',
+            'ez_dex_swaps'
         ) }}
     UNION ALL
     SELECT
@@ -38,8 +38,8 @@ WITH base AS (
         _log_id
     FROM
         {{ source(
-            'optimism_silver_dex',
-            'complete_dex_swaps'
+            'optimism_defi',
+            'ez_dex_swaps'
         ) }}
     UNION ALL
     SELECT
@@ -56,8 +56,8 @@ WITH base AS (
         _log_id
     FROM
         {{ source(
-            'avalanche_silver_dex',
-            'complete_dex_swaps'
+            'avalanche_defi',
+            'ez_dex_swaps'
         ) }}
     UNION ALL
     SELECT
@@ -74,8 +74,8 @@ WITH base AS (
         _log_id
     FROM
         {{ source(
-            'polygon_silver_dex',
-            'complete_dex_swaps'
+            'polygon_defi',
+            'ez_dex_swaps'
         ) }}
     UNION ALL
     SELECT
@@ -92,8 +92,8 @@ WITH base AS (
         _log_id
     FROM
         {{ source(
-            'bsc_silver_dex',
-            'complete_dex_swaps'
+            'bsc_defi',
+            'ez_dex_swaps'
         ) }}
     UNION ALL
     SELECT
@@ -110,8 +110,8 @@ WITH base AS (
         _log_id
     FROM
         {{ source(
-            'arbitrum_silver_dex',
-            'complete_dex_swaps'
+            'arbitrum_defi',
+            'ez_dex_swaps'
         ) }}
     UNION ALL
     SELECT
@@ -128,8 +128,8 @@ WITH base AS (
         _log_id
     FROM
         {{ source(
-            'base_silver_dex',
-            'complete_dex_swaps'
+            'base_defi',
+            'ez_dex_swaps'
         ) }}
     UNION ALL
     SELECT
@@ -146,8 +146,8 @@ WITH base AS (
         _log_id
     FROM
         {{ source(
-            'gnosis_silver_dex',
-            'complete_dex_swaps'
+            'gnosis_defi',
+            'ez_dex_swaps'
         ) }}
     UNION ALL
     SELECT
@@ -168,8 +168,8 @@ WITH base AS (
         ) AS _log_id
     FROM
         {{ source(
-            'osmosis_silver',
-            'swaps'
+            'osmosis_defi',
+            'fact_swaps'
         ) }}
     UNION ALL
     SELECT
@@ -186,7 +186,7 @@ WITH base AS (
         _log_id
     FROM
         {{ source(
-            'solana_core',
+            'solana_defi',
             'fact_swaps'
         ) }}
     WHERE
@@ -204,10 +204,11 @@ WITH base AS (
         token_out,
         amount_out_raw,
         swap_id AS _log_id
-    from {{ source(
-        'near_silver',
-        'dex_swaps_s3'
-    ) }}
+    FROM
+        {{ source(
+            'near_defi',
+            'ez_dex_swaps'
+        ) }}
 )
 SELECT
     blockchain,
