@@ -33,7 +33,7 @@ WITH base_labels AS (
             FROM
                 {{ source(
                     'crosschain_core',
-                    'address_labels'
+                    'dim_labels'
                 ) }}
             WHERE
                 blockchain = 'solana'
@@ -62,7 +62,7 @@ base_legacy_labels AS (
     FROM
         {{ source(
             'crosschain_core',
-            'address_labels'
+            'dim_labels'
         ) }}
     WHERE
         blockchain = 'solana'
