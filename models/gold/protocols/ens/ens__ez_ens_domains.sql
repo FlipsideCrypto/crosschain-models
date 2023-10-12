@@ -4,32 +4,29 @@
 ) }}
 
 SELECT
-    block_timestamp,
-    tx_hash,
+    last_registered_block,
+    last_registered_timestamp,
+    last_registered_tx_hash,
+    last_registered_contract,
+    manager,
     owner,
-    tokenid,
-    ens_name,
+    set_address,
     ens_set,
-    cost,
-    expiration_time,
-    expiration_date,
+    ens_domain,
+    ens_subdomains,
     label,
     node,
-    last_update_info,
-    info_updater,
-    twitter,
-    avatar,
-    discord,
-    github,
-    email,
-    url,
-    description,
-    notice,
-    keywords,
-    reddit,
-    telegram,
-    opensea,
-    rarible,
-    superrare
+    token_id,
+    last_registered_cost,
+    last_registered_premium,
+    renewal_cost,
+    expiration_timestamp,
+    expired,
+    resolver,
+    profile,
+    last_updated
 FROM
-    {{ ref('silver__ENS') }}
+    {{ source(
+        'ethereum_ens',
+        'ez_ens_domains'
+    ) }}

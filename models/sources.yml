@@ -35,6 +35,11 @@ sources:
       - name: abis
       - name: contracts
       - name: complete_event_abis
+  - name: ethereum_ens
+    database: ethereum
+    schema: ens
+    tables:
+      - name: ez_ens_domains
   - name: crosschain_silver
     database: crosschain
     schema: silver
