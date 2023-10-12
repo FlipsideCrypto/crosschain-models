@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.github_repo_data(
 
 {% set event_table %}
 
-CREATE OR REPLACE TABLE {{ target.database }}.bronze_api.log_messages (
+CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.log_messages (
     timestamp TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
     log_level STRING,
     message STRING
@@ -166,14 +166,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             result_set.next();
             var count_rows_with_excessive_retries = result_set.getColumnValue(1);
 
-            if (count_rows_with_excessive_retries > 0) {
-                var reset_retries_command = `
-                    UPDATE {{ target.database }}.silver.github_repos
-                    SET retries = 0
-                    WHERE retries > 5
-                `;
-                snowflake.execute({sqlText: reset_retries_command});
-}
+
 
             var update_retries_command = `
                 UPDATE {{ target.database }}.silver.github_repos
@@ -182,6 +175,14 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             `;
             snowflake.execute({sqlText: update_retries_command});
             
+            if (count_rows_with_excessive_retries > 0) {
+                var reset_retries_command = `
+                    UPDATE {{ target.database }}.silver.github_repos
+                    SET retries = 0
+                    WHERE retries > 5
+                `;
+                snowflake.execute({sqlText: reset_retries_command});
+            }
 
             // Check if there are any rows with non-zero retries
             var check_retries_query = `
@@ -216,18 +217,14 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
 
                 snowflake.execute({sqlText: wait_command});
             }
-            
+
             else if (count_rows_with_retries = 0) {
                     break;
                 }
 
-
-
-        var log_message = `INSERT INTO {{ target.database }}.bronze_api.log_messages (log_level, message) VALUES ('INFO', 'Starting iteration ${i} of ${call_groups}')`;
-        snowflake.execute({sqlText: log_message});
-        }
-
-        // reset retries to 0 when im done
+            var log_message = `INSERT INTO {{ target.database }}.bronze_api.log_messages (log_level, message) VALUES ('INFO', ' Iteration ${i} of ${call_groups} complete.')`;
+            snowflake.execute({sqlText: log_message});
+            }
 
     return 'Success';
 
