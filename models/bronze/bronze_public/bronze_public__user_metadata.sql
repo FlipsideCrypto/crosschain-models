@@ -1,14 +1,14 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = 'collection_address',
+    unique_key = 'nft_address',
     full_refresh = false
 ) }}
 
 SELECT
-    '0x123' AS collection_address,
+    '0x0000000000000000000000000000000000000000' AS nft_address,
     'ethereum' AS blockchain,
-    SYSDATE() AS _inserted_timestamp,
-    'interval_dev' AS discord_user
+    'interval_dev' AS discord_user,
+    SYSDATE() AS _inserted_timestamp
 
 {% if is_incremental() %}
 FROM
