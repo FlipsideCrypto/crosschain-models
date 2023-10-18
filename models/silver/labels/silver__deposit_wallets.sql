@@ -3,7 +3,7 @@
     unique_key = "CONCAT_WS('-', blockchain, address, creator)",
     incremental_strategy = 'delete+insert',
     tags = ['snowflake', 'crosschain', 'labels', 'silver__contract_autolabels'],
-    post_hook = "delete from {{this}} a using (select distinct blockchain, address from {{ ref('silver__address_labels') }} where delete_flag is null union select distinct blockchain, address from {{ ref('silver__contract_autolabels') }} union select distinct blockchain, address from {{ ref('silver__labels_eth_contracts_table') }}) b where a.blockchain = b.blockchain and a.address = b.address ",
+    post_hook= "delete from {{this}} a using {{ ref('silver__address_labels') }} b where a.blockchain = b.blockchain and a.address = b.address "
 ) }}
 
 SELECT
