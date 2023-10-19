@@ -6,8 +6,8 @@
 
 SELECT
     '0x4fdf87d4edae3fe323b8f6df502ccac6c8b4ba28' AS nft_address,
-    'ethereum' AS blockchain,
-    'interval_dev' AS discord_user,
+    'ethereum' :: VARCHAR AS blockchain,
+    'interval_dev' :: VARCHAR AS discord_user,
     SYSDATE() AS _inserted_timestamp
 
 {% if is_incremental() %}
