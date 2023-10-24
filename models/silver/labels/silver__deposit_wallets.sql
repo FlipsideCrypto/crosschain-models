@@ -92,6 +92,31 @@ SELECT
     address_name,
     project_name
 FROM
+    {{ ref('silver__snowflake_Base_satellites') }}
+
+{% if is_incremental() %}
+WHERE
+    insert_date >= (
+        SELECT
+            MAX(insert_date)
+        FROM
+            {{ this }}
+        WHERE
+            blockchain = 'base'
+    )
+{% endif %}
+UNION ALL
+SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name
+FROM
     {{ ref('silver__snowflake_BSC_satellites') }}
 
 {% if is_incremental() %}
