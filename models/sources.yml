@@ -425,9 +425,13 @@ sources:
     database: base
     schema: silver
     tables:
+      - name: logs
+      - name: decoded_logs
+      - name: traces
+      - name: transactions
       - name: abis
       - name: contracts
-      - name: traces
+      - name: complete_event_abis
   - name: base_silver_dex
     database: base
     schema: silver_dex
@@ -438,6 +442,8 @@ sources:
     database: base
     schema: core
     tables:
+      - name: fact_token_transfers
+      - name: fact_traces
       - name: dim_contracts
   - name: base_defi
     database: base
