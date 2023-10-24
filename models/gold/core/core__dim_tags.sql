@@ -598,3 +598,291 @@ SELECT
     '2023-09-11' :: TIMESTAMP as tag_created_at
 FROM  
     {{ ref('silver__opensea_names') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_arbitrum') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc4626_arbitrum') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc6551_arbitrum') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc6551_owner_arbitrum') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_avalanche') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc4626_avalanche') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc6551_avalanche') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc6551_owner_avalanche') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_base') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc4626_base') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc6551_base') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc6551_owner_base') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_bsc') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc4626_bsc') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc6551_bsc') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc6551_owner_bsc') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc4626_optimism') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc6551_optimism') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc6551_owner_optimism') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_optimism') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc4626_polygon') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc6551_owner_polygon') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_erc6551_polygon') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_token_standard_polygon') }}
