@@ -18,6 +18,7 @@ sources:
       - name: ez_current_balances
       - name: ez_dex_swaps
       - name: dim_contracts
+      - name: fact_hourly_token_prices
   - name: ethereum_defi
     database: ethereum
     schema: defi
