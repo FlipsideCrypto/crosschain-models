@@ -12,9 +12,12 @@
 --   {% endif %}
 -- {% endif %}
 {% if execute %}
-  {% if flags.FULL_REFRESH and var('allow_full_refresh', False) != True %}
-      {{ exceptions.raise_compiler_error("Full refresh is not allowed for this model unless the argument \"- -vars 'allow_full_refresh: True'\" is included in the dbt run command.") }}
-  {% endif %}
+    {% if flags.full_refresh and var(
+            'allow_full_refresh',
+            False
+        ) != True %}
+        {{ exceptions.raise_compiler_error("Full refresh is not allowed for this model unless the argument \"- -vars 'allow_full_refresh: True'\" is included in the dbt run command.") }}
+    {% endif %}
 {% endif %}
 
 WITH t1 AS (
@@ -48,14 +51,16 @@ t2 AS (
     FROM
         t1
     WHERE
-        wallets IN (
+        wallets NOT IN (
             SELECT
-                user_address
+                DISTINCT address
             FROM
-                flipside_prod_db.ethereum.erc20_balances
+                {{ source(
+                    'crosschain_core',
+                    'dim_labels'
+                ) }}
             WHERE
-                address_name IS NULL
-                AND label IS NULL
+                blockchain = 'ethereum'
         ) -- filtering treasury, funding wallets, etc.
 ),
 t3 AS (
