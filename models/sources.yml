@@ -493,12 +493,6 @@ sources:
     tables:
       - name: blocks_completeness
       - name: transactions_completeness
-  - name: evmos_observ
-    database: evmos
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: transactions_completeness
   - name: terra_observ
     database: terra
     schema: silver_observability
