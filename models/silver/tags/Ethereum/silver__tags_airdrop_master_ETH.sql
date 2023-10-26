@@ -27,8 +27,16 @@ WITH t1 AS (
         decoded_flat :value /(pow(10, 18)) AS tokens_claimed,
         price AS token_price_usd
     FROM
-        ethereum.silver.decoded_logs x
-        JOIN ethereum.core.fact_hourly_token_prices y
+        {{ source(
+            'ethereum_silver',
+            'decoded_logs'
+        ) }}
+        x
+        JOIN {{ source(
+            'ethereum_core',
+            'fact_hourly_token_prices'
+        ) }}
+        y
         ON x.contract_address = y.token_address
         AND TRUNC(
             block_timestamp,
