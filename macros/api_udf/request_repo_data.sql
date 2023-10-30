@@ -36,10 +36,10 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
 
         let parsedFrequencyArray = `('${FETCH_FREQUENCY.join("', '")}')`;
         const MIN_BATCH_SIZE = 10;  
-        const MAX_BATCH_SIZE = 100;
+        const MAX_BATCH_SIZE = 70;
 
         var row_count = 0;
-        var batch_num = 100;
+        var batch_num = 70;
         var max_calls = 5000;
 
         var res = snowflake.execute({sqlText: `WITH subset as (
