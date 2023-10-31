@@ -898,3 +898,15 @@ SELECT
     '2023-10-27' :: TIMESTAMP as tag_created_at
 FROM  
     {{ ref('silver__Israel_sanctioned_addresses_tags') }}
+UNION ALL
+SELECT 
+    blockchain, 
+    creator, 
+    address, 
+    tag_name, 
+    tag_type, 
+    start_date,
+    end_date,
+    tag_created_at
+FROM  
+    {{ ref('silver__tags_sei_abassador_tags') }}

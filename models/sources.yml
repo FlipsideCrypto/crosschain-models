@@ -541,3 +541,9 @@ sources:
     tables: 
       - name: blocks_completeness
       - name: transactions_completeness
+  - name: sei_core
+    database: sei
+    schema: core
+    tables:
+      - name: fact_msg_attributes
+      - name: transactions_completeness
