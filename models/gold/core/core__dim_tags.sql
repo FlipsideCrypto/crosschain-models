@@ -890,9 +890,9 @@ UNION ALL
 SELECT 
     blockchain, 
     creator, 
-    address, 
-    tag_name, 
-    tag_type, 
+    regexp_replace(address, '[^[:ascii:]]', '') as address, 
+    regexp_replace(tag_name, '[^[:ascii:]]', '') as tag_name, 
+    regexp_replace(tag_type, '[^[:ascii:]]', '') as tag_type, 
     start_date :: date as start_date,
     null as end_date,
     '2023-10-27' :: TIMESTAMP as tag_created_at
