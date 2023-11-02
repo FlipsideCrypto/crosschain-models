@@ -36,16 +36,16 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
 
         let parsedFrequencyArray = `('${FETCH_FREQUENCY.join("', '")}')`;
         const MIN_BATCH_SIZE = 10;  
-        const MAX_BATCH_SIZE = 70;
+        const MAX_BATCH_SIZE = 100;
 
         var row_count = 0;
-        var batch_num = 70;
+        var batch_num = 100;
         var max_calls = 5000;
 
         var res = snowflake.execute({sqlText: `WITH subset as (
                 SELECT *
                 FROM {{ target.database }}.silver.github_repos
-                WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
+                WHERE  (last_time_queried IS NULL OR DATE(last_time_queried) < DATEADD(DAY, -7, SYSDATE()))
                 AND frequency IN ${parsedFrequencyArray}
                 LIMIT 5000
             )
@@ -54,7 +54,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         res.next()
         row_count = res.getColumnValue(1);
 
-        batch_num = Math.max(MIN_BATCH_SIZE, Math.min(MAX_BATCH_SIZE, Math.round(row_count * 0.10)));
+        batch_num = Math.max(MIN_BATCH_SIZE, Math.min(MAX_BATCH_SIZE, Math.round(row_count * 0.05)));
 
         call_groups = Math.round(max_calls/batch_num);
 
@@ -76,7 +76,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                             full_endpoint,
                             endpoint_github
                         FROM {{ target.database }}.silver.github_repos
-                        WHERE (DATE(last_time_queried) <> SYSDATE()::DATE OR last_time_queried IS NULL)
+                        WHERE     (last_time_queried IS NULL OR DATE(last_time_queried) < DATEADD(DAY, -7, SYSDATE()))
                         AND frequency IN ${parsedFrequencyArray}
                         ORDER BY full_endpoint, retries DESC
                         LIMIT 1 OFFSET ${i}
@@ -200,7 +200,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                         SELECT AVG(retries) as retries
                         FROM {{ target.database }}.silver.github_repos
                         ORDER BY retries DESC
-                        LIMIT 50
+                        LIMIT ${batch_num}
                     `;
                     var result_set = snowflake.execute({sqlText: retries_query});
                     result_set.next();
