@@ -15,8 +15,7 @@ SELECT
     project_name
 FROM
     {{ ref('silver__address_labels') }}
-where delete_flag is null -- this should fix the issue with new pushes of deletes!
-    -- deposit wallet algos
+where delete_flag is null 
 UNION ALL
 SELECT
     system_created_at,

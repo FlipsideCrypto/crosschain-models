@@ -171,4 +171,5 @@ FROM
 WHERE
   project_name IS NOT NULL
   AND address_name IS NOT NULL
+  and address IS NOT NULL
   AND l1_label <> 'project' -- contract creations

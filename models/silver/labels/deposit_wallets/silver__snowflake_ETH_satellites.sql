@@ -13,8 +13,8 @@ WITH distributor_cex AS (
         blockchain,
         address,
         creator,
-        label_type as l1_label,
-        label_subtype as l2_label,
+        label_type AS l1_label,
+        label_subtype AS l2_label,
         address_name,
         project_name
     FROM
@@ -23,7 +23,7 @@ WITH distributor_cex AS (
         blockchain = 'ethereum'
         AND l1_label = 'cex'
         AND l2_label = 'hot_wallet'
-        and delete_flag is null
+        AND delete_flag IS NULL
 ),
 possible_sats AS (
     -- THIS STATEMENT LOCATES POTENTIAL SATELLITE WALLETS BASED ON DEPOSIT BEHAVIOR
@@ -118,7 +118,10 @@ GROUP BY
 real_sats AS (
     SELECT
         from_address,
-        COALESCE(project_name, 'blunts') AS project_names
+        COALESCE(
+            project_name,
+            'blunts'
+        ) AS project_names
     FROM
         {{ source(
             'ethereum_core',
@@ -142,7 +145,10 @@ AND block_timestamp > CURRENT_DATE - 10
 UNION
 SELECT
     from_address,
-    COALESCE(project_name, 'blunts') AS project_names
+    COALESCE(
+        project_name,
+        'blunts'
+    ) AS project_names
 FROM
     {{ source(
         'ethereum_core',
@@ -165,11 +171,16 @@ WHERE
 AND block_timestamp > CURRENT_DATE - 10
 {% endif %}
 ),
-project_counts as (
-    select distinct from_address, 
-    count(distinct project_names) as project_count
-    from real_sats
-    group by from_address
+project_counts AS (
+    SELECT
+        DISTINCT from_address,
+        COUNT(
+            DISTINCT project_names
+        ) AS project_count
+    FROM
+        real_sats
+    GROUP BY
+        from_address
 ),
 exclusive_sats AS (
     SELECT
@@ -201,24 +212,20 @@ final_base AS(
         ON e.address = p.address
 )
 SELECT
-    DISTINCT system_created_at,
-    insert_date,
-    blockchain,
-    address,
-    creator,
-    l1_label,
-    l2_label,
-    address_name,
-    project_name
+    DISTINCT f.system_created_at,
+    f.insert_date,
+    f.blockchain,
+    f.address,
+    f.creator,
+    f.l1_label,
+    f.l2_label,
+    f.address_name,
+    f.project_name
 FROM
-    final_base
+    final_base f
+    LEFT JOIN {{ ref('silver__address_labels') }} A
+    ON f.address = A.address
+    AND A.blockchain = 'ethereum'
+    AND A.delete_flag IS NULL
 WHERE
-    address NOT IN (
-        SELECT
-            DISTINCT address
-        FROM
-            {{ ref('silver__address_labels') }}
-        WHERE
-            blockchain = 'ethereum'
-            and delete_flag is null
-    )
+    A.address IS NULL

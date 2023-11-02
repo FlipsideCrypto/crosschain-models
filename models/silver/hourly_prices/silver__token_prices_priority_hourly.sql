@@ -63,7 +63,7 @@ SELECT
     blockchain,
     is_imputed,
     _inserted_timestamp,
-    {{ dbt_utils.surrogate_key(
+    {{ dbt_utils.generate_surrogate_key(
         ['hour', 'token_address', 'blockchain']
     ) }} AS _unique_key
 FROM

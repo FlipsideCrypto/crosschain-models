@@ -2,6 +2,7 @@
     materialized = 'incremental',
     unique_key = "CONCAT_WS('-', tokenid, ens_name)",
     incremental_strategy = 'delete+insert',
+    enabled = false
 ) }}
 
 

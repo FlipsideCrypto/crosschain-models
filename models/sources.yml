@@ -18,6 +18,12 @@ sources:
       - name: ez_current_balances
       - name: ez_dex_swaps
       - name: dim_contracts
+      - name: fact_hourly_token_prices
+  - name: ethereum_defi
+    database: ethereum
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
   - name: ethereum_silver
     database: ethereum
     schema: silver
@@ -30,6 +36,11 @@ sources:
       - name: abis
       - name: contracts
       - name: complete_event_abis
+  - name: ethereum_ens
+    database: ethereum
+    schema: ens
+    tables:
+      - name: ez_ens_domains
   - name: crosschain_silver
     database: crosschain
     schema: silver
@@ -44,6 +55,7 @@ sources:
     schema: core
     tables:
       - name: address_labels
+      - name: dim_labels
   - name: ethereum_silver_nft
     database: ethereum
     schema: silver_nft
@@ -80,6 +92,12 @@ sources:
     tables:
       - name: fact_token_transfers
       - name: fact_traces
+      - name: dim_contracts
+  - name: arbitrum_defi
+    database: arbitrum
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
   - name: avalanche_silver
     database: avalanche
     schema: silver
@@ -97,6 +115,12 @@ sources:
     tables:
       - name: fact_token_transfers
       - name: fact_traces
+      - name: dim_contracts
+  - name: avalanche_defi
+    database: avalanche
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
   - name: polygon_silver
     database: polygon
     schema: silver
@@ -114,6 +138,12 @@ sources:
     tables:
       - name: fact_token_transfers
       - name: fact_traces
+      - name: dim_contracts
+  - name: polygon_defi
+    database: polygon
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
   - name: optimism_silver
     database: optimism
     schema: silver
@@ -131,6 +161,12 @@ sources:
     tables:
       - name: fact_token_transfers
       - name: fact_traces
+      - name: dim_contracts
+  - name: optimism_defi
+    database: optimism
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
   - name: bsc_silver
     database: bsc
     schema: silver
@@ -148,6 +184,12 @@ sources:
     tables:
       - name: fact_token_transfers
       - name: fact_traces
+      - name: dim_contracts
+  - name: bsc_defi
+    database: bsc
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
   - name: thorchain
     database: flipside_prod_db
     schema: thorchain
@@ -171,11 +213,22 @@ sources:
     tables:
       - name: fact_transfers
       - name: fact_swaps
+      - name: dim_tokens
+  - name: solana_defi
+    database: solana
+    schema: core
+    tables:
+      - name: fact_swaps
   - name: near_core
     database: near
     schema: core
     tables:
       - name: fact_transfers
+      - name: ez_dex_swaps
+  - name: near_defi
+    database: near
+    schema: defi
+    tables:
       - name: ez_dex_swaps
   - name: near_silver
     database: near
@@ -200,6 +253,12 @@ sources:
       - name: fact_transactions
       - name: fact_transfers
       - name: fact_validators
+      - name: dim_tokens
+  - name: osmosis_defi
+    database: osmosis
+    schema: defi
+    tables:
+      - name: fact_swaps
   - name: axelar_core
     database: axelar
     schema: core
@@ -367,15 +426,31 @@ sources:
     database: base
     schema: silver
     tables:
+      - name: logs
+      - name: decoded_logs
+      - name: traces
+      - name: transactions
       - name: abis
       - name: contracts
-      - name: traces
+      - name: complete_event_abis
   - name: base_silver_dex
     database: base
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
       - name: complete_dex_liquidity_pools
+  - name: base_core
+    database: base
+    schema: core
+    tables:
+      - name: fact_token_transfers
+      - name: fact_traces
+      - name: dim_contracts
+  - name: base_defi
+    database: base
+    schema: defi
+    tables: 
+      - name: ez_dex_swaps
   - name: gnosis_silver
     database: gnosis
     schema: silver
@@ -390,6 +465,16 @@ sources:
     tables:
       - name: complete_dex_swaps
       - name: complete_dex_liquidity_pools
+  - name: gnosis_core
+    database: gnosis
+    schema: core
+    tables:
+      - name: dim_contracts
+  - name: gnosis_defi
+    database: gnosis
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
   - name: gnosis_observ
     database: gnosis
     schema: silver_observability
@@ -405,12 +490,6 @@ sources:
       - name: github_repo_data
   - name: axelar_observ
     database: axelar
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: transactions_completeness
-  - name: evmos_observ
-    database: evmos
     schema: silver_observability
     tables:
       - name: blocks_completeness
@@ -461,4 +540,10 @@ sources:
     schema: silver_observability
     tables: 
       - name: blocks_completeness
+      - name: transactions_completeness
+  - name: sei_core
+    database: sei
+    schema: core
+    tables:
+      - name: fact_msg_attributes
       - name: transactions_completeness

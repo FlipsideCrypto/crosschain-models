@@ -1,6 +1,7 @@
 {{ config(
     materialized = 'view',
     tags = ['snowflake', 'crosschain', 'ens'],
+    enabled = false
 ) }}
 
 SELECT

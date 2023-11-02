@@ -137,6 +137,6 @@ total_table_small AS (
 )
 SELECT
     *,
-     {{ dbt_utils.surrogate_key(['address', 'tag_name']) }} as unique_id
+    {{ dbt_utils.generate_surrogate_key(['address', 'tag_name']) }} AS unique_id
 FROM
-    total_table_small 
+    total_table_small

@@ -12,9 +12,12 @@
 --   {% endif %}
 -- {% endif %}
 {% if execute %}
-  {% if flags.FULL_REFRESH and var('allow_full_refresh', False) != True %}
-      {{ exceptions.raise_compiler_error("Full refresh is not allowed for this model unless the argument \"- -vars 'allow_full_refresh: True'\" is included in the dbt run command.") }}
-  {% endif %}
+    {% if flags.full_refresh and var(
+            'allow_full_refresh',
+            False
+        ) != True %}
+        {{ exceptions.raise_compiler_error("Full refresh is not allowed for this model unless the argument \"- -vars 'allow_full_refresh: True'\" is included in the dbt run command.") }}
+    {% endif %}
 {% endif %}
 
 WITH t1 AS (
@@ -24,8 +27,16 @@ WITH t1 AS (
         decoded_flat :value /(pow(10, 18)) AS tokens_claimed,
         price AS token_price_usd
     FROM
-        ethereum.silver.decoded_logs x
-        JOIN ethereum.core.fact_hourly_token_prices y
+        {{ source(
+            'ethereum_silver',
+            'decoded_logs'
+        ) }}
+        x
+        JOIN {{ source(
+            'ethereum_core',
+            'fact_hourly_token_prices'
+        ) }}
+        y
         ON x.contract_address = y.token_address
         AND TRUNC(
             block_timestamp,
@@ -48,14 +59,16 @@ t2 AS (
     FROM
         t1
     WHERE
-        wallets IN (
+        wallets NOT IN (
             SELECT
-                user_address
+                DISTINCT address
             FROM
-                flipside_prod_db.ethereum.erc20_balances
+                {{ source(
+                    'crosschain_core',
+                    'dim_labels'
+                ) }}
             WHERE
-                address_name IS NULL
-                AND label IS NULL
+                blockchain = 'ethereum'
         ) -- filtering treasury, funding wallets, etc.
 ),
 t3 AS (

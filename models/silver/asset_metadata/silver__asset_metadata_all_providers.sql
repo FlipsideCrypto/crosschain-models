@@ -581,7 +581,7 @@ SELECT
     UPPER(symbol) AS symbol,
     blockchain,
     provider,
-    {{ dbt_utils.surrogate_key(
+    {{ dbt_utils.generate_surrogate_key(
         ['token_address','id','symbol','blockchain','provider']
     ) }} AS _unique_key,
     _inserted_timestamp
