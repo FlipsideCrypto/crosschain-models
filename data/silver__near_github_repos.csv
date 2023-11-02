@@ -6139,6 +6139,15 @@ ZTGProjects/near-scripts
 ztopcuoglu/near-app
 ztopcuoglu/near_starter
 zuongnh/staking-contract
+NearSocial/api-server-js
+NearSocial/ideas
+NearSocial/ipfs-pin-proxy
+NearSocial/SEPs
+NearSocial/standards
+NearSocial/viewer
+NearSocial/VM
+NearSocial/web4-preview
+vgrichina/near-lands
 4everland/preview
 4everland/public-gateway-checker
 4everland/template-a-thon
@@ -6287,7 +6296,6 @@ Mintbase/rip-site
 Mintbase/rip-x
 mynearwallet/near-api-js
 mynearwallet/wallet-selector
-NearSocial/SEPs
 nevermined-io/contracts
 nightly-labs/aleph-zero-dashboard
 nightly-labs/aleph-zero-web3-template
@@ -6449,4 +6457,3 @@ XP-NETWORK/testing-casper
 XP-NETWORK/testing-multiversx
 XP-NETWORK/xp-casper-bridge-client
 XP-NETWORK/xp.site
-https://gitlab.com/ivankuzovkin/auroraplay
