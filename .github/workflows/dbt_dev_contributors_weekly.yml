@@ -4,7 +4,7 @@ run-name: dbt_dev_activity_daily_weekly
 on:
   workflow_dispatch:
   schedule:
-    - cron: "10 * * * 0" # 10 minutes past the hour, every hour, on Sunday
+    - cron: "0 0,5,10,15,20 * * 6" # At 00:00, 05:00, 10:00, 15:00, and 20:00 on Thursday
 
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
@@ -36,5 +36,5 @@ jobs:
 
       - name: Run DBT Jobs
         run: |
-          dbt run-operation get_github_repo_data --args "{GITHUB_TOKEN: 'GB_TOKEN', frequency: ['weekly']}"
+          dbt run-operation get_github_repo_data --args "{GITHUB_TOKEN: 'GB_TOKEN', frequency: ['contributors']}"
           dbt run --model silver__github_activity
