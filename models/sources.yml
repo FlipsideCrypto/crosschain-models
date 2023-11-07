@@ -212,11 +212,10 @@ sources:
     schema: core
     tables:
       - name: fact_transfers
-      - name: fact_swaps
       - name: dim_tokens
   - name: solana_defi
     database: solana
-    schema: core
+    schema: defi
     tables:
       - name: fact_swaps
   - name: near_core
