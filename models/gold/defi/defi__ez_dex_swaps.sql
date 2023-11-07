@@ -41,9 +41,9 @@ SELECT
     ) AS amount_out_usd,
     dex._log_id
 FROM
-    {{ ref('core__fact_dex_swaps') }}
+    {{ ref('defi__fact_dex_swaps') }}
     dex
-    LEFT JOIN {{ ref('core__ez_hourly_prices') }}
+    LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
     p_in
     ON REPLACE(
         dex.blockchain,
@@ -55,7 +55,7 @@ FROM
         'hour',
         dex.block_timestamp
     ) = p_in.hour
-    LEFT JOIN {{ ref('core__ez_hourly_prices') }}
+    LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
     p_out
     ON REPLACE(
         dex.blockchain,
