@@ -26,7 +26,10 @@ WITH nft_receipts AS (
             DISTINCT tx_hash
         ) AS num_transactions
     FROM
-        ethereum.core.ez_nft_transfers
+        {{ source(
+            'ethereum_nft',
+            'ez_nft_transfers'
+        ) }}
     GROUP BY
         1
 ),
@@ -38,7 +41,10 @@ nft_transfers AS (
             DISTINCT tx_hash
         ) AS num_transactions
     FROM
-        ethereum.core.ez_nft_transfers
+        {{ source(
+            'ethereum_nft',
+            'ez_nft_transfers'
+        ) }}
     GROUP BY
         1
 ),
