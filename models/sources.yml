@@ -13,12 +13,19 @@ sources:
       - name: fact_transactions
       - name: fact_token_transfers
       - name: fact_traces
+      - name: ez_current_balances
+      - name: dim_contracts
+  - name: ethereum_price
+    database: ethereum
+    schema: price
+    tables:
+      - name: fact_hourly_token_prices
+  - name: ethereum_nft
+    database: ethereum
+    schema: nft 
+    tables:
       - name: ez_nft_sales
       - name: ez_nft_transfers
-      - name: ez_current_balances
-      - name: ez_dex_swaps
-      - name: dim_contracts
-      - name: fact_hourly_token_prices
   - name: ethereum_defi
     database: ethereum
     schema: defi
