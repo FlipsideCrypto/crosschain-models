@@ -15,7 +15,7 @@ SELECT
   NULL AS memo
 FROM
   {{ source(
-    'axelar_core',
+    'axelar_gov',
     'fact_governance_votes'
   ) }}
 UNION ALL
@@ -32,7 +32,7 @@ SELECT
   NULL AS memo
 FROM
   {{ source(
-    'cosmos_core',
+    'cosmos_gov',
     'fact_governance_votes'
   ) }}
 UNION ALL
@@ -49,6 +49,6 @@ SELECT
   memo
 FROM
   {{ source(
-    'osmosis_core',
+    'osmosis_gov',
     'fact_governance_votes'
   ) }}
