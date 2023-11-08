@@ -253,6 +253,12 @@ sources:
       - name: fact_transfers
       - name: fact_validators
       - name: dim_tokens
+  - name: osmosis_gov
+    database: osmosis
+    schema: gov
+    tables:
+      - name: fact_governance_votes
+      - name: fact_validators
   - name: osmosis_defi
     database: osmosis
     schema: defi
@@ -267,6 +273,12 @@ sources:
       - name: fact_transactions
       - name: fact_transfers
       - name: fact_validators
+  - name: axelar_gov
+    database: axelar
+    schema: gov
+    tables:
+      - name: fact_governance_votes
+      - name: fact_validators
   - name: cosmos_core
     database: cosmos
     schema: core
@@ -275,6 +287,12 @@ sources:
       - name: fact_governance_votes
       - name: fact_transactions
       - name: fact_transfers
+      - name: fact_validators
+  - name: cosmos_gov
+    database: cosmos
+    schema: gov
+    tables:
+      - name: fact_governance_votes
       - name: fact_validators
   - name: bronze_streamline
     database: streamline

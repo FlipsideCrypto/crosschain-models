@@ -21,7 +21,7 @@ SELECT
   raw_metadata
 FROM
   {{ source(
-    'axelar_core',
+    'axelar_gov',
     'fact_validators'
   ) }}
 UNION ALL
@@ -44,7 +44,7 @@ SELECT
   raw_metadata
 FROM
   {{ source(
-    'cosmos_core',
+    'cosmos_gov',
     'fact_validators'
   ) }}
 UNION ALL
@@ -67,6 +67,6 @@ SELECT
   raw_metadata
 FROM
   {{ source(
-    'osmosis_core',
+    'osmosis_gov',
     'fact_validators'
   ) }}
