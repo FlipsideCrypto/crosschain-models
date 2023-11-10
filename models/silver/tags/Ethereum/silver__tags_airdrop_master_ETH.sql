@@ -33,7 +33,7 @@ WITH t1 AS (
         ) }}
         x
         JOIN {{ source(
-            'ethereum_core',
+            'ethereum_price',
             'fact_hourly_token_prices'
         ) }}
         y

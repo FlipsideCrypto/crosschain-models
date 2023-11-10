@@ -13,6 +13,6 @@ SELECT
     p.blockchain,
     is_imputed
 FROM {{ ref('silver__token_prices_priority_hourly') }} p
-LEFT JOIN {{ ref('core__ez_asset_metadata') }} m
+LEFT JOIN {{ ref('price__ez_asset_metadata') }} m
     ON p.token_address = m.token_address 
         AND p.blockchain = m.blockchain
