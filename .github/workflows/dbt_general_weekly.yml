@@ -1,5 +1,5 @@
-name: dbt_dev_activity_daily_weekly
-run-name: dbt_dev_activity_daily_weekly
+name: dbt_general_weekly
+run-name: dbt_general_weekly
 
 on:
   workflow_dispatch:
@@ -36,5 +36,5 @@ jobs:
 
       - name: Run DBT Jobs
         run: |
-          dbt run-operation get_github_repo_data --args "{GITHUB_TOKEN: 'GB_TOKEN', frequency: ['contributors']}"
+          dbt run-operation get_github_repo_data --args "{GITHUB_TOKEN: 'GB_TOKEN', frequency: ['core']}"
           dbt run --model silver__github_activity
