@@ -3,7 +3,6 @@ run-name: dbt_contributors_weekly
 
 on:
   workflow_dispatch:
-  on:
     schedule:
       - cron: "0 */5 * * 2-3" # At every 5th hour on Tuesday and Wednesday
 
