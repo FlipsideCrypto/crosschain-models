@@ -61,7 +61,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         for(let i = 0; i < call_groups; i++) {
 
             var create_temp_table_command = `
-                CREATE OR REPLACE TEMPORARY TABLE {{ target.database }}.bronze_api.response_data AS
+                CREATE OR REPLACE TABLE {{ target.database }}.bronze_api.response_data AS
                 WITH api_call AS (
             `;
 
@@ -225,6 +225,8 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             var log_message = `INSERT INTO {{ target.database }}.bronze_api.log_messages (log_level, message) VALUES ('INFO', ' Iteration ${i} of ${call_groups} complete.')`;
             snowflake.execute({sqlText: log_message});
             }
+
+            break;
 
     return 'Success';
 
