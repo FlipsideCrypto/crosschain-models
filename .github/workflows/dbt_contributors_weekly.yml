@@ -4,8 +4,8 @@ run-name: dbt_contributors_weekly
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0,5,10,15,20 * * 6" # At 00:00, 05:00, 10:00, 15:00, and 20:00 on Thursday
-
+    - cron: "0 */5 * * 2-3" # At every 5th hour on Tuesday and Wednesday
+    
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
   DBT_VERSION: "${{ vars.DBT_VERSION }}"
