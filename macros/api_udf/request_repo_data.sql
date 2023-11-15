@@ -55,7 +55,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         row_count = res.getColumnValue(1);
         
         if (row_count < 1000) {
-            batch_num = 100;
+            batch_num = 10;
         } else {
             batch_num = Math.max(MIN_BATCH_SIZE, Math.min(MAX_BATCH_SIZE, Math.round(row_count * 0.05)));
         }
