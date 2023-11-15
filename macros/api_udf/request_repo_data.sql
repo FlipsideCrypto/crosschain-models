@@ -53,8 +53,12 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             FROM subset`});
         res.next()
         row_count = res.getColumnValue(1);
-
-        batch_num = Math.max(MIN_BATCH_SIZE, Math.min(MAX_BATCH_SIZE, Math.round(row_count * 0.05)));
+        
+        if (row_count < 1000) {
+            batch_num = 10;
+        } else {
+            batch_num = Math.max(MIN_BATCH_SIZE, Math.min(MAX_BATCH_SIZE, Math.round(row_count * 0.05)));
+        }
 
         call_groups = Math.round(max_calls/batch_num);
 
