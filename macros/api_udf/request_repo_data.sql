@@ -201,10 +201,10 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             if (count_rows_with_retries > 0) {
                     // Fetch the retries value of the first row ordered by retries DESC
                     var retries_query = `
-                        SELECT AVG(retries) as retries
+                        SELECT AVG(*) FROM ( SELECT retries
                         FROM {{ target.database }}.silver.github_repos
                         ORDER BY retries DESC
-                        LIMIT ${batch_num}
+                        LIMIT ${batch_num})
                     `;
                     var result_set = snowflake.execute({sqlText: retries_query});
                     result_set.next();
@@ -212,7 +212,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
 
                     // Determine the wait time based on the retries value
                     // For example, if you want to wait 10 seconds for each retry:
-                    var wait_time = Math.round(2 * retries);
+                    var wait_time = Math.round(retries);
 
                     var wait_command = `
                         CALL system$wait(${wait_time});
