@@ -55,7 +55,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         row_count = res.getColumnValue(1);
         
         if (row_count < 1000) {
-            batch_num = 10;
+            batch_num = 1;
         } else {
             batch_num = Math.max(MIN_BATCH_SIZE, Math.min(MAX_BATCH_SIZE, Math.round(row_count * 0.05)));
         }
@@ -74,7 +74,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                     SELECT * FROM (
                         SELECT
                             project_name,
-                            {{ target.database }}.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
+                            {{ target.database }}.live.udf_api('GET', CONCAT('https://api.github.com', '/repos/adrian1299/CovidVaccinationNear/stats/contributors'), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
                             SYSDATE() AS _request_timestamp,
                             repo_url,
                             full_endpoint,
