@@ -10,7 +10,11 @@ SELECT
     NAME,
     symbol,
     i.key AS platform,
-    _inserted_timestamp
+    _inserted_timestamp,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['id','token_address']) }} as asset_metadata_coin_gecko_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     {{ ref('bronze__asset_metadata_coin_gecko') }} A,
     TABLE(FLATTEN(A.value :platforms)) i

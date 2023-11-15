@@ -1,7 +1,8 @@
 {{ config(
     materialized = 'incremental',
     unique_key = ['_res_id'],
-    cluster_by = ['_inserted_timestamp::DATE']
+    cluster_by = ['_inserted_timestamp::DATE'],
+    merge_exclude_columns = ["inserted_timestamp"],
 ) }}
 
 SELECT
@@ -13,7 +14,11 @@ SELECT
     provider,
     endpoint_github,
     _inserted_timestamp,
-    _res_id
+    _res_id,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['_res_id']) }} AS github_activity_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     {{ source(
         'github',

@@ -44,7 +44,11 @@ SELECT
     f.value :quote :USD :close::float AS CLOSE,
     f.value :quote :USD :volume::number AS volume,
     f.value :quote :USD :market_cap::number AS market_cap,
-    A._inserted_timestamp
+    A._inserted_timestamp,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['A.id','recorded_hour']) }} AS hourly_prices_coin_market_cap_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     base A,
     TABLE(FLATTEN(DATA :quotes)) f qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour

@@ -3,7 +3,8 @@
   unique_key = "address",
   incremental_strategy = 'merge',
   cluster_by = 'block_timestamp::DATE',
-  post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION"
+  post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION",
+  merge_exclude_columns = ["inserted_timestamp"],
 ) }}
 
 WITH axelar_base AS (
@@ -321,7 +322,11 @@ SELECT
   address,
   blockchain,
   address_base,
-  block_timestamp
+  block_timestamp,
+  sysdate() as inserted_timestamp,
+  sysdate() as modified_timestamp,
+  {{ dbt_utils.generate_surrogate_key(['address']) }} AS cosmos_base_address_id,
+  '{{ invocation_id }}' as _invocation_id
 FROM
   fin
 WHERE

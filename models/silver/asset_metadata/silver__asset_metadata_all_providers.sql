@@ -1,7 +1,8 @@
 {{ config(
     materialized = 'incremental',
     unique_key = "_unique_key",
-    incremental_strategy = 'merge'
+    incremental_strategy = 'merge',
+    merge_exclude_columns = ["inserted_timestamp"],
 ) }}
 
 WITH coin_gecko_meta AS (
@@ -581,10 +582,11 @@ SELECT
     UPPER(symbol) AS symbol,
     blockchain,
     provider,
-    {{ dbt_utils.generate_surrogate_key(
-        ['token_address','id','symbol','blockchain','provider']
-    ) }} AS _unique_key,
-    _inserted_timestamp
+    _inserted_timestamp,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['token_address','id','symbol','blockchain','provider']) }} AS asset_metadata_all_providers_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     FINAL
 WHERE
