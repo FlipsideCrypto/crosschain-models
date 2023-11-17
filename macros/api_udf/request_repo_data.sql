@@ -66,7 +66,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             var num_batch_tries = 0
 
             /* seed the table for 1st run */
-            snowflake.execute({sqlText: `create or replace table {{ target.database }}.bronze_api.response_data AS
+            snowflake.execute({sqlText: `create or replace table temporary {{ target.database }}.bronze_api.response_data AS
                 select full_endpoint, NULL as status_code from table(result_scan('${query_id}'))`});
 
             while(!is_batch_done) {
@@ -74,7 +74,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                 /* log start */
                 snowflake.execute({sqlText: `INSERT INTO {{ target.database }}.bronze_api.log_messages (log_level, message) VALUES ('INFO', 'START,iteration ${num_batch_tries} of group ${i}')`});
                 var create_temp_table_command = `
-                    CREATE OR REPLACE TABLE {{ target.database }}.bronze_api.response_data AS
+                    CREATE OR REPLACE TABLE TEMPORARY {{ target.database }}.bronze_api.response_data AS
                     WITH subset AS (
                         SELECT 
                             project_name,
