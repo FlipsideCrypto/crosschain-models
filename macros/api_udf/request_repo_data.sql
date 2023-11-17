@@ -186,7 +186,6 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
 
                 var need_to_retry_command = `SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE (status_code = 202 or status_code is NULL);`;
                 need_to_retry_res = snowflake.execute({sqlText: need_to_retry_command});
-                var need_to_retry_query_id = need_to_retry_res.getQueryId();
                 var need_to_retry_row_count = need_to_retry_res.getRowCount();
                 var wait_seconds = 5
                 var wait_stmt = `CALL system$wait(${wait_seconds});`
