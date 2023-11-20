@@ -238,35 +238,45 @@ cap_millionaires AS (
         )
 )
 {% endif %}
-SELECT
-    *
-FROM
-    new_wallet_oner
-UNION
-SELECT
-    *
-FROM
-    new_billionaires
-UNION
-SELECT
-    *
-FROM
-    new_millionaires
+, pre_final AS (
+    SELECT
+        *
+    FROM
+        new_wallet_oner
+    UNION
+    SELECT
+        *
+    FROM
+        new_billionaires
+    UNION
+    SELECT
+        *
+    FROM
+        new_millionaires
 
-{% if is_incremental() %}
-UNION
-SELECT
-    *
-FROM
-    cap_wallet_oner
-UNION
-SELECT
-    *
-FROM
-    cap_billionaires
-UNION
-SELECT
-    *
-FROM
-    cap_millionaires
-{% endif %}
+    {% if is_incremental() %}
+    UNION
+    SELECT
+        *
+    FROM
+        cap_wallet_oner
+    UNION
+    SELECT
+        *
+    FROM
+        cap_billionaires
+    UNION
+    SELECT
+        *
+    FROM
+        cap_millionaires
+    {% endif %}
+)
+SELECT 
+    *,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address','tag_name','start_date']) }} AS tags_wallet_token_value_id,
+    '{{ invocation_id }}' as _invocation_id  
+FROM 
+    pre_final

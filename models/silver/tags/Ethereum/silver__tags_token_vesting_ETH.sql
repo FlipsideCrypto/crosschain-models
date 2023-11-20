@@ -3,6 +3,7 @@
     unique_key = "address",
     incremental_strategy = 'merge',
     merge_update_columns = ['creator'],
+    merge_exclude_columns = ["inserted_timestamp"],
 ) }}
 
 WITH base_table AS (
@@ -146,7 +147,11 @@ SELECT
     start_date,
     NULL AS end_date,
     CURRENT_TIMESTAMP AS tag_created_at,
-    _inserted_timestamp
+    _inserted_timestamp,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address']) }} AS tags_token_vesting_eth_id,
+    '{{ invocation_id }}' as _invocation_id  
 FROM
     base_table
 WHERE

@@ -3,6 +3,7 @@
     unique_key = "address",
     incremental_strategy = 'merge',
     merge_update_columns = ['creator'],
+    merge_exclude_columns = ["inserted_timestamp"],
 ) }}
 
 WITH lp_from AS (
@@ -141,6 +142,10 @@ final_table AS (
         to_asset
 )
 SELECT
-    A.*
+    A.*,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address']) }} AS tags_thor_liquidity_provider_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     final_table A

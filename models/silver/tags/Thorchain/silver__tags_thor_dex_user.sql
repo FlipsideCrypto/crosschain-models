@@ -3,6 +3,7 @@
     unique_key = "address",
     incremental_strategy = 'merge',
     merge_update_columns = ['creator'],
+    merge_exclude_columns = ["inserted_timestamp"],
 ) }}
 
 WITH from_addresses AS (
@@ -153,6 +154,10 @@ final_table AS (
     where blockchain != 'error'
 )
 SELECT
-    *
+    *,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address']) }} AS tags_thor_dex_user_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     final_table 

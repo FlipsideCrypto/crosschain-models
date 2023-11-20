@@ -3,6 +3,7 @@
     unique_key = "unique_id",
     incremental_strategy = 'merge',
     merge_update_columns = ['creator'],
+    merge_exclude_columns = ["inserted_timestamp"],
 ) }}
 
 WITH from_cex AS (
@@ -137,6 +138,10 @@ total_table_small AS (
 )
 SELECT
     *,
-    {{ dbt_utils.generate_surrogate_key(['address', 'tag_name']) }} AS unique_id
+    {{ dbt_utils.generate_surrogate_key(['address', 'tag_name']) }} AS unique_id,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address','tag_name']) }} AS tags_cex_user_eth_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     total_table_small
