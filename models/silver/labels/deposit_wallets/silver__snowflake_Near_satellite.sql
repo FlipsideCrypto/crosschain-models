@@ -138,7 +138,11 @@ SELECT
     f.l1_label,
     f.l2_label,
     f.address_name,
-    f.project_name
+    f.project_name,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address']) }} AS snowflake_near_satellites_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     final_base f
     LEFT JOIN {{ ref('silver__address_labels') }} A
