@@ -52,7 +52,8 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                 AND frequency IN ${parsedFrequencyArray}
             )
             SELECT *
-            FROM subset`});
+            FROM subset
+            WHERE gn < 10`});
 
         var query_id = res.getQueryId();
 
@@ -90,7 +91,17 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                             full_endpoint in (SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE (status_code = 202 or status_code is NULL))
                     ),
                     api_call as (
-                        SELECT * 
+                        SELECT
+                            project_name,
+                            {{ target.database }}.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
+                            SYSDATE() AS _request_timestamp,
+                            repo_url,
+                            full_endpoint,
+                            endpoint_github
+                        FROM 
+                            subset`
+                        
+                        /*SELECT * 
                         FROM (`
                 
                         for (let offset = 0; offset < batch_size; offset++) {
@@ -112,8 +123,8 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                                 create_temp_table_command += `  UNION ALL `;
                             }
                         }
+                        `)`*/
                 create_temp_table_command += `
-                        )
                     ),
                     flatten_res AS (
                         SELECT
