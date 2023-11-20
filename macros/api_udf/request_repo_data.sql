@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
         var row_count = 0;
         var batch_size = 100;
         var max_batch_tries = 5;
+        var num_calls_remaining = 5000;
 
         var res = snowflake.execute({sqlText: `WITH subset as (
                 SELECT 
@@ -57,13 +58,19 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
 
         var query_id = res.getQueryId();
 
-        var get_max_batch_num_stmt = snowflake.execute({sqlText: `select max(gn) from table(result_scan('${query_id}'))`});
+        var get_max_batch_num_stmt = snowflake.execute({sqlText: `select coalesce(max(gn),-1) from table(result_scan('${query_id}'))`});
         get_max_batch_num_stmt.next()
         var max_batch_num = get_max_batch_num_stmt.getColumnValue(1);
 
         for(let i = 0; i < max_batch_num+1; i++) {
             var is_batch_done = false
             var num_batch_tries = 0
+
+            /* need at least (batch_size * max_batch_tries) number of calls left in our hourly rate limit for this batch to work*/
+            if (num_calls_remaining < batch_size*max_batch_tries) {
+                snowflake.execute({sqlText: `INSERT INTO {{ target.database }}.bronze_api.log_messages (log_level, message) VALUES ('INFO', 'CALLS REMAINING,ending execution due to ${num_calls_remaining} calls remaining')`});
+                break;
+            }
 
             /* seed the table for 1st run */
             snowflake.execute({sqlText: `create or replace temporary table {{ target.database }}.bronze_api.response_data AS
@@ -99,32 +106,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                             full_endpoint,
                             endpoint_github
                         FROM 
-                            subset`
-                        
-                        /*SELECT * 
-                        FROM (`
-                
-                        for (let offset = 0; offset < batch_size; offset++) {
-                            create_temp_table_command += `
-                                SELECT
-                                    project_name,
-                                    {{ target.database }}.live.udf_api('GET', CONCAT('https://api.github.com', full_endpoint), { 'Authorization': CONCAT('token ', '{${TOKEN}}'), 'Accept': 'application/vnd.github+json'},{}, 'github_cred') AS res,
-                                    SYSDATE() AS _request_timestamp,
-                                    repo_url,
-                                    full_endpoint,
-                                    endpoint_github
-                                FROM 
-                                    subset
-                                WHERE 
-                                    subset_rn = ${offset}+1
-                            `;
-
-                            if (offset < batch_size - 1) {
-                                create_temp_table_command += `  UNION ALL `;
-                            }
-                        }
-                        `)`*/
-                create_temp_table_command += `
+                            subset
                     ),
                     flatten_res AS (
                         SELECT
@@ -194,8 +176,12 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                 `;
                 snowflake.execute({sqlText: update_command});
 
+                var num_calls_remaining_res = snowflake.execute({sqlText: `SELECT min(rate_limit_remaining) FROM {{ target.database }}.bronze_api.response_data;`});
+                num_calls_remaining_res.next()
+                num_calls_remaining = num_calls_remaining_res.getColumnValue(1);
+
                 var need_to_retry_command = `SELECT full_endpoint FROM {{ target.database }}.bronze_api.response_data WHERE (status_code = 202 or status_code is NULL);`;
-                need_to_retry_res = snowflake.execute({sqlText: need_to_retry_command});
+                var need_to_retry_res = snowflake.execute({sqlText: need_to_retry_command});
                 var need_to_retry_row_count = need_to_retry_res.getRowCount();
                 var wait_seconds = 5
                 var wait_stmt = `CALL system$wait(${wait_seconds});`
@@ -206,6 +192,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
                     snowflake.execute({sqlText: wait_stmt})
                 }
 
+                snowflake.execute({sqlText: `INSERT INTO {{ target.database }}.bronze_api.log_messages (log_level, message) VALUES ('INFO', 'CALLS REMAINING,${num_calls_remaining}')`});
                 snowflake.execute({sqlText: `INSERT INTO {{ target.database }}.bronze_api.log_messages (log_level, message) VALUES ('INFO', 'END,iteration ${num_batch_tries} of group ${i}')`});
             }
         }
