@@ -1,5 +1,6 @@
 {{ config(
     materialized = 'incremental',
+    merge_exclude_columns = ["inserted_timestamp"],
     unique_key = ['blockchain','test_timestamp'],
     full_refresh = false
 ) }}
@@ -123,6 +124,10 @@ SELECT
     chain AS blockchain,
     delay,
     'traces' AS test_table,
-    CURRENT_TIMESTAMP AS test_timestamp
+    CURRENT_TIMESTAMP AS test_timestamp,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['blockchain','test_timestamp']) }} AS data_delay_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     base

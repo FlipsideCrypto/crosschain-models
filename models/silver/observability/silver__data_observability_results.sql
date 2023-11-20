@@ -75,12 +75,17 @@
     ('solana', source('solana_observ', 'transactions_completeness'))
 ]
 %}
-SELECT *
+SELECT 
+    *,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['blockchain','test_name','test_timestamp']) }} AS data_observability_result_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM (
         {% for models in models %}
         SELECT
         '{{ models[0] }}' AS blockchain,
-       test_name,
+        test_name,
         min_block,
         max_block,
         min_block_timestamp,
