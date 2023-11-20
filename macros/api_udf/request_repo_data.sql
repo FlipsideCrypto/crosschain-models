@@ -53,7 +53,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
             )
             SELECT *
             FROM subset
-            WHERE gn < 10`});
+            WHERE gn < 10`}); /* limit 1000 endpoints per run due to GH rate limits */
 
         var query_id = res.getQueryId();
 
