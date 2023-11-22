@@ -19,3 +19,9 @@ models:
         description: Date the tag no longer applies (for tags that are permanent or currently active, end_date can be NULL).
       - name: TAG_CREATED_AT
         description: Date the tag was added to our data.
+      - name: DIM_TAGS_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 
