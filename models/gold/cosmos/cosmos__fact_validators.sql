@@ -18,7 +18,10 @@ SELECT
   min_self_delegation,
   RANK,
   NULL AS missed_blocks,
-  raw_metadata
+  raw_metadata,
+  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(fact_validators_id,{{ dbt_utils.generate_surrogate_key(['address','creator','blockchain']) }}) AS fact_validators_id
 FROM
   {{ source(
     'axelar_gov',
@@ -41,7 +44,10 @@ SELECT
   NULL AS min_self_delegation,
   RANK,
   NULL AS missed_blocks,
-  raw_metadata
+  raw_metadata,
+  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(fact_validators_id,{{ dbt_utils.generate_surrogate_key(['address','creator','blockchain']) }}) AS fact_validators_id
 FROM
   {{ source(
     'cosmos_gov',
@@ -64,7 +70,10 @@ SELECT
   min_self_delegation,
   RANK,
   missed_blocks,
-  raw_metadata
+  raw_metadata,
+  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(fact_validators_id,{{ dbt_utils.generate_surrogate_key(['address','creator','blockchain']) }}) AS fact_validators_id
 FROM
   {{ source(
     'osmosis_gov',

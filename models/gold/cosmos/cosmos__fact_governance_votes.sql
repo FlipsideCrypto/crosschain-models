@@ -12,7 +12,10 @@ SELECT
   proposal_id,
   vote_option,
   vote_weight,
-  NULL AS memo
+  NULL AS memo,
+  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(fact_governance_votes_id,{{ dbt_utils.generate_surrogate_key(['tx_id','proposal_id','voter']) }}) AS fact_governance_votes_id
 FROM
   {{ source(
     'axelar_gov',
@@ -29,7 +32,10 @@ SELECT
   proposal_id,
   vote_option,
   vote_weight,
-  NULL AS memo
+  NULL AS memo,
+  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(fact_governance_votes_id,{{ dbt_utils.generate_surrogate_key(['tx_id','proposal_id','voter']) }}) AS fact_governance_votes_id
 FROM
   {{ source(
     'cosmos_gov',
@@ -46,7 +52,10 @@ SELECT
   proposal_id,
   vote_option,
   vote_weight,
-  memo
+  memo,
+  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(fact_governance_votes_id,{{ dbt_utils.generate_surrogate_key(['tx_id','proposal_id','voter']) }}) AS fact_governance_votes_id
 FROM
   {{ source(
     'osmosis_gov',

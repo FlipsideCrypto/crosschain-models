@@ -16,7 +16,10 @@ SELECT
   tx_code,
   tx_log,
   msgs,
-  tx_succeeded
+  tx_succeeded,
+  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(fact_transactions_id,{{ dbt_utils.generate_surrogate_key(['tx_id']) }}) AS fact_transactions_id
 FROM
   {{ source(
     'axelar_core',
@@ -37,7 +40,10 @@ SELECT
   tx_code,
   tx_log,
   msgs,
-  tx_succeeded
+  tx_succeeded,
+  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(fact_transactions_id,{{ dbt_utils.generate_surrogate_key(['tx_id']) }}) AS fact_transactions_id
 FROM
   {{ source(
     'cosmos_core',
@@ -64,7 +70,10 @@ SELECT
   tx_code,
   NULL AS tx_log,
   msgs,
-  tx_succeeded
+  tx_succeeded,
+  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(fact_transactions_id,{{ dbt_utils.generate_surrogate_key(['tx_id']) }}) AS fact_transactions_id
 FROM
   {{ source(
     'osmosis_core',

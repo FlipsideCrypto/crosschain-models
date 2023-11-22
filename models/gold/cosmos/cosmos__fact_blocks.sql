@@ -9,7 +9,10 @@ SELECT
   chain_id,
   tx_count,
   proposer_address,
-  validator_hash
+  validator_hash,
+  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(fact_blocks_id,{{ dbt_utils.generate_surrogate_key(['chain_id','block_id']) }}) AS fact_blocks_id
 FROM
   {{ source(
     'axelar_core',
@@ -23,7 +26,10 @@ SELECT
   chain_id,
   tx_count,
   proposer_address,
-  validator_hash
+  validator_hash,
+  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(fact_blocks_id,{{ dbt_utils.generate_surrogate_key(['chain_id','block_id']) }}) AS fact_blocks_id
 FROM
   {{ source(
     'cosmos_core',
@@ -37,7 +43,10 @@ SELECT
   chain_id,
   tx_count,
   proposer_address,
-  validator_hash
+  validator_hash,
+  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(fact_blocks_id,{{ dbt_utils.generate_surrogate_key(['chain_id','block_id']) }}) AS fact_blocks_id
 FROM
   {{ source(
     'osmosis_core',
