@@ -17,7 +17,9 @@ WITH base AS (
         amount_in_unadj AS amount_in_raw,
         token_out,
         amount_out_unadj AS amount_out_raw,
-        _log_id
+        _log_id,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
     FROM
         {{ source(
             'ethereum_defi',
@@ -35,7 +37,9 @@ WITH base AS (
         amount_in_unadj AS amount_in_raw,
         token_out,
         amount_out_unadj AS amount_out_raw,
-        _log_id
+        _log_id,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
     FROM
         {{ source(
             'optimism_defi',
@@ -53,7 +57,9 @@ WITH base AS (
         amount_in_unadj AS amount_in_raw,
         token_out,
         amount_out_unadj AS amount_out_raw,
-        _log_id
+        _log_id,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
     FROM
         {{ source(
             'avalanche_defi',
@@ -71,7 +77,9 @@ WITH base AS (
         amount_in_unadj AS amount_in_raw,
         token_out,
         amount_out_unadj AS amount_out_raw,
-        _log_id
+        _log_id,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
     FROM
         {{ source(
             'polygon_defi',
@@ -89,7 +97,9 @@ WITH base AS (
         amount_in_unadj AS amount_in_raw,
         token_out,
         amount_out_unadj AS amount_out_raw,
-        _log_id
+        _log_id,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
     FROM
         {{ source(
             'bsc_defi',
@@ -107,7 +117,9 @@ WITH base AS (
         amount_in_unadj AS amount_in_raw,
         token_out,
         amount_out_unadj AS amount_out_raw,
-        _log_id
+        _log_id,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
     FROM
         {{ source(
             'arbitrum_defi',
@@ -125,7 +137,9 @@ WITH base AS (
         amount_in_unadj AS amount_in_raw,
         token_out,
         amount_out_unadj AS amount_out_raw,
-        _log_id
+        _log_id,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
     FROM
         {{ source(
             'base_defi',
@@ -143,7 +157,9 @@ WITH base AS (
         amount_in_unadj AS amount_in_raw,
         token_out,
         amount_out_unadj AS amount_out_raw,
-        _log_id
+        _log_id,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
     FROM
         {{ source(
             'gnosis_defi',
@@ -165,7 +181,9 @@ WITH base AS (
             tx_id,
             '-',
             _BODY_INDEX
-        ) AS _log_id
+        ) AS _log_id,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
     FROM
         {{ source(
             'osmosis_defi',
@@ -183,7 +201,9 @@ WITH base AS (
         swap_from_amount AS amount_in_raw,
         LOWER(swap_to_mint) AS token_out,
         swap_to_amount AS amount_out_raw,
-        _log_id
+        _log_id,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
     FROM
         {{ source(
             'solana_defi',
@@ -203,7 +223,9 @@ WITH base AS (
         amount_in_raw,
         token_out,
         amount_out_raw,
-        swap_id AS _log_id
+        swap_id AS _log_id,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
     FROM
         {{ source(
             'near_defi',
@@ -221,6 +243,9 @@ SELECT
     amount_in_raw,
     token_out,
     amount_out_raw,
-    _log_id
+    _log_id,
+    inserted_timestamp,
+    modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['_log_id']) }} AS fact_dex_swaps_id
 FROM
     base

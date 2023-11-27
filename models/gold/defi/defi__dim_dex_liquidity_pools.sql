@@ -17,7 +17,10 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals
+        decimals,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['_id']) }} AS dim_dex_liquidity_pools_id
     FROM
         {{ source(
             'ethereum_silver_dex',
@@ -35,7 +38,10 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals
+        decimals,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['_id']) }} AS dim_dex_liquidity_pools_id
     FROM
         {{ source(
             'optimism_silver_dex',
@@ -53,7 +59,10 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals
+        decimals,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['_id']) }} AS dim_dex_liquidity_pools_id
     FROM
         {{ source(
             'avalanche_silver_dex',
@@ -89,7 +98,10 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals
+        decimals,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['_id']) }} AS dim_dex_liquidity_pools_id
     FROM
         {{ source(
             'bsc_silver_dex',
@@ -107,7 +119,10 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals
+        decimals,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['_id']) }} AS dim_dex_liquidity_pools_id
     FROM
         {{ source(
             'arbitrum_silver_dex',
@@ -125,7 +140,10 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals
+        decimals,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['_id']) }} AS dim_dex_liquidity_pools_id
     FROM
         {{ source(
             'base_silver_dex',
@@ -143,7 +161,10 @@ WITH base AS (
         pool_name,
         tokens,
         symbols,
-        decimals
+        decimals,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['_id']) }} AS dim_dex_liquidity_pools_id
     FROM
         {{ source(
             'gnosis_silver_dex',
@@ -161,6 +182,9 @@ SELECT
     pool_name,
     tokens,
     symbols,
-    decimals
+    decimals,
+    inserted_timestamp,
+    modified_timestamp,
+    dim_dex_liquidity_pools_id
 FROM
     base
