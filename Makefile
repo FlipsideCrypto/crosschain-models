@@ -9,23 +9,6 @@ dbt-console:
 
 .PHONY: dbt-console
 
-
-complete:
-	dbt run \
-	--vars '{"STREAMLINE_INVOKE_STREAMS":True, "STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES": True}' \
-	-m 1+models/silver/streamline/core/complete \
-	--profile crosschain \
-	--target $(DBT_TARGET) \
-	--profiles-dir ~/.dbt
-
-streamline_bronze:
-	dbt run \
-	--vars '{"STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES": True}' \
-	-m 1+models/silver/streamline/bronze \
-	--profiles-dir ~/.dbt \
-	--target $(DBT_TARGET) \
-	--profile crosschain
-
 prices_history:
 	dbt run \
 	--vars '{"STREAMLINE_INVOKE_STREAMS":True, "STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES": True}' \
