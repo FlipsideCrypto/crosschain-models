@@ -165,6 +165,22 @@ WITH base AS (
             'solana_core',
             'dim_tokens'
         ) }}
+    UNION ALL
+    SELECT
+        token_address AS address,
+        LOWER(symbol) AS symbol,
+        NAME AS NAME,
+        decimals,
+        NULL AS created_block_number,
+        transaction_created_timestamp AS created_block_timestamp,
+        NULL AS created_tx_hash,
+        creator_address AS creator_address,
+        'aptos' AS blockchain
+    FROM
+        {{ source(
+            'aptos_core',
+            'dim_tokens'
+        ) }}
 )
 SELECT
     address,
