@@ -565,3 +565,8 @@ sources:
     tables:
       - name: fact_msg_attributes
       - name: transactions_completeness
+  - name: aptos_core
+    database: aptos
+    schema: core
+    tables:
+      - name: dim_tokens

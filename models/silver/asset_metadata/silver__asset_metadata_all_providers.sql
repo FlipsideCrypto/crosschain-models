@@ -8,6 +8,7 @@ WITH coin_gecko_meta AS (
 
     SELECT
         DISTINCT CASE
+            WHEN LOWER(platform) = 'aptos' THEN A.token_address
             WHEN TRIM(
                 A.token_address
             ) ILIKE '^x%'
@@ -50,6 +51,7 @@ WITH coin_gecko_meta AS (
 coin_market_cap_meta AS (
     SELECT
         DISTINCT CASE
+            WHEN LOWER(platform) = 'aptos' THEN token_address
             WHEN TRIM(token_address) ILIKE '^x%'
             OR TRIM(token_address) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
             WHEN id = '12220' THEN 'uosmo'
@@ -552,6 +554,7 @@ FINAL AS (
             ) THEN 'cosmos'
             WHEN LOWER(platform) = 'algorand' THEN 'algorand'
             WHEN LOWER(platform) = 'solana' THEN 'solana'
+            WHEN LOWER(platform) = 'aptos' THEN 'aptos'
             ELSE NULL
         END AS blockchain,
         --supported chains only
