@@ -3,18 +3,14 @@
     tags = ['streamline_view']
 ) }}
 -- Generate a spine of dates from 2018-01-01 to today
+
 with base as (
     select
-        dateadd(day, id, '2017-12-31 00:00:00') as run_time -- coin gecko pro provides historical data from 2018-01-01
+        date_day::TIMESTAMP as run_time
     from
-        (select
-            row_number() over (
-                order by
-                    seq4()
-            ) as id
-        from
-            table(generator(rowcount => 4000))
-        )
+        crosschain_dev.core.dim_dates
+    where
+        date_day between '2018-01-01' and dateadd(day, 4747, '2018-01-01')  -- coin gecko pro provides historical data from 2018-01-01, dim_dates has 4747 days for this range (2018-01-01 to 2030-12-31)
 )
 select
     run_time
