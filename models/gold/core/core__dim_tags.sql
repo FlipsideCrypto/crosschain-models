@@ -180,102 +180,6 @@ SELECT
     end_date,
     tag_created_at
 FROM
-    {{ ref('silver__tags_nft_larva_labs_user') }}
-UNION ALL
-SELECT
-    blockchain,
-    creator,
-    address,
-    tag_name,
-    tag_type,
-    start_date,
-    end_date,
-    tag_created_at
-FROM
-    {{ ref('silver__tags_nft_looksrare_user') }}
-UNION ALL
-SELECT
-    blockchain,
-    creator,
-    address,
-    tag_name,
-    tag_type,
-    start_date,
-    end_date,
-    tag_created_at
-FROM
-    {{ ref('silver__tags_nft_nftx_user') }}
-UNION ALL
-SELECT
-    blockchain,
-    creator,
-    address,
-    tag_name,
-    tag_type,
-    start_date,
-    end_date,
-    tag_created_at
-FROM
-    {{ ref('silver__tags_nft_opensea_user') }}
-UNION ALL
-SELECT
-    blockchain,
-    creator,
-    address,
-    tag_name,
-    tag_type,
-    start_date,
-    end_date,
-    tag_created_at
-FROM
-    {{ ref('silver__tags_nft_rarible_user') }}
-UNION ALL
-SELECT
-    blockchain,
-    creator,
-    address,
-    tag_name,
-    tag_type,
-    start_date,
-    end_date,
-    tag_created_at
-FROM
-    {{ ref('silver__tags_nft_x2y2_user') }}
-UNION ALL
-SELECT
-    blockchain,
-    creator,
-    address,
-    tag_name,
-    tag_type,
-    start_date,
-    end_date,
-    tag_created_at
-FROM
-    {{ ref('silver__tags_nft_blur_user') }}
-UNION ALL
-SELECT
-    blockchain,
-    creator,
-    address,
-    tag_name,
-    tag_type,
-    start_date,
-    end_date,
-    tag_created_at
-FROM
-    {{ ref('silver__tags_nft_sudoswap_user') }}
-UNION ALL
-SELECT
-    blockchain,
-    creator,
-    address,
-    tag_name,
-    tag_type,
-    start_date,
-    end_date,
-    tag_created_at
-FROM
     {{ ref('silver__tags_wallet_ETH_value') }}
 UNION ALL
 SELECT
@@ -308,8 +212,8 @@ SELECT
     address,
     tag_name,
     tag_type,
-    start_date :: date,
-    null as end_date,
+    start_date :: DATE,
+    NULL AS end_date,
     '2022-09-06' :: TIMESTAMP AS tag_created_at
 FROM
     {{ source(
@@ -323,8 +227,8 @@ SELECT
     address,
     tag_name,
     tag_type,
-    start_date :: date,
-    null as end_date,
+    start_date :: DATE,
+    NULL AS end_date,
     '2022-12-13' :: TIMESTAMP AS tag_created_at
 FROM
     {{ source(
@@ -380,21 +284,21 @@ SELECT
 FROM
     {{ ref('silver__tags_airdrop_master_ETH') }}
 UNION ALL
-SELECT 
-    blockchain, 
-    creator, 
-    address, 
-    tag_name, 
-    tag_type, 
-    to_date(start_date) AS start_date, 
-    NULL AS end_date, 
-    NULL as tag_created_at
-FROM 
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    TO_DATE(start_date) AS start_date,
+    NULL AS end_date,
+    NULL AS tag_created_at
+FROM
     {{ source(
         'crosschain_silver',
         'optimism_delegates'
-    )}} 
-UNION  ALL
+    ) }}
+UNION ALL
 SELECT
     blockchain,
     creator,
@@ -446,61 +350,61 @@ UNION ALL
 SELECT
     blockchain,
     creator,
-    LOWER(address) as address,
+    LOWER(address) AS address,
     tag_name,
     tag_type,
-    start_date :: date,
-    null as end_date,
-    '2022-01-18' :: TIMESTAMP as tag_created_at
+    start_date :: DATE,
+    NULL AS end_date,
+    '2022-01-18' :: TIMESTAMP AS tag_created_at
 FROM
     {{ ref('silver__aave_balancer_addresses') }}
 UNION ALL
-SELECT 
-    blockchain, 
-    creator, 
-    address, 
-    tag_name, 
-    tag_type, 
-    start_date, 
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
     end_date,
     tag_created_at
-FROM  
+FROM
     {{ ref('silver__tags_icns') }}
 UNION ALL
-SELECT 
-    blockchain, 
-    creator, 
-    address, 
-    tag_name, 
-    tag_type, 
-    '2023-02-09' :: TIMESTAMP as start_date,
-    null as end_date,
-    '2023-02-09' :: TIMESTAMP as tag_created_at
-FROM  
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    '2023-02-09' :: TIMESTAMP AS start_date,
+    NULL AS end_date,
+    '2023-02-09' :: TIMESTAMP AS tag_created_at
+FROM
     {{ ref('silver__optimism_airdrop2_tags') }}
 UNION ALL
-SELECT 
-    blockchain, 
-    creator, 
-    address, 
-    tag_name, 
-    tag_type, 
-    '2022-06-01' :: TIMESTAMP as start_date,
-    null as end_date,
-    '2022-06-01' :: TIMESTAMP as tag_created_at
-FROM  
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    '2022-06-01' :: TIMESTAMP AS start_date,
+    NULL AS end_date,
+    '2022-06-01' :: TIMESTAMP AS tag_created_at
+FROM
     {{ ref('silver__optimism_airdrop1_tags') }}
 UNION ALL
-SELECT 
-    blockchain, 
-    creator, 
-    lower(address), 
-    tag_name, 
-    tag_type, 
-    start_date :: date as start_date,
-    null as end_date,
-    '2023-05-18' :: TIMESTAMP as tag_created_at
-FROM  
+SELECT
+    blockchain,
+    creator,
+    LOWER(address),
+    tag_name,
+    tag_type,
+    start_date :: DATE AS start_date,
+    NULL AS end_date,
+    '2023-05-18' :: TIMESTAMP AS tag_created_at
+FROM
     {{ ref('silver__dydx_delegates') }}
 UNION ALL
 SELECT
@@ -551,52 +455,52 @@ SELECT
 FROM
     {{ ref('silver__tags_token_standard_erc4626') }}
 UNION ALL
-SELECT 
-    blockchain, 
-    creator, 
-    lower(address), 
-    tag_name, 
-    tag_type, 
-    start_date :: date as start_date,
-    null as end_date,
-    '2023-06-13' :: TIMESTAMP as tag_created_at
-FROM  
+SELECT
+    blockchain,
+    creator,
+    LOWER(address),
+    tag_name,
+    tag_type,
+    start_date :: DATE AS start_date,
+    NULL AS end_date,
+    '2023-06-13' :: TIMESTAMP AS tag_created_at
+FROM
     {{ ref('silver__fund_address_tags') }}
 UNION ALL
-SELECT 
-    blockchain, 
-    creator, 
-    lower(address), 
-    tag_name, 
-    tag_type, 
-    start_date :: date as start_date,
-    null as end_date,
-    '2023-06-13' :: TIMESTAMP as tag_created_at
-FROM  
+SELECT
+    blockchain,
+    creator,
+    LOWER(address),
+    tag_name,
+    tag_type,
+    start_date :: DATE AS start_date,
+    NULL AS end_date,
+    '2023-06-13' :: TIMESTAMP AS tag_created_at
+FROM
     {{ ref('silver__influencer_address_tags') }}
 UNION ALL
-SELECT 
-    blockchain, 
-    creator, 
-    lower(address), 
-    tag_name, 
-    tag_type, 
-    start_date :: date as start_date,
-    null as end_date,
-    '2023-08-22' :: TIMESTAMP as tag_created_at
-FROM  
+SELECT
+    blockchain,
+    creator,
+    LOWER(address),
+    tag_name,
+    tag_type,
+    start_date :: DATE AS start_date,
+    NULL AS end_date,
+    '2023-08-22' :: TIMESTAMP AS tag_created_at
+FROM
     {{ ref('silver__uniswap_verified_token_tags') }}
 UNION ALL
-SELECT 
-    blockchain, 
-    creator, 
-    lower(address), 
-    tag_name, 
-    tag_type, 
-    start_date :: date as start_date,
-    null as end_date,
-    '2023-09-11' :: TIMESTAMP as tag_created_at
-FROM  
+SELECT
+    blockchain,
+    creator,
+    LOWER(address),
+    tag_name,
+    tag_type,
+    start_date :: DATE AS start_date,
+    NULL AS end_date,
+    '2023-09-11' :: TIMESTAMP AS tag_created_at
+FROM
     {{ ref('silver__opensea_names') }}
 UNION ALL
 SELECT
@@ -887,26 +791,206 @@ SELECT
 FROM
     {{ ref('silver__tags_token_standard_polygon') }}
 UNION ALL
-SELECT 
-    blockchain, 
-    creator, 
-    regexp_replace(address, '[^[:ascii:]]', '') as address, 
-    regexp_replace(tag_name, '[^[:ascii:]]', '') as tag_name, 
-    regexp_replace(tag_type, '[^[:ascii:]]', '') as tag_type, 
-    start_date :: date as start_date,
-    null as end_date,
-    '2023-10-27' :: TIMESTAMP as tag_created_at
-FROM  
+SELECT
+    blockchain,
+    creator,
+    REGEXP_REPLACE(
+        address,
+        '[^[:ascii:]]',
+        ''
+    ) AS address,
+    REGEXP_REPLACE(
+        tag_name,
+        '[^[:ascii:]]',
+        ''
+    ) AS tag_name,
+    REGEXP_REPLACE(
+        tag_type,
+        '[^[:ascii:]]',
+        ''
+    ) AS tag_type,
+    start_date :: DATE AS start_date,
+    NULL AS end_date,
+    '2023-10-27' :: TIMESTAMP AS tag_created_at
+FROM
     {{ ref('silver__Israel_sanctioned_addresses_tags') }}
 UNION ALL
-SELECT 
-    blockchain, 
-    creator, 
-    address, 
-    tag_name, 
-    tag_type, 
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
     start_date,
     end_date,
     tag_created_at
-FROM  
+FROM
     {{ ref('silver__tags_sei_abassador_tags') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_nft_eth_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_nft_arb_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_nft_ava_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_nft_base_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_nft_bsc_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_nft_optimism_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_nft_polygon_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_dex_eth_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_dex_arb_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_dex_ava_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_dex_base_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_dex_bsc_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_dex_optimism_platform_user') }}
+UNION ALL
+SELECT
+    blockchain,
+    creator,
+    address,
+    tag_name,
+    tag_type,
+    start_date,
+    end_date,
+    tag_created_at
+FROM
+    {{ ref('silver__tags_dex_polygon_platform_user') }}

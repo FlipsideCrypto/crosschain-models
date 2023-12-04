@@ -11,62 +11,76 @@ WITH buyers AS (
         DISTINCT 'ethereum' AS blockchain,
         'flipside' AS creator,
         buyer_address AS address,
-        'blur user' AS tag_name,
+        CONCAT(
+            platform_name,
+            ' user'
+        ) AS tag_name,
         'nft' AS tag_type,
         MIN(
             block_timestamp :: DATE
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(_inserted_timestamp) AS _inserted_timestamp
+        MIN(_INSERTED_TIMESTAMP) AS _INSERTED_TIMESTAMP
     FROM
         {{ source(
             'ethereum_silver_nft',
-            'blur_sales'
+            'complete_nft_sales'
         ) }}
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > (
+    _INSERTED_TIMESTAMP > (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_INSERTED_TIMESTAMP)
         FROM
             {{ this }}
     )
 {% endif %}
 GROUP BY
-    buyer_address
+    blockchain,
+    creator,
+    buyer_address,
+    tag_name,
+    tag_type
 ),
 sellers AS (
     SELECT
         DISTINCT 'ethereum' AS blockchain,
         'flipside' AS creator,
         seller_address AS address,
-        'blur user' AS tag_name,
+        CONCAT(
+            platform_name,
+            ' user'
+        ) AS tag_name,
         'nft' AS tag_type,
         MIN(
             block_timestamp :: DATE
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(_inserted_timestamp) AS _inserted_timestamp
+        MIN(_INSERTED_TIMESTAMP) AS _INSERTED_TIMESTAMP
     FROM
         {{ source(
             'ethereum_silver_nft',
-            'blur_sales'
+            'complete_nft_sales'
         ) }}
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > (
+    _INSERTED_TIMESTAMP > (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_INSERTED_TIMESTAMP)
         FROM
             {{ this }}
     )
 {% endif %}
 GROUP BY
-    seller_address
+    blockchain,
+    creator,
+    seller_address,
+    tag_name,
+    tag_type
 ),
 union_table AS (
     SELECT
