@@ -8,65 +8,79 @@
 WITH buyers AS (
 
     SELECT
-        DISTINCT 'ethereum' AS blockchain,
+        DISTINCT 'arbitrum' AS blockchain,
         'flipside' AS creator,
-        nft_to_address AS address,
-        'looksrare user' AS tag_name,
+        buyer_address AS address,
+        CONCAT(
+            platform_name,
+            ' user'
+        ) AS tag_name,
         'nft' AS tag_type,
         MIN(
             block_timestamp :: DATE
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(_INSERTED_TIMESTAMP) AS ingested_at
+        MIN(_INSERTED_TIMESTAMP) AS _INSERTED_TIMESTAMP
     FROM
         {{ source(
-            'ethereum_silver_nft',
-            'looksrare_sales'
+            'arbitrum_silver',
+            'complete_nft_sales'
         ) }}
 
 {% if is_incremental() %}
 WHERE
     _INSERTED_TIMESTAMP > (
         SELECT
-            MAX(ingested_at)
+            MAX(_INSERTED_TIMESTAMP)
         FROM
             {{ this }}
     )
 {% endif %}
 GROUP BY
-    nft_to_address
+    blockchain,
+    creator,
+    buyer_address,
+    tag_name,
+    tag_type
 ),
 sellers AS (
     SELECT
-        DISTINCT 'ethereum' AS blockchain,
+        DISTINCT 'arbitrum' AS blockchain,
         'flipside' AS creator,
-        nft_from_address AS address,
-        'looksrare user' AS tag_name,
+        seller_address AS address,
+        CONCAT(
+            platform_name,
+            ' user'
+        ) AS tag_name,
         'nft' AS tag_type,
         MIN(
             block_timestamp :: DATE
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(_INSERTED_TIMESTAMP) AS ingested_at
+        MIN(_INSERTED_TIMESTAMP) AS _INSERTED_TIMESTAMP
     FROM
         {{ source(
-            'ethereum_silver_nft',
-            'looksrare_sales'
+            'arbitrum_silver',
+            'complete_nft_sales'
         ) }}
 
 {% if is_incremental() %}
 WHERE
     _INSERTED_TIMESTAMP > (
         SELECT
-            MAX(ingested_at)
+            MAX(_INSERTED_TIMESTAMP)
         FROM
             {{ this }}
     )
 {% endif %}
 GROUP BY
-    nft_from_address
+    blockchain,
+    creator,
+    seller_address,
+    tag_name,
+    tag_type
 ),
 union_table AS (
     SELECT
