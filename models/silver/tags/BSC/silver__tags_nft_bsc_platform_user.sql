@@ -8,10 +8,13 @@
 WITH buyers AS (
 
     SELECT
-        DISTINCT 'ethereum' AS blockchain,
+        DISTINCT 'bsc' AS blockchain,
         'flipside' AS creator,
         buyer_address AS address,
-        'x2y2 user' AS tag_name,
+        CONCAT(
+            platform_name,
+            ' user'
+        ) AS tag_name,
         'nft' AS tag_type,
         MIN(
             block_timestamp :: DATE
@@ -21,8 +24,8 @@ WITH buyers AS (
         MIN(_INSERTED_TIMESTAMP) AS _INSERTED_TIMESTAMP
     FROM
         {{ source(
-            'ethereum_silver_nft',
-            'x2y2_sales'
+            'bsc_silver',
+            'complete_nft_sales'
         ) }}
 
 {% if is_incremental() %}
@@ -35,14 +38,21 @@ WHERE
     )
 {% endif %}
 GROUP BY
-    buyer_address
+    blockchain,
+    creator,
+    buyer_address,
+    tag_name,
+    tag_type
 ),
 sellers AS (
     SELECT
-        DISTINCT 'ethereum' AS blockchain,
+        DISTINCT 'bsc' AS blockchain,
         'flipside' AS creator,
         seller_address AS address,
-        'x2y2 user' AS tag_name,
+        CONCAT(
+            platform_name,
+            ' user'
+        ) AS tag_name,
         'nft' AS tag_type,
         MIN(
             block_timestamp :: DATE
@@ -52,8 +62,8 @@ sellers AS (
         MIN(_INSERTED_TIMESTAMP) AS _INSERTED_TIMESTAMP
     FROM
         {{ source(
-            'ethereum_silver_nft',
-            'x2y2_sales'
+            'bsc_silver',
+            'complete_nft_sales'
         ) }}
 
 {% if is_incremental() %}
@@ -66,7 +76,11 @@ WHERE
     )
 {% endif %}
 GROUP BY
-    seller_address
+    blockchain,
+    creator,
+    seller_address,
+    tag_name,
+    tag_type
 ),
 union_table AS (
     SELECT

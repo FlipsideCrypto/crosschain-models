@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver__tags_nft_looksrare_user
+  - name: silver__tags_nft_eth_platform_user
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

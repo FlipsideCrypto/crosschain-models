@@ -76,6 +76,7 @@ sources:
       - name: x2y2_sales
       - name: blur_sales
       - name: sudoswap_sales
+      - name: complete_nft_sales
   - name: algorand_core
     database: algorand
     schema: core
@@ -93,6 +94,7 @@ sources:
       - name: complete_event_abis
       - name: decoded_logs
       - name: abis
+      - name: complete_nft_sales
   - name: arbitrum_core
     database: arbitrum
     schema: core
@@ -116,6 +118,7 @@ sources:
       - name: abis
       - name: contracts
       - name: complete_event_abis
+      - name: complete_nft_sales
   - name: avalanche_core
     database: avalanche
     schema: core
@@ -139,6 +142,7 @@ sources:
       - name: abis
       - name: contracts
       - name: complete_event_abis
+      - name: complete_nft_sales
   - name: polygon_core
     database: polygon
     schema: core
@@ -162,6 +166,7 @@ sources:
       - name: complete_event_abis
       - name: decoded_logs
       - name: abis
+      - name: complete_nft_sales
   - name: optimism_core
     database: optimism
     schema: core
@@ -185,6 +190,7 @@ sources:
       - name: abis
       - name: complete_event_abis
       - name: decoded_logs
+      - name: complete_nft_sales
   - name: bsc_core
     database: bsc
     schema: core
@@ -451,6 +457,7 @@ sources:
       - name: abis
       - name: contracts
       - name: complete_event_abis
+      - name: complete_nft_sales
   - name: base_silver_dex
     database: base
     schema: silver_dex
