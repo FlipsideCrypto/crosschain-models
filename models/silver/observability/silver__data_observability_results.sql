@@ -72,7 +72,10 @@
     ('near', source('near_observ', 'logs_completeness')),
 
     ('solana', source('solana_observ', 'blocks_completeness')),
-    ('solana', source('solana_observ', 'transactions_completeness'))
+    ('solana', source('solana_observ', 'transactions_completeness')),
+
+    ('aptos', source('aptos_observ', 'blocks_completeness')),
+    ('aptos', source('aptos_observ', 'transactions_completeness'))
 ]
 %}
 SELECT *
