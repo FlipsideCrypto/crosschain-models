@@ -42,7 +42,7 @@ SELECT
     dex._log_id,
     GREATEST(COALESCE(dex.inserted_timestamp,'2000-01-01'), COALESCE(p_in.inserted_timestamp,'2000-01-01')) as inserted_timestamp,
     GREATEST(COALESCE(dex.modified_timestamp,'2000-01-01'), COALESCE(p_in.modified_timestamp,'2000-01-01')) as modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['dex.blockchain','dex._log_id']) }} AS ez_dex_swaps_id
+    fact_dex_swaps_id AS ez_dex_swaps_id
 FROM
     {{ ref('defi__fact_dex_swaps') }}
     dex

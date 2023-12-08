@@ -19,7 +19,8 @@ WITH base AS (
         amount_out_unadj AS amount_out_raw,
         _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE (ez_dex_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','event_index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'ethereum_defi',
@@ -39,7 +40,8 @@ WITH base AS (
         amount_out_unadj AS amount_out_raw,
         _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE (ez_dex_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','event_index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'optimism_defi',
@@ -59,7 +61,8 @@ WITH base AS (
         amount_out_unadj AS amount_out_raw,
         _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE (ez_dex_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','event_index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'avalanche_defi',
@@ -79,7 +82,8 @@ WITH base AS (
         amount_out_unadj AS amount_out_raw,
         _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE (ez_dex_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','event_index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'polygon_defi',
@@ -99,7 +103,8 @@ WITH base AS (
         amount_out_unadj AS amount_out_raw,
         _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE (ez_dex_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','event_index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'bsc_defi',
@@ -119,7 +124,8 @@ WITH base AS (
         amount_out_unadj AS amount_out_raw,
         _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE (ez_dex_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','event_index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'arbitrum_defi',
@@ -139,7 +145,8 @@ WITH base AS (
         amount_out_unadj AS amount_out_raw,
         _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE (ez_dex_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','event_index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'base_defi',
@@ -159,7 +166,8 @@ WITH base AS (
         amount_out_unadj AS amount_out_raw,
         _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE (ez_dex_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','event_index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'gnosis_defi',
@@ -183,7 +191,8 @@ WITH base AS (
             _BODY_INDEX
         ) AS _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE(fact_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','event_index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'osmosis_defi',
@@ -203,7 +212,8 @@ WITH base AS (
         swap_to_amount AS amount_out_raw,
         _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE(fact_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'solana_defi',
@@ -225,7 +235,8 @@ WITH base AS (
         amount_out_raw,
         swap_id AS _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE (ez_dex_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','event_index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'near_defi',
@@ -246,6 +257,6 @@ SELECT
     _log_id,
     inserted_timestamp,
     modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['_log_id']) }} AS fact_dex_swaps_id
+    fact_dex_swaps_id
 FROM
     base
