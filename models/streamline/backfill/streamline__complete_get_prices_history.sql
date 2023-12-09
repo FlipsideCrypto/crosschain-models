@@ -1,6 +1,6 @@
 {{ config (
     materialized = "incremental",
-    unique_key = "run_time",
+    unique_key = "uid",
     cluster_by = "run_time",
     merge_update_columns = [ "run_time"],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(run_time)",
@@ -12,7 +12,8 @@ SELECT
     run_time,
     metadata,
     data,
-    error
+    error,
+    id || '-' || run_time::VARCHAR as uid
 FROM
 
 {{ source( "bronze_streamline", "asset_prices_coin_gecko_api") }}
