@@ -9,10 +9,18 @@ dbt-console:
 
 .PHONY: dbt-console
 
-prices_history:
+eth_prices_history:
 	dbt run \
 	--vars '{"STREAMLINE_INVOKE_STREAMS":True, "STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES": True}' \
 	-m 1+models/streamline/backfill/streamline__get_ethereum_prices_history.sql \
+	--profile crosschain \
+	--target $(DBT_TARGET) \
+	--profiles-dir ~/.dbt
+
+prices_history:
+	dbt run \
+	--vars '{"STREAMLINE_INVOKE_STREAMS":True, "STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES": True}' \
+	-m 1+models/streamline/backfill/streamline__get_prices_history.sql \
 	--profile crosschain \
 	--target $(DBT_TARGET) \
 	--profiles-dir ~/.dbt
