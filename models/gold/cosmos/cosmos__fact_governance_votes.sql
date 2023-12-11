@@ -15,7 +15,7 @@ SELECT
   NULL AS memo,
   COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
   COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-  {{ dbt_utils.generate_surrogate_key(['blockchain','tx_id','proposal_id','voter']) }} AS fact_governance_votes_id
+  {{ dbt_utils.generate_surrogate_key(['blockchain','tx_id','proposal_id','voter','vote_option']) }} AS fact_governance_votes_id
 FROM
   {{ source(
     'axelar_gov',
@@ -35,7 +35,7 @@ SELECT
   NULL AS memo,
   COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
   COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-  {{ dbt_utils.generate_surrogate_key(['blockchain','tx_id','proposal_id','voter']) }} AS fact_governance_votes_id
+  {{ dbt_utils.generate_surrogate_key(['blockchain','tx_id','proposal_id','voter','vote_option']) }} AS fact_governance_votes_id
 FROM
   {{ source(
     'cosmos_gov',
@@ -55,7 +55,7 @@ SELECT
   memo,
   COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
   COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-  {{ dbt_utils.generate_surrogate_key(['blockchain','tx_id','proposal_id','voter']) }} AS fact_governance_votes_id
+  {{ dbt_utils.generate_surrogate_key(['blockchain','tx_id','proposal_id','voter','vote_option']) }} AS fact_governance_votes_id
 FROM
   {{ source(
     'osmosis_gov',
