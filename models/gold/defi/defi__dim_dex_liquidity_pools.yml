@@ -26,3 +26,11 @@ models:
         description: The symbol for the token included in the liquidity pool, as a JSON object, where available.
       - name: DECIMALS
         description: The number of decimals for the token included in the liquidity pool, as a JSON object, where available.
+      - name: DIM_DEX_LIQUIDITY_POOLS_ID
+        description: '{{ doc("pk") }}'   
+        tests:
+          - unique
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 

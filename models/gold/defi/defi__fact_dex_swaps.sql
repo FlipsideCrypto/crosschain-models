@@ -192,7 +192,7 @@ WITH base AS (
         ) AS _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE(fact_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','event_index']) }}) AS fact_dex_swaps_id
+        COALESCE(fact_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','_body_index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'osmosis_defi',
@@ -213,7 +213,7 @@ WITH base AS (
         _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE(fact_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','index']) }}) AS fact_dex_swaps_id
+        _log_id AS fact_dex_swaps_id
     FROM
         {{ source(
             'solana_defi',
@@ -236,7 +236,7 @@ WITH base AS (
         swap_id AS _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE (ez_dex_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','event_index']) }}) AS fact_dex_swaps_id
+        swap_id AS fact_dex_swaps_id
     FROM
         {{ source(
             'near_defi',

@@ -23,7 +23,7 @@ WITH base_priority AS (
         END AS priority,
         GREATEST(COALESCE(s.inserted_timestamp,'2000-01-01'), COALESCE(C.inserted_timestamp,'2000-01-01')) as inserted_timestamp,
         GREATEST(COALESCE(s.modified_timestamp,'2000-01-01'), COALESCE(C.modified_timestamp,'2000-01-01')) as modified_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['token_address','s.blockchain']) }}) AS ez_asset_metadata_id
+        {{ dbt_utils.generate_surrogate_key(['token_address','s.blockchain']) }} AS ez_asset_metadata_id
     FROM
         {{ ref('silver__asset_metadata_priority') }}
         s
