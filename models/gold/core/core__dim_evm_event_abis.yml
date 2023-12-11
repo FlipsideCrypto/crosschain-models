@@ -22,6 +22,8 @@ models:
         description: The block number before a similar event was created in the contract. This could be from a proxy or an implementation.
       - name: DIM_EVM_EVENT_ABIS_ID
         description: '{{ doc("pk") }}'   
+        tests:
+          - unique
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   
       - name: MODIFIED_TIMESTAMP

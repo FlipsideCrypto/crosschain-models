@@ -18,6 +18,8 @@ models:
         description: The corresponding blockchain for contract details.
       - name: DIM_CONTRACTS_ID
         description: '{{ doc("pk") }}'   
+        tests:
+          - unique
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   
       - name: MODIFIED_TIMESTAMP

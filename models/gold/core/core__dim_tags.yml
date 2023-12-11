@@ -21,6 +21,8 @@ models:
         description: Date the tag was added to our data.
       - name: DIM_TAGS_ID
         description: '{{ doc("pk") }}'   
+        tests:
+          - unique
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   
       - name: MODIFIED_TIMESTAMP

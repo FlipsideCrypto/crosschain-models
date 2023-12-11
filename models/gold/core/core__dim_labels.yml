@@ -51,6 +51,8 @@ models:
               where: BLOCKCHAIN = 'algorand'
       - name: DIM_LABELS_ID
         description: '{{ doc("pk") }}'   
+        tests:
+          - unique
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   
       - name: MODIFIED_TIMESTAMP

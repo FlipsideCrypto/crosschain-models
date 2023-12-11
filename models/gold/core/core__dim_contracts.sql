@@ -18,7 +18,7 @@ WITH base AS (
         'ethereum' AS blockchain,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE(dim_contracts_id,{{ dbt_utils.generate_surrogate_key(['address']) }}) AS dim_contracts_id
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
     FROM
         {{ source(
             'ethereum_core',
@@ -37,7 +37,7 @@ WITH base AS (
         'optimism' AS blockchain,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE(dim_contracts_id,{{ dbt_utils.generate_surrogate_key(['address']) }}) AS dim_contracts_id
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
     FROM
         {{ source(
             'optimism_core',
@@ -53,7 +53,10 @@ WITH base AS (
         created_block_timestamp,
         created_tx_hash,
         creator_address,
-        'arbitrum' AS blockchain
+        'arbitrum' AS blockchain,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
     FROM
         {{ source(
             'arbitrum_core',
@@ -72,7 +75,7 @@ WITH base AS (
         'polygon' AS blockchain,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE(dim_contracts_id,{{ dbt_utils.generate_surrogate_key(['address']) }}) AS dim_contracts_id
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
     FROM
         {{ source(
             'polygon_core',
@@ -91,7 +94,7 @@ WITH base AS (
         'avalanche' AS blockchain,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE(dim_contracts_id,{{ dbt_utils.generate_surrogate_key(['address']) }}) AS dim_contracts_id
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
     FROM
         {{ source(
             'avalanche_core',
@@ -110,7 +113,7 @@ WITH base AS (
         'bsc' AS blockchain,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE(dim_contracts_id,{{ dbt_utils.generate_surrogate_key(['address']) }}) AS dim_contracts_id
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
     FROM
         {{ source(
             'bsc_core',
@@ -129,7 +132,7 @@ WITH base AS (
         'base' AS blockchain,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE(dim_contracts_id,{{ dbt_utils.generate_surrogate_key(['address']) }}) AS dim_contracts_id
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
     FROM
         {{ source(
             'base_core',
@@ -148,7 +151,7 @@ WITH base AS (
         'gnosis' AS blockchain,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE(dim_contracts_id,{{ dbt_utils.generate_surrogate_key(['address']) }}) AS dim_contracts_id
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
     FROM
         {{ source(
             'gnosis_core',
@@ -167,7 +170,7 @@ WITH base AS (
         'cosmos' AS blockchain,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE(dim_contracts_id,{{ dbt_utils.generate_surrogate_key(['address']) }}) AS dim_contracts_id
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
     FROM
         {{ source(
             'osmosis_core',
@@ -186,7 +189,7 @@ WITH base AS (
         'solana' AS blockchain,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE(dim_contracts_id,{{ dbt_utils.generate_surrogate_key(['address']) }}) AS dim_contracts_id
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
     FROM
         {{ source(
             'solana_core',
