@@ -46,7 +46,7 @@ SELECT
     *,
     sysdate() as inserted_timestamp,
     sysdate() as modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['address']) }} AS tags_contract_address_optimism,
+    {{ dbt_utils.generate_surrogate_key(['address']) }} AS tags_contract_address_optimism_id,
     '{{ invocation_id }}' as _invocation_id
 FROM 
     pre_final

@@ -52,7 +52,7 @@ SELECT
     *,
     sysdate() as inserted_timestamp,
     sysdate() as modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['address','tag_name','start_date']) }} AS tags_token_standarc_erc4626_bsc_id,
+    {{ dbt_utils.generate_surrogate_key(['address','tag_name','start_date']) }} AS tags_token_standard_erc4626_bsc_id,
     '{{ invocation_id }}' as _invocation_id
 FROM 
     pre_final

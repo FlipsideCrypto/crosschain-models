@@ -13,6 +13,6 @@ SELECT
     END AS description,
     COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
     COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['vote_id']) }}) AS dim_vote_options_id
+    {{ dbt_utils.generate_surrogate_key(['vote_id']) }} AS dim_vote_options_id
 FROM
     {{ ref('cosmos__fact_governance_votes') }}
