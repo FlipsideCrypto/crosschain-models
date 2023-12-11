@@ -141,7 +141,7 @@ SELECT
     f.project_name,
     sysdate() as inserted_timestamp,
     sysdate() as modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['address']) }} AS snowflake_algorand_satellite_id,
+    {{ dbt_utils.generate_surrogate_key(['f.address']) }} AS snowflake_algorand_satellite_id,
     '{{ invocation_id }}' as _invocation_id
 FROM
     final_base f

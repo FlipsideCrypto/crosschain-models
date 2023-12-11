@@ -25,7 +25,7 @@ FROM (
         '{{ models[0] }}' AS blockchain,
         coalesce(inserted_timestamp,'2001-01-01'::timestamp_ntz) as inserted_timestamp,
         coalesce(modified_timestamp,'2001-01-01'::timestamp_ntz) as modified_timestamp,
-        coalesce(abis_id, {{ dbt_utils.generate_surrogate_key(['contract_address']) }}) as abis_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','contract_address']) }} as abis_id,
         _invocation_id
         FROM {{ models[1] }}
         {% if not loop.last %}

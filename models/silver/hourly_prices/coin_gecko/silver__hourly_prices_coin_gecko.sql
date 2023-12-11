@@ -59,7 +59,7 @@ SELECT
     b2._inserted_timestamp,
     sysdate() as inserted_timestamp,
     sysdate() as modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['id','recorded_hour']) }} AS hourly_prices_coin_gecko_id,
+    {{ dbt_utils.generate_surrogate_key(['b.id','b.recorded_hour']) }} AS hourly_prices_coin_gecko_id,
     '{{ invocation_id }}' as _invocation_id
 FROM
     base b
