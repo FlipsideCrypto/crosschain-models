@@ -62,4 +62,6 @@ SELECT
     addr_encoded,
     _inserted_timestamp
 FROM
-    log_address
+    log_address qualify(ROW_NUMBER() over (PARTITION BY near_address
+ORDER BY
+    _inserted_timestamp DESC)) = 1
