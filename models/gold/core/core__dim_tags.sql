@@ -283,7 +283,7 @@ WITH pre_final AS (
         ) AS modified_timestamp
     FROM
         {{ ref('silver__tags_active_polygon_last_7') }}
-    UNION ALL
+        {# UNION ALL
     SELECT
         blockchain,
         creator,
@@ -303,7 +303,8 @@ WITH pre_final AS (
         ) AS modified_timestamp
     FROM
         {{ ref('silver__tags_nft_larva_labs_user') }}
-    UNION ALL
+        #}
+        {# UNION ALL
     SELECT
         blockchain,
         creator,
@@ -323,7 +324,8 @@ WITH pre_final AS (
         ) AS modified_timestamp
     FROM
         {{ ref('silver__tags_nft_looksrare_user') }}
-    UNION ALL
+        #}
+        {# UNION ALL
     SELECT
         blockchain,
         creator,
@@ -343,7 +345,8 @@ WITH pre_final AS (
         ) AS modified_timestamp
     FROM
         {{ ref('silver__tags_nft_nftx_user') }}
-    UNION ALL
+        #}
+        {# UNION ALL
     SELECT
         blockchain,
         creator,
@@ -363,7 +366,8 @@ WITH pre_final AS (
         ) AS modified_timestamp
     FROM
         {{ ref('silver__tags_nft_opensea_user') }}
-    UNION ALL
+        #}
+        {# UNION ALL
     SELECT
         blockchain,
         creator,
@@ -383,7 +387,8 @@ WITH pre_final AS (
         ) AS modified_timestamp
     FROM
         {{ ref('silver__tags_nft_rarible_user') }}
-    UNION ALL
+        #}
+        {# UNION ALL
     SELECT
         blockchain,
         creator,
@@ -403,7 +408,8 @@ WITH pre_final AS (
         ) AS modified_timestamp
     FROM
         {{ ref('silver__tags_nft_x2y2_user') }}
-    UNION ALL
+        #}
+        {# UNION ALL
     SELECT
         blockchain,
         creator,
@@ -423,7 +429,8 @@ WITH pre_final AS (
         ) AS modified_timestamp
     FROM
         {{ ref('silver__tags_nft_blur_user') }}
-    UNION ALL
+        #}
+        {# UNION ALL
     SELECT
         blockchain,
         creator,
@@ -443,6 +450,7 @@ WITH pre_final AS (
         ) AS modified_timestamp
     FROM
         {{ ref('silver__tags_nft_sudoswap_user') }}
+        #}
     UNION ALL
     SELECT
         blockchain,

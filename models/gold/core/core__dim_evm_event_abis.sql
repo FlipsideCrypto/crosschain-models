@@ -26,7 +26,7 @@ FROM (
             end_block,
             COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
             COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-            COALESCE(complete_event_abis_id,{{ dbt_utils.generate_surrogate_key(['parent_contract_address','event_signature','start_block']) }}) AS dim_evm_event_abis_id
+            {{ dbt_utils.generate_surrogate_key(['parent_contract_address','event_signature','start_block','blockchain']) }} AS dim_evm_event_abis_id
         FROM {{ models[1] }}
         {% if not loop.last %}
         UNION ALL
