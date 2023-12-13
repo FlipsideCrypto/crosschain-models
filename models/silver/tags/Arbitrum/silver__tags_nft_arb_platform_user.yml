@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver__tags_nft_larva_labs_user
+  - name: silver__tags_nft_arb_platform_user
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

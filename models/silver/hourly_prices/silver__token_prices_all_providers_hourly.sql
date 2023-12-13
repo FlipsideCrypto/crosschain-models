@@ -110,6 +110,7 @@ FINAL AS (
             ) THEN 'cosmos'
             WHEN LOWER(platform) = 'algorand' THEN 'algorand'
             WHEN LOWER(platform) = 'solana' THEN 'solana'
+            WHEN LOWER(platform) = 'aptos' THEN 'aptos'
             ELSE NULL
         END AS blockchain,
         --supported chains only

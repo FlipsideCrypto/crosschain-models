@@ -2,71 +2,85 @@
     materialized = 'incremental',
     unique_key = "address",
     incremental_strategy = 'merge',
-    merge_update_columns = ['creator', 'modified_timestamp'],
+    merge_update_columns = ['creator'],
 ) }}
 
 WITH buyers AS (
 
     SELECT
-        DISTINCT 'ethereum' AS blockchain,
+        DISTINCT 'arbitrum' AS blockchain,
         'flipside' AS creator,
         buyer_address AS address,
-        'larva labs user' AS tag_name,
+        CONCAT(
+            platform_name,
+            ' user'
+        ) AS tag_name,
         'nft' AS tag_type,
         MIN(
             block_timestamp :: DATE
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(_inserted_timestamp) AS _inserted_timestamp
+        MIN(_INSERTED_TIMESTAMP) AS _INSERTED_TIMESTAMP
     FROM
         {{ source(
-            'ethereum_silver_nft',
-            'cryptopunk_sales'
+            'arbitrum_silver',
+            'complete_nft_sales'
         ) }}
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > (
+    _INSERTED_TIMESTAMP > (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_INSERTED_TIMESTAMP)
         FROM
             {{ this }}
     )
 {% endif %}
 GROUP BY
-    buyer_address
+    blockchain,
+    creator,
+    buyer_address,
+    tag_name,
+    tag_type
 ),
 sellers AS (
     SELECT
-        DISTINCT 'ethereum' AS blockchain,
+        DISTINCT 'arbitrum' AS blockchain,
         'flipside' AS creator,
         seller_address AS address,
-        'larva labs user' AS tag_name,
+        CONCAT(
+            platform_name,
+            ' user'
+        ) AS tag_name,
         'nft' AS tag_type,
         MIN(
             block_timestamp :: DATE
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(_inserted_timestamp) AS _inserted_timestamp
+        MIN(_INSERTED_TIMESTAMP) AS _INSERTED_TIMESTAMP
     FROM
         {{ source(
-            'ethereum_silver_nft',
-            'cryptopunk_sales'
+            'arbitrum_silver',
+            'complete_nft_sales'
         ) }}
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > (
+    _INSERTED_TIMESTAMP > (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_INSERTED_TIMESTAMP)
         FROM
             {{ this }}
     )
 {% endif %}
 GROUP BY
-    seller_address
+    blockchain,
+    creator,
+    seller_address,
+    tag_name,
+    tag_type
 ),
 union_table AS (
     SELECT
@@ -88,10 +102,6 @@ final_table AS (
         start_date ASC)) = 1
 )
 SELECT
-    A.*,
-    sysdate() as inserted_timestamp,
-    sysdate() as modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['address']) }} AS tags_nft_larva_labs_user_id,
-    '{{ invocation_id }}' as _invocation_id  
+    A.*
 FROM
     final_table A

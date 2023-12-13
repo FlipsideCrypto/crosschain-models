@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "CONCAT_WS('-', address, start_date)",
+    unique_key = "CONCAT_WS('-', address)",
     incremental_strategy = 'delete+insert',
 ) }}
 
