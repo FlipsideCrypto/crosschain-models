@@ -25,7 +25,7 @@ jobs:
   called_workflow_template:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
-      dbt_command: dbt run-m 1+models/streamline/backfill/streamline__get_prices_history.sql 
+      dbt_command: dbt run -m 1+models/streamline/backfill/streamline__get_prices_history.sql 
       environment: workflow_prod
       warehouse: ${{ vars.WAREHOUSE }}
     secrets: inherit 
