@@ -247,6 +247,7 @@ sources:
     schema: silver
     tables:
       - name: dex_swaps_s3
+      - name: logs_s3
   - name: osmosis_silver
     database: osmosis
     schema: silver
