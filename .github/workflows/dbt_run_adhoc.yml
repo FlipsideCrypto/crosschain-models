@@ -41,11 +41,21 @@ env:
   UPDATE_UDFS_AND_SPS: False
 
 jobs:
-  called_workflow_template:
-    uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
-    with:
-      dbt_command: ${{ inputs.dbt_command }}
-      environment: workflow_${{ inputs.environment }}
-      warehouse: ${{ inputs.warehouse }}
-    secrets: inherit 
+  echo_role:
+    runs-on: ubuntu-latest
+    environment:
+      name: workflow_prod
+    steps:
+      - name: Echo ROle
+        run: echo $ROLE
+  
+
+# jobs:
+#   called_workflow_template:
+#     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
+#     with:
+#       dbt_command: ${{ inputs.dbt_command }}
+#       environment: workflow_${{ inputs.environment }}
+#       warehouse: ${{ inputs.warehouse }}
+#     secrets: inherit 
   
