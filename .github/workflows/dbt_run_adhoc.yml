@@ -38,6 +38,7 @@ env:
   DATABASE: "${{ vars.DATABASE }}"
   WAREHOUSE: "${{ inputs.WAREHOUSE }}"
   SCHEMA: "${{ vars.SCHEMA }}"
+  UPDATE_UDFS_AND_SPS: False
 
 jobs:
   called_workflow_template:
