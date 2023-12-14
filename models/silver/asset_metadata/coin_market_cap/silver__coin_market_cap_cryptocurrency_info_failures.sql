@@ -1,7 +1,8 @@
 {{ config(
     materialized = 'incremental',
     unique_key = "cmc_id",
-    incremental_strategy = 'merge'
+    incremental_strategy = 'merge',
+    merge_exclude_columns = ["inserted_timestamp"],
 ) }}
 
 WITH base AS (
@@ -35,7 +36,11 @@ AND _inserted_timestamp > (
 )
 SELECT
     DISTINCT VALUE :: INT cmc_id,
-    _inserted_timestamp
+    _inserted_timestamp,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['cmc_id']) }} as coin_market_cap_cryptocurrency_info_failures_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     base,
     LATERAL SPLIT_TO_TABLE(cmc_id_raw, ',') qualify(ROW_NUMBER() over (PARTITION BY cmc_id

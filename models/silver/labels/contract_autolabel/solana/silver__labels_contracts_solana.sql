@@ -100,7 +100,11 @@ SELECT
         ': general contract'
     ) AS address_name,
     project_name,
-    _inserted_timestamp
+    _inserted_timestamp,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address']) }} AS labels_contracts_solana_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     base_transacts qualify(ROW_NUMBER() over(PARTITION BY address
 ORDER BY

@@ -208,7 +208,11 @@ SELECT
     'sei ambassador' AS tag_type,
     A.block_timestamp AS start_date,
     NULL AS end_date,
-    CURRENT_TIMESTAMP AS tag_created_at
+    CURRENT_TIMESTAMP AS tag_created_at,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address','start_date']) }} AS tags_sei_abassador_tags_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     campaign A
     JOIN roles b

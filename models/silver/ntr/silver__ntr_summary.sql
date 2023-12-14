@@ -229,7 +229,11 @@ SELECT
     prop_first_is_bounty,
     prop_did_hunt,
     prop_did_new_user,
-    prop_did_bounty
+    prop_did_bounty,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['blockchain','symbol','xfer_date']) }} AS ntr_summary_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     final_upload
 WHERE

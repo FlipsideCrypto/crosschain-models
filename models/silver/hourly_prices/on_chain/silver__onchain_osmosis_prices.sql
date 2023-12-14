@@ -57,7 +57,11 @@ SELECT
     CLOSE,
     source,
     is_imputed,
-    _inserted_timestamp
+    _inserted_timestamp,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['id','recorded_hour','source']) }} AS onchain_osmosis_prices_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     base qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour, source
 ORDER BY

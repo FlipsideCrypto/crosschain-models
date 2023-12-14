@@ -3,7 +3,8 @@
     unique_key = "_unique_key",
     incremental_strategy = 'merge',
     cluster_by = ['hour::DATE'],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, hour, blockchain)"
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, hour, blockchain)",
+    merge_exclude_columns = ["inserted_timestamp"],
 ) }}
 
 WITH all_providers AS (
@@ -65,7 +66,11 @@ SELECT
     _inserted_timestamp,
     {{ dbt_utils.generate_surrogate_key(
         ['hour', 'token_address', 'blockchain']
-    ) }} AS _unique_key
+    ) }} AS _unique_key,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain']) }} AS token_prices_priority_hourly_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     all_prices qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain
 ORDER BY

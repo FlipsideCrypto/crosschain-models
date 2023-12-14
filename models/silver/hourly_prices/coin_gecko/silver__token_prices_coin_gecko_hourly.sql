@@ -3,6 +3,7 @@
     unique_key = "_unique_key",
     incremental_strategy = 'merge',
     cluster_by = ['recorded_hour::DATE'],
+    merge_exclude_columns = ["inserted_timestamp"],
 ) }}
 
 WITH date_hours AS (
@@ -210,7 +211,7 @@ base_timestamp AS (
         ) AS CLOSE,
         CASE
             WHEN (CAST(ARRAY_AGG(imputed) AS STRING)) ILIKE '%true%' THEN TRUE
-            ELSE false end AS imputed,
+            ELSE FALSE END AS imputed,
             {{ dbt_utils.generate_surrogate_key(
                 ['f.recorded_hour','f.token_address','f.platform']
             ) }} AS _unique_key,
@@ -259,6 +260,10 @@ base_timestamp AS (
                 _inserted_timestamp,
                 imputed_timestamp
             )
-        END AS _inserted_timestamp
+        END AS _inserted_timestamp,
+        SYSDATE() AS inserted_timestamp,
+        SYSDATE() AS modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['recorded_hour','token_address','platform']) }} AS token_prices_coin_gecko_hourly,
+        '{{ invocation_id }}' AS _invocation_id
     FROM
         FINAL

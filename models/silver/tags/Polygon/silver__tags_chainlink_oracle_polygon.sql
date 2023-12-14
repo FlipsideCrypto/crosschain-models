@@ -72,7 +72,11 @@ base_table AS (
         AND tag_name IS NOT NULL
 )
 SELECT
-    *
+    *,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address','tag_name','start_date']) }} AS tags_chainlink_oracle_polygon_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     base_table qualify(ROW_NUMBER() over(PARTITION BY address, tag_name
 ORDER BY

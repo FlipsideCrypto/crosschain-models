@@ -165,7 +165,11 @@ SELECT
   l2_label AS label_subtype,
   address_name,
   project_name,
-  delete_flag
+  delete_flag,
+  sysdate() as inserted_timestamp,
+  sysdate() as modified_timestamp,
+  {{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }} AS address_labels_id,
+  '{{ invocation_id }}' as _invocation_id
 FROM
   flat_table
 WHERE

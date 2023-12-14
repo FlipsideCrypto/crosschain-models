@@ -13,7 +13,10 @@ SELECT
     created_block_timestamp,
     created_tx_hash,
     creator_address,
-    'ethereum' AS blockchain
+    blockchain,
+    inserted_timestamp,
+    modified_timestamp,
+    dim_contracts_id
 FROM
     {{ ref(
         'silver__contracts'

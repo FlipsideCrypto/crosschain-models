@@ -310,35 +310,45 @@ nft_top_10_cap AS (
         )
 )
 {% endif %}
-SELECT
-    *
-FROM
-    nft_top_1_new
-UNION
-SELECT
-    *
-FROM
-    nft_top_5_new
-UNION
-SELECT
-    *
-FROM
-    nft_top_10_new
+, pre_final AS (
+    SELECT
+        *
+    FROM
+        nft_top_1_new
+    UNION
+    SELECT
+        *
+    FROM
+        nft_top_5_new
+    UNION
+    SELECT
+        *
+    FROM
+        nft_top_10_new
 
-{% if is_incremental() %}
-UNION
-SELECT
-    *
-FROM
-    nft_top_1_cap
-UNION
-SELECT
-    *
-FROM
-    nft_top_5_cap
-UNION
-SELECT
-    *
-FROM
-    nft_top_10_cap
-{% endif %}
+    {% if is_incremental() %}
+    UNION
+    SELECT
+        *
+    FROM
+        nft_top_1_cap
+    UNION
+    SELECT
+        *
+    FROM
+        nft_top_5_cap
+    UNION
+    SELECT
+        *
+    FROM
+        nft_top_10_cap
+    {% endif %}
+)
+SELECT 
+    *,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address','tag_name','start_date']) }} AS tags_nft_transactor_eth_id,
+    '{{ invocation_id }}' as _invocation_id  
+FROM 
+    pre_final

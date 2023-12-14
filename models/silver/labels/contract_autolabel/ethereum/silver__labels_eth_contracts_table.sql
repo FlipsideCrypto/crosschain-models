@@ -56,7 +56,11 @@ SELECT
     NAME AS project_name,
     NAME AS address_name,
     NULL AS delete_flag,
-    _inserted_timestamp
+    _inserted_timestamp,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['A.address']) }} AS labels_eth_contracts_table_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     {{ source(
         'ethereum_silver',

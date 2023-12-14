@@ -2,7 +2,7 @@
     materialized = 'incremental',
     unique_key = "address",
     incremental_strategy = 'merge',
-    merge_update_columns = ['creator'],
+    merge_update_columns = ['creator', 'modified_timestamp'],
 ) }}
 
 WITH buyers AS (
@@ -102,6 +102,10 @@ final_table AS (
         start_date ASC)) = 1
 )
 SELECT
-    A.*
+    A.*,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address']) }} AS tags_nft_rarible_user_id,
+    '{{ invocation_id }}' as _invocation_id  
 FROM
     final_table A

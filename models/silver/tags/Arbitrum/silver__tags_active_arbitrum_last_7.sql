@@ -30,7 +30,11 @@
         'activity' as tag_type,
         start_date::date as start_date, 
         null as end_date,
-        CURRENT_TIMESTAMP AS tag_created_at
+        CURRENT_TIMESTAMP AS tag_created_at,
+        sysdate() as inserted_timestamp,
+        sysdate() as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['address','start_date']) }} AS tags_active_arbitrum_last_7_id,
+        '{{ invocation_id }}' as _invocation_id
         from base
         where address not in (select distinct address from current_tagged)
   ),
@@ -41,9 +45,13 @@
         address,
         tag_name,
         tag_type,
-        start_date::date, 
+        start_date::date as start_date, 
         date_trunc('DAY', current_date)::date as end_date,
-        CURRENT_TIMESTAMP AS tag_created_at
+        CURRENT_TIMESTAMP AS tag_created_at,
+        sysdate() as inserted_timestamp,
+        sysdate() as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['address','start_date']) }} AS tags_active_arbitrum_last_7_id,
+        '{{ invocation_id }}' as _invocation_id
         from current_tagged
         where address not in (select distinct address from base)
   )
@@ -95,7 +103,12 @@
         'activity' as tag_type,
         start_date, 
         iff(end_date>current_date, null, end_date) as end_date,
-        CURRENT_TIMESTAMP AS tag_created_at
+        CURRENT_TIMESTAMP AS tag_created_at,
+        sysdate() as inserted_timestamp,
+        sysdate() as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['address','start_date']) }} AS tags_active_arbitrum_last_7_id,
+        '{{ invocation_id }}' as _invocation_id
+        
     from final_base
 
 

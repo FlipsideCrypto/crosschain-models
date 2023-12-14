@@ -7,146 +7,156 @@
 
 ) }}
 
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag,
-  _inserted_timestamp
-FROM
-  {{ ref('silver__labels_contracts') }}
+WITH pre_final as (
+  SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name,
+    NULL AS delete_flag,
+    _inserted_timestamp
+  FROM
+    {{ ref('silver__labels_contracts') }}
 
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag,
-  _inserted_timestamp
-FROM
-  {{ ref('silver__labels_contracts_arbitrum') }}
+  UNION ALL
+  SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name,
+    NULL AS delete_flag,
+    _inserted_timestamp
+  FROM
+    {{ ref('silver__labels_contracts_arbitrum') }}
 
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag,
-  _inserted_timestamp
-FROM
-  {{ ref('silver__labels_contracts_avalanche') }}
+  UNION ALL
+  SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name,
+    NULL AS delete_flag,
+    _inserted_timestamp
+  FROM
+    {{ ref('silver__labels_contracts_avalanche') }}
 
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag,
-  _inserted_timestamp
-FROM
-  {{ ref('silver__labels_contracts_base') }}
+  UNION ALL
+  SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name,
+    NULL AS delete_flag,
+    _inserted_timestamp
+  FROM
+    {{ ref('silver__labels_contracts_base') }}
 
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag,
-  _inserted_timestamp
-FROM
-  {{ ref('silver__labels_contracts_bsc') }}
+  UNION ALL
+  SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name,
+    NULL AS delete_flag,
+    _inserted_timestamp
+  FROM
+    {{ ref('silver__labels_contracts_bsc') }}
 
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag,
-  _inserted_timestamp
-FROM
-  {{ ref('silver__labels_contracts_optimism') }}
+  UNION ALL
+  SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name,
+    NULL AS delete_flag,
+    _inserted_timestamp
+  FROM
+    {{ ref('silver__labels_contracts_optimism') }}
 
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag,
-  _inserted_timestamp
-FROM
-  {{ ref('silver__labels_contracts_polygon') }}
+  UNION ALL
+  SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name,
+    NULL AS delete_flag,
+    _inserted_timestamp
+  FROM
+    {{ ref('silver__labels_contracts_polygon') }}
 
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag,
-  _inserted_timestamp
-FROM
-  {{ ref('silver__labels_contracts_solana') }}
+  UNION ALL
+  SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name,
+    NULL AS delete_flag,
+    _inserted_timestamp
+  FROM
+    {{ ref('silver__labels_contracts_solana') }}
 
-UNION ALL
-SELECT
-  system_created_at,
-  insert_date,
-  blockchain,
-  address,
-  creator,
-  l1_label AS label_type,
-  l2_label AS label_subtype,
-  address_name,
-  project_name,
-  NULL AS delete_flag,
-  _inserted_timestamp
+  UNION ALL
+  SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name,
+    NULL AS delete_flag,
+    _inserted_timestamp
+  FROM
+    {{ ref('silver__labels_tokens_solana') }}
+)
+SELECT 
+  *,
+  sysdate() as inserted_timestamp,
+  sysdate() as modified_timestamp,
+  {{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }} AS contract_autolabels_id,
+  '{{ invocation_id }}' as _invocation_id
 FROM
-  {{ ref('silver__labels_tokens_solana') }}
+  pre_final
 

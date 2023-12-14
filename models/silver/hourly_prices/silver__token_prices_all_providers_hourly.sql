@@ -3,6 +3,7 @@
     unique_key = "_unique_key",
     incremental_strategy = 'merge',
     cluster_by = ['hour::DATE'],
+    merge_exclude_columns = ["inserted_timestamp"],
 ) }}
 
 WITH all_providers AS (
@@ -133,7 +134,11 @@ SELECT
     price,
     is_imputed,
     _inserted_timestamp,
-    _unique_key
+    _unique_key,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain','provider']) }} AS token_prices_all_providers_hourly_id,
+    '{{ invocation_id }}' as _invocation_id
 FROM
     FINAL --remove weird tokens / bad metadata
 WHERE

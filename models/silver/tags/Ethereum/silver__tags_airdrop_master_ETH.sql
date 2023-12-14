@@ -162,15 +162,25 @@ cap_end_date AS (
         )
 )
 {% endif %}
-SELECT
-    *
-FROM
-    new_additions
+, pre_final AS (
+    SELECT
+        *
+    FROM
+        new_additions
 
-{% if is_incremental() %}
-UNION
-SELECT
-    *
-FROM
-    cap_end_date
-{% endif %}
+    {% if is_incremental() %}
+    UNION
+    SELECT
+        *
+    FROM
+        cap_end_date
+    {% endif %}
+)
+SELECT 
+    *,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address','tag_name','start_date']) }} AS tags_airdrop_master_eth_id,
+    '{{ invocation_id }}' as _invocation_id
+FROM 
+    pre_final

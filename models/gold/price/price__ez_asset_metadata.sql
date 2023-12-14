@@ -20,7 +20,10 @@ WITH base_priority AS (
         CASE
             WHEN provider = 'coingecko' THEN 1
             WHEN provider = 'coinmarketcap' THEN 2
-        END AS priority
+        END AS priority,
+        GREATEST(COALESCE(s.inserted_timestamp,'2000-01-01'), COALESCE(C.inserted_timestamp,'2000-01-01')) as inserted_timestamp,
+        GREATEST(COALESCE(s.modified_timestamp,'2000-01-01'), COALESCE(C.modified_timestamp,'2000-01-01')) as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['token_address','s.blockchain']) }} AS ez_asset_metadata_id
     FROM
         {{ ref('silver__asset_metadata_priority') }}
         s
@@ -38,7 +41,10 @@ SELECT
     symbol,
     NAME,
     decimals,
-    blockchain
+    blockchain,
+    inserted_timestamp,
+    modified_timestamp,
+    ez_asset_metadata_id
 FROM
     base_priority qualify(ROW_NUMBER() over (PARTITION BY token_address, blockchain
 ORDER BY

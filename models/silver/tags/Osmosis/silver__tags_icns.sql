@@ -4,6 +4,7 @@
     incremental_strategy = 'delete+insert',
 ) }}
 
+WITH pre_final AS (
     SELECT 
         this :msg :set_record :bech32_prefix :: STRING AS blockchain, 
         this :msg :set_record :adr36_info :signer_bech32_address :: STRING as address, 
@@ -24,18 +25,27 @@
         AND value :: STRING = '/cosmwasm.wasm.v1.MsgExecuteContract'
         AND this :contract :: STRING = 'osmo1xk0s8xgktn9x5vwcgtjdxqzadg88fgn33p8u9cnpdxwemvxscvast52cdd'
         AND this :msg :set_record :adr36_info :signer_bech32_address :: STRING IS NOT NULL
-    
-    {% if is_incremental() %}
-AND _inserted_timestamp >= (
-    SELECT
-        MAX(
-            _inserted_timestamp
-        )
-    FROM
-        {{ this }}
-)
-{% endif %}
+        
+        {% if is_incremental() %}
+    AND _inserted_timestamp >= (
+        SELECT
+            MAX(
+                _inserted_timestamp
+            )
+        FROM
+            {{ this }}
+    )
+    {% endif %}
 
- qualify(ROW_NUMBER() over(PARTITION BY address, start_date, tag_name
-  ORDER BY
-    _inserted_timestamp DESC)) = 1 
+    qualify(ROW_NUMBER() over(PARTITION BY address, start_date, tag_name
+    ORDER BY
+        _inserted_timestamp DESC)) = 1 
+)
+SELECT 
+    *,
+    sysdate() as inserted_timestamp,
+    sysdate() as modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address','tag_name','start_date']) }} AS tags_icns_id,
+    '{{ invocation_id }}' as _invocation_id  
+FROM 
+    pre_final
