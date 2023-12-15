@@ -17,4 +17,4 @@ select
 from
     base
 where
-    run_time <= date_trunc('day', current_timestamp)
+    run_time <= date_trunc('day', sysdate() )
