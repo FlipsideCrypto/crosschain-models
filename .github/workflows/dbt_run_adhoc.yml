@@ -48,12 +48,21 @@ env:
   STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES: True
 
 
-jobs:
-  called_workflow_template:
-    uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
-    with:
-      dbt_command: ${{ inputs.dbt_command }}
-      environment: workflow_${{ inputs.environment }}
-      warehouse: ${{ inputs.warehouse }}
-    secrets: inherit 
+# jobs:
+#   called_workflow_template:
+#     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
+#     with:
+#       dbt_command: ${{ inputs.dbt_command }}
+#       environment: workflow_${{ inputs.environment }}
+#       warehouse: ${{ inputs.warehouse }}
+#     secrets: inherit 
   
+jobs:
+  dbt:
+    runs-on: ubuntu-latest
+    environment:
+      name: workflow_dev
+    steps:
+
+      - name: Echo Envar
+        run: echo $STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES
