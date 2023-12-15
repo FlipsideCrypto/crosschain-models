@@ -28,7 +28,7 @@ on:
         required: true
       update_udfs:
           type: string 
-          description: Bloolean to control updating UDFs and Stored Procedures
+          description: Boolean to control updating UDFs and Stored Procedures
           required: true
           default: 'False'
         
@@ -44,7 +44,6 @@ env:
   DATABASE: "${{ vars.DATABASE }}"
   WAREHOUSE: "${{ inputs.WAREHOUSE }}"
   SCHEMA: "${{ vars.SCHEMA }}"
-  UPDATE_UDFS_AND_SPS: ${{ inputs.update_udfs }}
   STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES: "True"
 
 
@@ -56,13 +55,3 @@ jobs:
       environment: workflow_${{ inputs.environment }}
       warehouse: ${{ inputs.warehouse }}
     secrets: inherit 
-  
-# jobs:
-#   dbt:
-#     runs-on: ubuntu-latest
-#     environment:
-#       name: workflow_dev
-#     steps:
-
-#       - name: Echo Envar
-#         run: echo $ROLE && echo $USER && echo $SCHEMA

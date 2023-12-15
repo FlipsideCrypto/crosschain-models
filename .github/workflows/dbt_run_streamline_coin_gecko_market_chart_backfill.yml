@@ -19,7 +19,6 @@ env:
   SCHEMA: "${{ vars.SCHEMA }}"
   STREAMLINE_INVOKE_STREAMS: "True"
   STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES: "False"
-  UPDATE_UDFS_AND_SPS: "False"
 
 
 jobs:
