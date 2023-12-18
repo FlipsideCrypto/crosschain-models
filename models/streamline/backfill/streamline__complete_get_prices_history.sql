@@ -32,6 +32,6 @@ WHERE
     )
 {% endif %}
  
-qualify(ROW_NUMBER() over (PARTITION BY run_time
+qualify(ROW_NUMBER() over (PARTITION BY uid
 ORDER BY
     run_time DESC)) = 1
