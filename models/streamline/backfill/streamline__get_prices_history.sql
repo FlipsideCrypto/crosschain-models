@@ -8,31 +8,17 @@
 ) }}
 
 WITH runtimes AS (
+
     SELECT
-        run_time
+        run_time,
+        id
     FROM
         {{ ref("streamline__runtimes") }}
-    CROSS JOIN
-        (SELECT DISTINCT uid FROM {{ ref("streamline__complete_get_prices_history") }}) uids
-    EXCEPT
-    SELECT 
-        run_time
-    FROM
-        {{ ref("streamline__complete_get_prices_history") }}
-    GROUP BY 
-        run_time, 
-        uid
-    HAVING 
-        COUNT(*) = 1
-),
-coins AS (
-    SELECT
-        id as coin_id
-    FROM
-        {{ source(
+        JOIN {{ source(
             'bronze_streamline',
             'asset_metadata_coin_gecko_api'
         ) }}
+        ON 1 = 1
     WHERE
         _inserted_date = (
             SELECT
@@ -45,16 +31,17 @@ coins AS (
             WHERE
                 provider = 'coingecko'
         )
-    limit 2
+    EXCEPT
+    SELECT
+        run_time,
+        id
+    FROM
+        {{ ref("streamline__complete_get_prices_history") }}
 )
 SELECT
-    coins.coin_id AS id,
-    run_time
+    run_time,
+    id
 FROM
     runtimes
-JOIN
-    coins
-ON
-    1=1
 ORDER BY
     run_time ASC
