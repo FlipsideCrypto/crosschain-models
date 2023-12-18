@@ -12,6 +12,8 @@ WITH runtimes AS (
         run_time
     FROM
         {{ ref("streamline__runtimes") }}
+    CROSS JOIN
+        (SELECT DISTINCT uid FROM {{ ref("streamline__complete_get_prices_history") }}) uids
     EXCEPT
     SELECT 
         run_time
@@ -43,6 +45,7 @@ coins AS (
             WHERE
                 provider = 'coingecko'
         )
+    limit 2
 )
 SELECT
     coins.coin_id AS id,
