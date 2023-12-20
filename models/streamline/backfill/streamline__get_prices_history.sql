@@ -4,7 +4,7 @@
         func = "{{this.schema}}.udf_bulk_get_coin_gecko_prices(object_construct('sql_source', '{{this.identifier}}','external_table', 'ASSET_PRICES_API','producer_batch_size', '500000', 'worker_batch_size', '50000', 'sql_limit', '100000'))",
         target = "{{this.schema}}.{{this.identifier}}"
     ),
-    tags = ['streamline_history']
+    tags = ['streamline_history', 'prices', 'backfill']
 ) }}
 
 WITH runtimes AS (
@@ -28,7 +28,7 @@ WITH runtimes AS (
         run_time,
         id
     FROM
-        {{ ref("streamline__complete_get_prices_history") }}
+        {{ ref("streamline__complete_coingecko_prices") }}
     WHERE
         DATA:error IS NULL
 )
