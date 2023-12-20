@@ -1,9 +1,8 @@
 {{ config (
     materialized = "incremental",
     unique_key = "uid",
-    cluster_by = "run_time",
-    merge_update_columns = [ "run_time"],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(run_time)",
+    cluster_by = "run_time::date",
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(uid)",
     tags = ['streamline_history']
 ) }}
 
