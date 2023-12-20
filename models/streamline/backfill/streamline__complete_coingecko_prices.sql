@@ -3,7 +3,7 @@
     unique_key = "uid",
     cluster_by = "run_time::date",
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(uid)",
-    tags = ['streamline_prices','streamline_coin_gecko_api','streamline_backfill']
+    tags = ['streamline_prices_complete']
 ) }}
 
 SELECT
