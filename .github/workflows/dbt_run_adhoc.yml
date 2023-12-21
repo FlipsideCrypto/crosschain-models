@@ -26,6 +26,12 @@ on:
         type: string
         description: 'DBT Run Command'
         required: true
+      update_udfs:
+          type: string 
+          description: Boolean to control updating UDFs and Stored Procedures
+          required: true
+          default: 'False'
+        
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
@@ -38,6 +44,8 @@ env:
   DATABASE: "${{ vars.DATABASE }}"
   WAREHOUSE: "${{ inputs.WAREHOUSE }}"
   SCHEMA: "${{ vars.SCHEMA }}"
+  STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES: "True"
+
 
 jobs:
   called_workflow_template:
@@ -47,4 +55,3 @@ jobs:
       environment: workflow_${{ inputs.environment }}
       warehouse: ${{ inputs.warehouse }}
     secrets: inherit 
-  

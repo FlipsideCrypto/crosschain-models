@@ -304,13 +304,15 @@ sources:
       - name: fact_validators
   - name: bronze_streamline
     database: streamline
-    schema: crosschain
+    schema: |
+      {{ "CROSSCHAIN_DEV" if var("STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES", False) else "CROSSCHAIN" }}
     tables:
       - name: asset_metadata_coin_market_cap_api
       - name: asset_metadata_coin_gecko_api
       - name: asset_ohlc_coin_market_cap_api
       - name: asset_historical_hourly_market_data_coin_gecko_api
       - name: asset_ohlc_coin_gecko_api
+      - name: asset_prices_coin_gecko_api
   - name: bronze
     database: crosschain
     schema: bronze
