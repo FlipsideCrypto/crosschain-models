@@ -25,7 +25,7 @@ jobs:
   called_workflow_template:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
-      dbt_command: dbt run -m "crosschain_models,tag:streamline_prices_complete" "crosschain_models,tag:streamline_prices_history" -target prod
+      dbt_command: dbt run -m "crosschain_models,tag:streamline_prices_complete" "crosschain_models,tag:streamline_prices_history" --target prod
       environment: workflow_prod
       warehouse: ${{ vars.WAREHOUSE }}
     secrets: inherit 
