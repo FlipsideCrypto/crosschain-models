@@ -1,7 +1,7 @@
 {{ config (
     materialized = "view",
     post_hook = if_data_call_function(
-        func = "{{this.schema}}.udf_bulk_get_coin_gecko_prices(object_construct('sql_source', '{{this.identifier}}','external_table', 'ASSET_PRICES_API','producer_batch_size', '5000', 'worker_batch_size', '500', 'sql_limit', '1000'))",
+        func = "{{this.schema}}.udf_bulk_get_coin_gecko_prices(object_construct('sql_source', '{{this.identifier}}','external_table', 'ASSET_PRICES_API','producer_batch_size', '50000', 'worker_batch_size', '5000', 'sql_limit', '10000'))",
         target = "{{this.schema}}.{{this.identifier}}"
     ),
     tags = ['streamline_prices_history']
@@ -28,7 +28,7 @@ WITH runtimes AS (
         run_time,
         id
     FROM
-        {{ ref("streamline__complete_coingecko_prices_backfill") }}
+        {{ ref("streamline__complete_coingecko_prices") }}
     WHERE
         DATA:error IS NULL
 )
