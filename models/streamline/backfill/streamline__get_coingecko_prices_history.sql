@@ -28,7 +28,7 @@ WITH runtimes AS (
         run_time,
         id
     FROM
-        {{ ref("streamline__complete_coingecko_prices") }}
+        {{ ref("streamline__complete_coingecko_prices_backfill") }}
     WHERE
         DATA:error IS NULL
 )
