@@ -9,7 +9,7 @@ WITH dates AS (
     FROM
         {{ ref('core__dim_dates') }}
     WHERE
-        date_day BETWEEN CURRENT_DATE - INTERVAL '7 day'
+        date_day BETWEEN CURRENT_DATE - INTERVAL '10 day'
         AND CURRENT_DATE
 )
 SELECT
@@ -38,7 +38,10 @@ WHERE
 EXCEPT
 SELECT
     id,
-    run_time
+    DATE_TRUNC(
+        'day',
+        run_time
+    ) :: timestamp_ltz AS run_time
 FROM
     {{ source(
         'bronze_streamline',
