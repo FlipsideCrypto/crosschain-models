@@ -4,7 +4,7 @@ run-name: dbt_run_streamline_coin_gecko_ohlc
 on:
   workflow_dispatch:
   schedule:
-    - cron: '15 0 * * *'
+    - cron: '15 */2 * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
