@@ -164,7 +164,7 @@ ibc_cg AS (
         ) AS symbol,
         'cosmos' AS platform,
         'coingecko' AS provider,
-        _inserted_timestamp
+        A._inserted_timestamp
     FROM
         {{ ref(
             'silver__asset_metadata_coin_gecko'
@@ -280,7 +280,7 @@ ibc_cmc AS (
         ) AS symbol,
         'cosmos' AS platform,
         'coinmarketcap' AS provider,
-        _inserted_timestamp
+        A._inserted_timestamp
     FROM
         {{ ref(
             'silver__asset_metadata_coin_market_cap'
