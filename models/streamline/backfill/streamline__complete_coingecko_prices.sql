@@ -12,7 +12,8 @@ SELECT
     metadata,
     data,
     error,
-    id || '-' || run_time::VARCHAR as uid
+    id || '-' || run_time::VARCHAR as uid,
+    metadata$file_last_modified as _inserted_at
 FROM
 
 {{ source( "bronze_streamline", "asset_prices_coin_gecko_api") }}
@@ -20,10 +21,10 @@ FROM
 WHERE
     TRUE
 {% if is_incremental() %}
-    AND run_time >= COALESCE(
+    AND _inserted_at >= COALESCE(
         (
             SELECT
-                MAX(run_time) run_time
+                MAX(_inserted_at) _inserted_at
             FROM
                 {{ this }}
         ),
