@@ -16,3 +16,9 @@ prices_history:
 	--profile crosschain \
 	--target $(DBT_TARGET) \
 	--profiles-dir ~/.dbt
+
+ohlc_realtime:
+	dbt run-operation run_get_coin_gecko_ohlc \
+	--profile crosschain \
+	--target $(DBT_TARGET) \
+	--profiles-dir ~/.dbt
