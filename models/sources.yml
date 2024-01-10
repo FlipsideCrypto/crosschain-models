@@ -580,6 +580,7 @@ sources:
     schema: core
     tables:
       - name: dim_tokens
+      - name: fact_transfers
   - name: aptos_observ
     database: aptos
     schema: silver_observability

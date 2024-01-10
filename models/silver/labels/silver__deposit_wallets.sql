@@ -43,6 +43,31 @@ WITH pre_final AS (
         address_name,
         project_name
     FROM
+        {{ ref('silver__snowflake_Aptos_satellites') }}
+
+    {% if is_incremental() %}
+    WHERE
+        insert_date >= (
+            SELECT
+                MAX(insert_date)
+            FROM
+                {{ this }}
+            WHERE
+                blockchain = 'aptos'
+        )
+    {% endif %}
+    UNION ALL
+    SELECT
+        system_created_at,
+        insert_date,
+        blockchain,
+        address,
+        creator,
+        l1_label AS label_type,
+        l2_label AS label_subtype,
+        address_name,
+        project_name
+    FROM
         {{ ref('silver__snowflake_Arbitrum_satellites') }}
 
     {% if is_incremental() %}
@@ -307,6 +332,31 @@ WITH pre_final AS (
         )
     {% endif %}
     UNION ALL
+    SELECT
+        system_created_at,
+        insert_date,
+        blockchain,
+        address,
+        creator,
+        l1_label AS label_type,
+        l2_label AS label_subtype,
+        address_name,
+        project_name
+    FROM
+        {{ ref('silver__snowflake_Thorchain_satellite') }}
+
+    {% if is_incremental() %}
+    WHERE
+        insert_date >= (
+            SELECT
+                MAX(insert_date)
+            FROM
+                {{ this }}
+            WHERE
+                blockchain = 'thorchain'
+        )
+    {% endif %}
+        UNION ALL
     SELECT
         system_created_at,
         insert_date,
