@@ -4,9 +4,26 @@
     incremental_strategy = 'delete+insert',
 ) }}
 
-WITH distributor_cex AS (
-    -- THIS STATEMENT FINDS KNOWN CEX LABELS WITHIN THE BRONZE ADDRESS LABELS TABLE
+WITH aptos_transfers AS (
 
+    SELECT
+        block_timestamp,
+        from_address,
+        to_address,
+        amount
+    FROM
+        {{ source(
+            'aptos_core',
+            'ez_native_transfers'
+        ) }}
+
+{% if is_incremental() %}
+WHERE
+    block_timestamp > CURRENT_DATE - 10
+{% endif %}
+),
+distributor_cex AS (
+    -- THIS STATEMENT FINDS KNOWN CEX LABELS WITHIN THE BRONZE ADDRESS LABELS TABLE
     SELECT
         system_created_at,
         insert_date,
@@ -48,41 +65,29 @@ possible_sats AS (
                     xfer.from_address
                 ) AS project_count -- how many projects has each from address sent to
             FROM
-                {{ source(
-                    'aptos_core',
-                    'ez_native_transfers'
-                ) }}
-                xfer
+                aptos_transfers xfer
                 JOIN distributor_cex dc
                 ON dc.address = xfer.to_address
             WHERE
                 amount > 0
-
-{% if is_incremental() %}
-AND block_timestamp > CURRENT_DATE - 10
-{% endif %}
-GROUP BY
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9
-)
+            GROUP BY
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+        )
 ),
 real_sats AS (
     SELECT
         from_address,
         COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
     FROM
-        {{ source(
-            'aptos_core',
-            'ez_native_transfers'
-        ) }}
-        xfer
+        aptos_transfers xfer
         LEFT OUTER JOIN distributor_cex dc
         ON dc.address = xfer.to_address
     WHERE
@@ -93,12 +98,8 @@ real_sats AS (
             FROM
                 possible_sats
         )
-
-{% if is_incremental() %}
-AND block_timestamp > CURRENT_DATE - 10
-{% endif %}
-GROUP BY
-    from_address
+    GROUP BY
+        from_address
 ),
 exclusive_sats AS (
     SELECT
@@ -141,7 +142,7 @@ SELECT
     f.project_name,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['f.address']) }} AS snowflake_sol_satellites_id,
+    {{ dbt_utils.generate_surrogate_key(['f.address']) }} AS snowflake_aptos_satellites_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     final_base f
