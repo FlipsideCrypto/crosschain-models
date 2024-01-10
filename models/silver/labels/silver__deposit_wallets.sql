@@ -356,31 +356,6 @@ WITH pre_final AS (
                 blockchain = 'thorchain'
         )
     {% endif %}
-        UNION ALL
-    SELECT
-        system_created_at,
-        insert_date,
-        blockchain,
-        address,
-        creator,
-        l1_label AS label_type,
-        l2_label AS label_subtype,
-        address_name,
-        project_name
-    FROM
-        {{ ref('silver__snowflake_Thorchain_satellite') }}
-
-    {% if is_incremental() %}
-    WHERE
-        insert_date >= (
-            SELECT
-                MAX(insert_date)
-            FROM
-                {{ this }}
-            WHERE
-                blockchain = 'thorchain'
-        )
-    {% endif %}
 )
 SELECT 
     *,
