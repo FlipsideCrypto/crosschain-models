@@ -1,0 +1,42 @@
+version: 2
+models:
+  - name: defi__fact_bridge_activity
+    description: '{{ doc("bridge_fact_table_doc") }}'  
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCKCHAIN
+            - FACT_BRIDGE_ACTIVITY_ID
+    columns:
+      - name: BLOCKCHAIN
+        description: Blockchain, Network, or Platform the token bridge activity is recorded on.
+      - name: PLATFORM
+        description: '{{ doc("bridge_platform") }}'  
+      - name: BLOCK_NUMBER
+        description: Also known as block height. The block number, which indicates the length of the blockchain, increases after the addition of each new block.      
+      - name: BLOCK_TIMESTAMP
+        description: The date and time at which the block was produced.  
+      - name: TX_HASH
+        description: Transaction hash is a unique identifier that is generated when a transaction is executed. 
+      - name: BRIDGE_ADDRESS
+        description: '{{ doc("bridge_address") }}'  
+      - name: SOURCE_CHAIN
+        description: '{{ doc("bridge_source_chain") }}'  
+      - name: DESTINATION_CHAIN
+        description: '{{ doc("bridge_destination_chain") }}'  
+      - name: DIRECTION
+        description: '{{ doc("bridge_direction") }}'  
+      - name: SOURCE_ADDRESS
+        description: '{{ doc("bridge_sender") }}'  
+      - name: DESTINATION_ADDRESS
+        description: '{{ doc("bridge_destination_chain_receiver") }}'  
+      - name: TOKEN_ADDRESS
+        description: '{{ doc("bridge_token_address") }}'  
+      - name: AMOUNT_RAW
+        description: '{{ doc("bridge_amount_unadj") }}'  
+      - name: FACT_BRIDGE_ACTIVITY_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 

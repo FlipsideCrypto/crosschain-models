@@ -31,6 +31,7 @@ sources:
     schema: defi
     tables:
       - name: ez_dex_swaps
+      - name: ez_bridge_activity
   - name: ethereum_silver
     database: ethereum
     schema: silver
@@ -107,6 +108,7 @@ sources:
     schema: defi
     tables:
       - name: ez_dex_swaps
+      - name: ez_bridge_activity
   - name: avalanche_silver
     database: avalanche
     schema: silver
@@ -131,6 +133,7 @@ sources:
     schema: defi
     tables:
       - name: ez_dex_swaps
+      - name: ez_bridge_activity
   - name: polygon_silver
     database: polygon
     schema: silver
@@ -155,6 +158,7 @@ sources:
     schema: defi
     tables:
       - name: ez_dex_swaps
+      - name: ez_bridge_activity
   - name: optimism_silver
     database: optimism
     schema: silver
@@ -179,6 +183,7 @@ sources:
     schema: defi
     tables:
       - name: ez_dex_swaps
+      - name: ez_bridge_activity
   - name: bsc_silver
     database: bsc
     schema: silver
@@ -203,6 +208,7 @@ sources:
     schema: defi
     tables:
       - name: ez_dex_swaps
+      - name: ez_bridge_activity
   - name: thorchain
     database: flipside_prod_db
     schema: thorchain
@@ -479,6 +485,7 @@ sources:
     schema: defi
     tables: 
       - name: ez_dex_swaps
+      - name: ez_bridge_activity
   - name: gnosis_silver
     database: gnosis
     schema: silver
@@ -503,6 +510,7 @@ sources:
     schema: defi
     tables:
       - name: ez_dex_swaps
+      - name: ez_bridge_activity
   - name: gnosis_observ
     database: gnosis
     schema: silver_observability
