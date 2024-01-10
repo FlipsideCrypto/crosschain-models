@@ -25,41 +25,6 @@ WITH distributor_cex AS (
         AND l2_label = 'hot_wallet'
         AND delete_flag IS NULL
 ),
-aptos_transfers AS (
-    SELECT
-        xf_from.block_timestamp,
-        xf_from.tx_hash,
-        xf_from.account_address AS from_address,
-        xf_to.account_address AS to_address,
-        xf_from.amount / pow(
-            10,
-            6
-        ) AS amount
-    FROM
-        {{ source(
-            'aptos_core',
-            'fact_transfers'
-        ) }}
-        xf_to
-        JOIN {{ source(
-            'aptos_core',
-            'fact_transfers'
-        ) }}
-        xf_from
-        ON xf_to.tx_hash = xf_from.tx_hash
-        AND xf_to.event_index - 1 = xf_from.event_index
-        AND xf_to.amount = xf_from.amount
-    WHERE
-        xf_to.transfer_event = 'DepositEvent'
-        AND xf_from.transfer_event = 'WithdrawEvent'
-        AND xf_from.token_address = '0x1::aptos_coin::AptosCoin'
-        AND xf_to.token_address = '0x1::aptos_coin::AptosCoin'
-
-{% if is_incremental() %}
-AND xf_to.block_timestamp > CURRENT_DATE - 10
-AND xf_from.block_timestamp > CURRENT_DATE - 10
-{% endif %}
-),
 possible_sats AS (
     -- THIS STATEMENT LOCATES POTENTIAL SATELLITE WALLETS BASED ON DEPOSIT BEHAVIOR
     SELECT
@@ -83,7 +48,11 @@ possible_sats AS (
                     xfer.from_address
                 ) AS project_count -- how many projects has each from address sent to
             FROM
-                aptos_transfers xfer
+                {{ source(
+                    'aptos_core',
+                    'ez_native_transfers'
+                ) }}
+                xfer
                 JOIN distributor_cex dc
                 ON dc.address = xfer.to_address
             WHERE
@@ -109,7 +78,11 @@ real_sats AS (
         from_address,
         COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
     FROM
-        aptos_transfers xfer
+        {{ source(
+            'aptos_core',
+            'ez_native_transfers'
+        ) }}
+        xfer
         LEFT OUTER JOIN distributor_cex dc
         ON dc.address = xfer.to_address
     WHERE
