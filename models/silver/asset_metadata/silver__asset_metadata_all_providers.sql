@@ -526,7 +526,10 @@ FINAL AS (
                 'arbitrum-one',
                 'arbitrum'
             ) THEN 'arbitrum'
-            WHEN platform IN ('avalanche') THEN 'avalanche'
+            WHEN platform IN (
+                'avalanche',
+                'avalanche c-chain'
+            ) THEN 'avalanche'
             WHEN platform IN (
                 'binance-smart-chain',
                 'binancecoin',
@@ -589,10 +592,10 @@ SELECT
         ['token_address','id','symbol','blockchain','provider']
     ) }} AS _unique_key,
     _inserted_timestamp,
-    sysdate() as inserted_timestamp,
-    sysdate() as modified_timestamp,
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['token_address','id','symbol','blockchain','provider']) }} AS asset_metadata_all_providers_id,
-    '{{ invocation_id }}' as _invocation_id
+    '{{ invocation_id }}' AS _invocation_id
 FROM
     FINAL
 WHERE
