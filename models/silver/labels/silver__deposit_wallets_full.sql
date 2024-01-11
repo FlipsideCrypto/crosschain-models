@@ -25,7 +25,16 @@ WITH new_addresses AS (
         'N' AS _is_deleted
     FROM
         {{ ref('silver__deposit_wallets') }} A
-        LEFT JOIN {{ this }} b
+        LEFT JOIN (
+            SELECT
+                blockchain,
+                address,
+                _is_deleted
+            FROM
+                {{ this }}
+            WHERE
+                _is_deleted = 'N'
+        ) b
         ON A.blockchain = b.blockchain
         AND A.address = b.address
     WHERE
@@ -48,8 +57,24 @@ delete_addresses AS (
         A._invocation_id,
         'Y' AS _is_deleted
     FROM
-        {{ this }} A
-        LEFT JOIN {{ ref('silver__deposit_wallets') }} b
+        (
+            SELECT
+                system_created_at,
+                insert_date,
+                blockchain,
+                address,
+                inserted_timestamp,
+                modified_timestamp,
+                deposit_wallets_id,
+                _invocation_id,
+                _is_deleted
+            FROM
+                {{ this }}
+            WHERE
+                _is_deleted = 'N'
+        ) A
+        LEFT JOIN {{ ref('silver__deposit_wallets') }}
+        b
         ON A.blockchain = b.blockchain
         AND A.address = b.address
     WHERE
