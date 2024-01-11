@@ -22,7 +22,7 @@ WITH new_addresses AS (
         A.modified_timestamp,
         A.deposit_wallets_id,
         A._invocation_id,
-        'N' AS _is_deleted
+        FALSE AS _is_deleted
     FROM
         {{ ref('silver__deposit_wallets') }} A
         LEFT JOIN (
@@ -33,7 +33,7 @@ WITH new_addresses AS (
             FROM
                 {{ this }}
             WHERE
-                _is_deleted = 'N'
+                _is_deleted = FALSE
         ) b
         ON A.blockchain = b.blockchain
         AND A.address = b.address
@@ -51,11 +51,11 @@ delete_addresses AS (
         NULL AS label_subtype,
         NULL AS address_name,
         NULL AS project_name,
-        A.inserted_timestamp,
-        A.modified_timestamp,
+        SYSDATE() AS inserted_timestamp,
+        SYSDATE() AS modified_timestamp,
         A.deposit_wallets_id,
-        A._invocation_id,
-        'Y' AS _is_deleted
+        '{{ invocation_id }}' AS _invocation_id,
+        TRUE AS _is_deleted
     FROM
         (
             SELECT
@@ -63,15 +63,12 @@ delete_addresses AS (
                 insert_date,
                 blockchain,
                 address,
-                inserted_timestamp,
-                modified_timestamp,
                 deposit_wallets_id,
-                _invocation_id,
                 _is_deleted
             FROM
                 {{ this }}
             WHERE
-                _is_deleted = 'N'
+                _is_deleted = FALSE
         ) A
         LEFT JOIN {{ ref('silver__deposit_wallets') }}
         b
@@ -84,7 +81,7 @@ SELECT
     *
 FROM
     new_addresses
-UNION
+UNION ALL
 SELECT
     *
 FROM
@@ -92,7 +89,7 @@ FROM
 {% else %}
 SELECT
     *,
-    'N' AS _is_deleted
+    FALSE AS _is_deleted
 FROM
     {{ ref('silver__deposit_wallets') }}
 {% endif %}
