@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "CONCAT_WS('-', blockchain, address)",
+    unique_key = "deposit_wallets_id",
     incremental_strategy = 'merge',
     tags = ['snowflake', 'crosschain', 'labels', 'silver__contract_autolabels']
 ) }}
@@ -18,11 +18,14 @@ WITH new_addresses AS (
         A.label_subtype,
         A.address_name,
         A.project_name,
+        A.inserted_timestamp,
+        A.modified_timestamp,
+        A.deposit_wallets_id,
+        A._invocation_id,
         'N' AS _is_deleted
     FROM
         {{ ref('silver__deposit_wallets') }} A
-        LEFT JOIN {{ this }}
-        b
+        LEFT JOIN {{ this }} b
         ON A.blockchain = b.blockchain
         AND A.address = b.address
     WHERE
@@ -39,11 +42,14 @@ delete_addresses AS (
         NULL AS label_subtype,
         NULL AS address_name,
         NULL AS project_name,
+        A.inserted_timestamp,
+        A.modified_timestamp,
+        A.deposit_wallets_id,
+        A._invocation_id,
         'Y' AS _is_deleted
     FROM
         {{ this }} A
-        LEFT JOIN {{ ref('silver__deposit_wallets') }}
-        b
+        LEFT JOIN {{ ref('silver__deposit_wallets') }} b
         ON A.blockchain = b.blockchain
         AND A.address = b.address
     WHERE
