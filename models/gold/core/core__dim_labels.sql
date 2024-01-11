@@ -34,7 +34,8 @@ SELECT
     COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
     COALESCE(deposit_wallets_id,{{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }}) AS dim_labels_id
 FROM
-    {{ ref('silver__deposit_wallets') }}
+    {{ ref('silver__deposit_wallets_full') }}
+WHERE _is_deleted = 'N'
 UNION ALL
 SELECT
   system_created_at,
