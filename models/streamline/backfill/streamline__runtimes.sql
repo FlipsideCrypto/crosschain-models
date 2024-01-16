@@ -10,4 +10,4 @@ FROM
     {{ ref('core__dim_dates') }}
 WHERE
     date_day BETWEEN '2018-01-01' -- coingecko api pro plan start date
-    AND DATEADD(DAY, -1, SYSDATE()) -- yesterday
+    AND '2024-01-15' -- backfill cut off date
