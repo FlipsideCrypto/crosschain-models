@@ -29,7 +29,7 @@ models:
         tests:
           - dbt_expectations.expect_column_to_exist
       - name: CONTRACT_ADDRESS
-        description: The contract address interacted with for the swap, typically the liquidity pool or router address, where applicable.
+        description: The contract address interacted with for the swap, typically the liquidity pool or router address, where applicable. Value may be NULL for certain chains, such as Osmosis and Near, where records occur at a different granularity such as one row per transaction rather than one row per event.
         tests:
           - dbt_expectations.expect_column_to_exist
       - name: TRADER
