@@ -24,6 +24,10 @@ models:
         description: Transaction hash is a unique identifier that is generated when a transaction is executed. 
         tests:
           - dbt_expectations.expect_column_to_exist
+      - name: CONTRACT_ADDRESS
+        description: The contract address interacted with for the swap, typically the liquidity pool or router address, where applicable.
+        tests:
+          - dbt_expectations.expect_column_to_exist
       - name: TRADER
         description: The address that initiated the swap.
         tests:
