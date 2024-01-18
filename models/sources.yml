@@ -282,6 +282,7 @@ sources:
     schema: defi
     tables:
       - name: fact_swaps
+      - name: dim_liquidity_pools
   - name: axelar_core
     database: axelar
     schema: core

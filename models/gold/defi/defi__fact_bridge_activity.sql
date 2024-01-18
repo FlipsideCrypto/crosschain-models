@@ -22,7 +22,9 @@ WITH base AS (
         amount_unadj AS amount_raw,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        ez_bridge_activity_id AS fact_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(
+            ['ez_bridge_activity_id','blockchain']
+        ) }} AS fact_bridge_activity_id
     FROM
         {{ source(
             'ethereum_defi',
@@ -45,7 +47,9 @@ WITH base AS (
         amount_unadj AS amount_raw,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        ez_bridge_activity_id AS fact_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(
+            ['ez_bridge_activity_id','blockchain']
+        ) }} AS fact_bridge_activity_id
     FROM
         {{ source(
             'optimism_defi',
@@ -68,7 +72,9 @@ WITH base AS (
         amount_unadj AS amount_raw,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        ez_bridge_activity_id AS fact_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(
+            ['ez_bridge_activity_id','blockchain']
+        ) }} AS fact_bridge_activity_id
     FROM
         {{ source(
             'avalanche_defi',
@@ -91,7 +97,9 @@ WITH base AS (
         amount_unadj AS amount_raw,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        ez_bridge_activity_id AS fact_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(
+            ['ez_bridge_activity_id','blockchain']
+        ) }} AS fact_bridge_activity_id
     FROM
         {{ source(
             'polygon_defi',
@@ -114,7 +122,9 @@ WITH base AS (
         amount_unadj AS amount_raw,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        ez_bridge_activity_id AS fact_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(
+            ['ez_bridge_activity_id','blockchain']
+        ) }} AS fact_bridge_activity_id
     FROM
         {{ source(
             'bsc_defi',
@@ -137,7 +147,9 @@ WITH base AS (
         amount_unadj AS amount_raw,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        ez_bridge_activity_id AS fact_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(
+            ['ez_bridge_activity_id','blockchain']
+        ) }} AS fact_bridge_activity_id
     FROM
         {{ source(
             'arbitrum_defi',
@@ -160,7 +172,9 @@ WITH base AS (
         amount_unadj AS amount_raw,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        ez_bridge_activity_id AS fact_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(
+            ['ez_bridge_activity_id','blockchain']
+        ) }} AS fact_bridge_activity_id
     FROM
         {{ source(
             'base_defi',
@@ -183,7 +197,9 @@ WITH base AS (
         amount_unadj AS amount_raw,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        ez_bridge_activity_id AS fact_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(
+            ['ez_bridge_activity_id','blockchain']
+        ) }} AS fact_bridge_activity_id
     FROM
         {{ source(
             'gnosis_defi',
