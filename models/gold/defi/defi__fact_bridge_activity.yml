@@ -5,7 +5,6 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - BLOCKCHAIN
             - FACT_BRIDGE_ACTIVITY_ID
     columns:
       - name: BLOCKCHAIN
