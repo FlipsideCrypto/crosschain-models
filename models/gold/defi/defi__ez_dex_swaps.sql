@@ -10,6 +10,7 @@ SELECT
     dex.block_number,
     dex.block_timestamp,
     dex.tx_hash,
+    dex.contract_address,
     dex.trader,
     dex.token_in,
     p_in.symbol AS symbol_in,
