@@ -12,6 +12,7 @@ WITH base AS (
         block_number,
         block_timestamp,
         tx_hash,
+        contract_address,
         origin_from_address AS trader,
         token_in,
         amount_in_unadj AS amount_in_raw,
@@ -33,6 +34,7 @@ WITH base AS (
         block_number,
         block_timestamp,
         tx_hash,
+        contract_address,
         origin_from_address AS trader,
         token_in,
         amount_in_unadj AS amount_in_raw,
@@ -54,6 +56,7 @@ WITH base AS (
         block_number,
         block_timestamp,
         tx_hash,
+        contract_address,
         origin_from_address AS trader,
         token_in,
         amount_in_unadj AS amount_in_raw,
@@ -75,6 +78,7 @@ WITH base AS (
         block_number,
         block_timestamp,
         tx_hash,
+        contract_address,
         origin_from_address AS trader,
         token_in,
         amount_in_unadj AS amount_in_raw,
@@ -96,6 +100,7 @@ WITH base AS (
         block_number,
         block_timestamp,
         tx_hash,
+        contract_address,
         origin_from_address AS trader,
         token_in,
         amount_in_unadj AS amount_in_raw,
@@ -117,6 +122,7 @@ WITH base AS (
         block_number,
         block_timestamp,
         tx_hash,
+        contract_address,
         origin_from_address AS trader,
         token_in,
         amount_in_unadj AS amount_in_raw,
@@ -138,6 +144,7 @@ WITH base AS (
         block_number,
         block_timestamp,
         tx_hash,
+        contract_address,
         origin_from_address AS trader,
         token_in,
         amount_in_unadj AS amount_in_raw,
@@ -159,6 +166,7 @@ WITH base AS (
         block_number,
         block_timestamp,
         tx_hash,
+        contract_address,
         origin_from_address AS trader,
         token_in,
         amount_in_unadj AS amount_in_raw,
@@ -177,27 +185,35 @@ WITH base AS (
     SELECT
         'osmosis' AS blockchain,
         'osmosis' platform,
-        block_id AS block_number,
-        block_timestamp,
-        tx_id AS tx_hash,
+        s.block_id AS block_number,
+        s.block_timestamp,
+        s.tx_id AS tx_hash,
+        pool_address AS contract_address,
         trader AS trader,
         from_currency AS token_in,
         from_amount AS amount_in_raw,
         to_currency AS token_out,
         to_amount AS amount_out_raw,
         CONCAT(
-            tx_id,
+            s.tx_id,
             '-',
-            _BODY_INDEX
+            s._BODY_INDEX
         ) AS _log_id,
-        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        COALESCE(fact_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','_body_index']) }}) AS fact_dex_swaps_id
+        COALESCE(s.inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(s.modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE(fact_swaps_id, {{ dbt_utils.generate_surrogate_key(['tx_hash','s._body_index']) }}) AS fact_dex_swaps_id
     FROM
         {{ source(
             'osmosis_defi',
             'fact_swaps'
         ) }}
+        s
+        LEFT JOIN {{ source(
+            'osmosis_defi',
+            'dim_liquidity_pools'
+        ) }}
+        p
+        ON s.pool_id = p.pool_id
     UNION ALL
     SELECT
         'solana' AS blockchain,
@@ -205,6 +221,7 @@ WITH base AS (
         block_id AS block_number,
         block_timestamp,
         tx_id AS tx_hash,
+        program_id AS contract_address,
         swapper AS trader,
         LOWER(swap_from_mint) AS token_in,
         swap_from_amount AS amount_in_raw,
@@ -228,6 +245,7 @@ WITH base AS (
         block_id AS block_number,
         block_timestamp,
         tx_hash,
+        NULL AS contract_address,
         trader,
         token_in,
         amount_in_raw,
@@ -249,6 +267,7 @@ SELECT
     block_number,
     block_timestamp,
     tx_hash,
+    contract_address,
     trader,
     token_in,
     amount_in_raw,
