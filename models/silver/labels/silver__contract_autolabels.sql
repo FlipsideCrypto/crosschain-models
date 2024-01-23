@@ -147,7 +147,7 @@ SELECT
   *,
   SYSDATE() AS inserted_timestamp,
   SYSDATE() AS modified_timestamp,
-  {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS contract_autolabels_id,
+  {{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }} AS contract_autolabels_id,
   '{{ invocation_id }}' AS _invocation_id
 FROM
   pre_final
