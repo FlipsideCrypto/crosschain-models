@@ -134,7 +134,7 @@ flat_table AS (
       WHEN blockchain IN (
         'algorand',
         'solana',
-        'bitcoin',
+        'bitcoin', 
         'cosmos'
       ) THEN t.value :address :: STRING
       ELSE LOWER(
@@ -166,14 +166,14 @@ SELECT
   address_name,
   project_name,
   delete_flag,
-  SYSDATE() AS inserted_timestamp,
-  SYSDATE() AS modified_timestamp,
+  sysdate() as inserted_timestamp,
+  sysdate() as modified_timestamp,
   {{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }} AS address_labels_id,
-  '{{ invocation_id }}' AS _invocation_id
+  '{{ invocation_id }}' as _invocation_id
 FROM
   flat_table
 WHERE
   project_name IS NOT NULL
   AND address_name IS NOT NULL
-  AND address IS NOT NULL
+  and address IS NOT NULL
   AND l1_label <> 'project' -- contract creations

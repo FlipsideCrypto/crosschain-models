@@ -4,10 +4,10 @@
   incremental_strategy = 'delete+insert',
   tags = ['snowflake', 'crosschain', 'labels', 'silver__contract_autolabels'],
   post_hook = "delete from {{this}} a using (select distinct blockchain, address from {{ ref('silver__address_labels') }} where delete_flag is null union select distinct blockchain, address from {{ ref('silver__deposit_wallets') }}) b where a.blockchain = b.blockchain and a.address = b.address ",
+
 ) }}
 
-WITH pre_final AS (
-
+WITH pre_final as (
   SELECT
     system_created_at,
     insert_date,
@@ -22,6 +22,7 @@ WITH pre_final AS (
     _inserted_timestamp
   FROM
     {{ ref('silver__labels_contracts') }}
+
   UNION ALL
   SELECT
     system_created_at,
@@ -37,6 +38,7 @@ WITH pre_final AS (
     _inserted_timestamp
   FROM
     {{ ref('silver__labels_contracts_arbitrum') }}
+
   UNION ALL
   SELECT
     system_created_at,
@@ -52,6 +54,7 @@ WITH pre_final AS (
     _inserted_timestamp
   FROM
     {{ ref('silver__labels_contracts_avalanche') }}
+
   UNION ALL
   SELECT
     system_created_at,
@@ -67,6 +70,7 @@ WITH pre_final AS (
     _inserted_timestamp
   FROM
     {{ ref('silver__labels_contracts_base') }}
+
   UNION ALL
   SELECT
     system_created_at,
@@ -82,6 +86,7 @@ WITH pre_final AS (
     _inserted_timestamp
   FROM
     {{ ref('silver__labels_contracts_bsc') }}
+
   UNION ALL
   SELECT
     system_created_at,
@@ -97,6 +102,7 @@ WITH pre_final AS (
     _inserted_timestamp
   FROM
     {{ ref('silver__labels_contracts_optimism') }}
+
   UNION ALL
   SELECT
     system_created_at,
@@ -112,6 +118,7 @@ WITH pre_final AS (
     _inserted_timestamp
   FROM
     {{ ref('silver__labels_contracts_polygon') }}
+
   UNION ALL
   SELECT
     system_created_at,
@@ -127,6 +134,7 @@ WITH pre_final AS (
     _inserted_timestamp
   FROM
     {{ ref('silver__labels_contracts_solana') }}
+
   UNION ALL
   SELECT
     system_created_at,
@@ -143,11 +151,12 @@ WITH pre_final AS (
   FROM
     {{ ref('silver__labels_tokens_solana') }}
 )
-SELECT
+SELECT 
   *,
-  SYSDATE() AS inserted_timestamp,
-  SYSDATE() AS modified_timestamp,
+  sysdate() as inserted_timestamp,
+  sysdate() as modified_timestamp,
   {{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }} AS contract_autolabels_id,
-  '{{ invocation_id }}' AS _invocation_id
+  '{{ invocation_id }}' as _invocation_id
 FROM
   pre_final
+
