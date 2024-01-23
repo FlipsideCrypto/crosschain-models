@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver__dim_labels
+  - name: silver__labels_combined
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

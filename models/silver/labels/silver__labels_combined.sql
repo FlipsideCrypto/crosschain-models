@@ -1,6 +1,7 @@
 {{ config(
-    materialized = 'view',
+    materialized = 'table',
     tags = ['snowflake', 'crosschain', 'labels', 'gold_address_labels'],
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION"
 ) }}
 
 SELECT

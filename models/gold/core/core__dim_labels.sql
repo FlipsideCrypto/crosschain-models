@@ -17,5 +17,5 @@ SELECT
     modified_timestamp,
     dim_labels_id
 FROM
-    {{ ref('silver__dim_labels') }}
+    {{ ref('silver__labels_combined') }}
 where _is_deleted = FALSE
