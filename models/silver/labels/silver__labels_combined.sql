@@ -19,6 +19,7 @@ SELECT
     COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
     COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
     COALESCE(address_labels_id,{{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }}) AS dim_labels_id,
+    'address_labels' as source,
     case when delete_flag is null then FALSE else TRUE end as _is_deleted
 FROM
     {{ ref('silver__address_labels') }}
@@ -29,6 +30,7 @@ WHERE
       MAX(insert_date)
     FROM
       {{ this }}
+    where source = 'address_labels'
   )
 {% endif %}
 UNION ALL
@@ -45,6 +47,7 @@ SELECT
     COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
     COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
     COALESCE(deposit_wallets_id,{{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }}) AS dim_labels_id,
+    'deposit' as source,
     _is_deleted
 FROM
     {{ ref('silver__deposit_wallets_full') }}
@@ -55,6 +58,7 @@ WHERE
       MAX(insert_date)
     FROM
       {{ this }}
+    where source = 'deposit'
   )
 {% endif %}
 UNION ALL
@@ -71,6 +75,7 @@ SELECT
   COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
   COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
   COALESCE(contract_autolabels_id,{{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }}) AS dim_labels_id,
+  'autolabel' as source,
   FALSE as _is_deleted
 FROM
   {{ ref('silver__contract_autolabels') }}
@@ -81,6 +86,7 @@ WHERE
       MAX(insert_date)
     FROM
       {{ this }}
+    where source = 'autolabel'
   )
 {% endif %}
 UNION ALL
@@ -97,6 +103,7 @@ SELECT
   COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
   COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
   COALESCE(labels_eth_contracts_table_id,{{ dbt_utils.generate_surrogate_key(['address']) }}) AS dim_labels_id,
+  'eth_contracts' as source,
   FALSE as _is_deleted
 FROM
   {{ ref('silver__labels_eth_contracts_table') }}
@@ -107,6 +114,7 @@ WHERE
       MAX(insert_date)
     FROM
       {{ this }}
+    where source = 'eth_contracts'
   )
 {% endif %}
 
