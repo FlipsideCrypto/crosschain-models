@@ -15,7 +15,8 @@ SELECT
     project_name,
     inserted_timestamp,
     modified_timestamp,
-    dim_labels_id
+    labels_combined_id AS dim_labels_id
 FROM
     {{ ref('silver__labels_combined') }}
-where _is_deleted = FALSE
+WHERE
+    _is_deleted = FALSE
