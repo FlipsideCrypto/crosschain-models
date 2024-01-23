@@ -51,7 +51,7 @@ delete_addresses AS (
         NULL AS label_subtype,
         NULL AS address_name,
         NULL AS project_name,
-        SYSDATE() AS inserted_timestamp,
+        A.inserted_timestamp AS inserted_timestamp,
         SYSDATE() AS modified_timestamp,
         A.deposit_wallets_id,
         '{{ invocation_id }}' AS _invocation_id,

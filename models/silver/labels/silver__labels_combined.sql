@@ -1,7 +1,9 @@
 {{ config(
-    materialized = 'table',
-    tags = ['snowflake', 'crosschain', 'labels', 'gold_address_labels'],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION"
+    materialized = 'incremental',
+    unique_key = ['blockchain','address'],
+    cluster_by = ['blockchain','_is_deleted','modified_timestamp::DATE'],
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(address)",
+    tags = ['snowflake', 'crosschain', 'labels', 'gold_address_labels']
 ) }}
 
 SELECT
@@ -20,6 +22,15 @@ SELECT
     case when delete_flag is null then FALSE else TRUE end as _is_deleted
 FROM
     {{ ref('silver__address_labels') }}
+{% if is_incremental() %}
+WHERE
+  modified_timestamp >= (
+    SELECT
+      MAX(insert_date)
+    FROM
+      {{ this }}
+  )
+{% endif %}
 UNION ALL
 SELECT
     system_created_at,
@@ -37,6 +48,15 @@ SELECT
     _is_deleted
 FROM
     {{ ref('silver__deposit_wallets_full') }}
+{% if is_incremental() %}
+WHERE
+  modified_timestamp >= (
+    SELECT
+      MAX(insert_date)
+    FROM
+      {{ this }}
+  )
+{% endif %}
 UNION ALL
 SELECT
   system_created_at,
@@ -54,6 +74,15 @@ SELECT
   FALSE as _is_deleted
 FROM
   {{ ref('silver__contract_autolabels') }}
+{% if is_incremental() %}
+WHERE
+  modified_timestamp >= (
+    SELECT
+      MAX(insert_date)
+    FROM
+      {{ this }}
+  )
+{% endif %}
 UNION ALL
 SELECT
   system_created_at,
@@ -71,4 +100,13 @@ SELECT
   FALSE as _is_deleted
 FROM
   {{ ref('silver__labels_eth_contracts_table') }}
+{% if is_incremental() %}
+WHERE
+  modified_timestamp >= (
+    SELECT
+      MAX(insert_date)
+    FROM
+      {{ this }}
+  )
+{% endif %}
 
