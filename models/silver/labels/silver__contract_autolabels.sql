@@ -1,6 +1,6 @@
 {{ config(
   materialized = 'incremental',
-  unique_key = "CONCAT_WS('-', blockchain, address)",
+  unique_key = "CONCAT_WS('-', blockchain, address, creator)",
   incremental_strategy = 'delete+insert',
   tags = ['snowflake', 'crosschain', 'labels', 'silver__contract_autolabels'],
   post_hook = "delete from {{this}} a using (select distinct blockchain, address from {{ ref('silver__address_labels') }} where delete_flag is null union select distinct blockchain, address from {{ ref('silver__deposit_wallets') }}) b where a.blockchain = b.blockchain and a.address = b.address ",
@@ -155,7 +155,7 @@ SELECT
   *,
   sysdate() as inserted_timestamp,
   sysdate() as modified_timestamp,
-  {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS contract_autolabels_id,
+  {{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }} AS contract_autolabels_id,
   '{{ invocation_id }}' as _invocation_id
 FROM
   pre_final

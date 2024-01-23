@@ -1,6 +1,6 @@
 {{ config(
   materialized = 'incremental',
-  unique_key = "CONCAT_WS('-', blockchain, address)",
+  unique_key = "CONCAT_WS('-', blockchain, address, creator)",
   incremental_strategy = 'delete+insert',
   tags = ['snowflake', 'crosschain', 'labels', 'silver__address_labels']
 ) }}
@@ -168,7 +168,7 @@ SELECT
   delete_flag,
   sysdate() as inserted_timestamp,
   sysdate() as modified_timestamp,
-  {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS address_labels_id,
+  {{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }} AS address_labels_id,
   '{{ invocation_id }}' as _invocation_id
 FROM
   flat_table
