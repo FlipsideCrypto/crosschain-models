@@ -18,7 +18,7 @@ SELECT
     project_name,
     COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
     COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-    COALESCE(address_labels_id,{{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }}) AS dim_labels_id,
+    COALESCE(address_labels_id,{{ dbt_utils.generate_surrogate_key(['blockchain','address']) }}) AS dim_labels_id,
     'address_labels' as source,
     case when delete_flag is null then FALSE else TRUE end as _is_deleted
 FROM
@@ -46,7 +46,7 @@ SELECT
     project_name,
     COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
     COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-    COALESCE(deposit_wallets_id,{{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }}) AS dim_labels_id,
+    COALESCE(deposit_wallets_id,{{ dbt_utils.generate_surrogate_key(['blockchain','address']) }}) AS dim_labels_id,
     'deposit' as source,
     _is_deleted
 FROM
@@ -74,7 +74,7 @@ SELECT
   project_name,
   COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
   COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-  COALESCE(contract_autolabels_id,{{ dbt_utils.generate_surrogate_key(['blockchain','creator','address']) }}) AS dim_labels_id,
+  COALESCE(contract_autolabels_id,{{ dbt_utils.generate_surrogate_key(['blockchain','address']) }}) AS dim_labels_id,
   'autolabel' as source,
   FALSE as _is_deleted
 FROM
