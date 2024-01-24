@@ -64,7 +64,8 @@ delete_addresses AS (
                 blockchain,
                 address,
                 deposit_wallets_id,
-                _is_deleted
+                _is_deleted,
+                inserted_timestamp
             FROM
                 {{ this }}
             WHERE
