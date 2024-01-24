@@ -205,6 +205,43 @@ WITH base AS (
             'gnosis_defi',
             'ez_bridge_activity'
         ) }}
+    UNION ALL
+    SELECT
+        'solana' AS blockchain,
+        platform,
+        block_id AS block_number,
+        block_timestamp,
+        tx_id AS tx_hash,
+        CASE
+            WHEN direction = 'outbound' THEN 'solana'
+            ELSE NULL
+        END AS source_chain,
+        CASE
+            WHEN direction = 'inbound' THEN 'solana'
+            ELSE NULL
+        END AS destination_chain,
+        program_id AS bridge_address,
+        CASE
+            WHEN direction = 'outbound' THEN user_address
+            ELSE NULL
+        END AS source_address,
+        CASE
+            WHEN direction = 'inbound' THEN user_address
+            ELSE NULL
+        END AS destination_address,
+        direction,
+        lower(mint) AS token_address,
+        amount AS amount_raw,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(
+            ['fact_bridge_activity_id','blockchain']
+        ) }} AS fact_bridge_activity_id
+    FROM
+        {{ source(
+            'solana_defi',
+            'fact_bridge_activity'
+        ) }}
 )
 SELECT
     blockchain,
