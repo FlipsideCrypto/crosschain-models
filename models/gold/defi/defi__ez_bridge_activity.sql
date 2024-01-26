@@ -20,6 +20,7 @@ SELECT
     p.symbol AS token_symbol,
     b.amount_raw,
     CASE
+        WHEN b.blockchain = 'solana' then amount_raw
         WHEN p.decimals IS NOT NULL THEN b.amount_raw / power(
             10,
             p.decimals
