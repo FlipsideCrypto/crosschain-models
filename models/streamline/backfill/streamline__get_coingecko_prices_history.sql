@@ -29,8 +29,6 @@ WITH runtimes AS (
         id
     FROM
         {{ ref("streamline__complete_coingecko_prices") }}
-    WHERE
-        DATA:error IS NULL
 )
 SELECT
     run_time,
