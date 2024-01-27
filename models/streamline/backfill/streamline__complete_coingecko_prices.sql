@@ -31,4 +31,4 @@ WHERE
         '1900-01-01' :: timestamp_ntz
     )
 {% endif %}
- 
+
