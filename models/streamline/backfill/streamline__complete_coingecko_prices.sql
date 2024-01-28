@@ -31,7 +31,4 @@ WHERE
         '1900-01-01' :: timestamp_ntz
     )
 {% endif %}
- 
-qualify(ROW_NUMBER() over (PARTITION BY uid
-ORDER BY
-    run_time DESC)) = 1
+
