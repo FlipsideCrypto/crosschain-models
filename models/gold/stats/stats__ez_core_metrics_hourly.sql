@@ -20,17 +20,17 @@ SELECT
     unique_from_count AS unique_initiator_count,
     total_fees_native * p.price AS total_fees_usd,
     COALESCE (
-        core_metrics_hourly_id,
+        ez_core_metrics_hourly_id,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_core_metrics_hourly_id','blockchain']
         ) }}
     ) AS ez_core_metrics_hourly_id,
     COALESCE(
-        inserted_timestamp,
+        s.inserted_timestamp,
         '2000-01-01'
     ) AS inserted_timestamp,
     COALESCE(
-        modified_timestamp,
+        s.modified_timestamp,
         '2000-01-01'
     ) AS modified_timestamp
 FROM
@@ -57,17 +57,17 @@ SELECT
     unique_from_count AS unique_initiator_count,
     total_fees_native * p.price AS total_fees_usd,
     COALESCE (
-        core_metrics_hourly_id,
+        ez_core_metrics_hourly_id,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_core_metrics_hourly_id','blockchain']
         ) }}
     ) AS ez_core_metrics_hourly_id,
     COALESCE(
-        inserted_timestamp,
+        s.inserted_timestamp,
         '2000-01-01'
     ) AS inserted_timestamp,
     COALESCE(
-        modified_timestamp,
+        s.modified_timestamp,
         '2000-01-01'
     ) AS modified_timestamp
 FROM
@@ -94,17 +94,17 @@ SELECT
     unique_from_count AS unique_initiator_count,
     total_fees_native * p.price AS total_fees_usd,
     COALESCE (
-        core_metrics_hourly_id,
+        ez_core_metrics_hourly_id,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_core_metrics_hourly_id','blockchain']
         ) }}
     ) AS ez_core_metrics_hourly_id,
     COALESCE(
-        inserted_timestamp,
+        s.inserted_timestamp,
         '2000-01-01'
     ) AS inserted_timestamp,
     COALESCE(
-        modified_timestamp,
+        s.modified_timestamp,
         '2000-01-01'
     ) AS modified_timestamp
 FROM
@@ -131,17 +131,17 @@ SELECT
     unique_from_count AS unique_initiator_count,
     total_fees_native * p.price AS total_fees_usd,
     COALESCE (
-        core_metrics_hourly_id,
+        ez_core_metrics_hourly_id,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_core_metrics_hourly_id','blockchain']
         ) }}
     ) AS ez_core_metrics_hourly_id,
     COALESCE(
-        inserted_timestamp,
+        s.inserted_timestamp,
         '2000-01-01'
     ) AS inserted_timestamp,
     COALESCE(
-        modified_timestamp,
+        s.modified_timestamp,
         '2000-01-01'
     ) AS modified_timestamp
 FROM
@@ -168,17 +168,17 @@ SELECT
     unique_from_count AS unique_initiator_count,
     total_fees_native * p.price AS total_fees_usd,
     COALESCE (
-        core_metrics_hourly_id,
+        ez_core_metrics_hourly_id,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_core_metrics_hourly_id','blockchain']
         ) }}
     ) AS ez_core_metrics_hourly_id,
     COALESCE(
-        inserted_timestamp,
+        s.inserted_timestamp,
         '2000-01-01'
     ) AS inserted_timestamp,
     COALESCE(
-        modified_timestamp,
+        s.modified_timestamp,
         '2000-01-01'
     ) AS modified_timestamp
 FROM
@@ -205,17 +205,17 @@ SELECT
     unique_from_count AS unique_initiator_count,
     total_fees_native * p.price AS total_fees_usd,
     COALESCE (
-        core_metrics_hourly_id,
+        ez_core_metrics_hourly_id,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_core_metrics_hourly_id','blockchain']
         ) }}
     ) AS ez_core_metrics_hourly_id,
     COALESCE(
-        inserted_timestamp,
+        s.inserted_timestamp,
         '2000-01-01'
     ) AS inserted_timestamp,
     COALESCE(
-        modified_timestamp,
+        s.modified_timestamp,
         '2000-01-01'
     ) AS modified_timestamp
 FROM
@@ -242,17 +242,17 @@ SELECT
     unique_from_count AS unique_initiator_count,
     total_fees_native * p.price AS total_fees_usd,
     COALESCE (
-        core_metrics_hourly_id,
+        ez_core_metrics_hourly_id,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_core_metrics_hourly_id','blockchain']
         ) }}
     ) AS ez_core_metrics_hourly_id,
     COALESCE(
-        inserted_timestamp,
+        s.inserted_timestamp,
         '2000-01-01'
     ) AS inserted_timestamp,
     COALESCE(
-        modified_timestamp,
+        s.modified_timestamp,
         '2000-01-01'
     ) AS modified_timestamp
 FROM
@@ -279,17 +279,17 @@ SELECT
     unique_from_count AS unique_initiator_count,
     total_fees_native * p.price AS total_fees_usd,
     COALESCE (
-        core_metrics_hourly_id,
+        ez_core_metrics_hourly_id,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_core_metrics_hourly_id','blockchain']
         ) }}
     ) AS ez_core_metrics_hourly_id,
     COALESCE(
-        inserted_timestamp,
+        s.inserted_timestamp,
         '2000-01-01'
     ) AS inserted_timestamp,
     COALESCE(
-        modified_timestamp,
+        s.modified_timestamp,
         '2000-01-01'
     ) AS modified_timestamp
 FROM
