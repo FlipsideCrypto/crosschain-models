@@ -1,12 +1,41 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "address",
+    unique_key = ["address","blockchain"],
     incremental_strategy = 'merge',
     merge_update_columns = ['creator', 'modified_timestamp'],
 ) }}
 
-WITH from_addresses AS (
+WITH base AS (
 
+    SELECT
+        A.*,
+        b.block_id
+    FROM
+        {{ source(
+            'thorchain_defi',
+            'fact_swaps'
+        ) }} A
+        JOIN {{ source(
+            'thorchain_core',
+            'dim_block'
+        ) }}
+        b
+        ON A.dim_block_id = b.dim_block_id
+
+{% if is_incremental() %}
+WHERE
+    DATE_TRUNC(
+        'day',
+        A.block_timestamp
+    ) >= (
+        SELECT
+            MAX(start_date)
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
+from_addresses AS (
     SELECT
         DISTINCT CASE
             blockchain
@@ -19,7 +48,7 @@ WITH from_addresses AS (
             WHEN 'LTC' THEN 'litecoin'
             WHEN 'DOGE' THEN 'dogechain'
             WHEN 'BTC' THEN 'bitcoin'
-            else 'error'
+            ELSE 'error'
         END AS blockchain,
         'flipside' AS creator,
         from_address AS address,
@@ -30,24 +59,20 @@ WITH from_addresses AS (
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
-        {{ source(
-            'thorchain',
-            'swaps'
-        ) }}
-
-where (blockchain not in ('error', 'NULL', 'null', 'Null') or blockchain is not null)
-{% if is_incremental() %}
-and
-    block_id NOT IN (
-        SELECT
-            DISTINCT block_id
-        FROM
-            {{ this }}
-    )
-{% endif %}
-GROUP BY
-    blockchain,
-    address
+        base
+    WHERE
+        (
+            blockchain NOT IN (
+                'error',
+                'NULL',
+                'null',
+                'Null'
+            )
+            OR blockchain IS NOT NULL
+        )
+    GROUP BY
+        blockchain,
+        address
 ),
 to_addresses AS (
     SELECT
@@ -115,10 +140,7 @@ to_addresses AS (
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
-        {{ source(
-            'thorchain',
-            'swaps'
-        ) }}
+        base
     WHERE
         blockchain != 'error'
         AND native_to_address NOT IN (
@@ -127,36 +149,29 @@ to_addresses AS (
             FROM
                 from_addresses
         )
-
-{% if is_incremental() %}
-AND block_id NOT IN (
-    SELECT
-        DISTINCT block_id
-    FROM
-        {{ this }}
-)
-{% endif %}
-GROUP BY
-    address
+    GROUP BY
+        address
 ),
 final_table AS (
     SELECT
         *
     FROM
         from_addresses
-    where blockchain != 'error'
+    WHERE
+        blockchain != 'error'
     UNION
     SELECT
         *
     FROM
         to_addresses
-    where blockchain != 'error'
+    WHERE
+        blockchain != 'error'
 )
 SELECT
     *,
-    sysdate() as inserted_timestamp,
-    sysdate() as modified_timestamp,
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['address']) }} AS tags_thor_dex_user_id,
-    '{{ invocation_id }}' as _invocation_id
+    '{{ invocation_id }}' AS _invocation_id
 FROM
-    final_table 
+    final_table

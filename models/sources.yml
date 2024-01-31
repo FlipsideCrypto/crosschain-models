@@ -209,18 +209,18 @@ sources:
     tables:
       - name: ez_dex_swaps
       - name: ez_bridge_activity
-  - name: thorchain
-    database: flipside_prod_db
-    schema: thorchain
+  - name: thorchain_defi
+    database: thorchain
+    schema: defi
     tables:
-      - name: swaps
-      - name: liquidity_actions
-      - name: transfers
+      - name: fact_swaps
+      - name: fact_liquidity_actions
   - name: thorchain_core
     database: thorchain
     schema: core
     tables:
       - name: fact_transfers
+      - name: dim_block
   - name: flow_core
     database: flow
     schema: core
