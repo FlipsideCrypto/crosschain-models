@@ -19,8 +19,8 @@ SELECT
     label_subtype,
     address_name,
     project_name,
-    SYSDATE() as inserted_timestamp,
-    SYSDATE() as modified_timestamp,
+    inserted_timestamp,
+    modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS labels_combined_id,
     'address_labels' as source,
     case when delete_flag is null then FALSE else TRUE end as _is_deleted
@@ -47,8 +47,8 @@ SELECT
     label_subtype,
     address_name,
     project_name,
-    SYSDATE() as inserted_timestamp,
-    SYSDATE() as modified_timestamp,
+    inserted_timestamp,
+    modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS labels_combined_id,
     'deposit' as source,
     _is_deleted
@@ -75,8 +75,8 @@ SELECT
   label_subtype,
   address_name,
   project_name,
-  SYSDATE() as inserted_timestamp,
-  SYSDATE() as modified_timestamp,
+  inserted_timestamp,
+  Smodified_timestamp,
   {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }}  AS labels_combined_id,
   'autolabel' as source,
   FALSE as _is_deleted
@@ -103,8 +103,8 @@ SELECT
   label_subtype,
   address_name,
   project_name,
-  SYSDATE() as inserted_timestamp,
-  SYSDATE() as modified_timestamp,
+  inserted_timestamp,
+  modified_timestamp,
   {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }}  AS labels_combined_id,
   'eth_contracts' as source,
   FALSE as _is_deleted
