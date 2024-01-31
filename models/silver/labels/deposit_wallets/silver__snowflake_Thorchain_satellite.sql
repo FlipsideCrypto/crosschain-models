@@ -49,8 +49,8 @@ possible_sats AS (
                 ) AS project_count -- how many projects has each from address sent to
             FROM
                 {{ source(
-                    'thorchain',
-                    'transfers'
+                    'thorchain_core',
+                    'fact_transfers'
                 ) }}
                 xfer
                 JOIN distributor_cex dc
@@ -79,8 +79,8 @@ real_sats AS (
         COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
     FROM
         {{ source(
-            'thorchain',
-            'transfers'
+            'thorchain_core',
+            'fact_transfers'
         ) }}
         xfer
         LEFT OUTER JOIN distributor_cex dc
@@ -140,10 +140,10 @@ SELECT
     f.l2_label,
     f.address_name,
     f.project_name,
-    sysdate() as inserted_timestamp,
-    sysdate() as modified_timestamp,
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['f.address']) }} AS snowflake_thorchain_satellite_id,
-    '{{ invocation_id }}' as _invocation_id
+    '{{ invocation_id }}' AS _invocation_id
 FROM
     final_base f
     LEFT JOIN {{ ref('silver__address_labels') }} A
