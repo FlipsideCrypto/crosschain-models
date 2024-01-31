@@ -76,7 +76,7 @@ SELECT
   address_name,
   project_name,
   inserted_timestamp,
-  Smodified_timestamp,
+  modified_timestamp,
   {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }}  AS labels_combined_id,
   'autolabel' as source,
   FALSE as _is_deleted
