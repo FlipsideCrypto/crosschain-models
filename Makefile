@@ -10,6 +10,21 @@ dbt-console:
 
 .PHONY: dbt-console
 
+sl-api-integrations:
+	dbt run-operation create_aws_crosschain_api \
+	--profile crosschain \
+	--target $(DBT_TARGET) \
+	--profiles-dir ~/.dbt/
+
+udfs:
+	dbt run-operation create_udfs \
+	--vars '{"UPDATE_UDFS_AND_SPS":True}' \
+	--profile crosschain \
+	--target $(DBT_TARGET) \
+	--profiles-dir ~/.dbt/
+
+streamline-v2: sl-api-integrations udfs
+
 prices_history:
 	dbt run \
 	--vars '{"STREAMLINE_INVOKE_STREAMS": $(INVOKE_STREAMS), "STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES": True}' \
@@ -19,7 +34,9 @@ prices_history:
 	--profiles-dir ~/.dbt
 
 ohlc_realtime:
-	dbt run-operation run_get_coin_gecko_ohlc \
+	dbt run \
+	--vars '{"STREAMLINE_INVOKE_STREAMS": $(INVOKE_STREAMS), "STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES": True}' \
+	-m "crosschain_models,tag:ohlc_realtime_v2" \
 	--profile crosschain \
 	--target $(DBT_TARGET) \
 	--profiles-dir ~/.dbt
