@@ -5,6 +5,7 @@
     cluster_by = ['block_timestamp_hour::DATE']
 ) }}
 
+--update source to silver
 WITH base AS (
 
     SELECT
