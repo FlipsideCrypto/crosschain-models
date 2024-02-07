@@ -7,7 +7,7 @@
 ) }}
 
 SELECT
-    blockchain,
+    s.blockchain,
     block_timestamp_hour,
     block_number_min,
     block_number_max,
@@ -16,10 +16,13 @@ SELECT
     transaction_count_success,
     transaction_count_failed,
     unique_initiator_count,
-    total_fees_native * p.price AS total_fees_usd,
+    ROUND(
+        total_fees_native * p.price,
+        2
+    ) AS total_fees_usd,
     core_metrics_hourly_id AS ez_core_metrics_hourly_id,
-    inserted_timestamp,
-    modified_timestamp
+    s.inserted_timestamp,
+    s.modified_timestamp
 FROM
     {{ ref('silver_stats__core_metrics_hourly') }}
     s
