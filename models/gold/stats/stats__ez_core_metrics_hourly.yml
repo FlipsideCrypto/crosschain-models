@@ -18,12 +18,8 @@ models:
         description: '{{ doc("crosschain_transaction_count_success") }}'
       - name: TRANSACTION_COUNT_FAILED
         description: '{{ doc("crosschain_transaction_count_failed") }}'
-      - name: UNIQUE_FROM_COUNT
+      - name: UNIQUE_INITIATOR_COUNT
         description: '{{ doc("crosschain_unique_from_count") }}'
-      - name: UNIQUE_TO_COUNT
-        description: '{{ doc("crosschain_unique_to_count") }}'
-      - name: TOTAL_FEES_ETH
-        description: '{{ doc("crosschain_total_fees_native") }}'
       - name: TOTAL_FEES_USD
         description: '{{ doc("crosschain_total_fees_usd") }}'
       - name: EZ_CORE_METRICS_HOURLY_ID

@@ -48,7 +48,7 @@ The number of failed transactions in the hour.
 
 {% docs crosschain_unique_from_count %}
 
-The number of unique origin from addresses in the hour.
+The number of unique initiator or origin from addresses in the hour.
 
 {% enddocs %}
 

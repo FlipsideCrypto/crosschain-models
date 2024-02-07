@@ -598,43 +598,43 @@ sources:
     tables: 
       - name: blocks_completeness
       - name: transactions_completeness
-  - name: ethereum_stats
+  - name: ethereum_silver_stats
     database: ethereum
-    schema: stats
+    schema: silver_stats
     tables:
-      - name: ez_core_metrics_hourly
-  - name: optimism_stats
+      - name: core_metrics_hourly
+  - name: optimism_silver_stats
     database: optimism
-    schema: stats
+    schema: silver_stats
     tables:
-      - name: ez_core_metrics_hourly
-  - name: arbitrum_stats
+      - name: core_metrics_hourly
+  - name: arbitrum_silver_stats
     database: arbitrum
-    schema: stats
+    schema: silver_stats
     tables:
-      - name: ez_core_metrics_hourly
-  - name: bsc_stats
+      - name: core_metrics_hourly
+  - name: bsc_silver_stats
     database: bsc
-    schema: stats
+    schema: silver_stats
     tables:
-      - name: ez_core_metrics_hourly
-  - name: polygon_stats
+      - name: core_metrics_hourly
+  - name: polygon_silver_stats
     database: polygon
-    schema: stats
+    schema: silver_stats
     tables:
-      - name: ez_core_metrics_hourly
-  - name: base_stats
+      - name: core_metrics_hourly
+  - name: base_silver_stats
     database: base
-    schema: stats
+    schema: silver_stats
     tables:
-      - name: ez_core_metrics_hourly
-  - name: gnosis_stats
+      - name: core_metrics_hourly
+  - name: gnosis_silver_stats
     database: gnosis
-    schema: stats
+    schema: silver_stats
     tables:
-      - name: ez_core_metrics_hourly
-  - name: avalanche_stats
+      - name: core_metrics_hourly
+  - name: avalanche_silver_stats
     database: avalanche
-    schema: stats
+    schema: silver_stats
     tables:
-      - name: ez_core_metrics_hourly
+      - name: core_metrics_hourly
