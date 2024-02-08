@@ -242,6 +242,52 @@ WITH base AS (
             'solana_defi',
             'fact_bridge_activity'
         ) }}
+    UNION ALL
+    SELECT
+        'near' AS blockchain,
+        platform,
+        block_id AS block_number,
+        block_timestamp,
+        tx_hash,
+        source_chain,
+        destination_chain,
+        bridge_address,
+        source_address,
+        destination_address,
+        direction,
+        token_address,
+        amount_unadj AS amount_raw,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        fact_bridge_activity_id
+    FROM
+        {{ source(
+            'near_defi',
+            'fact_bridge_activity'
+        ) }}
+    UNION ALL
+    SELECT
+        'flow' AS blockchain,
+        bridge AS platform,
+        block_height AS block_number,
+        block_timestamp,
+        tx_id AS tx_hash,
+        IFF(direction = 'outbound', 'flow', blockchain) AS source_chain,
+        IFF(direction = 'inbound', 'flow', blockchain) AS destination_chain,
+        bridge_contract AS bridge_address,
+        IFF(direction = 'outbound', flow_wallet_address, null) AS source_address,
+        IFF(direction = 'inbound', flow_wallet_address, null) AS destination_address,
+        direction,
+        token_contract AS token_address,
+        amount AS amount_raw,
+        COALESCE(inserted_timestamp,'2000-01-01') AS inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') AS modified_timestamp,
+        ez_bridge_transactions_id AS fact_bridge_activity_id
+    FROM
+        {{ source(
+            'flow_defi',
+            'ez_bridge_transactions'
+        ) }}
 )
 SELECT
     blockchain,

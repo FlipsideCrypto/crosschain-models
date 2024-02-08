@@ -226,6 +226,12 @@ sources:
     schema: core
     tables:
       - name: ez_token_transfers
+  - name: flow_defi
+    database: flow
+    schema: defi
+    tables:
+      - name: ez_bridge_transactions
+      - name: ez_swaps
   - name: solana_core
     database: solana
     schema: core
@@ -248,7 +254,8 @@ sources:
     database: near
     schema: defi
     tables:
-      - name: ez_dex_swaps
+      - name: fact_dex_swaps
+      - name: fact_bridge_activity
   - name: near_silver
     database: near
     schema: silver

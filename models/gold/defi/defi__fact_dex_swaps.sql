@@ -241,24 +241,46 @@ WITH base AS (
     UNION ALL
     SELECT
         'near' AS blockchain,
-        platform,
+        receiver_id AS platform,
         block_id AS block_number,
         block_timestamp,
         tx_hash,
         NULL AS contract_address,
-        trader,
+        signer_id AS trader,
         token_in,
         amount_in_raw,
         token_out,
         amount_out_raw,
-        swap_id AS _log_id,
+        fact_dex_swaps_id AS _log_id,
         COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
         COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
-        swap_id AS fact_dex_swaps_id
+        fact_dex_swaps_id AS fact_dex_swaps_id
     FROM
         {{ source(
             'near_defi',
-            'ez_dex_swaps'
+            'fact_dex_swaps'
+        ) }}
+    UNION ALL
+    SELECT
+        'flow' AS blockchain,
+        NULL as platform,
+        block_height AS block_number,
+        block_timestamp,
+        tx_id AS tx_hash,
+        swap_contract AS contract_address,
+        trader,
+        token_in_contract AS token_in,
+        token_in_amount AS amount_in_raw,
+        token_out_contract AS token_out,
+        token_out_amount AS amount_out_raw,
+        ez_swaps_id AS _log_id,
+        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
+        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        ez_swaps_id AS fact_dex_swaps_id
+    FROM
+        {{ source(
+            'flow_defi',
+            'ez_swaps'
         ) }}
 )
 SELECT
