@@ -592,6 +592,11 @@ sources:
       - name: dim_tokens
       - name: fact_transfers
       - name: ez_native_transfers
+  - name: aptos_defi
+    database: aptos
+    schema: defi
+    tables:
+      - name: fact_bridge_activity
   - name: aptos_observ
     database: aptos
     schema: silver_observability
