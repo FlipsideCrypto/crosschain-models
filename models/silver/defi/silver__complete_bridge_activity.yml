@@ -1,0 +1,57 @@
+version: 2
+models:
+  - name: silver__complete_bridge_activity
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - COMPLETE_BRIDGE_ACTIVITY_ID
+            
+    columns:
+      - name: BLOCKCHAIN
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: PLATFORM
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: BLOCK_NUMBER
+        tests:
+          - dbt_expectations.expect_column_to_exist 
+      - name: BLOCK_TIMESTAMP
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TX_HASH
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: BRIDGE_ADDRESS
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: SOURCE_CHAIN
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: DESTINATION_CHAIN
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: DIRECTION
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: SOURCE_ADDRESS
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: DESTINATION_ADDRESS
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TOKEN_ADDRESS
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: AMOUNT_RAW
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: FACT_BRIDGE_ACTIVITY_ID
+        tests:
+          - not_null
+      - name: INSERTED_TIMESTAMP
+        tests:
+          - not_null
+      - name: MODIFIED_TIMESTAMP
+        tests:
+          - not_null

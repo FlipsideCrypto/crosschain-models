@@ -1,0 +1,55 @@
+version: 2
+models:
+  - name: silver__complete_dex_swaps
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - COMPLETE_DEX_SWAPS_ID
+
+    columns:
+      - name: BLOCKCHAIN
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: PLATFORM
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: BLOCK_NUMBER
+        tests:
+          - dbt_expectations.expect_column_to_exist          
+      - name: BLOCK_TIMESTAMP
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TX_HASH
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: CONTRACT_ADDRESS
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TRADER
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TOKEN_IN
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: AMOUNT_IN_RAW
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TOKEN_OUT
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: AMOUNT_OUT_RAW
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: _LOG_ID
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: COMPLETE_DEX_SWAPS_ID
+        tests:
+          - not_null
+      - name: INSERTED_TIMESTAMP
+        tests:
+          - not_null
+      - name: MODIFIED_TIMESTAMP
+        tests:
+          - not_null
+      
