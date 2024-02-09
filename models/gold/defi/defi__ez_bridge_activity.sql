@@ -17,13 +17,22 @@ SELECT
     b.destination_address,
     b.direction,
     b.token_address,
-    p.symbol AS token_symbol,
+    COALESCE(
+        p.symbol,
+        C.symbol
+    ) AS token_symbol,
     b.amount_raw,
     CASE
-        WHEN b.blockchain = 'solana' then amount_raw
-        WHEN p.decimals IS NOT NULL THEN b.amount_raw / power(
+        WHEN b.blockchain = 'solana' THEN amount_raw
+        WHEN COALESCE(
+            p.decimals,
+            C.decimals
+        ) IS NOT NULL THEN b.amount_raw / power(
             10,
-            p.decimals
+            COALESCE(
+                p.decimals,
+                C.decimals
+            )
         )
     END amount,
     ROUND(
@@ -44,3 +53,6 @@ FROM
         'hour',
         b.block_timestamp
     ) = p.hour
+    LEFT JOIN {{ ref('core__dim_contracts') }} C
+    ON b.blockchain = C.blockchain
+    AND b.token_address = C.address
