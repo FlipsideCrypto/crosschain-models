@@ -535,14 +535,32 @@ SELECT
     ) AS amount_out_usd,
     d._log_id,
     GREATEST(
-        d.inserted_timestamp,
-        p_in.inserted_timestamp,
-        p_out.inserted_timestamp
+        COALESCE(
+            d.inserted_timestamp,
+            '2000-01-01'
+        ),
+        COALESCE(
+            p_in.inserted_timestamp,
+            '2000-01-01'
+        ),
+        COALESCE(
+            p_out.inserted_timestamp,
+            '2000-01-01'
+        )
     ) AS inserted_timestamp,
     GREATEST(
-        d.modified_timestamp,
-        p_in.modified_timestamp,
-        p_out.modified_timestamp
+        COALESCE(
+            d.modified_timestamp,
+            '2000-01-01'
+        ),
+        COALESCE(
+            p_in.modified_timestamp,
+            '2000-01-01'
+        ),
+        COALESCE(
+            p_out.modified_timestamp,
+            '2000-01-01'
+        )
     ) AS modified_timestamp,
     d._inserted_timestamp,
     complete_dex_swaps_id

@@ -470,12 +470,24 @@ SELECT
         2
     ) AS amount_usd,
     GREATEST(
-        b.inserted_timestamp,
-        p.inserted_timestamp
+        COALESCE(
+            b.inserted_timestamp,
+            '2000-01-01'
+        ),
+        COALESCE(
+            p.inserted_timestamp,
+            '2000-01-01'
+        )
     ) AS inserted_timestamp,
     GREATEST(
-        b.modified_timestamp,
-        p.modified_timestamp
+        COALESCE(
+            b.modified_timestamp,
+            '2000-01-01'
+        ),
+        COALESCE(
+            p.modified_timestamp,
+            '2000-01-01'
+        )
     ) AS modified_timestamp,
     b._inserted_timestamp,
     complete_bridge_activity_id
