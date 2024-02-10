@@ -16,9 +16,13 @@ WITH ethereum AS (
         contract_address,
         origin_from_address AS trader,
         token_in,
+        symbol_in,
         amount_in_unadj AS amount_in_raw,
+        amount_in,
         token_out,
+        symbol_out,
         amount_out_unadj AS amount_out_raw,
+        amount_out,
         _log_id,
         inserted_timestamp,
         modified_timestamp,
@@ -34,7 +38,7 @@ WITH ethereum AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours' -- long lookback for reorgs (and delete)
+            MAX(_inserted_timestamp) - INTERVAL '36 hours'
         FROM
             {{ this }}
     )
@@ -50,9 +54,13 @@ optimism AS (
         contract_address,
         origin_from_address AS trader,
         token_in,
+        symbol_in,
         amount_in_unadj AS amount_in_raw,
+        amount_in,
         token_out,
+        symbol_out,
         amount_out_unadj AS amount_out_raw,
+        amount_out,
         _log_id,
         inserted_timestamp,
         modified_timestamp,
@@ -84,9 +92,13 @@ avalanche AS (
         contract_address,
         origin_from_address AS trader,
         token_in,
+        symbol_in,
         amount_in_unadj AS amount_in_raw,
+        amount_in,
         token_out,
+        symbol_out,
         amount_out_unadj AS amount_out_raw,
+        amount_out,
         _log_id,
         inserted_timestamp,
         modified_timestamp,
@@ -118,9 +130,13 @@ polygon AS (
         contract_address,
         origin_from_address AS trader,
         token_in,
+        symbol_in,
         amount_in_unadj AS amount_in_raw,
+        amount_in,
         token_out,
+        symbol_out,
         amount_out_unadj AS amount_out_raw,
+        amount_out,
         _log_id,
         inserted_timestamp,
         modified_timestamp,
@@ -152,9 +168,13 @@ bsc AS (
         contract_address,
         origin_from_address AS trader,
         token_in,
+        symbol_in,
         amount_in_unadj AS amount_in_raw,
+        amount_in,
         token_out,
+        symbol_out,
         amount_out_unadj AS amount_out_raw,
+        amount_out,
         _log_id,
         inserted_timestamp,
         modified_timestamp,
@@ -186,9 +206,13 @@ arbitrum AS (
         contract_address,
         origin_from_address AS trader,
         token_in,
+        symbol_in,
         amount_in_unadj AS amount_in_raw,
+        amount_in,
         token_out,
+        symbol_out,
         amount_out_unadj AS amount_out_raw,
+        amount_out,
         _log_id,
         inserted_timestamp,
         modified_timestamp,
@@ -220,9 +244,13 @@ base AS (
         contract_address,
         origin_from_address AS trader,
         token_in,
+        symbol_in,
         amount_in_unadj AS amount_in_raw,
+        amount_in,
         token_out,
+        symbol_out,
         amount_out_unadj AS amount_out_raw,
+        amount_out,
         _log_id,
         inserted_timestamp,
         modified_timestamp,
@@ -254,9 +282,13 @@ gnosis AS (
         contract_address,
         origin_from_address AS trader,
         token_in,
+        symbol_in,
         amount_in_unadj AS amount_in_raw,
+        amount_in,
         token_out,
+        symbol_out,
         amount_out_unadj AS amount_out_raw,
+        amount_out,
         _log_id,
         inserted_timestamp,
         modified_timestamp,
@@ -288,9 +320,23 @@ osmosis AS (
         pool_address AS contract_address,
         trader AS trader,
         from_currency AS token_in,
+        NULL AS symbol_in,
         from_amount AS amount_in_raw,
+        CASE
+            WHEN s.from_decimal IS NOT NULL THEN from_amount / power(
+                10,
+                s.from_decimal
+            )
+        END AS amount_in,
         to_currency AS token_out,
+        NULL AS symbol_out,
         to_amount AS amount_out_raw,
+        CASE
+            WHEN s.to_decimal IS NOT NULL THEN to_amount / power(
+                10,
+                s.to_decimal
+            )
+        END AS amount_out,
         CONCAT(
             s.tx_id,
             '-',
@@ -333,9 +379,13 @@ solana AS (
         program_id AS contract_address,
         swapper AS trader,
         LOWER(swap_from_mint) AS token_in,
+        NULL AS symbol_in,
         swap_from_amount AS amount_in_raw,
+        amount_in_raw AS amount_in,
         LOWER(swap_to_mint) AS token_out,
+        NULL AS symbol_out,
         swap_to_amount AS amount_out_raw,
+        amount_out_raw AS amount_out,
         _log_id,
         inserted_timestamp,
         modified_timestamp,
@@ -350,13 +400,12 @@ solana AS (
         succeeded
 
 {% if is_incremental() and 'solana' not in var('HEAL_CURATED_MODEL') %}
-WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
-        FROM
-            {{ this }}
-    )
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp) - INTERVAL '36 hours'
+    FROM
+        {{ this }}
+)
 {% endif %}
 ),
 near AS (
@@ -368,10 +417,14 @@ near AS (
         tx_hash,
         NULL AS contract_address,
         trader,
-        token_in,
+        token_in_contract AS token_in,
+        n.token_in AS symbol_in,
         amount_in_raw,
-        token_out,
+        amount_in,
+        token_out_contract AS token_out,
+        n.token_out AS symbol_out,
         amount_out_raw,
+        amount_out,
         swap_id AS _log_id,
         inserted_timestamp,
         modified_timestamp,
@@ -382,6 +435,7 @@ near AS (
             'near_defi',
             'ez_dex_swaps'
         ) }}
+        n
 
 {% if is_incremental() and 'near' not in var('HEAL_CURATED_MODEL') %}
 WHERE
@@ -459,60 +513,45 @@ SELECT
     d.trader,
     d.token_in,
     COALESCE(
-        p_in.symbol,
-        c_in.symbol
+        d.symbol_in,
+        p_in.symbol
     ) AS symbol_in,
     d.amount_in_raw,
-    CASE
-        WHEN d.blockchain = 'solana' THEN d.amount_in_raw
-        WHEN COALESCE(
-            p_in.decimals,
-            c_in.decimals
-        ) IS NOT NULL THEN d.amount_in_raw / power(
-            10,
-            COALESCE(
-                p_in.decimals,
-                c_in.decimals
-            )
-        )
-    END amount_in,
+    amount_in,
     ROUND(
         p_in.price * amount_in,
         2
     ) AS amount_in_usd,
     d.token_out,
     COALESCE(
-        p_out.symbol,
-        c_out.symbol
+        d.symbol_out,
+        p_out.symbol
     ) AS symbol_out,
     d.amount_out_raw,
-    CASE
-        WHEN d.blockchain = 'solana' THEN d.amount_out_raw
-        WHEN COALESCE(
-            p_out.decimals,
-            c_out.decimals
-        ) IS NOT NULL THEN d.amount_out_raw / power(
-            10,
-            COALESCE(
-                p_out.decimals,
-                c_out.decimals
-            )
-        )
-    END amount_out,
+    amount_out,
     ROUND(
         p_out.price * amount_out,
         2
     ) AS amount_out_usd,
     d._log_id,
-    GREATEST(d.inserted_timestamp, p_in.inserted_timestamp, p_out.inserted_timestamp, c_in.inserted_timestamp, c_out.inserted_timestamp) AS inserted_timestamp,
-    GREATEST(d.modified_timestamp, p_in.modified_timestamp, p_out.modified_timestamp, c_in.modified_timestamp, c_out.modified_timestamp) AS modified_timestamp,
+    GREATEST(
+        d.inserted_timestamp,
+        p_in.inserted_timestamp,
+        p_out.inserted_timestamp
+    ) AS inserted_timestamp,
+    GREATEST(
+        d.modified_timestamp,
+        p_in.modified_timestamp,
+        p_out.modified_timestamp
+    ) AS modified_timestamp,
     d._inserted_timestamp,
     complete_dex_swaps_id
 FROM
     all_chains_dex d
     LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
     p_in
-    ON REPLACE(
+    ON d.blockchain <> 'near'
+    AND REPLACE(
         d.blockchain,
         'osmosis',
         'cosmos'
@@ -524,7 +563,8 @@ FROM
     ) = p_in.hour
     LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
     p_out
-    ON REPLACE(
+    ON d.blockchain <> 'near'
+    AND REPLACE(
         d.blockchain,
         'osmosis',
         'cosmos'
@@ -534,19 +574,3 @@ FROM
         'hour',
         d.block_timestamp
     ) = p_out.hour
-    LEFT JOIN {{ ref('core__dim_contracts') }}
-    c_in
-    ON REPLACE(
-        d.blockchain,
-        'osmosis',
-        'cosmos'
-    ) = c_in.blockchain
-    AND d.token_in = c_in.address
-    LEFT JOIN {{ ref('core__dim_contracts') }}
-    c_out
-    ON REPLACE(
-        d.blockchain,
-        'osmosis',
-        'cosmos'
-    ) = c_out.blockchain
-    AND d.token_out = c_out.address

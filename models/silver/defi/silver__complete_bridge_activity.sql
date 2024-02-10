@@ -20,7 +20,9 @@ WITH ethereum AS (
         destination_chain_receiver AS destination_address,
         'outbound' AS direction,
         token_address,
+        token_symbol,
         amount_unadj AS amount_raw,
+        amount,
         inserted_timestamp,
         modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
@@ -55,7 +57,9 @@ optimism AS (
         destination_chain_receiver AS destination_address,
         'outbound' AS direction,
         token_address,
+        token_symbol,
         amount_unadj AS amount_raw,
+        amount,
         inserted_timestamp,
         modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
@@ -90,7 +94,9 @@ avalanche AS (
         destination_chain_receiver AS destination_address,
         'outbound' AS direction,
         token_address,
+        token_symbol,
         amount_unadj AS amount_raw,
+        amount,
         inserted_timestamp,
         modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
@@ -125,7 +131,9 @@ polygon AS (
         destination_chain_receiver AS destination_address,
         'outbound' AS direction,
         token_address,
+        token_symbol,
         amount_unadj AS amount_raw,
+        amount,
         inserted_timestamp,
         modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
@@ -160,7 +168,9 @@ bsc AS (
         destination_chain_receiver AS destination_address,
         'outbound' AS direction,
         token_address,
+        token_symbol,
         amount_unadj AS amount_raw,
+        amount,
         inserted_timestamp,
         modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
@@ -195,7 +205,9 @@ arbitrum AS (
         destination_chain_receiver AS destination_address,
         'outbound' AS direction,
         token_address,
+        token_symbol,
         amount_unadj AS amount_raw,
+        amount,
         inserted_timestamp,
         modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
@@ -230,7 +242,9 @@ base AS (
         destination_chain_receiver AS destination_address,
         'outbound' AS direction,
         token_address,
+        token_symbol,
         amount_unadj AS amount_raw,
+        amount,
         inserted_timestamp,
         modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
@@ -265,7 +279,9 @@ gnosis AS (
         destination_chain_receiver AS destination_address,
         'outbound' AS direction,
         token_address,
+        token_symbol,
         amount_unadj AS amount_raw,
+        amount,
         inserted_timestamp,
         modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
@@ -312,7 +328,9 @@ solana AS (
         END AS destination_address,
         direction,
         LOWER(mint) AS token_address,
+        NULL AS token_symbol,
         amount AS amount_raw,
+        amount,
         inserted_timestamp,
         modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
@@ -347,7 +365,9 @@ aptos AS (
         receiver AS destination_address,
         direction,
         token_address,
+        NULL AS token_symbol,
         amount_unadj AS amount_raw,
+        NULL AS amount,
         inserted_timestamp,
         modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
@@ -433,36 +453,29 @@ SELECT
     b.direction,
     b.token_address,
     COALESCE(
-        p.symbol,
-        C.symbol
+        b.token_symbol,
+        p.symbol
     ) AS token_symbol,
     b.amount_raw,
     CASE
-        WHEN b.blockchain = 'solana' THEN amount_raw
-        WHEN COALESCE(
-            p.decimals,
-            C.decimals
-        ) IS NOT NULL THEN b.amount_raw / power(
+        WHEN b.blockchain = 'aptos'
+        AND p.decimals IS NOT NULL THEN b.amount_raw / power(
             10,
-            COALESCE(
-                p.decimals,
-                C.decimals
-            )
+            p.decimals
         )
-    END amount,
+        ELSE b.amount
+    END AS amount,
     ROUND(
         p.price * amount,
         2
     ) AS amount_usd,
     GREATEST(
         b.inserted_timestamp,
-        p.inserted_timestamp,
-        C.inserted_timestamp
+        p.inserted_timestamp
     ) AS inserted_timestamp,
     GREATEST(
         b.modified_timestamp,
-        p.modified_timestamp,
-        C.modified_timestamp
+        p.modified_timestamp
     ) AS modified_timestamp,
     b._inserted_timestamp,
     complete_bridge_activity_id
@@ -476,6 +489,3 @@ FROM
         'hour',
         b.block_timestamp
     ) = p.hour
-    LEFT JOIN {{ ref('core__dim_contracts') }} C
-    ON b.blockchain = C.blockchain
-    AND b.token_address = C.address
