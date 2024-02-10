@@ -367,6 +367,14 @@ WHERE
         FROM
             {{ this }}
     )
+    AND s.block_timestamp >= (
+        SELECT
+            MAX(block_timestamp) - INTERVAL '36 hours'
+        FROM
+            {{ this }}
+        WHERE blockchain = 'osmosis'
+    )
+    --additional filter required to prevent reprocessing 100% of osmosis data on incremental runs
 {% endif %}
 ),
 solana AS (
