@@ -367,14 +367,6 @@ WHERE
         FROM
             {{ this }}
     )
-    AND s.tx_id NOT IN (
-        SELECT
-            DISTINCT tx_hash
-        FROM
-            {{ this }}
-        WHERE blockchain = 'osmosis'
-    )
-    --additional filter required to prevent reprocessing 100% of osmosis data on incremental runs
 {% endif %}
 ),
 solana AS (
