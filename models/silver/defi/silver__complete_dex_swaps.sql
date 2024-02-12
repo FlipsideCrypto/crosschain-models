@@ -367,9 +367,9 @@ WHERE
         FROM
             {{ this }}
     )
-    AND s.block_timestamp >= (
+    AND s.tx_id NOT IN (
         SELECT
-            MAX(block_timestamp) - INTERVAL '36 hours'
+            DISTINCT tx_hash
         FROM
             {{ this }}
         WHERE blockchain = 'osmosis'

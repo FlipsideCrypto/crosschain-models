@@ -23,6 +23,6 @@ SELECT
     amount_usd,
     inserted_timestamp,
     modified_timestamp,
-    fact_bridge_activity_id AS ez_bridge_activity_id
+    complete_bridge_activity_id AS ez_bridge_activity_id
 FROM
     {{ ref('silver__complete_bridge_activity') }}
