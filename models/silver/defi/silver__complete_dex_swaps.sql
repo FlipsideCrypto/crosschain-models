@@ -326,8 +326,6 @@ osmosis AS (
             '-',
             s._BODY_INDEX
         ) AS _log_id,
-        s.inserted_timestamp,
-        s.modified_timestamp,
         s.modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['fact_swaps_id','blockchain']) }} AS complete_dex_swaps_id
     FROM
