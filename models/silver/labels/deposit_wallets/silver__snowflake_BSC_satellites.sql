@@ -4,7 +4,25 @@
     incremental_strategy = 'delete+insert',
 ) }}
 
-WITH distributor_cex AS (
+WITH raw AS(
+
+    SELECT
+        live.udf_api('https://gateway.ipfs.io/ipns/tokens.uniswap.org') AS resp
+),
+tokens AS (
+    SELECT
+        VALUE :name AS NAME,
+        VALUE :symbol AS symbol,
+        VALUE :address AS address,
+        VALUE :chainId AS chain_id,
+        VALUE :decimals AS decimals
+    FROM
+        raw,
+        LATERAL FLATTEN (
+            input => resp :data :tokens
+        )
+),
+distributor_cex AS (
     -- THIS STATEMENT FINDS KNOWN CEX LABELS WITHIN THE BRONZE ADDRESS LABELS TABLE
 
     SELECT
@@ -72,33 +90,32 @@ GROUP BY
     8,
     9
 UNION
-SELECT
-    DISTINCT dc.system_created_at,
-    dc.insert_date,
-    dc.blockchain,
-    tr.from_address AS address,
-    dc.creator,
-    dc.address_name,
-    dc.project_name,
-    dc.l1_label,
-    'deposit_wallet' AS l2_label,
-    COUNT(
-        DISTINCT project_name
-    ) over(
-        PARTITION BY dc.blockchain,
-        tr.from_address
-    ) AS project_count
-FROM
-    {{ source(
-        'bsc_core',
-        'fact_traces'
-    ) }}
-    tr
-    JOIN distributor_cex dc
-    ON dc.address = tr.to_address
-WHERE
-    tx_status = 'SUCCESS'
-    AND bnb_value > 0
+        SELECT
+            DISTINCT dc.system_created_at,
+            dc.insert_date,
+            dc.blockchain,
+            xfer.from_address AS address,
+            dc.creator,
+            dc.address_name,
+            dc.project_name,
+            dc.l1_label,
+            'deposit_wallet' AS l2_label,
+            COUNT(
+                DISTINCT project_name
+            ) over(
+                PARTITION BY dc.blockchain,
+                xfer.from_address
+            ) AS project_count -- how many projects has each from address sent to
+        FROM
+            {{ source(
+                'bsc_core',
+                'ez_native_transfers'
+            ) }}
+            xfer
+            JOIN distributor_cex dc
+            ON dc.address = xfer.to_address
+        WHERE
+            amount > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -152,7 +169,7 @@ SELECT
 FROM
     {{ source(
         'bsc_core',
-        'fact_traces'
+        'ez_native_transfers'
     ) }}
     tr
     LEFT OUTER JOIN distributor_cex dc
@@ -164,8 +181,7 @@ WHERE
         FROM
             possible_sats
     )
-    AND tx_status = 'SUCCESS'
-    AND bnb_value > 0
+    AND amount > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10

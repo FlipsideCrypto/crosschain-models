@@ -2,6 +2,7 @@
     materialized = 'incremental',
     unique_key = "address",
     incremental_strategy = 'delete+insert',
+    post_hook = "delete from {{this}} a using {{ ref('silver__snowflake_ETH_satellites') }} b where a.address = b.address ",
 ) }}
 
 WITH raw AS(
@@ -74,6 +75,14 @@ possible_sats AS (
                 ON dc.address = xfer.to_address
             WHERE
                 raw_amount > 0
+                AND contract_address IN (
+                    SELECT
+                        DISTINCT LOWER(address)
+                    FROM
+                        tokens
+                    WHERE
+                        chain_id = '1'
+                )
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -89,32 +98,32 @@ GROUP BY
     8,
     9
 UNION
-        SELECT
-            DISTINCT dc.system_created_at,
-            dc.insert_date,
-            dc.blockchain,
-            xfer.from_address AS address,
-            dc.creator,
-            dc.address_name,
-            dc.project_name,
-            dc.l1_label,
-            'deposit_wallet' AS l2_label,
-            COUNT(
-                DISTINCT project_name
-            ) over(
-                PARTITION BY dc.blockchain,
-                xfer.from_address
-            ) AS project_count -- how many projects has each from address sent to
-        FROM
-            {{ source(
-                'ethereum_core',
-                'ez_native_transfers'
-            ) }}
-            xfer
-            JOIN distributor_cex dc
-            ON dc.address = xfer.to_address
-        WHERE
-            amount > 0
+SELECT
+    DISTINCT dc.system_created_at,
+    dc.insert_date,
+    dc.blockchain,
+    xfer.from_address AS address,
+    dc.creator,
+    dc.address_name,
+    dc.project_name,
+    dc.l1_label,
+    'deposit_wallet' AS l2_label,
+    COUNT(
+        DISTINCT project_name
+    ) over(
+        PARTITION BY dc.blockchain,
+        xfer.from_address
+    ) AS project_count -- how many projects has each from address sent to
+FROM
+    {{ source(
+        'ethereum_core',
+        'ez_native_transfers'
+    ) }}
+    xfer
+    JOIN distributor_cex dc
+    ON dc.address = xfer.to_address
+WHERE
+    amount > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -154,6 +163,14 @@ real_sats AS (
                 possible_sats
         )
         AND raw_amount > 0
+        AND contract_address IN (
+            SELECT
+                DISTINCT LOWER(address)
+            FROM
+                tokens
+            WHERE
+                chain_id = '1'
+        )
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
