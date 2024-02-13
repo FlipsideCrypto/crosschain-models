@@ -4,25 +4,7 @@
     incremental_strategy = 'delete+insert',
 ) }}
 
-WITH raw AS(
-
-    SELECT
-        live.udf_api('https://gateway.ipfs.io/ipns/tokens.uniswap.org') AS resp
-),
-tokens AS (
-    SELECT
-        VALUE :name AS NAME,
-        VALUE :symbol AS symbol,
-        VALUE :address AS address,
-        VALUE :chainId AS chain_id,
-        VALUE :decimals AS decimals
-    FROM
-        raw,
-        LATERAL FLATTEN (
-            input => resp :data :tokens
-        )
-),
-distributor_cex AS (
+WITH distributor_cex AS (
     -- THIS STATEMENT FINDS KNOWN CEX LABELS WITHIN THE BRONZE ADDRESS LABELS TABLE
 
     SELECT
