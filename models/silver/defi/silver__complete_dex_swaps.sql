@@ -24,8 +24,6 @@ WITH ethereum AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         _log_id,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
     FROM
@@ -62,8 +60,6 @@ optimism AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         _log_id,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
     FROM
@@ -100,8 +96,6 @@ avalanche AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         _log_id,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
     FROM
@@ -138,8 +132,6 @@ polygon AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         _log_id,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
     FROM
@@ -176,8 +168,6 @@ bsc AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         _log_id,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
     FROM
@@ -214,8 +204,6 @@ arbitrum AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         _log_id,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
     FROM
@@ -252,8 +240,6 @@ base AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         _log_id,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
     FROM
@@ -290,8 +276,6 @@ gnosis AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         _log_id,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
     FROM
@@ -387,8 +371,6 @@ solana AS (
         swap_to_amount AS amount_out_raw,
         amount_out_raw AS amount_out,
         _log_id,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['_log_id','blockchain']) }} AS complete_dex_swaps_id
     FROM
@@ -426,8 +408,6 @@ near AS (
         amount_out_raw,
         amount_out,
         swap_id AS _log_id,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['swap_id','blockchain']) }} AS complete_dex_swaps_id
     FROM
@@ -534,34 +514,8 @@ SELECT
         2
     ) AS amount_out_usd,
     d._log_id,
-    GREATEST(
-        COALESCE(
-            d.inserted_timestamp,
-            '2000-01-01'
-        ),
-        COALESCE(
-            p_in.inserted_timestamp,
-            '2000-01-01'
-        ),
-        COALESCE(
-            p_out.inserted_timestamp,
-            '2000-01-01'
-        )
-    ) AS inserted_timestamp,
-    GREATEST(
-        COALESCE(
-            d.modified_timestamp,
-            '2000-01-01'
-        ),
-        COALESCE(
-            p_in.modified_timestamp,
-            '2000-01-01'
-        ),
-        COALESCE(
-            p_out.modified_timestamp,
-            '2000-01-01'
-        )
-    ) AS modified_timestamp,
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
     d._inserted_timestamp,
     complete_dex_swaps_id
 FROM

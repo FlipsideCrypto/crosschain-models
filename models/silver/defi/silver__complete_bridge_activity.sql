@@ -23,8 +23,6 @@ WITH ethereum AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -60,8 +58,6 @@ optimism AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -97,8 +93,6 @@ avalanche AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -134,8 +128,6 @@ polygon AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -171,8 +163,6 @@ bsc AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -208,8 +198,6 @@ arbitrum AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -245,8 +233,6 @@ base AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -282,8 +268,6 @@ gnosis AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -331,8 +315,6 @@ solana AS (
         NULL AS token_symbol,
         amount AS amount_raw,
         amount,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['fact_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -368,8 +350,6 @@ aptos AS (
         NULL AS token_symbol,
         amount_unadj AS amount_raw,
         NULL AS amount,
-        inserted_timestamp,
-        modified_timestamp,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['fact_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -469,26 +449,8 @@ SELECT
         p.price * amount,
         2
     ) AS amount_usd,
-    GREATEST(
-        COALESCE(
-            b.inserted_timestamp,
-            '2000-01-01'
-        ),
-        COALESCE(
-            p.inserted_timestamp,
-            '2000-01-01'
-        )
-    ) AS inserted_timestamp,
-    GREATEST(
-        COALESCE(
-            b.modified_timestamp,
-            '2000-01-01'
-        ),
-        COALESCE(
-            p.modified_timestamp,
-            '2000-01-01'
-        )
-    ) AS modified_timestamp,
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
     b._inserted_timestamp,
     complete_bridge_activity_id
 FROM
