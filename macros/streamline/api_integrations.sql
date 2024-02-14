@@ -1,4 +1,4 @@
--- macro used to create flow api integrations
+-- macro used to create crosschain sl 2.0 api integrations
 {% macro create_aws_crosschain_api() %}
     {% if target.name == "prod" %}
         {{ log("Generating api integration for target:" ~ target.name, info=True) }}
