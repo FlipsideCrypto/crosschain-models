@@ -16,21 +16,21 @@
 {% endmacro %}
 
 {% macro generate_sl_udf_params(
-    external_table,
-    sql_limit,
-    producer_batch_size,
-    worker_batch_size,
-    sm_secret_name
+    external_table='',
+    sql_limit='5000',
+    producer_batch_size='1000',
+    worker_batch_size='1000',
+    sm_secret_name=''
 ) %}
   {#
     This macro generates the parameters for the udf_bulk_rest_api_v2 function.
 
     Parameters:
-    external_table (str): The name of the external table.
-    sql_limit (str, optional): The SQL limit. Defaults to '10'.
-    producer_batch_size (str, optional): The producer batch size. Defaults to '10'.
-    worker_batch_size (str, optional): The worker batch size. Defaults to '10'.
-    sm_secret_name (str, optional): The secret name. Defaults to 'prod/coingecko/rest'.
+    external_table (str): The name of the external table to flush. Defaults to ''.
+    sql_limit (str, optional): The SQL limit. Defaults to '5000'.
+    producer_batch_size (str, optional): The producer batch size. Defaults to '1000'.
+    worker_batch_size (str, optional): The worker batch size. Defaults to '1000'.
+    sm_secret_name (str): The secret name. Defaults to ''.
   #}
   {% raw %}{{this.schema}}{% endraw %}.udf_bulk_rest_api_v2(
     object_construct(
