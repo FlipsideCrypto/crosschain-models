@@ -27,6 +27,15 @@
         ) enabled = TRUE;    
         {% endset %}
         {% do run_query(sql) %}
+    {% elif target.name == "dev" %}
+        {{ log("Generating api integration for target:" ~ target.name, info=True) }}
+        {% set sql %}
+        
+        CREATE api integration IF NOT EXISTS aws_crosschain_api_stg api_provider = aws_api_gateway api_aws_role_arn = 'arn:aws:iam::704693948482:role/crosschain-api-stg-rolesnowflakeudfsAF733095-5u61kmZdVfGr' api_allowed_prefixes = (
+            'https://q0bnjqvs9a.execute-api.us-east-1.amazonaws.com/dev/'
+        ) enabled = TRUE;    
+        {% endset %}
+        {% do run_query(sql) %}
     {% endif %}
 {% endmacro %}
 
