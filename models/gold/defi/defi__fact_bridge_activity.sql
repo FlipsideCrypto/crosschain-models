@@ -17,11 +17,17 @@ WITH base AS (
         bridge_address,
         sender AS source_address,
         destination_chain_receiver AS destination_address,
-        'outbound' AS direction,        
+        'outbound' AS direction,
         token_address,
         amount_unadj AS amount_raw,
-        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_bridge_activity_id','blockchain']
         ) }} AS fact_bridge_activity_id
@@ -41,12 +47,18 @@ WITH base AS (
         destination_chain,
         bridge_address,
         sender AS source_address,
-        destination_chain_receiver AS destination_address,        
-        'outbound' AS direction,        
+        destination_chain_receiver AS destination_address,
+        'outbound' AS direction,
         token_address,
         amount_unadj AS amount_raw,
-        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_bridge_activity_id','blockchain']
         ) }} AS fact_bridge_activity_id
@@ -66,12 +78,18 @@ WITH base AS (
         destination_chain,
         bridge_address,
         sender AS source_address,
-        destination_chain_receiver AS destination_address,        
-        'outbound' AS direction,        
+        destination_chain_receiver AS destination_address,
+        'outbound' AS direction,
         token_address,
         amount_unadj AS amount_raw,
-        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_bridge_activity_id','blockchain']
         ) }} AS fact_bridge_activity_id
@@ -91,12 +109,18 @@ WITH base AS (
         destination_chain,
         bridge_address,
         sender AS source_address,
-        destination_chain_receiver AS destination_address,        
-        'outbound' AS direction,        
+        destination_chain_receiver AS destination_address,
+        'outbound' AS direction,
         token_address,
         amount_unadj AS amount_raw,
-        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_bridge_activity_id','blockchain']
         ) }} AS fact_bridge_activity_id
@@ -116,12 +140,18 @@ WITH base AS (
         destination_chain,
         bridge_address,
         sender AS source_address,
-        destination_chain_receiver AS destination_address,        
-        'outbound' AS direction,        
+        destination_chain_receiver AS destination_address,
+        'outbound' AS direction,
         token_address,
         amount_unadj AS amount_raw,
-        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_bridge_activity_id','blockchain']
         ) }} AS fact_bridge_activity_id
@@ -141,12 +171,18 @@ WITH base AS (
         destination_chain,
         bridge_address,
         sender AS source_address,
-        destination_chain_receiver AS destination_address,        
-        'outbound' AS direction,        
+        destination_chain_receiver AS destination_address,
+        'outbound' AS direction,
         token_address,
         amount_unadj AS amount_raw,
-        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_bridge_activity_id','blockchain']
         ) }} AS fact_bridge_activity_id
@@ -166,12 +202,18 @@ WITH base AS (
         destination_chain,
         bridge_address,
         sender AS source_address,
-        destination_chain_receiver AS destination_address,        
-        'outbound' AS direction,        
+        destination_chain_receiver AS destination_address,
+        'outbound' AS direction,
         token_address,
         amount_unadj AS amount_raw,
-        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_bridge_activity_id','blockchain']
         ) }} AS fact_bridge_activity_id
@@ -191,12 +233,18 @@ WITH base AS (
         destination_chain,
         bridge_address,
         sender AS source_address,
-        destination_chain_receiver AS destination_address,        
-        'outbound' AS direction,        
+        destination_chain_receiver AS destination_address,
+        'outbound' AS direction,
         token_address,
         amount_unadj AS amount_raw,
-        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
         {{ dbt_utils.generate_surrogate_key(
             ['ez_bridge_activity_id','blockchain']
         ) }} AS fact_bridge_activity_id
@@ -230,16 +278,47 @@ WITH base AS (
             ELSE NULL
         END AS destination_address,
         direction,
-        lower(mint) AS token_address,
+        LOWER(mint) AS token_address,
         amount AS amount_raw,
-        COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-        COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
         {{ dbt_utils.generate_surrogate_key(
             ['fact_bridge_activity_id','blockchain']
         ) }} AS fact_bridge_activity_id
     FROM
         {{ source(
             'solana_defi',
+            'fact_bridge_activity'
+        ) }}
+    UNION ALL
+    SELECT
+        'aptos' AS blockchain,
+        platform,
+        block_number,
+        block_timestamp,
+        tx_hash,
+        LOWER(source_chain_name) AS source_chain,
+        LOWER(destination_chain_name) AS destination_chain,
+        bridge_address,
+        sender AS source_address,
+        receiver AS destination_address,
+        direction,
+        token_address,
+        amount_unadj AS amount_raw,
+        inserted_timestamp,
+        modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(
+            ['fact_bridge_activity_id','blockchain']
+        ) }} AS fact_bridge_activity_id
+    FROM
+        {{ source(
+            'aptos_defi',
             'fact_bridge_activity'
         ) }}
 )
@@ -253,8 +332,8 @@ SELECT
     destination_chain,
     bridge_address,
     source_address,
-    destination_address,        
-    direction,        
+    destination_address,
+    direction,
     token_address,
     amount_raw,
     inserted_timestamp,

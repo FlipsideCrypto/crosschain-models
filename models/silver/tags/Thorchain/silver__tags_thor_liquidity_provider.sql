@@ -1,14 +1,43 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "address",
+    unique_key = ["address","blockchain"],
     incremental_strategy = 'merge',
     merge_update_columns = ['creator', 'modified_timestamp'],
 ) }}
 
-WITH lp_from AS (
+WITH base AS (
 
     SELECT
-        DISTINCT 'thorchain' AS blockchain,
+        A.*,
+        b.block_id
+    FROM
+        {{ source(
+            'thorchain_defi',
+            'fact_liquidity_actions'
+        ) }} A
+        JOIN {{ source(
+            'thorchain_core',
+            'dim_block'
+        ) }}
+        b
+        ON A.dim_block_id = b.dim_block_id
+
+{% if is_incremental() %}
+WHERE
+    DATE_TRUNC(
+        'day',
+        A.block_timestamp
+    ) >= (
+        SELECT
+            MAX(start_date)
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
+lp_from AS (
+    SELECT
+        'thorchain' AS blockchain,
         'flipside' AS creator,
         from_address AS address,
         'thorchain liquidity provider' AS tag_name,
@@ -18,31 +47,19 @@ WITH lp_from AS (
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
-        {{ source(
-            'thorchain',
-            'liquidity_actions'
-        ) }}
+        base
     WHERE
         lp_action = 'add_liquidity'
         AND address != 'NULL'
         AND address IS NOT NULL
-
-{% if is_incremental() %}
-AND block_id NOT IN (
-    SELECT
-        DISTINCT block_id
-    FROM
-        {{ this }}
-)
-{% endif %}
-GROUP BY
-    address
-ORDER BY
-    address DESC
+    GROUP BY
+        address
+    ORDER BY
+        address DESC
 ),
 to_asset AS (
     SELECT
-        DISTINCT CASE
+        CASE
             WHEN LEFT(
                 asset_address,
                 3
@@ -106,28 +123,16 @@ to_asset AS (
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
-        {{ source(
-            'thorchain',
-            'liquidity_actions'
-        ) }}
+        base
     WHERE
         lp_action = 'add_liquidity'
         AND asset_address != 'NULL'
         AND asset_address IS NOT NULL
         AND blockchain != 'error'
-
-{% if is_incremental() %}
-AND block_id NOT IN (
-    SELECT
-        DISTINCT block_id
-    FROM
-        {{ this }}
-)
-{% endif %}
-GROUP BY
-    address
-ORDER BY
-    address DESC
+    GROUP BY
+        address
+    ORDER BY
+        address DESC
 ),
 final_table AS (
     SELECT
@@ -142,9 +147,9 @@ final_table AS (
 )
 SELECT
     A.*,
-    sysdate() as inserted_timestamp,
-    sysdate() as modified_timestamp,
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['address']) }} AS tags_thor_liquidity_provider_id,
-    '{{ invocation_id }}' as _invocation_id
+    '{{ invocation_id }}' AS _invocation_id
 FROM
     final_table A
