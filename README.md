@@ -61,8 +61,31 @@ We recommend you [review our docs on Tags](https://docs.flipsidecrypto.com/our-d
 
 Flipside has a very active community and extraordinarily helpful employees. Reach out to the community, or to @gto, in Discord and someone will help you set up your tags. 
 
+When submitting, please include 3 itmes:
+  - Brief description of your tag (what are you trying to tag)?
+  - What is the cadence of refresh this needs?
+  - SQL query. Reminder, your SQL MUST include:
 
+  Column Name | Description
+  --- | --- 
+  blockchain | The blockchain that the address belongs to.
+  creator | Who created the tag. Use your Flipside username, shown in your Flipside profile URL, for tags you create.
+  address | The address of the contract or wallet the tag describes.
+  tag_name | Tag name (sub-category).
+  tag_type | Tag type (high-level category).
+  start_date | Date the tag first applies. For tags that are permanent, this might be the date the address had its first behavior that warrants its tag, or the addresses' first transaction (e.g. if the tag identifies a celebrity NFT address).
+  end_date | Date the tag no longer applies (for tags that are permanent or currently active, end_date can be NULL).
 
+### To reload records in a curated complete table without a full-refresh, such as `silver.complete_dex_swaps`:
+* HEAL_CURATED_MODEL
+Default is an empty array []
+When item is included in var array [], incremental logic will be skipped for that CTE / code block  
+When item is not included in var array [] or does not match specified item in model, incremental logic will apply
+Example set up: `{% if is_incremental() and 'optimism' not in var('HEAL_CURATED_MODEL') %}`
+
+* Usage:
+Single CTE: dbt run --vars '{"HEAL_CURATED_MODEL":"optimism"}' -m ...
+Multiple CTEs: dbt run --vars '{"HEAL_CURATED_MODEL":["optimism","base","solana"]}' -m ...
 
 ## How to Set Up a DBT Profile for this Repo
 This info is for contributors who plan to use [DBT](https://docs.getdbt.com/docs/introduction) to contribute to Flipside's data models. A DBT profile is _not_ required to add tags via a seed file (to add tags, follow the instructions above).
@@ -95,27 +118,3 @@ crosschain:
 - Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
 - Find [dbt events](https://events.getdbt.com) near you
 - Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
-
-
-
-
-
-
-
-
-
-
-When submitting, please include 3 itmes:
-  - Brief description of your tag (what are you trying to tag)?
-  - What is the cadence of refresh this needs?
-  - SQL query. Reminder, your SQL MUST include:
-
-  Column Name | Description
-  --- | --- 
-  blockchain | The blockchain that the address belongs to.
-  creator | Who created the tag. Use your Flipside username, shown in your Flipside profile URL, for tags you create.
-  address | The address of the contract or wallet the tag describes.
-  tag_name | Tag name (sub-category).
-  tag_type | Tag type (high-level category).
-  start_date | Date the tag first applies. For tags that are permanent, this might be the date the address had its first behavior that warrants its tag, or the addresses' first transaction (e.g. if the tag identifies a celebrity NFT address).
-  end_date | Date the tag no longer applies (for tags that are permanent or currently active, end_date can be NULL).
