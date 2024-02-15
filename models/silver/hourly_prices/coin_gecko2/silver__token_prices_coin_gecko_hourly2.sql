@@ -1,8 +1,7 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "token_prices_coin_gecko_hourly_id",
-    incremental_strategy = 'merge',
-    merge_exclude_columns = ["inserted_timestamp"],
+    unique_key = ['recorded_hour','token_address','platform'],
+    incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE']
 ) }}
 
@@ -28,7 +27,7 @@ WITH date_hours AS (
 {% if is_incremental() %}
 AND date_hour >= (
     SELECT
-        MAX(recorded_hour) - INTERVAL '72 hours'
+        MAX(recorded_hour) - INTERVAL '36 hours'
     FROM
         {{ this }}
 )
@@ -43,7 +42,7 @@ asset_metadata AS (
             WHEN id = 'osmosis' THEN 'uosmo'
             WHEN id = 'algorand' THEN '0'
             ELSE token_address
-        END AS token_address,
+        END AS token_address_adj,
         id,
         LOWER(
             CASE
@@ -52,19 +51,22 @@ asset_metadata AS (
                 WHEN id = 'solana' THEN 'solana'
                 ELSE platform :: STRING
             END
-        ) AS platform,
+        ) AS platform_adj,
         _inserted_timestamp
     FROM
         {{ ref(
             'silver__asset_metadata_coin_gecko2'
         ) }}
+        qualify(ROW_NUMBER() over (PARTITION BY token_address_adj, platform_adj
+    ORDER BY
+        _inserted_timestamp DESC)) = 1
 ),
 base_date_hours_address AS (
     SELECT
         date_hour,
-        token_address,
+        token_address_adj AS token_address,
         id,
-        platform
+        platform_adj AS platform
     FROM
         date_hours
         CROSS JOIN asset_metadata
@@ -72,11 +74,11 @@ base_date_hours_address AS (
 base_prices AS (
     SELECT
         p.recorded_hour,
-        p._inserted_timestamp,
-        m.token_address,
+        m.token_address_adj AS token_address,
         p.id,
-        m.platform,
-        p.close
+        m.platform_adj AS platform,
+        p.close,
+        p._inserted_timestamp
     FROM
         {{ ref(
             'silver__hourly_prices_coin_gecko2'
@@ -88,7 +90,7 @@ base_prices AS (
 {% if is_incremental() %}
 AND p._inserted_timestamp >= (
     SELECT
-        MAX(_inserted_timestamp) - INTERVAL '72 hours'
+        MAX(_inserted_timestamp) - INTERVAL '36 hours'
     FROM
         {{ this }}
 )
@@ -106,7 +108,6 @@ imputed_prices AS (
             p.close ignore nulls
         ) over (
             PARTITION BY d.token_address,
-            d.id,
             d.platform
             ORDER BY
                 d.date_hour rows unbounded preceding
@@ -119,17 +120,13 @@ imputed_prices AS (
             WHEN hourly_close IS NULL THEN TRUE
             ELSE FALSE
         END AS imputed,
-        _inserted_timestamp
+        p._inserted_timestamp
     FROM
         base_date_hours_address d
         LEFT JOIN base_prices p
         ON p.recorded_hour = d.date_hour
         AND p.token_address = d.token_address
-        AND LOWER(
-            p.id
-        ) = LOWER(
-            d.id
-        )
+        AND p.platform = d.platform
 ),
 final_prices AS (
     SELECT
@@ -146,7 +143,8 @@ final_prices AS (
         END AS _imputed_timestamp
     FROM
         imputed_prices
-    WHERE CLOSE IS NOT NULL
+    WHERE
+        CLOSE IS NOT NULL
 )
 SELECT
     recorded_hour,
@@ -161,8 +159,7 @@ SELECT
     ) AS _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','token_address','id','platform']) }} AS token_prices_coin_gecko_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','token_address','platform']) }} AS token_prices_coin_gecko_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     final_prices
---original model is unique on recorded_hour, token_address, platform NOT INCLUDING id

@@ -4,8 +4,8 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - ID
             - TOKEN_ADDRESS
+            - PLATFORM
     columns:
       - name: ID
         tests:
@@ -20,7 +20,7 @@ models:
       - name: PLATFORM
         tests:
           - not_null:
-              where: token_address is not null
+              where: token_address IS NOT NULL
       - name: _INSERTED_TIMESTAMP
         tests:
           - not_null

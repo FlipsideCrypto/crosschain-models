@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "CONCAT_WS('-', id, recorded_hour)",
+    unique_key = ['id','recorded_hour'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
 ) }}
@@ -17,7 +17,7 @@ WITH base AS (
             'hour',
             recorded_timestamp
         ) AS recorded_hour,
-        f.value [1] AS price,
+        f.value [1] :: FLOAT AS price,
         ROW_NUMBER() over(
             PARTITION BY recorded_hour,
             id,
@@ -102,3 +102,4 @@ FROM
     FINAL qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
 ORDER BY
     _inserted_timestamp DESC)) = 1
+--union/join history/backfill + realtime in this model
