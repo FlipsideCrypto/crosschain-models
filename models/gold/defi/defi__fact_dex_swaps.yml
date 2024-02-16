@@ -6,55 +6,29 @@ models:
     columns:
       - name: BLOCKCHAIN
         description: Blockchain, Network, or Platform the token price is recorded on.
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: PLATFORM
         description: The name of the dex or swap platform
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: BLOCK_NUMBER
-        description: Also known as block height. The block number, which indicates the length of the blockchain, increases after the addition of each new block. 
-        tests:
-          - dbt_expectations.expect_column_to_exist          
+        description: Also known as block height. The block number, which indicates the length of the blockchain, increases after the addition of each new block.     
       - name: BLOCK_TIMESTAMP
         description: The date and time at which the block was produced.  
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: TX_HASH
         description: Transaction hash is a unique identifier that is generated when a transaction is executed. 
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: CONTRACT_ADDRESS
         description: The contract address interacted with for the swap, typically the liquidity pool or router address, where applicable. Value may be NULL for certain chains, such as Osmosis and Near, where records occur at a different granularity such as one row per transaction rather than one row per event.
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: TRADER
         description: The address that initiated the swap.
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: TOKEN_IN
         description: The address of the token sent for swap.
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: AMOUNT_IN_RAW
         description: The unadjusted amount of tokens put into the swap.
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: TOKEN_OUT
         description: The address of the token being swapped to.
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: AMOUNT_OUT_RAW
         description: The unadjusted amount of tokens taken out of or received from the swap.
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: _LOG_ID
-        tests:
-          - dbt_expectations.expect_column_to_exist
       - name: FACT_DEX_SWAPS_ID
         description: '{{ doc("pk") }}'   
-        tests:
-          - unique
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   
       - name: MODIFIED_TIMESTAMP

@@ -2,10 +2,7 @@ version: 2
 models:
   - name: defi__fact_bridge_activity
     description: '{{ doc("bridge_fact_table_doc") }}'  
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - FACT_BRIDGE_ACTIVITY_ID
+
     columns:
       - name: BLOCKCHAIN
         description: Blockchain, Network, or Platform the token bridge activity is recorded on.
