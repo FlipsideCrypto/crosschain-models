@@ -1,6 +1,6 @@
 {{ config (
     materialized = "view",
-    post_hook = if_data_call_function_v2(
+    post_hook = fsc_utils.if_data_call_function_v2(
         func = 'udf_bulk_rest_api_v2',
         target = "{{this.schema}}.{{this.identifier}}",
         params = {
