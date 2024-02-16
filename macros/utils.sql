@@ -115,3 +115,41 @@
     {% do run_and_log_sql(sql) %}
     {% do log("Privileges granted", info=True) %}
 {% endmacro %}
+
+{% macro if_data_call_function_v2(
+        func,
+        target,
+        params
+    ) %}
+    {% if var(
+            "STREAMLINE_INVOKE_STREAMS"
+        ) %}
+        {% if execute %}
+            {{ log(
+                "Running macro `if_data_call_function`: Calling udf " ~ func ~ " with params: \n" ~ params | tojson(indent=2) ~  "\n on " ~ target,
+                True
+            ) }}
+        {% endif %}
+    SELECT
+        {{ this.schema }}.{{ func  }}( parse_json($${{ params | tojson }}$$) )
+    WHERE
+        EXISTS(
+            SELECT
+                1
+            FROM
+                {{ target }}
+            LIMIT
+                1
+        )
+    {% else %}
+        {% if execute %}
+            {{ log(
+                "Running macro `if_data_call_function`: NOOP",
+                False
+            ) }}
+        {% endif %}
+    SELECT
+        NULL
+    {% endif %}
+{% endmacro %}
+
