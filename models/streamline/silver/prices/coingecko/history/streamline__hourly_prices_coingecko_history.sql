@@ -28,7 +28,7 @@ WITH runtimes AS (
         run_time,
         id
     FROM
-        {{ ref("streamline__complete_coingecko_prices") }}
+        {{ ref("streamline__hourly_prices_coingecko_complete") }}
 )
 SELECT
     run_time,

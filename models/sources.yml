@@ -321,6 +321,7 @@ sources:
       - name: asset_historical_hourly_market_data_coin_gecko_api
       - name: asset_ohlc_coin_gecko_api
       - name: asset_prices_coin_gecko_api
+      - name: asset_ohlc_coin_gecko_api_v2
   - name: bronze
     database: crosschain
     schema: bronze
