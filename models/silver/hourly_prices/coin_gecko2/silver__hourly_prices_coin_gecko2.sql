@@ -170,3 +170,4 @@ ORDER BY
     _inserted_timestamp DESC)) = 1 -- history model will run 1 day behind, realtime will run every hour
     -- add logic to account for overlap / heal from history
     -- e.g. if prices reload from history, then overwrite existing data (delete+insert)
+ 
