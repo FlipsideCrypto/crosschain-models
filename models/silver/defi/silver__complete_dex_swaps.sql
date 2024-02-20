@@ -388,43 +388,6 @@ AND _inserted_timestamp >= (
 )
 {% endif %}
 ),
-near AS (
-    SELECT
-        'near' AS blockchain,
-        platform,
-        block_id AS block_number,
-        block_timestamp,
-        tx_hash,
-        NULL AS contract_address,
-        trader,
-        token_in_contract AS token_in,
-        n.token_in AS symbol_in,
-        amount_in_raw,
-        amount_in,
-        token_out_contract AS token_out,
-        n.token_out AS symbol_out,
-        amount_out_raw,
-        amount_out,
-        swap_id AS _log_id,
-        modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['swap_id','blockchain']) }} AS complete_dex_swaps_id
-    FROM
-        {{ source(
-            'near_defi',
-            'ez_dex_swaps'
-        ) }}
-        n
-
-{% if is_incremental() and 'near' not in var('HEAL_CURATED_MODEL') %}
-WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
-        FROM
-            {{ this }}
-    )
-{% endif %}
-),
 all_chains_dex AS (
     SELECT
         *
@@ -475,11 +438,6 @@ all_chains_dex AS (
         *
     FROM
         solana
-    UNION ALL
-    SELECT
-        *
-    FROM
-        near
 )
 SELECT
     d.blockchain,
