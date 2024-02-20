@@ -368,6 +368,41 @@ WHERE
     )
 {% endif %}
 ),
+near AS (
+    SELECT
+        'near' AS blockchain,
+        platform,
+        block_id AS block_number,
+        block_timestamp,
+        tx_hash,
+        LOWER(source_chain) AS source_chain,
+        LOWER(destination_chain) AS destination_chain,
+        bridge_address,
+        source_address,
+        destination_address,
+        direction,
+        token_address,
+        symbol AS token_symbol,
+        amount_unadj AS amount_raw,
+        amount,
+        modified_timestamp AS _inserted_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+    FROM
+        {{ source(
+            'near_defi',
+            'ez_bridge_activity'
+        ) }}
+
+{% if is_incremental() and 'near' not in var('HEAL_CURATED_MODEL') %}
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
 all_chains_bridge AS (
     SELECT
         *
@@ -418,6 +453,11 @@ all_chains_bridge AS (
         *
     FROM
         aptos
+    UNION ALL
+    SELECT
+        *
+    FROM
+        near
 )
 SELECT
     b.blockchain,
