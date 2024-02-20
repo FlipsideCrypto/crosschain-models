@@ -4,7 +4,7 @@
         func = "{{this.schema}}.udf_bulk_rest_api_v2(object_construct('sql_source', '{{this.identifier}}', 'external_table', 'ASSET_OHLC_API/COINGECKO', 'sql_limit', {{var('sql_limit','10')}}, 'producer_batch_size', {{var('producer_batch_size','10')}}, 'worker_batch_size', {{var('worker_batch_size','10')}}, 'sm_secret_name','prod/coingecko/rest'))",
         target = "{{this.schema}}.{{this.identifier}}"
     ),
-    tags = ['ohlc_realtime_v2']
+    tags = ['streamline_prices_realtime']
 ) }}
 
 WITH calls AS (
@@ -17,13 +17,13 @@ WITH calls AS (
             SELECT
                 id as asset_id
             FROM
-                {{ ref("bronze__asset_metadata_coin_gecko") }}
+                {{ ref("bronze__streamline_asset_metadata_coingecko_realtime") }}
             WHERE
                 _inserted_date = (
                     SELECT
                         MAX(_inserted_date)
                     FROM
-                        {{ ref("bronze__asset_metadata_coin_gecko") }}
+                        {{ ref("bronze__streamline_asset_metadata_coingecko_realtime") }}
                 )
         )
 )
@@ -40,3 +40,4 @@ SELECT
     )AS request
 FROM
     calls
+    

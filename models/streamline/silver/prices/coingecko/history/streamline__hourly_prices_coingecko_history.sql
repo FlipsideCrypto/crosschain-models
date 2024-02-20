@@ -14,14 +14,14 @@ WITH runtimes AS (
         id
     FROM
         {{ ref("streamline__runtimes") }}
-        JOIN {{ ref("bronze__asset_metadata_coin_gecko") }}
+        JOIN {{ ref("bronze__streamline_asset_metadata_coingecko_realtime") }}
         ON 1 = 1
     WHERE
         _inserted_date = (
             SELECT
                 MAX(_inserted_date)
             FROM
-                {{ ref("bronze__asset_metadata_coin_gecko") }}
+                {{ ref("bronze__streamline_asset_metadata_coingecko_realtime") }}
         )
     EXCEPT
     SELECT

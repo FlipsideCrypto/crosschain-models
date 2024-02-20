@@ -18,7 +18,7 @@ FROM
     {{ source(
         "bronze_streamline",
         "asset_prices_coin_gecko_api"
-    ) }}
+    ) }} --update to use `bronze__streamline_hourly_prices_coingecko_history` table
 WHERE
     TRUE
 
@@ -33,3 +33,4 @@ AND _inserted_at >= COALESCE(
     '1900-01-01' :: timestamp_ntz
 )
 {% endif %}
+--union in `bronze__streamline_hourly_prices_coingecko_realtime` table
