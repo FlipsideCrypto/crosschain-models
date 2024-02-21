@@ -1,33 +1,33 @@
-name: dbt_run_streamline_prices_history
-run-name: dbt_run_streamline_prices_history
+# name: dbt_run_streamline_prices_history
+# run-name: dbt_run_streamline_prices_history
 
-on:
-  workflow_dispatch:
-  schedule:
-      # Runs at minute 5 every hour (see https://crontab.guru)
-      - cron: '5 * * * *'  
+# on:
+#   workflow_dispatch:
+#   schedule:
+#       # Runs at minute 5 every hour (see https://crontab.guru)
+#       - cron: '5 * * * *'  
     
-env:
-  DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
-  DBT_VERSION: "${{ vars.DBT_VERSION }}"
-  ACCOUNT: "${{ vars.ACCOUNT }}"
-  ROLE: "${{ vars.ROLE }}"
-  USER: "${{ vars.USER }}"
-  PASSWORD: "${{ secrets.PASSWORD }}"
-  REGION: "${{ vars.REGION }}"
-  DATABASE: "${{ vars.DATABASE }}"
-  WAREHOUSE: "${{ vars.WAREHOUSE }}"
-  SCHEMA: "${{ vars.SCHEMA }}"
-  STREAMLINE_INVOKE_STREAMS: "True"
-  STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES: "False"
+# env:
+#   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
+#   DBT_VERSION: "${{ vars.DBT_VERSION }}"
+#   ACCOUNT: "${{ vars.ACCOUNT }}"
+#   ROLE: "${{ vars.ROLE }}"
+#   USER: "${{ vars.USER }}"
+#   PASSWORD: "${{ secrets.PASSWORD }}"
+#   REGION: "${{ vars.REGION }}"
+#   DATABASE: "${{ vars.DATABASE }}"
+#   WAREHOUSE: "${{ vars.WAREHOUSE }}"
+#   SCHEMA: "${{ vars.SCHEMA }}"
+#   STREAMLINE_INVOKE_STREAMS: "True"
+#   STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES: "False"
 
 
-jobs:
-  called_workflow_template:
-    uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
-    with:
-      dbt_command: dbt run --vars '{"STREAMLINE_INVOKE_STREAMS":True}' -m "crosschain_models,tag:streamline_asset_metadata_realtime" --target prod
-      environment: workflow_prod
-      warehouse: ${{ vars.WAREHOUSE }}
-    secrets: inherit 
+# jobs:
+#   called_workflow_template:
+#     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
+#     with:
+#       dbt_command: dbt run --vars '{"STREAMLINE_INVOKE_STREAMS":True}' -m "crosschain_models,tag:streamline_asset_metadata_realtime" --target prod
+#       environment: workflow_prod
+#       warehouse: ${{ vars.WAREHOUSE }}
+#     secrets: inherit 
           
