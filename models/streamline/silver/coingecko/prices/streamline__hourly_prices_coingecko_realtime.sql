@@ -1,16 +1,8 @@
 {{ config (
     materialized = "view",
-    post_hook = if_data_call_function_v2(
-        func = 'udf_bulk_rest_api_v2',
-        target = "{{this.schema}}.{{this.identifier}}",
-        params = {
-            "external_table": "ASSET_OHLC_API/COINGECKO",
-            "sql_limit": "10",
-            "producer_batch_size": "10",
-            "worker_batch_size": "10",
-            "sm_secret_name": "prod/coingecko/rest",
-            "sql_source": "{{this.identifier}}"
-        }
+    post_hook = if_data_call_function(
+        func = "{{this.schema}}.udf_bulk_rest_api_v2(object_construct('sql_source', '{{this.identifier}}', 'external_table', 'ASSET_OHLC_API/COINGECKO', 'sql_limit', {{var('sql_limit','10')}}, 'producer_batch_size', {{var('producer_batch_size','10')}}, 'worker_batch_size', {{var('worker_batch_size','10')}}, 'sm_secret_name','prod/coingecko/rest'))",
+        target = "{{this.schema}}.{{this.identifier}}"
     ),
     tags = ['streamline_prices_realtime2']
 ) }}
@@ -18,7 +10,7 @@
 WITH calls AS (
 
     SELECT
-        '{service}/api/v3/coins/' || asset_id || '/ohlc?vs_currency=usd&days=1&x_cg_pro_api_key={Authentication}' calls,
+        '{service}/api/v3/coins/' || asset_id || '/ohlc?vs_currency=usd&days=1&x_cg_pro_api_key={Authentication}' AS api_url,
         asset_id
     FROM
         (
@@ -37,10 +29,10 @@ WITH calls AS (
 )
 SELECT
     ARRAY_CONSTRUCT(
-        DATE_PART('EPOCH', CURRENT_DATE())::INTEGER,
+        DATE_PART('EPOCH', SYSDATE())::INTEGER,
         ARRAY_CONSTRUCT(
             'GET',
-            calls,
+            api_url,
             PARSE_JSON('{}'),
             PARSE_JSON('{}'),
             ''

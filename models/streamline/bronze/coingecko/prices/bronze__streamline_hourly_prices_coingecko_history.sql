@@ -11,6 +11,7 @@ SELECT
 FROM
     {{ source(
         'bronze_streamline',
-        'asset_prices_coin_gecko_api'
+        'asset_market_chart_coin_gecko_api_v2'
     ) }}
     -- endpoint: market_chart
+-- needs backfill data migrated from streamline.crosschain.asset_prices_coin_gecko_api

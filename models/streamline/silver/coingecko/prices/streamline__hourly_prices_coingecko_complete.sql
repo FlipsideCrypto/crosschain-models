@@ -15,10 +15,11 @@ SELECT
     id || '-' || run_time :: VARCHAR AS UID,
     metadata$file_last_modified AS _inserted_at
 FROM
-    {{ source(
+    {{ ref(
         "bronze_streamline",
         "asset_prices_coin_gecko_api"
-    ) }} --update to use `bronze__streamline_hourly_prices_coingecko_history` table
+    ) }} 
+    --update to use {{ ref('bronze__streamline_hourly_prices_coingecko_history') }}
 WHERE
     TRUE
 
