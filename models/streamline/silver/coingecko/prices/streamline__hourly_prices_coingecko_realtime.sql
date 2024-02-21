@@ -17,13 +17,13 @@ WITH calls AS (
             SELECT
                 id as asset_id
             FROM
-                {{ ref("bronze__streamline_asset_metadata_coingecko_realtime") }}
+                {{ ref("bronze__streamline_asset_metadata_coingecko") }}
             WHERE
                 _inserted_date = (
                     SELECT
                         MAX(_inserted_date)
                     FROM
-                        {{ ref("bronze__streamline_asset_metadata_coingecko_realtime") }}
+                        {{ ref("bronze__streamline_asset_metadata_coingecko") }}
                 )
         )
 )
