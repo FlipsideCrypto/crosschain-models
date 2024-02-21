@@ -2,11 +2,29 @@
     materialized = 'incremental',
     unique_key = "address",
     incremental_strategy = 'delete+insert',
+    post_hook = "delete from {{this}} a using {{ ref('silver__snowflake_Avalanche_satellites') }} b where a.address = b.address ",
 ) }}
 
-WITH distributor_cex AS (
-    -- THIS STATEMENT FINDS KNOWN CEX LABELS WITHIN THE BRONZE ADDRESS LABELS TABLE
+WITH raw AS(
 
+    SELECT
+        live.udf_api('https://gateway.ipfs.io/ipns/tokens.uniswap.org') AS resp
+),
+tokens AS (
+    SELECT
+        VALUE :name AS NAME,
+        VALUE :symbol AS symbol,
+        VALUE :address AS address,
+        VALUE :chainId AS chain_id,
+        VALUE :decimals AS decimals
+    FROM
+        raw,
+        LATERAL FLATTEN (
+            input => resp :data :tokens
+        )
+),
+distributor_cex AS (
+    -- THIS STATEMENT FINDS KNOWN CEX LABELS WITHIN THE BRONZE ADDRESS LABELS TABLE
     SELECT
         system_created_at,
         insert_date,
@@ -20,7 +38,7 @@ WITH distributor_cex AS (
     FROM
         {{ ref('silver__address_labels') }}
     WHERE
-        blockchain = 'base'
+        blockchain = 'avalanche'
         AND l1_label = 'cex'
         AND l2_label = 'hot_wallet'
         AND delete_flag IS NULL
@@ -49,7 +67,7 @@ possible_sats AS (
                 ) AS project_count -- how many projects has each from address sent to
             FROM
                 {{ source(
-                    'base_core',
+                    'avalanche_core',
                     'fact_token_transfers'
                 ) }}
                 xfer
@@ -57,6 +75,14 @@ possible_sats AS (
                 ON dc.address = xfer.to_address
             WHERE
                 raw_amount > 0
+                AND contract_address IN (
+                    SELECT
+                        DISTINCT LOWER(address)
+                    FROM
+                        tokens
+                    WHERE
+                        chain_id = '43114'
+                )
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -72,32 +98,32 @@ GROUP BY
     8,
     9
 UNION
-        SELECT
-            DISTINCT dc.system_created_at,
-            dc.insert_date,
-            dc.blockchain,
-            xfer.from_address AS address,
-            dc.creator,
-            dc.address_name,
-            dc.project_name,
-            dc.l1_label,
-            'deposit_wallet' AS l2_label,
-            COUNT(
-                DISTINCT project_name
-            ) over(
-                PARTITION BY dc.blockchain,
-                xfer.from_address
-            ) AS project_count -- how many projects has each from address sent to
-        FROM
-            {{ source(
-                'base_core',
-                'ez_native_transfers'
-            ) }}
-            xfer
-            JOIN distributor_cex dc
-            ON dc.address = xfer.to_address
-        WHERE
-            amount > 0
+SELECT
+    DISTINCT dc.system_created_at,
+    dc.insert_date,
+    dc.blockchain,
+    xfer.from_address AS address,
+    dc.creator,
+    dc.address_name,
+    dc.project_name,
+    dc.l1_label,
+    'deposit_wallet' AS l2_label,
+    COUNT(
+        DISTINCT project_name
+    ) over(
+        PARTITION BY dc.blockchain,
+        xfer.from_address
+    ) AS project_count -- how many projects has each from address sent to
+FROM
+    {{ source(
+        'avalanche_core',
+        'ez_native_transfers'
+    ) }}
+    xfer
+    JOIN distributor_cex dc
+    ON dc.address = xfer.to_address
+WHERE
+    amount > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -123,7 +149,7 @@ real_sats AS (
         ) AS project_names
     FROM
         {{ source(
-            'base_core',
+            'avalanche_core',
             'fact_token_transfers'
         ) }}
         xfer
@@ -137,6 +163,14 @@ real_sats AS (
                 possible_sats
         )
         AND raw_amount > 0
+        AND contract_address IN (
+            SELECT
+                DISTINCT LOWER(address)
+            FROM
+                tokens
+            WHERE
+                chain_id = '43114'
+        )
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -150,7 +184,7 @@ SELECT
     ) AS project_names
 FROM
     {{ source(
-        'base_core',
+        'avalanche_core',
         'ez_native_transfers'
     ) }}
     tr
@@ -219,15 +253,15 @@ SELECT
     f.l2_label,
     f.address_name,
     f.project_name,
-    sysdate() as inserted_timestamp,
-    sysdate() as modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['f.address']) }} AS snowflake_base_satellites_id,
-    '{{ invocation_id }}' as _invocation_id
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['f.address']) }} AS snowflake_avalanche_satellites_id,
+    '{{ invocation_id }}' AS _invocation_id
 FROM
     final_base f
     LEFT JOIN {{ ref('silver__address_labels') }} A
     ON f.address = A.address
-    AND A.blockchain = 'base'
+    AND A.blockchain = 'avalanche'
     AND A.delete_flag IS NULL
 WHERE
     A.address IS NULL

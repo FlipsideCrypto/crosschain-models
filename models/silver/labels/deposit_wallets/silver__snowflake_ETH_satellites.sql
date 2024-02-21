@@ -6,7 +6,6 @@
 
 WITH distributor_cex AS (
     -- THIS STATEMENT FINDS KNOWN CEX LABELS WITHIN THE BRONZE ADDRESS LABELS TABLE
-
     SELECT
         system_created_at,
         insert_date,
@@ -72,33 +71,32 @@ GROUP BY
     8,
     9
 UNION
-SELECT
-    DISTINCT dc.system_created_at,
-    dc.insert_date,
-    dc.blockchain,
-    tr.from_address AS address,
-    dc.creator,
-    dc.address_name,
-    dc.project_name,
-    dc.l1_label,
-    'deposit_wallet' AS l2_label,
-    COUNT(
-        DISTINCT project_name
-    ) over(
-        PARTITION BY dc.blockchain,
-        tr.from_address
-    ) AS project_count
-FROM
-    {{ source(
-        'ethereum_core',
-        'fact_traces'
-    ) }}
-    tr
-    JOIN distributor_cex dc
-    ON dc.address = tr.to_address
-WHERE
-    tx_status = 'SUCCESS'
-    AND eth_value > 0
+        SELECT
+            DISTINCT dc.system_created_at,
+            dc.insert_date,
+            dc.blockchain,
+            xfer.from_address AS address,
+            dc.creator,
+            dc.address_name,
+            dc.project_name,
+            dc.l1_label,
+            'deposit_wallet' AS l2_label,
+            COUNT(
+                DISTINCT project_name
+            ) over(
+                PARTITION BY dc.blockchain,
+                xfer.from_address
+            ) AS project_count -- how many projects has each from address sent to
+        FROM
+            {{ source(
+                'ethereum_core',
+                'ez_native_transfers'
+            ) }}
+            xfer
+            JOIN distributor_cex dc
+            ON dc.address = xfer.to_address
+        WHERE
+            amount > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -152,7 +150,7 @@ SELECT
 FROM
     {{ source(
         'ethereum_core',
-        'fact_traces'
+        'ez_native_transfers'
     ) }}
     tr
     LEFT OUTER JOIN distributor_cex dc
@@ -164,8 +162,7 @@ WHERE
         FROM
             possible_sats
     )
-    AND tx_status = 'SUCCESS'
-    AND eth_value > 0
+    AND amount > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -221,10 +218,10 @@ SELECT
     f.l2_label,
     f.address_name,
     f.project_name,
-    sysdate() as inserted_timestamp,
-    sysdate() as modified_timestamp,
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['f.address']) }} AS snowflake_eth_satellites_id,
-    '{{ invocation_id }}' as _invocation_id
+    '{{ invocation_id }}' AS _invocation_id
 FROM
     final_base f
     LEFT JOIN {{ ref('silver__address_labels') }} A
