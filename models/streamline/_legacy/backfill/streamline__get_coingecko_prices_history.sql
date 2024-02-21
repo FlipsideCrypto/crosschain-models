@@ -13,22 +13,22 @@ WITH runtimes AS (
         run_time,
         id
     FROM
-        {{ ref("streamline__runtimes2") }}
-        JOIN {{ ref("bronze__streamline_asset_metadata_coingecko") }}
+        {{ ref("streamline__runtimes") }}
+        JOIN {{ ref("bronze__asset_metadata_coin_gecko") }}
         ON 1 = 1
     WHERE
         _inserted_date = (
             SELECT
                 MAX(_inserted_date)
             FROM
-                {{ ref("bronze__streamline_asset_metadata_coingecko") }}
+                {{ ref("bronze__asset_metadata_coin_gecko") }}
         )
     EXCEPT
     SELECT
         run_time,
         id
     FROM
-        {{ ref("streamline__hourly_prices_coingecko_complete") }}
+        {{ ref("streamline__complete_coingecko_prices") }}
 )
 SELECT
     run_time,
