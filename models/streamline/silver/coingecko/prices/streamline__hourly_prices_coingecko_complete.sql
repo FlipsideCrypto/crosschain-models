@@ -1,37 +1,84 @@
 {{ config (
     materialized = "incremental",
-    unique_key = "uid",
+    unique_key = "hourly_prices_coin_gecko_complete_id",
     cluster_by = "run_time::date",
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(uid)",
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(id)",
     tags = ['streamline_prices_complete2']
 ) }}
 
+WITH backfill AS (
+
+    SELECT
+        id,
+        run_time,
+        metadata,
+        DATA,
+        error,
+        {{ dbt_utils.generate_surrogate_key(['id','run_time']) }} AS hourly_prices_coin_gecko_complete_id,
+        metadata$file_last_modified AS _inserted_at
+    FROM
+        {{ ref(
+            'bronze__streamline_hourly_prices_coingecko_backfill'
+        ) }}
+
+{% if is_incremental() %}
+WHERE
+    _inserted_at >= COALESCE(
+        (
+            SELECT
+                MAX(_inserted_at) AS _inserted_at
+            FROM
+                {{ this }}
+        ),
+        '1900-01-01' :: TIMESTAMP_NTZ
+    )
+{% endif %}
+),
+history AS (
+    SELECT
+        id,
+        run_time,
+        metadata,
+        DATA,
+        error,
+        {{ dbt_utils.generate_surrogate_key(['id','run_time']) }} AS hourly_prices_coin_gecko_complete_id,
+        metadata$file_last_modified AS _inserted_at
+    FROM
+        {{ ref(
+            'bronze__streamline_hourly_prices_coingecko_history'
+        ) }}
+
+{% if is_incremental() %}
+WHERE
+    _inserted_at >= COALESCE(
+        (
+            SELECT
+                MAX(_inserted_at) AS _inserted_at
+            FROM
+                {{ this }}
+        ),
+        '1900-01-01' :: TIMESTAMP_NTZ
+    )
+{% endif %}
+),
+all_historical_prices AS (
+    SELECT
+        *
+    FROM
+        backfill
+    UNION ALL
+    SELECT
+        *
+    FROM
+        history
+)
 SELECT
     id,
     run_time,
     metadata,
     DATA,
     error,
-    id || '-' || run_time :: VARCHAR AS UID,
-    metadata$file_last_modified AS _inserted_at
+    hourly_prices_coin_gecko_complete_id,
+    _inserted_at
 FROM
-    {{ source(
-        "bronze_streamline",
-        "asset_prices_coin_gecko_api"
-    ) }} 
-    --update to use {{ ref('bronze__streamline_hourly_prices_coingecko_history') }}
-WHERE
-    TRUE
-
-{% if is_incremental() %}
-AND _inserted_at >= COALESCE(
-    (
-        SELECT
-            MAX(_inserted_at) _inserted_at
-        FROM
-            {{ this }}
-    ),
-    '1900-01-01' :: timestamp_ntz
-)
-{% endif %}
---union in `bronze__streamline_hourly_prices_coingecko_realtime` table
+    all_historical_prices

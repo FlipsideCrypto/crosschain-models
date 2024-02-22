@@ -10,19 +10,19 @@
 WITH assets AS (
 
     SELECT
-        id AS asset_id,
+        DISTINCT id AS asset_id
+    FROM
+        {{ ref('silver__asset_metadata_coin_gecko2') }}
+),
+run_times AS (
+    SELECT
+        asset_id,
         run_time
     FROM
-        {{ ref('bronze__streamline_asset_metadata_coingecko') }}
+        assets
         CROSS JOIN {{ ref('streamline__runtimes2') }}
     WHERE
-        _inserted_date = (
-            SELECT
-                MAX(_inserted_date)
-            FROM
-                {{ ref("bronze__streamline_asset_metadata_coingecko") }}
-        )
-        AND run_time < DATEADD('day', -1, SYSDATE())
+        run_time < DATEADD('day', -1, SYSDATE())
     EXCEPT
     SELECT
         id AS asset_id,
@@ -32,29 +32,28 @@ WITH assets AS (
     WHERE
         run_time < DATEADD('day', -1, SYSDATE())
     ),
-    calls AS (
-        SELECT
-            asset_id,
-            DATE_PART(
-                'EPOCH',
-                run_time
-            ) :: INTEGER AS run_time_epoch,
-            '{service}/api/v3/coins/' || asset_id || '/market_chart/range?vs_currency=usd&from=' || run_time_epoch || '&to=' || run_time_epoch || '&x_cg_pro_api_key={Authentication}' AS api_url
-        FROM
-            assets
-    )
+calls AS (
     SELECT
-        run_time_epoch AS partition_key,
-        ARRAY_CONSTRUCT(
-            partition_key,
-            ARRAY_CONSTRUCT(
-                'GET',
-                api_url,
-                PARSE_JSON('{}'),
-                PARSE_JSON('{}'),
-                ''
-            )
-        ) AS request
+        asset_id,
+        DATE_PART(
+            'EPOCH',
+            run_time
+        ) :: INTEGER AS run_time_epoch,
+        '{service}/api/v3/coins/' || asset_id || '/market_chart/range?vs_currency=usd&from=' || run_time_epoch || '&to=' || run_time_epoch || '&x_cg_pro_api_key={Authentication}' AS api_url
     FROM
-        calls
-        --dont run for assets already backfilled
+        run_times
+    )
+SELECT
+    run_time_epoch AS partition_key,
+    ARRAY_CONSTRUCT(
+        partition_key,
+        ARRAY_CONSTRUCT(
+            'GET',
+            api_url,
+            PARSE_JSON('{}'),
+            PARSE_JSON('{}'),
+            ''
+        )
+    ) AS request
+FROM
+    calls

@@ -7,37 +7,31 @@
     tags = ['streamline_prices_realtime2']
 ) }}
 
-WITH calls AS (
+WITH assets AS (
 
     SELECT
-        '{service}/api/v3/coins/' || asset_id || '/ohlc?vs_currency=usd&days=1&x_cg_pro_api_key={Authentication}' AS api_url,
-        asset_id
+        DISTINCT id AS asset_id
     FROM
-        (
-            SELECT
-                id as asset_id
-            FROM
-                {{ ref("bronze__streamline_asset_metadata_coingecko") }}
-            WHERE
-                _inserted_date = (
-                    SELECT
-                        MAX(_inserted_date)
-                    FROM
-                        {{ ref("bronze__streamline_asset_metadata_coingecko") }}
-                )
-        )
+        {{ ref("silver__asset_metadata_coin_gecko2") }}
+),
+calls AS (
+    SELECT
+        asset_id,
+        '{service}/api/v3/coins/' || asset_id || '/ohlc?vs_currency=usd&days=1&x_cg_pro_api_key={Authentication}' AS api_url
+    FROM
+        assets
 )
 SELECT
+    DATE_PART('EPOCH', SYSDATE()) :: INTEGER AS partition_key,
     ARRAY_CONSTRUCT(
-        DATE_PART('EPOCH', SYSDATE())::INTEGER,
+        partition_key,
         ARRAY_CONSTRUCT(
             'GET',
             api_url,
             PARSE_JSON('{}'),
             PARSE_JSON('{}'),
             ''
-        ) 
-    )AS request
+        )
+    ) AS request
 FROM
     calls
-    
