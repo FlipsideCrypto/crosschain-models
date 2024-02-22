@@ -15,7 +15,7 @@ SELECT
     id || '-' || run_time :: VARCHAR AS UID,
     metadata$file_last_modified AS _inserted_at
 FROM
-    {{ ref(
+    {{ source(
         "bronze_streamline",
         "asset_prices_coin_gecko_api"
     ) }} 

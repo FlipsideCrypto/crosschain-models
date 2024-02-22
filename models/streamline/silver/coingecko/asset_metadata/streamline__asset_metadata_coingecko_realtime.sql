@@ -13,8 +13,9 @@ WITH calls AS (
         '{service}/api/v3/coins/list?include_platform=true&x_cg_pro_api_key={Authentication}' AS api_url
 )
 SELECT
+    DATE_PART('EPOCH', SYSDATE())::INTEGER AS partition_key,
     ARRAY_CONSTRUCT(
-        DATE_PART('EPOCH', SYSDATE())::INTEGER,
+        partition_key,
         ARRAY_CONSTRUCT(
             'GET',
             api_url,
