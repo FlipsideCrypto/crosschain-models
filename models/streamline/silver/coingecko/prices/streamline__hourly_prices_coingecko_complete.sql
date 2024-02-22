@@ -82,3 +82,4 @@ SELECT
     _inserted_at
 FROM
     all_historical_prices
+-- `complete` model includes only assets from `history` data as `realtime` does not require `complete`

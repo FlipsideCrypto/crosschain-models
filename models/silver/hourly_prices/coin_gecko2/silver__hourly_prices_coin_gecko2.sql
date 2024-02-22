@@ -5,7 +5,7 @@
     cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
 ) }}
 
-WITH base_history AS (
+WITH base_backfill AS (
 
     SELECT
         _runtime_date,
@@ -44,7 +44,7 @@ WITH base_history AS (
         ) AS low_price,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__streamline_hourly_prices_coingecko_history') }}
+        {{ ref('bronze__streamline_hourly_prices_coingecko_backfill') }}
         s,
         LATERAL FLATTEN(input => DATA :prices) f
 
@@ -58,7 +58,7 @@ WHERE
     )
 {% endif %}
 ),
-final_history AS (
+final_backfill AS (
     SELECT
         id,
         recorded_hour,
@@ -77,7 +77,7 @@ final_history AS (
         _runtime_date,
         MAX(_inserted_timestamp) AS _inserted_timestamp
     FROM
-        base_history
+        base_backfill
     WHERE
         id IS NOT NULL
     GROUP BY
@@ -85,6 +85,7 @@ final_history AS (
         id,
         _runtime_date
 ),
+--add `history` model
 base_realtime AS (
     SELECT
         id,
@@ -144,7 +145,12 @@ all_prices AS (
     SELECT
         *
     FROM
-        final_history
+        final_backfill
+    {# UNION ALL
+    SELECT 
+        *
+    FROM 
+        final_history #}
     UNION ALL
     SELECT
         *
@@ -167,7 +173,9 @@ SELECT
 FROM
     all_prices qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
 ORDER BY
-    _inserted_timestamp DESC)) = 1 -- history model will run 1 day behind, realtime will run every hour
-    -- add logic to account for overlap / heal from history
-    -- e.g. if prices reload from history, then overwrite existing data (delete+insert)
+    _inserted_timestamp DESC)) = 1 
+    -- `backfill` data will be merged into `history` external table
+    -- `history` runs 1 day prior to current, `realtime` runs every hour for current day
+    -- need to test / add logic to account for overlap / heal from backfill and history
+    -- e.g. if prices reload from history, then does data need to be overwritten? will delete+insert properly handle?
  

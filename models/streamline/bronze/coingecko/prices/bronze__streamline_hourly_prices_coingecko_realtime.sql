@@ -14,3 +14,5 @@ FROM
         'asset_ohlc_coin_gecko_api_v2'
     ) }}
     -- endpoint: ohlc
+    -- streamline 2.0 external table
+    -- to serve as destination for `realtime` prices

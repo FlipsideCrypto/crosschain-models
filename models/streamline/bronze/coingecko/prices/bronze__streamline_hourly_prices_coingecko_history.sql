@@ -14,4 +14,5 @@ FROM
         'asset_market_chart_coin_gecko_api_v2'
     ) }}
     -- endpoint: market_chart
--- needs backfill data migrated from streamline.crosschain.asset_prices_coin_gecko_api
+    -- streamline 2.0 external table
+    -- to serve as primary `history` external table, but backfill data needs to be merged in

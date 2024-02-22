@@ -22,4 +22,6 @@ FROM
     LATERAL FLATTEN(input => VALUE :platforms) p qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
 ORDER BY
     _inserted_timestamp DESC)) = 1 
-    -- need logic / macro to handle assets no longer in source (e.g. deprecated by coingecko)
+    -- tagged as `complete` to run alongside prices `history` and `realtime` models
+    -- intended to feed calls with most up to date / currently support assets
+    -- needs logic / macro to handle or flag assets no longer in source (e.g. deprecated by coingecko)

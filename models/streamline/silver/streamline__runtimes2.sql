@@ -11,3 +11,4 @@ FROM
 WHERE
     date_day BETWEEN '2018-01-01' -- coingecko api pro plan start date
     AND DATEADD('day', -1, SYSDATE())
+-- end date updated to run one day prior to current date

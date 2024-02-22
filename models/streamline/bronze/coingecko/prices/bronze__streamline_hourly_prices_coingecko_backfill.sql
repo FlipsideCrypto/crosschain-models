@@ -14,4 +14,6 @@ FROM
         'asset_prices_coin_gecko_api'
     ) }}
     -- endpoint: market_chart
+    -- streamline 1.0 external table
     -- backfill only: '2018-01-01' - '2024-01-15'
+    -- data to be merged into streamline 2.0 external table `asset_market_chart_coin_gecko_api_v2`

@@ -98,7 +98,7 @@ AND p._inserted_timestamp >= (
 ),
 imputed_prices AS (
     SELECT
-        --dateadd(hour,1,date_hour) AS date_hour, --if we want to roll the close price forward 1 hour
+        --dateadd(hour,1,date_hour) AS recorded_hour, -- use this instead if we want to roll the close price forward 1 hour
         date_hour AS recorded_hour,
         d.token_address,
         d.id,

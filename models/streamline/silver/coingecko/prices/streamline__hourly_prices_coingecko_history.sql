@@ -57,3 +57,4 @@ SELECT
     ) AS request
 FROM
     calls
+-- needs to be tested with newly deployed streamline 2.0 external table, may need to update external table columns

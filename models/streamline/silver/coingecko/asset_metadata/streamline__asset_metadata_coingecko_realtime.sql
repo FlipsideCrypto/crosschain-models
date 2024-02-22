@@ -26,4 +26,4 @@ SELECT
     ) AS request
 FROM
     calls
-    --needs to run 10-15 min prior to prices workflows (both history,if running on recurring basis, + realtime)
+    -- needs to run 10-15 min prior to prices workflows (asset metadata referenced in history + realtime models)
