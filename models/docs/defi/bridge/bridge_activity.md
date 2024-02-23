@@ -1,12 +1,12 @@
 {% docs bridge_ez_table_doc %}
 
-A comprehensive convenience table holding blockchain and platform specific bridge activity from event_logs, traces and transfers, including bridge deposits/withdrawals and transfers in/out on the following blockchains: Arbitrum, Avalanche, Base, BSC, Gnosis, Ethereum, Optimism and Polygon. This table also includes prices and token symbols, where available.
+A comprehensive convenience table holding blockchain and platform specific bridge activity from event_logs, traces and transfers, including bridge deposits/withdrawals and transfers in/out on the following blockchains: Arbitrum, Avalanche, Base, BSC, Gnosis, Ethereum, Optimism, Polygon, Solana, Aptos, Near, Flow and more. This table also includes prices and token symbols, where available. Note: source_address and destination_address are intentionally case-sensitive where applicable, depending on the requirements of the network.
 
 {% enddocs %}
 
 {% docs bridge_fact_table_doc %}
 
-A comprehensive convenience fact holding blockchain and platform specific bridge activity from event_logs, traces and transfers, including bridge deposits/withdrawals and transfers in/out on the following blockchains: Arbitrum, Avalanche, Base, BSC, Gnosis, Ethereum, Optimism and Polygon.
+A comprehensive fact table holding blockchain and platform specific bridge activity from event_logs, traces and transfers, including bridge deposits/withdrawals and transfers in/out on the following blockchains: Arbitrum, Avalanche, Base, BSC, Gnosis, Ethereum, Optimism, Polygon, and Solana.
 
 {% enddocs %}
 
@@ -66,7 +66,7 @@ The symbol representing the token being bridged. This provides a shorthand repre
 
 {% docs bridge_amount_unadj %}
 
-The raw, non-decimal adjusted amount of tokens involved in the bridge transaction.
+The raw, non-decimal adjusted amount of tokens involved in the bridge transaction. For Solana, these are decimal adjusted amounts.
 
 {% enddocs %}
 

@@ -8,6 +8,7 @@
     tags = ['snowflake', 'crosschain', 'labels', 'gold_address_labels']
 ) }}
 
+WITH base as (
 SELECT
     system_created_at,
     insert_date,
@@ -119,4 +120,23 @@ WHERE
     where source = 'eth_contracts'
   )
 {% endif %}
-
+)
+SELECT
+  system_created_at,
+  insert_date,
+  blockchain,
+  address,
+  creator,
+  label_type,
+  label_subtype,
+  address_name,
+  project_name,
+  inserted_timestamp,
+  modified_timestamp,
+  labels_combined_id,
+  source,
+  _is_deleted
+FROM
+  base qualify (ROW_NUMBER() over (PARTITION BY blockchain, address
+ORDER BY
+  modified_timestamp DESC) = 1)

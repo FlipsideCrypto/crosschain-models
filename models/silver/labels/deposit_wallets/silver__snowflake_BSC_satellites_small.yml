@@ -1,11 +1,12 @@
 version: 2
 models:
-  - name: silver__tags_thor_liquidity_provider
+  - name: silver__snowflake_BSC_satellites_small
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - ADDRESS
             - BLOCKCHAIN
+            - CREATOR
+            - ADDRESS
     columns:
       - name: ADDRESS
         tests:
