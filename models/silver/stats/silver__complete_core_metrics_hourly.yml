@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver_stats__core_metrics_hourly
+  - name: silver__complete_core_metrics_hourly
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
@@ -36,6 +36,9 @@ models:
         tests:
           - not_null
       - name: TOTAL_FEES_NATIVE
+        tests:
+          - not_null
+      - name: TOTAL_FEES_USD
         tests:
           - not_null
       - name: CORE_METRICS_HOURLY_ID
