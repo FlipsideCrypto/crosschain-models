@@ -1,0 +1,43 @@
+version: 2
+models:
+  - name: silver__complete_core_metrics_hourly
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCK_TIMESTAMP_HOUR
+            - BLOCKCHAIN
+
+    columns:
+      - name: BLOCK_TIMESTAMP_HOUR
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: BLOCK_NUMBER_MIN
+        tests:
+          - not_null
+      - name: BLOCK_NUMBER_MAX
+        tests:
+          - not_null
+      - name: BLOCK_COUNT
+        tests:
+          - not_null
+      - name: TRANSACTION_COUNT
+        tests:
+          - not_null
+      - name: UNIQUE_INITIATOR_COUNT
+        tests:
+          - not_null
+      - name: TOTAL_FEES_NATIVE
+        tests:
+          - not_null
+      - name: CORE_METRICS_HOURLY_ID
+        tests:
+          - not_null
+      - name: INSERTED_TIMESTAMP
+        tests:
+          - not_null
+      - name: MODIFIED_TIMESTAMP
+        tests:
+          - not_null

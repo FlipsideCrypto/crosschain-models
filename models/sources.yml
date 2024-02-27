@@ -618,3 +618,98 @@ sources:
     tables: 
       - name: blocks_completeness
       - name: transactions_completeness
+  - name: ethereum_stats
+    database: ethereum
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: optimism_stats
+    database: optimism
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: arbitrum_stats
+    database: arbitrum
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: bsc_stats
+    database: bsc
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: polygon_stats
+    database: polygon
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: base_stats
+    database: base
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: gnosis_stats
+    database: gnosis
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: avalanche_stats
+    database: avalanche
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: sei_stats
+    database: sei
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: cosmos_stats
+    database: cosmos
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: terra_stats
+    database: terra
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: osmosis_stats
+    database: osmosis
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: axelar_stats
+    database: axelar
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: flow_stats
+    database: flow
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: solana_stats
+    database: solana
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: aptos_stats
+    database: aptos
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: near_stats
+    database: near
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: aurora_stats
+    database: aurora
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: bitcoin_stats
+    database: bitcoin
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
