@@ -1460,6 +1460,26 @@ WITH pre_final AS (
         ) AS modified_timestamp
     FROM
         {{ ref('silver__tags_sei_abassador_tags') }}
+    UNION ALL
+    SELECT
+        blockchain,
+        creator,
+        address,
+        tag_name,
+        tag_type,
+        start_date,
+        end_date,
+        tag_created_at,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp
+    FROM
+        {{ ref('silver__libreplex_inscription') }}
 )
 SELECT
     *,
