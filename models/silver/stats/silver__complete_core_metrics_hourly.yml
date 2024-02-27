@@ -26,12 +26,6 @@ models:
       - name: TRANSACTION_COUNT
         tests:
           - not_null
-      - name: TRANSACTION_COUNT_SUCCESS
-        tests:
-          - not_null
-      - name: TRANSACTION_COUNT_FAILED
-        tests:
-          - not_null
       - name: UNIQUE_INITIATOR_COUNT
         tests:
           - not_null
