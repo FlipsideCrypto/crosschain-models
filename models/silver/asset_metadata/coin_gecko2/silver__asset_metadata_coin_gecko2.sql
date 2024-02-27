@@ -19,7 +19,21 @@ SELECT
     '{{ invocation_id }}' AS _invocation_id
 FROM
     {{ ref('bronze__streamline_asset_metadata_coingecko') }} A,
-    LATERAL FLATTEN(input => VALUE :platforms) p qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
+    LATERAL FLATTEN(
+        input => VALUE :platforms
+    ) p
+
+{% if is_incremental() %}
+WHERE
+    _inserted_timestamp > (
+        SELECT
+            MAX(_inserted_timestamp)
+        FROM
+            {{ this }}
+    )
+{% endif %}
+
+qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
 ORDER BY
     _inserted_timestamp DESC)) = 1 
     -- tagged as `complete` to run alongside prices `history` and `realtime` models
