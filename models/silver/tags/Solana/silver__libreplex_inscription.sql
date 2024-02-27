@@ -61,7 +61,7 @@ SELECT
     SYSDATE() AS tag_created_at,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['address','tag_name','start_date']) }} AS tags_icns_id,
+    {{ dbt_utils.generate_surrogate_key(['address','tag_name','start_date']) }} AS tags_libreplex_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     libreplex_txs
