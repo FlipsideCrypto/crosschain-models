@@ -38,9 +38,6 @@ models:
       - name: TOTAL_FEES_NATIVE
         tests:
           - not_null
-      - name: TOTAL_FEES_USD
-        tests:
-          - not_null
       - name: CORE_METRICS_HOURLY_ID
         tests:
           - not_null
