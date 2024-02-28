@@ -554,7 +554,7 @@ bitcoin AS (
         block_number_max,
         block_count,
         transaction_count,
-        NULL AS transaction_count_success,
+        transaction_count AS transaction_count_success,
         NULL AS transaction_count_failed,
         unique_address_count AS unique_initiator_count,
         total_fees_native,
