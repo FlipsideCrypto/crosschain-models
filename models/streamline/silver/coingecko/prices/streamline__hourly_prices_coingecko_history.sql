@@ -12,7 +12,14 @@ WITH assets AS (
     SELECT
         DISTINCT id AS asset_id
     FROM
-        {{ ref('silver__asset_metadata_coin_gecko2') }}
+        {{ ref('silver__asset_metadata_coin_gecko2') }} 
+    WHERE
+        _inserted_timestamp = (
+            SELECT
+                MAX(_inserted_timestamp)
+            FROM
+                {{ ref('silver__asset_metadata_coin_gecko2') }} --confirm deprecated assets are not supported by market_chart endpoint
+        )
 ),
 run_times AS (
     SELECT
@@ -30,31 +37,29 @@ run_times AS (
     FROM
         {{ ref('streamline__hourly_prices_coingecko_complete') }}
     WHERE
-        run_time < DATEADD('day', -1, SYSDATE())
-    ),
-calls AS (
-    SELECT
-        asset_id,
-        DATE_PART(
-            'EPOCH',
-            run_time
-        ) :: INTEGER AS run_time_epoch,
-        '{service}/api/v3/coins/' || asset_id || '/market_chart/range?vs_currency=usd&from=' || run_time_epoch || '&to=' || run_time_epoch || '&x_cg_pro_api_key={Authentication}' AS api_url
-    FROM
-        run_times
-    )
-SELECT
-    run_time_epoch AS partition_key,
-    ARRAY_CONSTRUCT(
-        partition_key,
-        ARRAY_CONSTRUCT(
-            'GET',
-            api_url,
-            PARSE_JSON('{}'),
-            PARSE_JSON('{}'),
-            ''
+        run_time < DATEADD('day', -1, SYSDATE())),
+        calls AS (
+            SELECT
+                asset_id,
+                DATE_PART(
+                    'EPOCH',
+                    run_time
+                ) :: INTEGER AS run_time_epoch,
+                '{service}/api/v3/coins/' || asset_id || '/market_chart/range?vs_currency=usd&from=' || run_time_epoch || '&to=' || run_time_epoch || '&x_cg_pro_api_key={Authentication}' AS api_url
+            FROM
+                run_times
         )
-    ) AS request
-FROM
-    calls
--- needs to be tested with newly deployed streamline 2.0 external table, may need to update external table columns
+    SELECT
+        run_time_epoch AS partition_key,
+        ARRAY_CONSTRUCT(
+            partition_key,
+            ARRAY_CONSTRUCT(
+                'GET',
+                api_url,
+                PARSE_JSON('{}'),
+                PARSE_JSON('{}'),
+                ''
+            )
+        ) AS request
+    FROM
+        calls -- needs to be tested with newly deployed streamline 2.0 external table, may need to update external table columns

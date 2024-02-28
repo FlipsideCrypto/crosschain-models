@@ -39,3 +39,4 @@ ORDER BY
     -- tagged as `complete` to run alongside prices `history` and `realtime` models
     -- intended to feed calls with most up to date / currently support assets
     -- needs logic / macro to handle or flag assets no longer in source (e.g. deprecated by coingecko)
+    -- when coingecko adds a new asset_id, do they have historical data for it? only data as of that date? do they backfill?
