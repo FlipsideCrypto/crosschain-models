@@ -16,6 +16,7 @@ WITH backfill AS (
         error,
         {{ dbt_utils.generate_surrogate_key(['id','run_time']) }} AS hourly_prices_coin_gecko_complete_id,
         metadata$file_last_modified AS _inserted_at
+        -- NULL AS _inserted_at
     FROM
         {{ ref(
             'bronze__streamline_hourly_prices_coingecko_backfill'
@@ -43,6 +44,7 @@ history AS (
         error,
         {{ dbt_utils.generate_surrogate_key(['id','run_time']) }} AS hourly_prices_coin_gecko_complete_id,
         metadata$file_last_modified AS _inserted_at
+        -- NULL AS _inserted_at
     FROM
         {{ ref(
             'bronze__streamline_hourly_prices_coingecko_history'
