@@ -15,8 +15,7 @@ WITH backfill AS (
         DATA,
         error,
         {{ dbt_utils.generate_surrogate_key(['id','run_time']) }} AS hourly_prices_coin_gecko_complete_id,
-        metadata$file_last_modified AS _inserted_at
-        -- NULL AS _inserted_at
+        _inserted_timestamp
     FROM
         {{ ref(
             'bronze__streamline_hourly_prices_coingecko_backfill'
@@ -24,14 +23,14 @@ WITH backfill AS (
 
 {% if is_incremental() %}
 WHERE
-    _inserted_at >= COALESCE(
+    _inserted_timestamp >= COALESCE(
         (
             SELECT
-                MAX(_inserted_at) AS _inserted_at
+                MAX(_inserted_timestamp)
             FROM
                 {{ this }}
         ),
-        '1900-01-01' :: TIMESTAMP_NTZ
+        '1900-01-01' :: timestamp_ntz
     )
 {% endif %}
 ),
@@ -43,8 +42,7 @@ history AS (
         DATA,
         error,
         {{ dbt_utils.generate_surrogate_key(['id','run_time']) }} AS hourly_prices_coin_gecko_complete_id,
-        metadata$file_last_modified AS _inserted_at
-        -- NULL AS _inserted_at
+        _inserted_timestamp
     FROM
         {{ ref(
             'bronze__streamline_hourly_prices_coingecko_history'
@@ -52,14 +50,14 @@ history AS (
 
 {% if is_incremental() %}
 WHERE
-    _inserted_at >= COALESCE(
+    _inserted_timestamp >= COALESCE(
         (
             SELECT
-                MAX(_inserted_at) AS _inserted_at
+                MAX(_inserted_timestamp)
             FROM
                 {{ this }}
         ),
-        '1900-01-01' :: TIMESTAMP_NTZ
+        '1900-01-01' :: timestamp_ntz
     )
 {% endif %}
 ),
@@ -81,7 +79,7 @@ SELECT
     DATA,
     error,
     hourly_prices_coin_gecko_complete_id,
-    _inserted_at
+    _inserted_timestamp
 FROM
-    all_historical_prices
--- `complete` model includes only assets from `history` data as `realtime` does not require `complete`
+    all_historical_prices 
+    -- `complete` model includes only assets from `history` data as `realtime` does not require `complete`
