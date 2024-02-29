@@ -19,3 +19,4 @@ FROM
         input => DATA
     ) f
 -- columns parsed out to match legacy bronze model `bronze__asset_metadata_coin_gecko`
+-- confirm _inserted_timestamp is accurate

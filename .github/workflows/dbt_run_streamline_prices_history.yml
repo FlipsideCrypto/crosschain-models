@@ -18,8 +18,6 @@ env:
   DATABASE: "${{ vars.DATABASE }}"
   WAREHOUSE: "${{ vars.WAREHOUSE }}"
   SCHEMA: "${{ vars.SCHEMA }}"
-  STREAMLINE_INVOKE_STREAMS: "True"
-  STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES: "False"
 
 
 jobs:

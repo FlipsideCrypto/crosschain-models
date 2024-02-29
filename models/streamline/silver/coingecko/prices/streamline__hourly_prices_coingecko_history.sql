@@ -12,38 +12,44 @@ WITH assets AS (
     SELECT
         DISTINCT id AS asset_id
     FROM
-        {{ ref('silver__asset_metadata_coin_gecko2') }} 
+        {{ ref('silver__asset_metadata_coin_gecko2') }}
     WHERE
         _inserted_timestamp = (
             SELECT
                 MAX(_inserted_timestamp)
             FROM
-                {{ ref('silver__asset_metadata_coin_gecko2') }} --confirm deprecated assets are not supported by market_chart endpoint
+                {{ ref('silver__asset_metadata_coin_gecko2') }}
+                --confirm deprecated assets are not supported by market_chart endpoint
         )
 ),
 run_times AS (
     SELECT
         asset_id,
-        run_time
+        run_time :: DATE AS run_time
     FROM
-        assets
+        assets A
         CROSS JOIN {{ ref('streamline__runtimes2') }}
     WHERE
-        run_time < DATEADD('day', -1, SYSDATE())
+        run_time :: DATE < DATEADD('day', -1, SYSDATE())
+    WHERE
+        run_time :: DATE BETWEEN '2024-01-15' :: DATE
+        AND DATEADD('day', -1, SYSDATE()) -- temp logic for backfill
+        {# run_time :: DATE BETWEEN DATEADD('day',- var("LOOKBACK", 45), SYSDATE())
+        AND DATEADD('day', -1, SYSDATE()) -- long term logic #}
     EXCEPT
     SELECT
         id AS asset_id,
-        run_time
+        run_time :: DATE AS run_time
     FROM
         {{ ref('streamline__hourly_prices_coingecko_complete') }}
     WHERE
-        run_time < DATEADD('day', -1, SYSDATE())),
+        run_time :: DATE < DATEADD('day', -1, SYSDATE())),
         calls AS (
             SELECT
                 asset_id,
                 DATE_PART(
                     'EPOCH',
-                    run_time
+                    run_time :: DATE
                 ) :: INTEGER AS run_time_epoch,
                 '{service}/api/v3/coins/' || asset_id || '/market_chart/range?vs_currency=usd&from=' || run_time_epoch || '&to=' || run_time_epoch || '&x_cg_pro_api_key={Authentication}' AS api_url
             FROM
@@ -62,4 +68,8 @@ run_times AS (
             )
         ) AS request
     FROM
-        calls -- needs to be tested with newly deployed streamline 2.0 external table, may need to update external table columns
+        calls
+    ORDER BY
+        partition_key ASC
+    LIMIT
+        100

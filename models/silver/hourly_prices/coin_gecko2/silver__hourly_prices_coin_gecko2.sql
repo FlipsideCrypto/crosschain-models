@@ -3,6 +3,7 @@
     unique_key = ['id','recorded_hour'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
+    tags = ['streamline_prices_complete2']
 ) }}
 
 WITH base_backfill AS (
@@ -85,7 +86,85 @@ final_backfill AS (
         id,
         _runtime_date
 ),
---add `history` model
+base_history AS (
+    SELECT
+        _inserted_date,
+        id,
+        TO_TIMESTAMP(
+            f.value [0] :: STRING
+        ) AS recorded_timestamp,
+        DATE_TRUNC(
+            'hour',
+            recorded_timestamp
+        ) AS recorded_hour,
+        f.value [1] :: FLOAT AS price,
+        ROW_NUMBER() over(
+            PARTITION BY recorded_hour,
+            id,
+            _inserted_date
+            ORDER BY
+                recorded_timestamp ASC
+        ) AS rn_open,
+        ROW_NUMBER() over(
+            PARTITION BY recorded_hour,
+            id,
+            _inserted_date
+            ORDER BY
+                recorded_timestamp DESC
+        ) AS rn_close,
+        MAX(price) over(
+            PARTITION BY recorded_hour,
+            id,
+            _inserted_date
+        ) AS high_price,
+        MIN(price) over(
+            PARTITION BY recorded_hour,
+            id,
+            _inserted_date
+        ) AS low_price,
+        _inserted_timestamp
+    FROM
+        {{ ref('bronze__streamline_hourly_prices_coingecko_history') }}
+        s,
+        LATERAL FLATTEN(input => DATA :prices) f
+
+{% if is_incremental() %}
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp) - INTERVAL '24 hours'
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
+final_history AS (
+    SELECT
+        id,
+        recorded_hour,
+        MAX(
+            CASE
+                WHEN rn_open = 1 THEN price
+            END
+        ) AS OPEN,
+        MAX(high_price) AS high,
+        MAX(low_price) AS low,
+        MAX(
+            CASE
+                WHEN rn_close = 1 THEN price
+            END
+        ) AS CLOSE,
+        _inserted_date,
+        MAX(_inserted_timestamp) AS _inserted_timestamp
+    FROM
+        base_history
+    WHERE
+        id IS NOT NULL
+    GROUP BY
+        recorded_hour,
+        id,
+        _inserted_date
+),
 base_realtime AS (
     SELECT
         id,
@@ -114,7 +193,10 @@ base_realtime AS (
         LATERAL FLATTEN(
             input => DATA
         ) f
-    WHERE recorded_hour IS NOT NULL
+    WHERE
+        recorded_hour IS NOT NULL
+        AND DATA :: STRING <> '[]'
+        AND DATA IS NOT NULL
 
 {% if is_incremental() %}
 WHERE
@@ -146,11 +228,11 @@ all_prices AS (
         *
     FROM
         final_backfill
-    {# UNION ALL
-    SELECT 
+    UNION ALL
+    SELECT
         *
-    FROM 
-        final_history #}
+    FROM
+        final_history
     UNION ALL
     SELECT
         *
@@ -173,9 +255,4 @@ SELECT
 FROM
     all_prices qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
 ORDER BY
-    _inserted_timestamp DESC)) = 1 
-    -- `backfill` data will be merged into `history` external table
-    -- `history` runs 1 day prior to current, `realtime` runs every hour for current day
-    -- need to test / add logic to account for overlap / heal from backfill and history
-    -- e.g. if prices reload from history, then does data need to be overwritten? will delete+insert properly handle?
- 
+    _inserted_timestamp DESC)) = 1 -- `backfill` data will be merged into `history` external table

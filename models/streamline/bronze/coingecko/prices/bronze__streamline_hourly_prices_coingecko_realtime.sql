@@ -13,9 +13,7 @@ FROM
         'bronze_streamline',
         'asset_ohlc_coin_gecko_api_v2'
     ) }}
-WHERE
-    DATA :: STRING <> '[]'
-    AND DATA IS NOT NULL 
     -- endpoint: ohlc
     -- streamline 2.0 external table
     -- to serve as destination for `realtime` prices
+    -- confirm _inserted_timestamp is accurate vs information_schema
