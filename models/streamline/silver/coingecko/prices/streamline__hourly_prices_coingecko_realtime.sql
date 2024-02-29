@@ -12,13 +12,13 @@ WITH assets AS (
     SELECT
         DISTINCT id AS asset_id
     FROM
-        {{ ref("silver__asset_metadata_coin_gecko2") }}
+        {{ ref("bronze__streamline_asset_metadata_coingecko") }}
     WHERE
         _inserted_timestamp = (
             SELECT
                 MAX(_inserted_timestamp)
             FROM
-                {{ ref("silver__asset_metadata_coin_gecko2") }}
+                {{ ref("bronze__streamline_asset_metadata_coingecko") }}
         )
 ),
 calls AS (
