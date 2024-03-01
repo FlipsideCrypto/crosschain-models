@@ -186,3 +186,4 @@ SELECT
     '{{ invocation_id }}' AS _invocation_id
 FROM
     final_prices
+--add gap testing, retry logic etc.
