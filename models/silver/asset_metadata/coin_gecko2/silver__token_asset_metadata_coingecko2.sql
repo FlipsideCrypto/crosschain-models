@@ -2,8 +2,7 @@
     materialized = 'incremental',
     unique_key = ['token_address', 'platform'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['_inserted_timestamp::DATE'],
-    tags = ['streamline_prices_complete2']
+    cluster_by = ['_inserted_timestamp::DATE']
 ) }}
 
 SELECT
@@ -36,7 +35,6 @@ WHERE
 qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
 ORDER BY
     _inserted_timestamp DESC)) = 1 
-    -- tagged as `complete` to run alongside prices `history` and `realtime` models
-    -- intended to feed calls with most up to date / currently support assets
+    -- specifically built for tokens with token_address (not native/gas tokens)
     -- needs logic / macro to handle or flag assets no longer in source (e.g. deprecated by coingecko)
     -- when coingecko adds a new asset_id, do they have historical data for it? only data as of that date? do they backfill?

@@ -88,7 +88,7 @@ final_backfill AS (
 ),
 base_history AS (
     SELECT
-        _inserted_date,
+        _inserted_date AS _runtime_date,
         id,
         TO_TIMESTAMP(
             f.value [0] :: STRING
@@ -154,7 +154,7 @@ final_history AS (
                 WHEN rn_close = 1 THEN price
             END
         ) AS CLOSE,
-        _inserted_date,
+        _runtime_date,
         MAX(_inserted_timestamp) AS _inserted_timestamp
     FROM
         base_history
@@ -163,10 +163,11 @@ final_history AS (
     GROUP BY
         recorded_hour,
         id,
-        _inserted_date
+        _runtime_date
 ),
 base_realtime AS (
     SELECT
+        _inserted_date AS _runtime_date,
         id,
         CASE
             WHEN TO_TIMESTAMP(
@@ -185,7 +186,6 @@ base_realtime AS (
         f.value [2] :: FLOAT AS high,
         f.value [3] :: FLOAT AS low,
         f.value [4] :: FLOAT AS CLOSE,
-        _inserted_date AS _runtime_date,
         _inserted_timestamp
     FROM
         {{ ref('bronze__streamline_hourly_prices_coingecko_realtime') }}

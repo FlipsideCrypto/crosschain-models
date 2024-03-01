@@ -23,6 +23,7 @@ SELECT
     partition_key,
     DATE_PART('EPOCH',run_time)::STRING AS run_time_epoch,
     run_time,
+    _inserted_date,
     id,
     currency,
     DATA,

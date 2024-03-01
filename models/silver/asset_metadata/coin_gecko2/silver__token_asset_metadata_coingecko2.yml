@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver__asset_metadata_coin_gecko2
+  - name: silver__token_asset_metadata_coingecko2
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

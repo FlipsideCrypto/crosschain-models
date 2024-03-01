@@ -20,7 +20,7 @@ WITH date_hours AS (
                 MAX(recorded_hour)
             FROM
                 {{ ref(
-                    'silver__hourly_prices_coin_gecko2'
+                    'silver__all_prices_coingecko2'
                 ) }}
         )
 
@@ -33,7 +33,7 @@ AND date_hour >= (
 )
 {% endif %}
 ),
-asset_metadata AS (
+all_asset_metadata AS (
     SELECT
         DISTINCT CASE
             WHEN LOWER(platform) = 'aptos' THEN token_address
@@ -55,7 +55,7 @@ asset_metadata AS (
         _inserted_timestamp
     FROM
         {{ ref(
-            'silver__asset_metadata_coin_gecko2'
+            'silver__token_asset_metadata_coingecko2'
         ) }}
         qualify(ROW_NUMBER() over (PARTITION BY token_address_adj, platform_adj
     ORDER BY
@@ -69,7 +69,7 @@ base_date_hours_address AS (
         platform_adj AS platform
     FROM
         date_hours
-        CROSS JOIN asset_metadata
+        CROSS JOIN all_asset_metadata
 ),
 base_prices AS (
     SELECT
@@ -81,10 +81,10 @@ base_prices AS (
         p._inserted_timestamp
     FROM
         {{ ref(
-            'silver__hourly_prices_coin_gecko2'
+            'silver__all_prices_coingecko2'
         ) }}
         p
-        LEFT JOIN asset_metadata m
+        LEFT JOIN all_asset_metadata m
         ON m.id = p.id
 
 {% if is_incremental() %}
@@ -96,6 +96,22 @@ AND p._inserted_timestamp >= (
 )
 {% endif %}
 ),
+current_asset_metadata AS (
+    SELECT
+        token_address_adj AS token_address,
+        id,
+        platform_adj AS platform,
+        _inserted_timestamp
+    FROM
+        all_asset_metadata
+    WHERE
+        _inserted_timestamp = (
+            SELECT
+                MAX(_inserted_timestamp)
+            FROM
+                all_asset_metadata
+        )
+),
 imputed_prices AS (
     SELECT
         --dateadd(hour,1,date_hour) AS recorded_hour, -- use this instead if we want to roll the close price forward 1 hour
@@ -104,14 +120,18 @@ imputed_prices AS (
         d.id,
         d.platform,
         p.close AS hourly_close,
-        LAST_VALUE(
-            p.close ignore nulls
-        ) over (
-            PARTITION BY d.token_address,
-            d.platform
-            ORDER BY
-                d.date_hour rows unbounded preceding
-        ) AS imputed_close,
+        CASE
+            WHEN C.token_address IS NULL
+            AND C.platform IS NULL THEN NULL
+            ELSE LAST_VALUE(
+                p.close ignore nulls
+            ) over (
+                PARTITION BY d.token_address,
+                d.platform
+                ORDER BY
+                    d.date_hour rows unbounded preceding
+            )
+        END AS imputed_close, --only impute prices for tokens currently supported by coingecko
         COALESCE(
             hourly_close,
             imputed_close
@@ -127,6 +147,9 @@ imputed_prices AS (
         ON p.recorded_hour = d.date_hour
         AND p.token_address = d.token_address
         AND p.platform = d.platform
+        LEFT JOIN current_asset_metadata C
+        ON C.token_address = d.token_address
+        AND C.platform = d.platform
 ),
 final_prices AS (
     SELECT

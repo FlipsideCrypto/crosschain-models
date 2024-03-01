@@ -76,7 +76,7 @@ realtime AS (
         run_time IS NOT NULL
 
 {% if is_incremental() %}
-WHERE
+AND
     _inserted_timestamp >= (
         SELECT
             MAX(_inserted_timestamp)
@@ -107,4 +107,6 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['id','run_time']) }} AS hourly_prices_coingecko_complete_id,
     _inserted_timestamp
 FROM
-    all_prices
+    all_prices qualify(ROW_NUMBER() over (PARTITION BY id, run_time
+ORDER BY
+    _inserted_timestamp DESC)) = 1

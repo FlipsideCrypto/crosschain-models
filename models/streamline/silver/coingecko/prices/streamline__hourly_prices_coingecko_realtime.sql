@@ -44,4 +44,4 @@ FROM
     calls
 ORDER BY
     partition_key ASC
-LIMIT 100
+LIMIT 100 --remove after testing

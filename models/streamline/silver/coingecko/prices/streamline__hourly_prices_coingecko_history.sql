@@ -19,7 +19,6 @@ WITH assets AS (
                 MAX(_inserted_timestamp)
             FROM
                 {{ ref('bronze__streamline_asset_metadata_coingecko') }}
-                --confirm deprecated assets are not supported by market_chart endpoint
         )
 ),
 run_times AS (
@@ -30,12 +29,10 @@ run_times AS (
         assets A
         CROSS JOIN {{ ref('streamline__runtimes2') }}
     WHERE
-        run_time :: DATE < DATEADD('day', -1, SYSDATE())
-    WHERE
         run_time :: DATE BETWEEN '2024-01-15' :: DATE
         AND DATEADD('day', -1, SYSDATE()) -- temp logic for backfill
-        {# run_time :: DATE BETWEEN DATEADD('day',- var("LOOKBACK", 45), SYSDATE())
-        AND DATEADD('day', -1, SYSDATE()) -- long term logic #}
+        -- run_time :: DATE BETWEEN DATEADD('day',-{{ var("LOOKBACK", 45) }}, SYSDATE())
+        -- AND DATEADD('day', -1, SYSDATE()) -- long term logic
     EXCEPT
     SELECT
         id AS asset_id,
@@ -43,20 +40,25 @@ run_times AS (
     FROM
         {{ ref('streamline__hourly_prices_coingecko_complete') }}
     WHERE
-        run_time :: DATE < DATEADD('day', -1, SYSDATE())),
+        run_time :: DATE < DATEADD('day', -1, SYSDATE())
+        ),
         calls AS (
             SELECT
                 asset_id,
                 DATE_PART(
                     'EPOCH',
                     run_time :: DATE
-                ) :: INTEGER AS run_time_epoch,
-                '{service}/api/v3/coins/' || asset_id || '/market_chart/range?vs_currency=usd&from=' || run_time_epoch || '&to=' || run_time_epoch || '&x_cg_pro_api_key={Authentication}' AS api_url
+                ) :: INTEGER AS start_time_epoch,
+                DATE_PART(
+                    'EPOCH',
+                    DATEADD('day',1,run_time :: DATE)
+                ) :: INTEGER AS end_time_epoch,
+                '{service}/api/v3/coins/' || asset_id || '/market_chart/range?vs_currency=usd&from=' || start_time_epoch || '&to=' || end_time_epoch || '&x_cg_pro_api_key={Authentication}' AS api_url
             FROM
                 run_times
         )
     SELECT
-        run_time_epoch AS partition_key,
+        start_time_epoch AS partition_key,
         ARRAY_CONSTRUCT(
             partition_key,
             ARRAY_CONSTRUCT(
@@ -72,4 +74,4 @@ run_times AS (
     ORDER BY
         partition_key ASC
     LIMIT
-        100
+        100 --remove after testing
