@@ -36,5 +36,3 @@ qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
 ORDER BY
     _inserted_timestamp DESC)) = 1 
     -- specifically built for tokens with token_address (not native/gas tokens)
-    -- needs logic / macro to handle or flag assets no longer in source (e.g. deprecated by coingecko)
-    -- when coingecko adds a new asset_id, do they have historical data for it? only data as of that date? do they backfill?
