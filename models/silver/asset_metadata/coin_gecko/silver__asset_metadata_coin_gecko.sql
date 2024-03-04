@@ -9,7 +9,7 @@ SELECT
     i.value :: STRING AS token_address,
     NAME,
     symbol,
-    i.key AS platform,
+    i.key :: STRING AS platform,
     _inserted_timestamp,
     sysdate() as inserted_timestamp,
     sysdate() as modified_timestamp,
