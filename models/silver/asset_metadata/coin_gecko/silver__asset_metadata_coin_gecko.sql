@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "CONCAT_WS('-', id, coalesce(token_address,''))",
+    unique_key = ['token_address', 'platform'],
     incremental_strategy = 'delete+insert'
 ) }}
 
@@ -37,6 +37,6 @@ WHERE
     )
 {% endif %}
 
-qualify(ROW_NUMBER() over (PARTITION BY id, token_address
+qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
 ORDER BY
     _inserted_timestamp DESC)) = 1

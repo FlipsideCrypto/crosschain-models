@@ -104,6 +104,7 @@ FINAL AS (
                 'polygon-pos'
             ) THEN 'polygon'
             WHEN LOWER(platform) IN ('base') THEN 'base'
+            WHEN LOWER(platform) IN ('blast') THEN 'blast'
             WHEN platform IN (
                 'cosmos',
                 'evmos',
@@ -146,7 +147,7 @@ FROM
     FINAL --remove weird tokens / bad metadata
 WHERE
     len(token_address) > 0
-    AND NOT (LOWER(blockchain) IN ('arbitrum', 'avalanche', 'bsc', 'ethereum', 'gnosis', 'optimism', 'polygon', 'base')
+    AND NOT (LOWER(blockchain) IN ('arbitrum', 'avalanche', 'bsc', 'ethereum', 'gnosis', 'optimism', 'polygon', 'base', 'blast')
     AND token_address NOT ILIKE '0x%')
     AND NOT (
         blockchain = 'algorand'
