@@ -199,7 +199,7 @@ base_realtime AS (
         AND DATA IS NOT NULL
 
 {% if is_incremental() %}
-WHERE
+AND
     _inserted_timestamp >= (
         SELECT
             MAX(_inserted_timestamp) - INTERVAL '24 hours'
