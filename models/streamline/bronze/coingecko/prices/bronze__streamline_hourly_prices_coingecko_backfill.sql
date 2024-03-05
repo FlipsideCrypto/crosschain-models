@@ -14,7 +14,7 @@ WITH meta AS (
         ),'_',1)))::STRING AS _partition_key
     FROM
         TABLE(
-            information_schema.external_table_file_registration_history(
+            information_schema.external_table_files(
                 table_name => '{{ source( "bronze_streamline", "asset_prices_coin_gecko_api") }}'
             )
         )
