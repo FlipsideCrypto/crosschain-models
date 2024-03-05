@@ -1,5 +1,5 @@
-name: dbt_run_streamline_prices_history
-run-name: dbt_run_streamline_prices_history
+name: dbt_run_streamline_prices_realtime
+run-name: dbt_run_streamline_prices_realtime
 
 on:
   workflow_dispatch:
