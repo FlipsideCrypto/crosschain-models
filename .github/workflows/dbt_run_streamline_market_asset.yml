@@ -25,6 +25,7 @@ jobs:
     with:
       dbt_command: >
         dbt run-operation run_sp_bulk_get_coin_market_cap_asset_metadata;
+        dbt run-operation run_sp_bulk_get_coin_gecko_asset_metadata;
       environment: workflow_prod
       warehouse: ${{ vars.WAREHOUSE }}
     secrets: inherit 

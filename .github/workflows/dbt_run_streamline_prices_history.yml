@@ -3,9 +3,9 @@ run-name: dbt_run_streamline_prices_history
 
 on:
   workflow_dispatch:
-  schedule:
-      # Runs at 01:20 daily (see https://crontab.guru)
-      - cron: '20 1 * * *'  
+  # schedule:
+  #     # Runs at 01:20 daily (see https://crontab.guru)
+  #     - cron: '20 1 * * *'  
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"

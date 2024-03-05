@@ -22,7 +22,7 @@ WITH base AS (
         MINUTE(recorded_hour) AS recorded_minute_part,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__streamline_hourly_prices_coingecko_realtime') }}
+        {{ ref('bronze__hourly_prices_coin_gecko') }}
         LEFT JOIN TABLE(FLATTEN(DATA)) d
 
 {% if is_incremental() %}
