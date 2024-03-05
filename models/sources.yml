@@ -713,3 +713,9 @@ sources:
     schema: stats
     tables:
       - name: ez_core_metrics_hourly
+  - name: blast_silver
+    database: blast
+    schema: silver
+    tables:
+      - name: complete_event_abis
+      - name: abis
