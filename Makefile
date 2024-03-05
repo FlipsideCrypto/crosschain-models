@@ -17,7 +17,7 @@ sl-api-integrations:
 	--profiles-dir ~/.dbt/
 
 udfs:
-	dbt run-operation create_udf_bulk_rest_api \
+	dbt run-operation fsc_utils.create_udf_bulk_rest_api_v2 --debug \
 	--vars '{"UPDATE_UDFS_AND_SPS":True}' \
 	--profile crosschain \
 	--target $(DBT_TARGET) \
