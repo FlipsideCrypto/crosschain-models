@@ -12,7 +12,8 @@
     ('arbitrum', source('arbitrum_silver', 'abis')),
     ('optimism', source('optimism_silver', 'abis')),
     ('base', source('base_silver', 'abis')),
-    ('gnosis', source('gnosis_silver', 'abis'))
+    ('gnosis', source('gnosis_silver', 'abis')),
+    ('blast', source('blast_silver', 'abis'))
 ]
 %}
 
