@@ -1,5 +1,5 @@
-name: dbt_run_streamline_prices_realtime
-run-name: dbt_run_streamline_prices_realtime
+name: dbt_run_streamline_asset_metadata_realtime
+run-name: dbt_run_streamline_asset_metadata_realtime
 
 on:
   workflow_dispatch:
