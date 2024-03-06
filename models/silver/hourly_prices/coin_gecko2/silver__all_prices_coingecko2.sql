@@ -2,8 +2,7 @@
     materialized = 'incremental',
     unique_key = ['id','recorded_hour'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
-    tags = ['streamline_prices_complete2']
+    cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE']
 ) }}
 
 WITH base_backfill AS (
