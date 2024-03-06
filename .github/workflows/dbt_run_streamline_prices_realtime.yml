@@ -3,9 +3,9 @@ run-name: dbt_run_streamline_prices_realtime
 
 on:
   workflow_dispatch:
-  # schedule:
-  #     # Runs at minute 25 every hour (see https://crontab.guru)
-  #     - cron: '25 * * * *'  
+  schedule:
+      # Runs at minute 25 every hour (see https://crontab.guru)
+      - cron: '25 * * * *'  
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
