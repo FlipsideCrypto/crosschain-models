@@ -1,0 +1,47 @@
+version: 2
+models:
+  - name: silver__all_prices_coinmarketcap2
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ID
+            - RECORDED_HOUR
+    columns:
+      - name: ID
+        tests:
+          - not_null
+      - name: RECORDED_HOUR
+        tests:
+          - not_null
+      - name: OPEN
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - FLOAT
+                - DOUBLE
+      - name: HIGH
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - FLOAT
+                - DOUBLE
+      - name: LOW
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - FLOAT
+                - DOUBLE
+      - name: CLOSE
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - FLOAT
+                - DOUBLE
+      - name: _INSERTED_TIMESTAMP
+        tests:
+          - not_null
+      

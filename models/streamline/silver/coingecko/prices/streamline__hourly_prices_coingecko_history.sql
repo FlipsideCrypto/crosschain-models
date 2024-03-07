@@ -27,7 +27,7 @@ run_times AS (
         run_time :: DATE AS run_time
     FROM
         assets A
-        CROSS JOIN {{ ref('streamline__runtimes2') }}
+        CROSS JOIN {{ ref('streamline__runtimes_daily') }}
     WHERE
         run_time :: DATE BETWEEN '2024-01-15' :: DATE
         AND DATEADD('day', -1, SYSDATE()) -- temp logic for backfill

@@ -21,18 +21,21 @@ FROM
     LATERAL FLATTEN(
         input => VALUE :platforms
     ) p
+WHERE
+    token_address IS NOT NULL
+    AND LENGTH(token_address) > 0
+    AND platform IS NOT NULL
+    AND LENGTH(platform) > 0
 
 {% if is_incremental() %}
-WHERE
-    _inserted_timestamp > (
-        SELECT
-            MAX(_inserted_timestamp)
-        FROM
-            {{ this }}
-    )
+AND _inserted_timestamp > (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
 {% endif %}
 
 qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
 ORDER BY
-    _inserted_timestamp DESC)) = 1 
-    -- specifically built for tokens with token_address (not native/gas tokens)
+    _inserted_timestamp DESC)) = 1 -- specifically built for tokens with token_address (not native/gas tokens)

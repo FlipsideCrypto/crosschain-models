@@ -10,7 +10,7 @@ WITH base AS (
     SELECT
         *
     FROM
-        {{ ref('bronze__hourly_prices_coin_market_cap') }}
+        {{ ref('bronze__streamline_hourly_prices_coinmarketcap_realtime') }}
 
 {% if is_incremental() %}
 WHERE
@@ -51,6 +51,6 @@ SELECT
     '{{ invocation_id }}' as _invocation_id
 FROM
     base A,
-    TABLE(FLATTEN(DATA :quotes)) f qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
+    TABLE(FLATTEN(DATA :data :quotes)) f qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
 ORDER BY
     _inserted_timestamp DESC)) = 1

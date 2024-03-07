@@ -20,25 +20,46 @@ WITH assets AS (
             FROM
                 {{ ref("bronze__streamline_asset_metadata_coinmarketcap") }}
         )
-    AND asset_id :: STRING = '2396' --temp for testing
+),
+run_times AS (
+    SELECT
+        asset_id,
+        run_time
+    FROM
+        assets A
+        CROSS JOIN {{ ref("streamline__runtimes_hourly") }}
+    WHERE
+        run_time > DATEADD('hour', -2, SYSDATE())
+    EXCEPT
+    SELECT
+        id AS asset_id,
+        run_time
+    FROM
+        {{ ref('streamline__hourly_prices_coinmarketcap_complete') }}
+    WHERE
+        run_time > DATEADD('hour', -2, SYSDATE())
 ),
 calls AS (
     SELECT
         asset_id,
         DATE_PART(
             'EPOCH',
-            DATEADD('day', -1, SYSDATE())
+            run_time
         ) :: INTEGER AS start_time_epoch,
         DATE_PART(
             'EPOCH',
-            SYSDATE()
+            DATEADD(
+                'hour',
+                1,
+                run_time
+            )
         ) :: INTEGER AS end_time_epoch,
-        '{service}/v2/cryptocurrency/ohlcv/historical?time_period=hourly&time_start=' || start_time_epoch || '&time_end=' || end_time_epoch || '&interval=hourly&id=' || asset_id AS api_url
+        '{service}/v2/cryptocurrency/ohlcv/historical?interval=hourly&time_period=hourly&time_start=' || start_time_epoch || '&time_end=' || end_time_epoch || '&id=' || asset_id AS api_url
     FROM
-        assets
+        run_times
 )
 SELECT
-    start_time_epoch AS partition_key,
+    end_time_epoch AS partition_key,
     ARRAY_CONSTRUCT(
         partition_key,
         ARRAY_CONSTRUCT(
