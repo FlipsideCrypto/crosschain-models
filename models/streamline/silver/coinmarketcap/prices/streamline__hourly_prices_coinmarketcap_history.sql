@@ -29,7 +29,7 @@ run_times AS (
         assets A
         CROSS JOIN {{ ref("streamline__runtimes_hourly") }}
     WHERE
-        run_time :: DATE >= '2024-06-07' --update to model deployment date
+        run_time :: DATE >= '2024-06-07' --set to model deployment date to avoid extended backfill
         AND
         run_time < DATEADD('hour', -2, SYSDATE())
     EXCEPT
@@ -39,7 +39,7 @@ run_times AS (
     FROM
         {{ ref('streamline__hourly_prices_coinmarketcap_complete') }}
     WHERE
-        run_time :: DATE >= '2024-06-07' --update to model deployment date
+        run_time :: DATE >= '2024-06-07' --set to model deployment date to avoid extended backfill
         AND
         run_time < DATEADD('hour', -2, SYSDATE())
 ),
@@ -78,3 +78,4 @@ FROM
     calls
 ORDER BY
     partition_key ASC
+LIMIT 100 --remove after testing

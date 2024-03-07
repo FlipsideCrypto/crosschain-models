@@ -30,6 +30,7 @@ run_times AS (
         CROSS JOIN {{ ref("streamline__runtimes_hourly") }}
     WHERE
         run_time > DATEADD('hour', -2, SYSDATE())
+        AND run_time < DATE_TRUNC('hour',SYSDATE())
     EXCEPT
     SELECT
         id AS asset_id,
@@ -38,6 +39,7 @@ run_times AS (
         {{ ref('streamline__hourly_prices_coinmarketcap_complete') }}
     WHERE
         run_time > DATEADD('hour', -2, SYSDATE())
+        AND run_time < DATE_TRUNC('hour',SYSDATE())
 ),
 calls AS (
     SELECT
@@ -74,3 +76,4 @@ FROM
     calls
 ORDER BY
     partition_key ASC
+LIMIT 100 --remove after testing
