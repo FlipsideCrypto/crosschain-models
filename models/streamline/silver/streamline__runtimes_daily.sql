@@ -1,6 +1,5 @@
 {{ config (
-    materialized = "view",
-    tags = ['streamline_view']
+    materialized = "view"
 ) }}
 -- Generate a spine of dates from 2018-01-01 to one day prior to current date
 

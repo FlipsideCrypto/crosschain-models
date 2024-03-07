@@ -1,5 +1,5 @@
-name: dbt_run_streamline_asset_metadata_realtime
-run-name: dbt_run_streamline_asset_metadata_realtime
+name: dbt_run_streamline_asset_metadata
+run-name: dbt_run_streamline_asset_metadata
 
 on:
   workflow_dispatch:
@@ -43,4 +43,4 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run --vars '{"STREAMLINE_INVOKE_STREAMS":True}' -m "crosschain_models,tag:streamline_asset_metadata_realtime"
+          dbt run --vars '{"STREAMLINE_INVOKE_STREAMS":True}' -m "crosschain_models,tag:streamline_cmc_asset_metadata" "crosschain_models,tag:streamline_cg_asset_metadata"

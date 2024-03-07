@@ -3,7 +3,7 @@
     unique_key = ['id','run_time'],
     cluster_by = "run_time::date",
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(id)",
-    tags = ['streamline_prices_complete2']
+    tags = ['streamline_cmc_prices_complete']
 ) }}
 
 WITH base AS (

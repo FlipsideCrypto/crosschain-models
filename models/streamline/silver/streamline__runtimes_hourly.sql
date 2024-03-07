@@ -1,6 +1,5 @@
 {{ config (
-    materialized = "view",
-    tags = ['streamline_view']
+    materialized = "view"
 ) }}
 -- Generate a spine of hours from 2023-03-01 to current timestamp
 

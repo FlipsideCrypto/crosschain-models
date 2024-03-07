@@ -4,7 +4,7 @@
         func = "{{this.schema}}.udf_bulk_rest_api_v2(object_construct('sql_source', '{{this.identifier}}', 'external_table', 'ASSET_OHLC_API/COINMARKETCAP', 'sql_limit', {{var('sql_limit','50000')}}, 'producer_batch_size', {{var('producer_batch_size','50000')}}, 'worker_batch_size', {{var('worker_batch_size','25000')}}, 'sm_secret_name','prod/prices/coinmarketcap'))",
         target = "{{this.schema}}.{{this.identifier}}"
     ),
-    tags = ['streamline_prices_realtime2']
+    tags = ['streamline_cmc_prices_realtime']
 ) }}
 
 WITH assets AS (

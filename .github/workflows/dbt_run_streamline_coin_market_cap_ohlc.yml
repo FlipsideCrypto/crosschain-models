@@ -3,8 +3,8 @@ run-name: dbt_run_streamline_coin_market_cap_ohlc
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '15,30,45 * * * *'
+  # schedule:
+  #   - cron: '15,30,45 * * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
