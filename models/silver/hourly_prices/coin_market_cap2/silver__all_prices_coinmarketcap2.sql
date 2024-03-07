@@ -5,7 +5,7 @@
     cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE']
 ) }}
 
-WITH base_realtime AS (
+WITH base AS (
 
     SELECT
         _inserted_date AS _runtime_date,
@@ -22,7 +22,7 @@ WITH base_realtime AS (
         b.value :quote :USD :market_cap :: FLOAT AS market_cap,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__streamline_hourly_prices_coinmarketcap_realtime') }} A,
+        {{ ref('bronze__streamline_hourly_prices_coinmarketcap') }} A,
         LATERAL FLATTEN(
             input => DATA :data :quotes
         ) b
@@ -40,7 +40,7 @@ AND _inserted_timestamp >= (
 )
 {% endif %}
 ),
-final_realtime AS (
+final AS (
     SELECT
         id,
         recorded_hour,
@@ -53,16 +53,9 @@ final_realtime AS (
         _runtime_date,
         _inserted_timestamp
     FROM
-        base_realtime
+        base
     WHERE
         id IS NOT NULL
-),
-all_prices AS (
-    --add history
-    SELECT
-        *
-    FROM
-        final_realtime
 )
 SELECT
     id,
@@ -80,6 +73,6 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['id','recorded_hour']) }} AS hourly_prices_coin_gecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_prices qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
+    final qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
 ORDER BY
     _inserted_timestamp DESC)) = 1

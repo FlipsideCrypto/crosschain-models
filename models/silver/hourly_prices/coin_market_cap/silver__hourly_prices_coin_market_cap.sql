@@ -10,7 +10,7 @@ WITH base AS (
     SELECT
         *
     FROM
-        {{ ref('bronze__streamline_hourly_prices_coinmarketcap_realtime') }}
+        {{ ref('bronze__streamline_hourly_prices_coinmarketcap') }}
 
 {% if is_incremental() %}
 WHERE

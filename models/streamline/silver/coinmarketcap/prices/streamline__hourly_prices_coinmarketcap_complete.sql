@@ -6,7 +6,7 @@
     tags = ['streamline_prices_complete2']
 ) }}
 
-WITH realtime AS (
+WITH base AS (
 
     SELECT
         id,
@@ -16,7 +16,7 @@ WITH realtime AS (
         ) AS run_time,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__streamline_hourly_prices_coinmarketcap_realtime') }}
+        {{ ref('bronze__streamline_hourly_prices_coinmarketcap') }}
         s,
         LATERAL FLATTEN(
             input => DATA :data :quotes
@@ -32,13 +32,6 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
-),
-all_prices AS (
-    --add history
-    SELECT
-        *
-    FROM
-        realtime
 )
 SELECT
     id,
@@ -46,6 +39,6 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['id','run_time']) }} AS hourly_prices_coinmarketcap_complete_id,
     _inserted_timestamp
 FROM
-    all_prices qualify(ROW_NUMBER() over (PARTITION BY id, run_time
+    base qualify(ROW_NUMBER() over (PARTITION BY id, run_time
 ORDER BY
     _inserted_timestamp DESC)) = 1
