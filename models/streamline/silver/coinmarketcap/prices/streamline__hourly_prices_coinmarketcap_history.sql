@@ -90,4 +90,5 @@ FROM
     calls
 ORDER BY
     partition_key ASC
-LIMIT 1000
+LIMIT 200
+--CMC API SAFE REQUEST LIMIT
