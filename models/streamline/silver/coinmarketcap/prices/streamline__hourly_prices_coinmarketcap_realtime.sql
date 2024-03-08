@@ -45,7 +45,7 @@ numbered_assets AS (
     SELECT
         asset_id,
         run_time,
-        FLOOR((ROW_NUMBER() OVER (ORDER BY asset_id::INT) - 1) / 100) AS group_id
+        FLOOR((ROW_NUMBER() OVER (PARTITION BY run_time ORDER BY asset_id::INT) - 1) / 100) AS group_id
     FROM
         run_times
 ),
