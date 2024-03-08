@@ -9,22 +9,23 @@ WITH base AS (
 
     SELECT
         _inserted_date AS _runtime_date,
-        id,
+        b.key AS id,
+        b.value :quotes [0] :quote :USD :timestamp :: TIMESTAMP AS recorded_timestamp,
         DATE_TRUNC(
             'hour',
-            b.value :quote :USD :timestamp :: TIMESTAMP
+            recorded_timestamp
         ) AS recorded_hour,
-        b.value :quote :USD :open :: FLOAT AS OPEN,
-        b.value :quote :USD :high :: FLOAT AS high,
-        b.value :quote :USD :low :: FLOAT AS low,
-        b.value :quote :USD :close :: FLOAT AS CLOSE,
-        b.value :quote :USD :volume :: FLOAT AS volume,
-        b.value :quote :USD :market_cap :: FLOAT AS market_cap,
+        b.value :quotes [0] :quote :USD :open :: FLOAT AS OPEN,
+        b.value :quotes [0] :quote :USD :high :: FLOAT AS high,
+        b.value :quotes [0] :quote :USD :low :: FLOAT AS low,
+        b.value :quotes [0] :quote :USD :close :: FLOAT AS CLOSE,
+        b.value :quotes [0] :quote :USD :volume :: FLOAT AS volume,
+        b.value :quotes [0] :quote :USD :market_cap :: FLOAT AS market_cap,
         _inserted_timestamp
     FROM
         {{ ref('bronze__streamline_hourly_prices_coinmarketcap') }} A,
         LATERAL FLATTEN(
-            input => DATA :data :quotes
+            input => DATA :data
         ) b
     WHERE
         recorded_hour IS NOT NULL
@@ -40,9 +41,10 @@ AND _inserted_timestamp >= (
 )
 {% endif %}
 ),
-final AS (
+FINAL AS (
     SELECT
         id,
+        recorded_timestamp,
         recorded_hour,
         OPEN,
         high,
@@ -59,6 +61,7 @@ final AS (
 )
 SELECT
     id,
+    recorded_timestamp,
     recorded_hour,
     OPEN,
     high,
@@ -73,6 +76,6 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['id','recorded_hour']) }} AS hourly_prices_coin_gecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    final qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
+    FINAL qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
 ORDER BY
     _inserted_timestamp DESC)) = 1

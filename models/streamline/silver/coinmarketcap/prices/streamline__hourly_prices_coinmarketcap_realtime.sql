@@ -29,7 +29,7 @@ run_times AS (
         assets A
         CROSS JOIN {{ ref("streamline__runtimes_hourly") }}
     WHERE
-        run_time > DATEADD('hour', -2, SYSDATE())
+        run_time >= DATEADD('hour', -2, SYSDATE())
         AND run_time < DATE_TRUNC('hour',SYSDATE())
     EXCEPT
     SELECT
@@ -38,27 +38,39 @@ run_times AS (
     FROM
         {{ ref('streamline__hourly_prices_coinmarketcap_complete') }}
     WHERE
-        run_time > DATEADD('hour', -2, SYSDATE())
+        run_time >= DATEADD('hour', -2, SYSDATE())
         AND run_time < DATE_TRUNC('hour',SYSDATE())
+),
+numbered_assets AS (
+    SELECT
+        asset_id,
+        run_time,
+        FLOOR((ROW_NUMBER() OVER (ORDER BY asset_id::INT) - 1) / 100) AS group_id
+    FROM
+        run_times
+),
+grouped_assets AS (
+    SELECT
+        group_id,
+        run_time,
+        LISTAGG(asset_id, ',') WITHIN GROUP (ORDER BY asset_id::INT) AS ids
+    FROM
+        numbered_assets
+    GROUP BY
+        1,2
 ),
 calls AS (
     SELECT
-        asset_id,
+        group_id,
         DATE_PART(
-            'EPOCH',
-            run_time
+            'EPOCH',DATEADD('HOUR', -1, run_time)
         ) :: INTEGER AS start_time_epoch,
         DATE_PART(
-            'EPOCH',
-            DATEADD(
-                'hour',
-                1,
-                run_time
-            )
-        ) :: INTEGER AS end_time_epoch,
-        '{service}/v2/cryptocurrency/ohlcv/historical?interval=hourly&time_period=hourly&time_start=' || start_time_epoch || '&time_end=' || end_time_epoch || '&id=' || asset_id AS api_url
+            'EPOCH',date_trunc('hour',run_time)
+            ) :: INTEGER AS end_time_epoch,
+        '{service}/v2/cryptocurrency/ohlcv/historical?interval=hourly&time_period=hourly&time_start=' || start_time_epoch || '&time_end=' || end_time_epoch || '&id=' || ids AS api_url
     FROM
-        run_times
+        grouped_assets
 )
 SELECT
     end_time_epoch AS partition_key,
@@ -76,4 +88,3 @@ FROM
     calls
 ORDER BY
     partition_key ASC
-LIMIT 100 --remove after testing
