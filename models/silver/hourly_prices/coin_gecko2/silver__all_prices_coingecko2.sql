@@ -5,11 +5,59 @@
     cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE']
 ) }}
 
-WITH base_backfill AS (
+WITH base_legacy AS (
 
     SELECT
-        _runtime_date,
+        recorded_at :: DATE AS _runtime_date,
+        asset_id :: STRING AS id,
+        recorded_at :: TIMESTAMP AS recorded_timestamp,
+        DATE_TRUNC(
+            'hour',
+            recorded_timestamp
+        ) AS recorded_hour,
+        NULL AS OPEN,
+        NULL AS high,
+        NULL AS low,
+        price :: FLOAT AS CLOSE,
+        NULL AS volume,
+        market_cap :: FLOAT market_cap,
+        recorded_at AS _inserted_timestamp
+    FROM
+        {{ source(
+            'bronze',
+            'legacy_prices'
+        ) }}
+    WHERE
+        provider = 'coingecko'
+
+{% if is_incremental() %}
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp) - INTERVAL '24 hours'
+    FROM
+        {{ this }}
+)
+{% endif %}
+),
+final_legacy AS (
+    SELECT
         id,
+        recorded_hour,
+        OPEN,
+        high,
+        low,
+        CLOSE,
+        _runtime_date,
+        _inserted_timestamp
+    FROM
+        base_legacy
+    WHERE
+        id IS NOT NULL
+),
+base_backfill AS (
+    SELECT
+        _runtime_date,
+        id :: STRING AS id,
         TO_TIMESTAMP(
             f.value [0] :: STRING
         ) AS recorded_timestamp,
@@ -88,7 +136,7 @@ final_backfill AS (
 base_history AS (
     SELECT
         _inserted_date AS _runtime_date,
-        id,
+        id :: STRING AS id,
         TO_TIMESTAMP(
             f.value [0] :: STRING
         ) AS recorded_timestamp,
@@ -167,18 +215,15 @@ final_history AS (
 base_realtime AS (
     SELECT
         _inserted_date AS _runtime_date,
-        id,
+        id :: STRING AS id,
+        TO_TIMESTAMP(
+            f.value [0] :: STRING
+        ) AS recorded_timestamp,
         CASE
-            WHEN TO_TIMESTAMP(
-                f.value [0] :: STRING
-            ) = DATE_TRUNC(
+            WHEN recorded_timestamp = DATE_TRUNC(
                 'hour',
-                TO_TIMESTAMP(
-                    f.value [0] :: STRING
-                )
-            ) THEN TO_TIMESTAMP(
-                f.value [0] :: STRING
-            )
+                recorded_timestamp
+            ) THEN recorded_timestamp
             ELSE NULL
         END AS recorded_hour,
         f.value [1] :: FLOAT AS OPEN,
@@ -198,13 +243,12 @@ base_realtime AS (
         AND DATA IS NOT NULL
 
 {% if is_incremental() %}
-AND
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp) - INTERVAL '24 hours'
-        FROM
-            {{ this }}
-    )
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp) - INTERVAL '24 hours'
+    FROM
+        {{ this }}
+)
 {% endif %}
 ),
 final_realtime AS (
@@ -223,6 +267,11 @@ final_realtime AS (
         id IS NOT NULL
 ),
 all_prices AS (
+    SELECT
+        *
+    FROM
+        final_legacy
+    UNION ALL
     SELECT
         *
     FROM
@@ -254,4 +303,4 @@ SELECT
 FROM
     all_prices qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
 ORDER BY
-    _inserted_timestamp DESC)) = 1 -- `backfill` data will be merged into `history` external table
+    _inserted_timestamp DESC)) = 1 -- `backfill` data will eventually be merged into `history` external table
