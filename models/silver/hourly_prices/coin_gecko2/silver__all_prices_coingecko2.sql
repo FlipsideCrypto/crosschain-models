@@ -31,7 +31,7 @@ WITH base_legacy AS (
         provider = 'coingecko'
 
 {% if is_incremental() %}
-AND _inserted_timestamp >= (
+AND _inserted_timestamp > (
     SELECT
         MAX(_inserted_timestamp) - INTERVAL '24 hours'
     FROM
@@ -98,7 +98,7 @@ base_backfill AS (
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp >= (
+    _inserted_timestamp > (
         SELECT
             MAX(_inserted_timestamp) - INTERVAL '24 hours'
         FROM

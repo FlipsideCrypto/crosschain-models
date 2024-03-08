@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('bronze__streamline_hourly_prices_coinmarketcap_sp') }}
 {{ config(
     materialized = 'incremental',
     unique_key = ['id','recorded_hour'],
@@ -31,9 +32,10 @@ WITH base_legacy AS (
         ) }}
     WHERE
         provider = 'coinmarketcap'
+        AND recorded_at < '2022-07-20'
 
 {% if is_incremental() %}
-AND _inserted_timestamp >= (
+AND _inserted_timestamp > (
     SELECT
         MAX(_inserted_timestamp) - INTERVAL '24 hours'
     FROM
@@ -78,22 +80,33 @@ base_sp AS (
         b.value :quote :USD :market_cap :: FLOAT AS market_cap,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__streamline_hourly_prices_coinmarketcap_sp') }} A,
-        LATERAL FLATTEN(
-            input => DATA :quotes
-        ) b
-    WHERE
-        recorded_hour IS NOT NULL
-        AND DATA :: STRING <> '[]'
-        AND DATA IS NOT NULL
 
 {% if is_incremental() %}
-AND _inserted_timestamp >= (
-    SELECT
-        MAX(_inserted_timestamp) - INTERVAL '24 hours'
-    FROM
-        {{ this }}
-)
+{{ ref('bronze__streamline_hourly_prices_coinmarketcap_sp') }} A,
+LATERAL FLATTEN(
+    input => DATA :quotes
+) b
+WHERE
+    _inserted_date >= '2022-07-20'
+    AND recorded_hour IS NOT NULL
+    AND DATA :: STRING <> '[]'
+    AND DATA IS NOT NULL
+    AND _inserted_timestamp > (
+        SELECT
+            MAX(_inserted_timestamp) - INTERVAL '24 hours'
+        FROM
+            {{ this }}
+    )
+{% else %}
+    {{ ref('bronze__fr_streamline_hourly_prices_coinmarketcap_sp') }} A,
+    LATERAL FLATTEN(
+        input => DATA :quotes
+    ) b
+WHERE
+    _inserted_date >= '2022-07-20'
+    AND recorded_hour IS NOT NULL
+    AND DATA :: STRING <> '[]'
+    AND DATA IS NOT NULL
 {% endif %}
 ),
 final_sp AS (

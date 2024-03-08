@@ -14,13 +14,10 @@ WITH meta AS (
         ) AS _partition_key
     FROM
         TABLE(
-            information_schema.external_table_file_registration_history(
-                start_time => DATEADD('day', -3, SYSDATE()),
+            information_schema.external_table_files(
                 table_name => '{{ source( "bronze_streamline", "asset_ohlc_coin_market_cap_api") }}'
             )
         )
-    WHERE last_modified > DATEADD('day', -3, SYSDATE())
-    AND job_created_time > DATEADD('day', -3, SYSDATE())
 )
 SELECT
     api_end_time AS partition_key,
