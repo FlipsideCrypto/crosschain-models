@@ -50,7 +50,7 @@ all_asset_metadata AS (
                 WHEN id = '4030' THEN 'Algorand'
                 ELSE platform :: STRING
             END
-        ) AS platform_adj
+        ) AS platform_adj,
         _inserted_timestamp
     FROM
         {{ ref(
@@ -186,3 +186,4 @@ SELECT
 FROM
     final_prices
 --add gap testing, retry logic etc.
+--add logic to impute price gaps for non-supported tokens

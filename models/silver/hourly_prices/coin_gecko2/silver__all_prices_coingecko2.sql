@@ -14,8 +14,8 @@ WITH legacy AS (
         high,
         low,
         CLOSE,
-        _runtime_date,
         source,
+        _runtime_date,
         _inserted_timestamp
     FROM
         {{ ref('silver__legacy_prices_coingecko') }}
@@ -24,7 +24,7 @@ WITH legacy AS (
 WHERE
     _inserted_timestamp > (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '24 hours'
+            MAX(_inserted_timestamp)
         FROM
             {{ this }}
     )
@@ -77,7 +77,7 @@ base_backfill AS (
 WHERE
     _inserted_timestamp > (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '24 hours'
+            MAX(_inserted_timestamp)
         FROM
             {{ this }}
     )
@@ -109,7 +109,8 @@ final_backfill AS (
     GROUP BY
         recorded_hour,
         id,
-        _runtime_date
+        _runtime_date,
+        source
 ),
 base_history AS (
     SELECT
@@ -188,6 +189,7 @@ final_history AS (
     WHERE
         id IS NOT NULL
     GROUP BY
+        source,
         recorded_hour,
         id,
         _runtime_date

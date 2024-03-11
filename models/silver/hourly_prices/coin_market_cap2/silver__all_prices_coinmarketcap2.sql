@@ -23,15 +23,17 @@ WITH legacy AS (
         _inserted_timestamp
     FROM
         {{ ref('silver__legacy_prices_coinmarketcap') }}
+    WHERE
+        id IS NOT NULL
+        AND recorded_hour IS NOT NULL
 
 {% if is_incremental() %}
-WHERE
-    _inserted_timestamp > (
-        SELECT
-            MAX(_inserted_timestamp) - INTERVAL '24 hours'
-        FROM
-            {{ this }}
-    )
+AND _inserted_timestamp > (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
 {% endif %}
 ),
 base_streamline AS (
@@ -89,6 +91,7 @@ final_streamline AS (
         base_streamline
     WHERE
         id IS NOT NULL
+        AND recorded_hour IS NOT NULL
 ),
 all_prices AS (
     SELECT
