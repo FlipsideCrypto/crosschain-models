@@ -45,3 +45,4 @@ FROM
     AND s._inserted_date = b._partition_key 
     -- endpoint: ohlc
     -- streamline 1.0 external table
+    -- destination for stored procedures pipeline, containing historical data

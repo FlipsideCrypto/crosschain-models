@@ -49,4 +49,5 @@ FROM
     LATERAL FLATTEN(
         input => DATA
     ) f 
+    -- streamline 2.0 external table
     -- columns parsed out to match legacy bronze model `bronze__asset_metadata_coin_gecko`

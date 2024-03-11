@@ -47,3 +47,5 @@ SELECT
     _inserted_timestamp
 FROM
     asset_metadata
+    -- streamline 1.0 external table
+    -- destination for stored procedures pipeline, containing historical data
