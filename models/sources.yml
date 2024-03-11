@@ -731,3 +731,4 @@ sources:
     tables:
       - name: complete_event_abis
       - name: abis
+      - name: traces

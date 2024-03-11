@@ -118,6 +118,20 @@ WITH base AS (
             'optimism_silver',
             'traces'
         ) }}
+    UNION
+    SELECT
+        MAX(block_timestamp) AS max_timestamp,
+        'blast' AS chain,
+        DATEDIFF(
+            'minutes',
+            max_timestamp,
+            CURRENT_TIMESTAMP
+        ) AS delay
+    FROM
+        {{ source(
+            'blast_silver',
+            'traces'
+        ) }}
 )
 SELECT
     max_timestamp,
