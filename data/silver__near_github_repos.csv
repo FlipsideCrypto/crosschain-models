@@ -1447,6 +1447,7 @@ Endemic-NFT/aurora-contracts
 Endemic-NFT/endemic-subgraph
 EnesZhr/Near_Practice-1
 Entangle-Protocol/centralized-script
+Entangle-Protocol/chains
 Entangle-Protocol/distributors
 Entangle-Protocol/elrond-smart-contracts
 Entangle-Protocol/entangle-blockchain
@@ -2998,6 +2999,7 @@ NEAR-Balkans/pool-together
 NEAR-DevHub/badges-contract
 NEAR-DevHub/neardevhub-bos
 NEAR-DevHub/neardevhub-contract
+NEAR-DevHub/neardevhub-treasury-dashboard
 NEAR-Edu/contract-registry
 NEAR-Edu/contract-registry-ci-test
 NEAR-Edu/dao-in-15
@@ -3086,6 +3088,7 @@ NEARBuilders/audits
 NEARBuilders/bos-blocks
 NEARBuilders/bos-workspace
 NEARBuilders/create
+NEARBuilders/devs.near
 NEARBuilders/discoverbos
 NEARBuilders/docs
 NEARBuilders/editor
@@ -3760,6 +3763,7 @@ RNHTTR/near-sdk-rs
 RNHTTR/typto
 RNHTTR/typto-contract
 Rabbit-Onchain/nft-contract
+RadomNetwork/crypto-payments-salesforce-commerce-b2c-cartridge
 RadomNetwork/radom-contracts-js
 RadomNetwork/radom-js
 RafaDSan/Blockchain_Inicial_Projects
@@ -4186,8 +4190,11 @@ Soptq/near-nft-viewer
 SouL-H/Near-Allowance-DApp
 SouL-H/Near-Deploying
 SouL-H/Near-Developer-Course
+SourceScan/NEPs
+SourceScan/cargo-near-image
 SourceScan/contract-builders
 SourceScan/crypto-ecosystems
+SourceScan/docker-verification-example
 SourceScan/rust-builder
 SourceScan/rust-secp256k1
 SourceScan/verifier-back
@@ -4746,6 +4753,7 @@ Veridise/lib-symexec
 Veridise/libBlockchain
 Veridise/near_audits
 Veridise/openethereum
+Veridise/picus_gnark
 Veridise/pip-cairo-lang
 Veridise/proof-of-liability
 Veridise/rust
@@ -4893,12 +4901,14 @@ XFutureLabs/near_zk_demo1
 XLabs/TypeChain
 XLabs/app-status
 XLabs/cctp-relayer
+XLabs/connect-esm-example
 XLabs/example-token-bridge-relayer
 XLabs/fiber-redis-storage
 XLabs/ledger-ethers-signer
 XLabs/portal-bridge-ui
 XLabs/relayer-engine
 XLabs/relayer-price-feed
+XLabs/relayer-smart-contract-challenge
 XLabs/relayer-status-api
 XLabs/sei-relayer
 XLabs/swap-layer
@@ -6399,6 +6409,7 @@ celer-network/celer-light-client
 celer-network/celer-substrate-client
 celer-network/celer-token-contracts
 celer-network/celer-unity-android-game-sdk-demo
+celer-network/celer-web-sdk
 celer-network/celer-web-wallet
 celer-network/celercore-docs
 celer-network/celerx-example-go-celer
@@ -8371,6 +8382,7 @@ figment-networks/NFT
 figment-networks/figment-apis-demo-app
 figment-networks/visualize-staking-api-flows
 fileverse/.github
+fileverse/HeartBitSDK
 fileverse/decentralised-auth
 fileverse/fileverse-assets
 fileverse/fileverse-backend
@@ -9302,6 +9314,7 @@ huynguyen1212/spk-frontend
 hwnprsd/near-scaffold
 hyeonjin25/TutoPick
 hyperfiles-org/hyperfiles
+hyperfiles-org/registry
 hyperswap/near-contract
 i-am-stark/voteforyou
 i-fix-typos/nearcore
@@ -10429,6 +10442,7 @@ lifinance/jumper.exchange
 lifinance/lifi-analytics-backend
 lifinance/lifi-analytics-dashboard
 lifinance/lifi-contract-types
+lifinance/lifi-subgraph
 lifinance/lifi-web
 lifinance/lifi-web-archive
 lifinance/lizard-merkle-script
@@ -11546,7 +11560,11 @@ near-multicall/contracts
 near-multicall/docs
 near-multicall/nearcon22
 near-multicall/ui
+near-ndc/AstraPlusPlus
+near-ndc/DAOs
+near-ndc/OpsTeam
 near-ndc/astra
+near-ndc/community-voice
 near-ndc/gooddollar-oracle
 near-ndc/gov
 near-ndc/gwg
@@ -11558,6 +11576,7 @@ near-ndc/kudos
 near-ndc/ndc-dashboard
 near-ndc/verification-oracle
 near-ndc/voting-v1
+near-ndc/voting-v2
 near-ndc/wasm-arithmetic-exception
 near-ndc/widget-specs
 near-npns/npns-dapp
@@ -13890,6 +13909,7 @@ safe-global/safe-react-components
 safe-global/safe-react-status
 safe-global/safe-services-status
 safe-global/safe-singleton-factory
+safe-global/safe-smart-account
 safe-global/safe-token
 safe-global/safe-transaction-service
 safe-global/safe-transaction-service-status-page
