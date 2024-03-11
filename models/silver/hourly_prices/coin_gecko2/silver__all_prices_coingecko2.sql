@@ -15,6 +15,7 @@ WITH legacy AS (
         low,
         CLOSE,
         _runtime_date,
+        source,
         _inserted_timestamp
     FROM
         {{ ref('silver__legacy_prices_coingecko') }}
@@ -31,6 +32,7 @@ WHERE
 ),
 base_backfill AS (
     SELECT
+        'backfill' AS source,
         _runtime_date,
         id :: STRING AS id,
         TO_TIMESTAMP(
@@ -97,6 +99,7 @@ final_backfill AS (
                 WHEN rn_close = 1 THEN price
             END
         ) AS CLOSE,
+        source,
         _runtime_date,
         MAX(_inserted_timestamp) AS _inserted_timestamp
     FROM
@@ -110,6 +113,7 @@ final_backfill AS (
 ),
 base_history AS (
     SELECT
+        'history' AS source,
         _inserted_date AS _runtime_date,
         id :: STRING AS id,
         TO_TIMESTAMP(
@@ -176,6 +180,7 @@ final_history AS (
                 WHEN rn_close = 1 THEN price
             END
         ) AS CLOSE,
+        source,
         _runtime_date,
         MAX(_inserted_timestamp) AS _inserted_timestamp
     FROM
@@ -189,6 +194,7 @@ final_history AS (
 ),
 base_realtime AS (
     SELECT
+        'realtime' AS source,
         _inserted_date AS _runtime_date,
         id :: STRING AS id,
         TO_TIMESTAMP(
@@ -234,6 +240,7 @@ final_realtime AS (
         high,
         low,
         CLOSE,
+        source,
         _runtime_date,
         _inserted_timestamp
     FROM
@@ -269,6 +276,7 @@ SELECT
     high,
     low,
     CLOSE,
+    source,
     _runtime_date,
     _inserted_timestamp
 FROM

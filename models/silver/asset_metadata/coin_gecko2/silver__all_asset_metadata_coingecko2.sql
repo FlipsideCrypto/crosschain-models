@@ -8,6 +8,7 @@
 WITH base_sp AS (
 
     SELECT
+        'sp' AS source,
         VALUE,
         provider,
         id,
@@ -30,6 +31,7 @@ AND _inserted_timestamp > (
 ),
 base_streamline AS (
     SELECT
+        'streamline' AS source,
         VALUE,
         provider,
         id,
@@ -67,6 +69,7 @@ SELECT
     id,
     NAME,
     symbol,
+    source,
     _inserted_timestamp
 FROM
     all_assets qualify(ROW_NUMBER() over (PARTITION BY id

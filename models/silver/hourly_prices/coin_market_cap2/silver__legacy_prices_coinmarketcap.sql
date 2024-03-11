@@ -11,6 +11,7 @@
 WITH base_legacy AS (
 
     SELECT
+        'legacy' AS source,
         recorded_at :: DATE AS _runtime_date,
         TRY_TO_NUMBER(
             asset_id :: STRING
@@ -56,6 +57,7 @@ final_legacy AS (
         CLOSE,
         volume,
         market_cap,
+        source,
         _runtime_date,
         _inserted_timestamp
     FROM
@@ -65,6 +67,7 @@ final_legacy AS (
 ),
 base_sp AS (
     SELECT
+        'sp' AS source,
         _inserted_date AS _runtime_date,
         TRY_TO_NUMBER(
             A.id :: STRING
@@ -111,6 +114,7 @@ final_sp AS (
         CLOSE,
         volume,
         market_cap,
+        source,
         _runtime_date,
         _inserted_timestamp
     FROM
@@ -139,6 +143,7 @@ SELECT
     CLOSE,
     volume,
     market_cap,
+    source,
     _runtime_date,
     _inserted_timestamp
 FROM

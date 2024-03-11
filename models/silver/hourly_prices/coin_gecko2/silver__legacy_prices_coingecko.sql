@@ -10,6 +10,7 @@
 WITH base_legacy AS (
 
     SELECT
+        'legacy' AS source,
         recorded_at :: DATE AS _runtime_date,
         asset_id :: STRING AS id,
         recorded_at :: TIMESTAMP AS recorded_timestamp,
@@ -49,6 +50,7 @@ final_legacy AS (
         high,
         low,
         CLOSE,
+        source,
         _runtime_date,
         _inserted_timestamp
     FROM
@@ -58,6 +60,7 @@ final_legacy AS (
 ),
 base_sp AS (
     SELECT
+        'sp' AS source,
         _runtime_date,
         id :: STRING AS id,
         TO_TIMESTAMP(
@@ -103,6 +106,7 @@ final_sp AS (
         high,
         low,
         CLOSE,
+        source,
         _runtime_date,
         _inserted_timestamp
     FROM
@@ -128,6 +132,7 @@ SELECT
     high,
     low,
     CLOSE,
+    source,
     _runtime_date,
     _inserted_timestamp
 FROM

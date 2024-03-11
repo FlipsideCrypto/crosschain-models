@@ -18,6 +18,7 @@ WITH legacy AS (
         CLOSE,
         volume,
         market_cap,
+        source,
         _runtime_date,
         _inserted_timestamp
     FROM
@@ -35,6 +36,7 @@ WHERE
 ),
 base_streamline AS (
     SELECT
+        'streamline' AS source,
         _inserted_date AS _runtime_date,
         TRY_TO_NUMBER(
             b.key :: STRING
@@ -80,6 +82,7 @@ final_streamline AS (
         CLOSE,
         volume,
         market_cap,
+        source,
         _runtime_date,
         _inserted_timestamp
     FROM
@@ -108,6 +111,7 @@ SELECT
     CLOSE,
     volume,
     market_cap,
+    source,
     _runtime_date,
     _inserted_timestamp
 FROM
