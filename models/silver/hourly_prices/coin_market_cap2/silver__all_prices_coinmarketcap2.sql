@@ -28,12 +28,7 @@ WITH legacy AS (
         AND recorded_hour IS NOT NULL
 
 {% if is_incremental() %}
-AND _inserted_timestamp > (
-    SELECT
-        MAX(_inserted_timestamp)
-    FROM
-        {{ this }}
-)
+AND 1 = 2
 {% endif %}
 ),
 base_streamline AS (

@@ -38,12 +38,7 @@ WITH base_legacy AS (
         AND recorded_at < '2022-07-20'
 
 {% if is_incremental() %}
-AND _inserted_timestamp > (
-    SELECT
-        MAX(_inserted_timestamp)
-    FROM
-        {{ this }}
-)
+AND 1 = 2
 {% endif %}
 ),
 final_legacy AS (
@@ -95,12 +90,7 @@ base_sp AS (
         AND DATA IS NOT NULL
 
 {% if is_incremental() %}
-AND _inserted_timestamp > (
-    SELECT
-        MAX(_inserted_timestamp)
-    FROM
-        {{ this }}
-)
+AND 1 = 2
 {% endif %}
 ),
 final_sp AS (
