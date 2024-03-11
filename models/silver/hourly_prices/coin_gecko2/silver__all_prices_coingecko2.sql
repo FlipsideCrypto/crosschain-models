@@ -5,41 +5,8 @@
     cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE']
 ) }}
 
-WITH base_legacy AS (
+WITH legacy AS (
 
-    SELECT
-        recorded_at :: DATE AS _runtime_date,
-        asset_id :: STRING AS id,
-        recorded_at :: TIMESTAMP AS recorded_timestamp,
-        DATE_TRUNC(
-            'hour',
-            recorded_timestamp
-        ) AS recorded_hour,
-        NULL AS OPEN,
-        NULL AS high,
-        NULL AS low,
-        price :: FLOAT AS CLOSE,
-        NULL AS volume,
-        market_cap :: FLOAT market_cap,
-        recorded_at AS _inserted_timestamp
-    FROM
-        {{ source(
-            'bronze',
-            'legacy_prices'
-        ) }}
-    WHERE
-        provider = 'coingecko'
-
-{% if is_incremental() %}
-AND _inserted_timestamp > (
-    SELECT
-        MAX(_inserted_timestamp) - INTERVAL '24 hours'
-    FROM
-        {{ this }}
-)
-{% endif %}
-),
-final_legacy AS (
     SELECT
         id,
         recorded_hour,
@@ -50,9 +17,17 @@ final_legacy AS (
         _runtime_date,
         _inserted_timestamp
     FROM
-        base_legacy
-    WHERE
-        id IS NOT NULL
+        {{ ref('silver__legacy_prices_coingecko') }}
+
+{% if is_incremental() %}
+WHERE
+    _inserted_timestamp > (
+        SELECT
+            MAX(_inserted_timestamp) - INTERVAL '24 hours'
+        FROM
+            {{ this }}
+    )
+{% endif %}
 ),
 base_backfill AS (
     SELECT
@@ -270,7 +245,7 @@ all_prices AS (
     SELECT
         *
     FROM
-        final_legacy
+        legacy
     UNION ALL
     SELECT
         *
