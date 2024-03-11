@@ -17,7 +17,7 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['token_address','platform']) }} AS asset_metadata_coin_gecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    {{ ref('bronze__streamline_asset_metadata_coingecko') }} A,
+    {{ ref('silver__all_asset_metadata_coingecko2') }} A,
     LATERAL FLATTEN(
         input => VALUE :platforms
     ) p

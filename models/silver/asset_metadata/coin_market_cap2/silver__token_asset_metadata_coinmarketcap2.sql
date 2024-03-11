@@ -20,7 +20,7 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['token_address','platform']) }} AS asset_metadata_coin_market_cap_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    {{ ref('bronze__streamline_asset_metadata_coinmarketcap') }} A,
+    {{ ref('silver__all_asset_metadata_coinmarketcap2') }} A,
     LATERAL FLATTEN(
         input => VALUE :platform
     ) p

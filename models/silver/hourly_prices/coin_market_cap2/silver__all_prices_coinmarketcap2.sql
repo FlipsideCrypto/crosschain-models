@@ -110,11 +110,7 @@ SELECT
     volume,
     market_cap,
     _runtime_date,
-    _inserted_timestamp,
-    SYSDATE() AS inserted_timestamp,
-    SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['id','recorded_hour']) }} AS hourly_prices_coin_market_cap_id,
-    '{{ invocation_id }}' AS _invocation_id
+    _inserted_timestamp
 FROM
     all_prices qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
 ORDER BY
