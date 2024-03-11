@@ -88,7 +88,6 @@ base_sp AS (
         ) b
     WHERE
         _inserted_date >= '2022-07-20'
-        AND recorded_hour IS NOT NULL
         AND DATA :: STRING <> '[]'
         AND DATA IS NOT NULL
 

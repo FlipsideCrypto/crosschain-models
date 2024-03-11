@@ -57,8 +57,7 @@ base_streamline AS (
             input => DATA :data
         ) b
     WHERE
-        recorded_hour IS NOT NULL
-        AND DATA :: STRING <> '[]'
+        DATA :: STRING <> '[]'
         AND DATA IS NOT NULL
 
 {% if is_incremental() %}
