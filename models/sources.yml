@@ -465,6 +465,15 @@ sources:
       - name: receipts_completeness
       - name: traces_completeness
       - name: transactions_completeness
+  - name: blast_observ
+    database: blast
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: logs_completeness
+      - name: receipts_completeness
+      - name: traces_completeness
+      - name: transactions_completeness
   - name: base_observ
     database: base
     schema: silver_observability
@@ -722,3 +731,4 @@ sources:
     tables:
       - name: complete_event_abis
       - name: abis
+      - name: traces
