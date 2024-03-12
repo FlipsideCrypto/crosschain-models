@@ -4,7 +4,7 @@
         func = "{{this.schema}}.udf_bulk_rest_api_v2(object_construct('sql_source', '{{this.identifier}}', 'external_table', 'ASSET_MARKET_CHART_API/COINGECKO', 'sql_limit', {{var('sql_limit','50000')}}, 'producer_batch_size', {{var('producer_batch_size','50000')}}, 'worker_batch_size', {{var('worker_batch_size','50000')}}, 'sm_secret_name','prod/coingecko/rest'))",
         target = "{{this.schema}}.{{this.identifier}}"
     ),
-    tags = ['streamline_prices_history2']
+    tags = ['streamline_cg_prices_history']
 ) }}
 
 WITH assets AS (
@@ -27,7 +27,7 @@ run_times AS (
         run_time :: DATE AS run_time
     FROM
         assets A
-        CROSS JOIN {{ ref('streamline__runtimes2') }}
+        CROSS JOIN {{ ref('streamline__runtimes_daily') }}
     WHERE
         run_time :: DATE BETWEEN '2024-01-15' :: DATE
         AND DATEADD('day', -1, SYSDATE()) -- temp logic for backfill

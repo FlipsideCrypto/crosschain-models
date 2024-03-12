@@ -9,19 +9,22 @@ WITH base_assets AS (
 
     SELECT
         id,
-        p.value :: STRING AS token_address,
+        p.this :token_address :: STRING AS token_address,
         NAME,
         symbol,
-        p.key :: STRING AS platform,
+        p.this :name :: STRING AS platform,
+        p.this :id AS platform_id,
+        p.this :slug :: STRING AS platform_slug,
+        p.this :symbol :: STRING AS platform_symbol,
         _inserted_timestamp,
         SYSDATE() AS inserted_timestamp,
         SYSDATE() AS modified_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['token_address','platform']) }} AS asset_metadata_coin_gecko_id,
+        {{ dbt_utils.generate_surrogate_key(['token_address','platform']) }} AS asset_metadata_coin_market_cap_id,
         '{{ invocation_id }}' AS _invocation_id
     FROM
-        {{ ref('silver__all_asset_metadata_coingecko2') }} A,
+        {{ ref('silver__all_asset_metadata_coinmarketcap2') }} A,
         LATERAL FLATTEN(
-            input => VALUE :platforms
+            input => VALUE :platform
         ) p
 
 {% if is_incremental() %}
@@ -40,10 +43,13 @@ SELECT
     NAME,
     symbol,
     platform,
+    platform_id,
+    platform_slug,
+    platform_symbol,
     _inserted_timestamp,
     inserted_timestamp,
     modified_timestamp,
-    asset_metadata_coin_gecko_id,
+    asset_metadata_coin_market_cap_id,
     _invocation_id
 FROM
     base_assets

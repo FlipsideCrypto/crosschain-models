@@ -15,7 +15,7 @@ WITH meta AS (
     FROM
         TABLE(
             information_schema.external_table_file_registration_history(
-                table_name => '{{ source( "bronze_streamline", "asset_metadata_coin_gecko_api_v2") }}'
+                table_name => '{{ source( "bronze_streamline", "asset_metadata_coin_market_cap_api_v2") }}'
             )
         )
 ),
@@ -29,7 +29,7 @@ asset_metadata AS (
     FROM
         {{ source(
             'bronze_streamline',
-            'asset_metadata_coin_gecko_api_v2'
+            'asset_metadata_coin_market_cap_api_v2'
         ) }}
         s
         JOIN meta b
@@ -37,17 +37,23 @@ asset_metadata AS (
 )
 SELECT
     f.value AS VALUE,
-    'coingecko' AS provider,
+    'coinmarketcap' AS provider,
     f.value :id :: STRING AS id,
     f.value :symbol :: STRING AS symbol,
     f.value :name :: STRING AS NAME,
+    f.value :first_historical_data :: TIMESTAMP AS first_historical_data,
+    f.value :last_historical_data :: TIMESTAMP AS last_historical_data,
+    f.value :is_active :: INT AS is_active,
+    f.value :platform AS platform,
+    f.value :rank :: INT AS RANK,
+    f.value :slug :: STRING AS slug,
     run_time,
     _inserted_date,
     _inserted_timestamp
 FROM
     asset_metadata A,
     LATERAL FLATTEN(
-        input => DATA
+        input => data :data
     ) f 
     -- streamline 2.0 external table
-    -- columns parsed out to match legacy bronze model `bronze__asset_metadata_coin_gecko`
+    -- columns parsed out to match legacy bronze model `bronze__asset_metadata_coin_market_cap`

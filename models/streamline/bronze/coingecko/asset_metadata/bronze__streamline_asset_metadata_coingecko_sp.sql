@@ -14,40 +14,38 @@ WITH meta AS (
         ) AS _partition_key
     FROM
         TABLE(
-            information_schema.external_table_file_registration_history(
-                table_name => '{{ source( "bronze_streamline", "asset_metadata_coin_gecko_api_v2") }}'
+            information_schema.external_table_files(
+                table_name => '{{ source( "bronze_streamline", "asset_metadata_coin_gecko_api") }}'
             )
         )
 ),
 asset_metadata AS (
     SELECT
-        partition_key,
+        _inserted_date AS partition_key,
         _inserted_date,
         TO_TIMESTAMP(partition_key) AS run_time,
-        DATA,
+        VALUE,
         _inserted_timestamp
     FROM
         {{ source(
             'bronze_streamline',
-            'asset_metadata_coin_gecko_api_v2'
+            'asset_metadata_coin_gecko_api'
         ) }}
         s
         JOIN meta b
         ON s.metadata$filename = b.file_name
 )
 SELECT
-    f.value AS VALUE,
+    VALUE,
     'coingecko' AS provider,
-    f.value :id :: STRING AS id,
-    f.value :symbol :: STRING AS symbol,
-    f.value :name :: STRING AS NAME,
+    VALUE :id :: STRING AS id,
+    VALUE :symbol :: STRING AS symbol,
+    VALUE :name :: STRING AS NAME,
+    VALUE :platforms AS platforms,
     run_time,
     _inserted_date,
     _inserted_timestamp
 FROM
-    asset_metadata A,
-    LATERAL FLATTEN(
-        input => DATA
-    ) f 
-    -- streamline 2.0 external table
-    -- columns parsed out to match legacy bronze model `bronze__asset_metadata_coin_gecko`
+    asset_metadata
+    -- streamline 1.0 external table
+    -- destination for stored procedures pipeline, containing historical data

@@ -338,6 +338,8 @@ sources:
       - name: asset_ohlc_coin_gecko_api_v2
       - name: asset_market_chart_coin_gecko_api_v2
       - name: asset_metadata_coin_gecko_api_v2
+      - name: asset_metadata_coin_market_cap_api_v2
+      - name: asset_ohlc_coin_market_cap_api_v2
   - name: bronze
     database: crosschain
     schema: bronze

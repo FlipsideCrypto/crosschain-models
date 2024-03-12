@@ -2,15 +2,33 @@
     materialized = 'incremental',
     unique_key = ['id','recorded_hour'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
-    tags = ['streamline_prices_complete2']
+    cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE']
 ) }}
 
-WITH base_backfill AS (
+WITH legacy AS (
 
     SELECT
-        _runtime_date,
         id,
+        recorded_hour,
+        OPEN,
+        high,
+        low,
+        CLOSE,
+        source,
+        _runtime_date,
+        _inserted_timestamp
+    FROM
+        {{ ref('silver__legacy_prices_coingecko') }}
+
+{% if is_incremental() %}
+AND 1 = 2
+{% endif %}
+),
+base_backfill AS (
+    SELECT
+        'backfill' AS source,
+        _runtime_date,
+        id :: STRING AS id,
         TO_TIMESTAMP(
             f.value [0] :: STRING
         ) AS recorded_timestamp,
@@ -50,13 +68,7 @@ WITH base_backfill AS (
         LATERAL FLATTEN(input => DATA :prices) f
 
 {% if is_incremental() %}
-WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp) - INTERVAL '24 hours'
-        FROM
-            {{ this }}
-    )
+AND 1 = 2
 {% endif %}
 ),
 final_backfill AS (
@@ -75,6 +87,7 @@ final_backfill AS (
                 WHEN rn_close = 1 THEN price
             END
         ) AS CLOSE,
+        source,
         _runtime_date,
         MAX(_inserted_timestamp) AS _inserted_timestamp
     FROM
@@ -84,12 +97,14 @@ final_backfill AS (
     GROUP BY
         recorded_hour,
         id,
-        _runtime_date
+        _runtime_date,
+        source
 ),
 base_history AS (
     SELECT
+        'history' AS source,
         _inserted_date AS _runtime_date,
-        id,
+        id :: STRING AS id,
         TO_TIMESTAMP(
             f.value [0] :: STRING
         ) AS recorded_timestamp,
@@ -154,6 +169,7 @@ final_history AS (
                 WHEN rn_close = 1 THEN price
             END
         ) AS CLOSE,
+        source,
         _runtime_date,
         MAX(_inserted_timestamp) AS _inserted_timestamp
     FROM
@@ -161,25 +177,24 @@ final_history AS (
     WHERE
         id IS NOT NULL
     GROUP BY
+        source,
         recorded_hour,
         id,
         _runtime_date
 ),
 base_realtime AS (
     SELECT
+        'realtime' AS source,
         _inserted_date AS _runtime_date,
-        id,
+        id :: STRING AS id,
+        TO_TIMESTAMP(
+            f.value [0] :: STRING
+        ) AS recorded_timestamp,
         CASE
-            WHEN TO_TIMESTAMP(
-                f.value [0] :: STRING
-            ) = DATE_TRUNC(
+            WHEN recorded_timestamp = DATE_TRUNC(
                 'hour',
-                TO_TIMESTAMP(
-                    f.value [0] :: STRING
-                )
-            ) THEN TO_TIMESTAMP(
-                f.value [0] :: STRING
-            )
+                recorded_timestamp
+            ) THEN recorded_timestamp
             ELSE NULL
         END AS recorded_hour,
         f.value [1] :: FLOAT AS OPEN,
@@ -199,13 +214,12 @@ base_realtime AS (
         AND DATA IS NOT NULL
 
 {% if is_incremental() %}
-AND
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp) - INTERVAL '24 hours'
-        FROM
-            {{ this }}
-    )
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp) - INTERVAL '24 hours'
+    FROM
+        {{ this }}
+)
 {% endif %}
 ),
 final_realtime AS (
@@ -216,6 +230,7 @@ final_realtime AS (
         high,
         low,
         CLOSE,
+        source,
         _runtime_date,
         _inserted_timestamp
     FROM
@@ -224,6 +239,11 @@ final_realtime AS (
         id IS NOT NULL
 ),
 all_prices AS (
+    SELECT
+        *
+    FROM
+        legacy
+    UNION ALL
     SELECT
         *
     FROM
@@ -246,13 +266,10 @@ SELECT
     high,
     low,
     CLOSE,
+    source,
     _runtime_date,
-    _inserted_timestamp,
-    SYSDATE() AS inserted_timestamp,
-    SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['id','recorded_hour']) }} AS hourly_prices_coin_gecko_id,
-    '{{ invocation_id }}' AS _invocation_id
+    _inserted_timestamp
 FROM
     all_prices qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
 ORDER BY
-    _inserted_timestamp DESC)) = 1 -- `backfill` data will be merged into `history` external table
+    _inserted_timestamp DESC)) = 1 -- `backfill` data will eventually be merged into `history` external table

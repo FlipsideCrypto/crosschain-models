@@ -14,13 +14,13 @@ WITH date_hours AS (
             'core__dim_date_hours'
         ) }}
     WHERE
-        date_hour >= '2018-01-01'
+        date_hour >= '2020-05-05'
         AND date_hour <= (
             SELECT
                 MAX(recorded_hour)
             FROM
                 {{ ref(
-                    'silver__all_prices_coingecko2'
+                    'silver__all_prices_coinmarketcap2'
                 ) }}
         )
 
@@ -39,23 +39,22 @@ all_asset_metadata AS (
             WHEN LOWER(platform) = 'aptos' THEN token_address
             WHEN TRIM(token_address) ILIKE '^x%'
             OR TRIM(token_address) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
-            WHEN id = 'osmosis' THEN 'uosmo'
-            WHEN id = 'algorand' THEN '0'
+            WHEN id = '12220' THEN 'uosmo'
+            WHEN id = '4030' THEN '0'
             ELSE token_address
         END AS token_address_adj,
         id,
         LOWER(
             CASE
-                WHEN id = 'osmosis' THEN 'osmosis'
-                WHEN id = 'algorand' THEN 'algorand'
-                WHEN id = 'solana' THEN 'solana'
+                WHEN id = '12220' THEN 'osmosis'
+                WHEN id = '4030' THEN 'Algorand'
                 ELSE platform :: STRING
             END
         ) AS platform_adj,
         _inserted_timestamp
     FROM
         {{ ref(
-            'silver__token_asset_metadata_coingecko2'
+            'silver__token_asset_metadata_coinmarketcap2'
         ) }}
         qualify(ROW_NUMBER() over (PARTITION BY token_address_adj, platform_adj
     ORDER BY
@@ -81,7 +80,7 @@ base_prices AS (
         p._inserted_timestamp
     FROM
         {{ ref(
-            'silver__all_prices_coingecko2'
+            'silver__all_prices_coinmarketcap2'
         ) }}
         p
         LEFT JOIN all_asset_metadata m
@@ -131,7 +130,7 @@ imputed_prices AS (
                 ORDER BY
                     d.date_hour rows unbounded preceding
             )
-        END AS imputed_close, --only impute prices for tokens currently supported by coingecko
+        END AS imputed_close, --only impute prices for tokens currently supported by coinmarketcap
         COALESCE(
             hourly_close,
             imputed_close
@@ -182,7 +181,7 @@ SELECT
     ) AS _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','token_address','platform']) }} AS token_prices_coin_gecko_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','token_address','platform']) }} AS token_prices_coin_market_cap_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     final_prices

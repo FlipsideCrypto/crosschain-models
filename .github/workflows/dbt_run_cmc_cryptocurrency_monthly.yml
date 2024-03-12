@@ -3,9 +3,9 @@ run-name: dbt_run_cmc_cryptocurrency_monthly
 
 on:
   workflow_dispatch:
-  schedule:
-    # “At minute 10, 20, 30, and 40 past hour 1 on day-of-month 1.”
-    - cron: '10,20,30,40 1 1 * *'
+  # schedule:
+  #   # “At minute 10, 20, 30, and 40 past hour 1 on day-of-month 1.”
+  #   - cron: '10,20,30,40 1 1 * *'
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
