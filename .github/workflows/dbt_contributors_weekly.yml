@@ -4,7 +4,7 @@ run-name: dbt_contributors_weekly
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */1 * * 2-3-4" # Run every Monday, Tuesday, and Wednesday
+    - cron: "0 */1 * * 1-3" # Run every Monday, Tuesday, and Wednesday
 
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
