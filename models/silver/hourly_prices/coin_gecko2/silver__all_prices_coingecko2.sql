@@ -21,7 +21,7 @@ WITH legacy AS (
         {{ ref('silver__legacy_prices_coingecko') }}
 
 {% if is_incremental() %}
-AND 1 = 2
+WHERE 1 = 2
 {% endif %}
 ),
 base_backfill AS (
@@ -68,7 +68,7 @@ base_backfill AS (
         LATERAL FLATTEN(input => DATA :prices) f
 
 {% if is_incremental() %}
-AND 1 = 2
+WHERE 1 = 2
 {% endif %}
 ),
 final_backfill AS (
