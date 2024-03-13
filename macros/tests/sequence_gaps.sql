@@ -67,7 +67,7 @@ ORDER BY
     FROM
         source
     WHERE
-        gap <> 0
+        gap > 0
     ORDER BY
         gap DESC
 {% endtest %}
