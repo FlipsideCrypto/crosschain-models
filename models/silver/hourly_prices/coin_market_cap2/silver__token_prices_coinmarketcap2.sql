@@ -95,21 +95,16 @@ AND p._inserted_timestamp >= (
 )
 {% endif %}
 ),
-current_asset_metadata AS (
+latest_supported_assets AS (
     SELECT
         token_address_adj AS token_address,
-        id,
         platform_adj AS platform,
-        _inserted_timestamp
+        MAX(_inserted_timestamp) AS last_supported_timestamp
     FROM
         all_asset_metadata
-    WHERE
-        _inserted_timestamp = (
-            SELECT
-                MAX(_inserted_timestamp)
-            FROM
-                all_asset_metadata
-        )
+    GROUP BY
+        1,
+        2
 ),
 imputed_prices AS (
     SELECT
@@ -120,24 +115,26 @@ imputed_prices AS (
         d.platform,
         p.close AS hourly_close,
         CASE
-            WHEN C.token_address IS NULL
-            AND C.platform IS NULL THEN NULL
-            ELSE LAST_VALUE(
+            WHEN p.close IS NOT NULL THEN NULL
+            WHEN p.close IS NULL
+            AND d.date_hour :: DATE <= C.last_supported_timestamp :: DATE THEN LAST_VALUE(
                 p.close ignore nulls
             ) over (
                 PARTITION BY d.token_address,
                 d.platform
                 ORDER BY
-                    d.date_hour rows unbounded preceding
+                    d.date_hour rows BETWEEN unbounded preceding
+                    AND CURRENT ROW
             )
-        END AS imputed_close, --only impute prices for tokens currently supported by coinmarketcap
+            ELSE NULL
+        END AS imputed_close, --only impute prices for coinmarketcap supported ranges
         COALESCE(
             hourly_close,
             imputed_close
         ) AS final_close,
         CASE
-            WHEN hourly_close IS NULL THEN TRUE
-            ELSE FALSE
+            WHEN imputed_close IS NULL THEN FALSE
+            ELSE TRUE
         END AS imputed,
         p._inserted_timestamp
     FROM
@@ -146,7 +143,7 @@ imputed_prices AS (
         ON p.recorded_hour = d.date_hour
         AND p.token_address = d.token_address
         AND p.platform = d.platform
-        LEFT JOIN current_asset_metadata C
+        LEFT JOIN latest_supported_assets C
         ON C.token_address = d.token_address
         AND C.platform = d.platform
 ),
@@ -186,4 +183,3 @@ SELECT
 FROM
     final_prices
 --add gap testing, retry logic etc.
---add logic to impute price gaps for non-supported tokens

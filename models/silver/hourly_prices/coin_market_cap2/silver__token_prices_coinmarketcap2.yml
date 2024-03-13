@@ -11,6 +11,11 @@ models:
     columns:
       - name: RECORDED_HOUR
         tests:
+          - hour_sequence_gaps:
+              partition_by:
+                - TOKEN_ADDRESS
+                - PLATFORM
+              column_name: RECORDED_HOUR
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
               interval: 1
