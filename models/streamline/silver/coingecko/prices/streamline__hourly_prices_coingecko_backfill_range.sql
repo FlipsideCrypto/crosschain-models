@@ -3,14 +3,13 @@
     post_hook = if_data_call_function(
         func = "{{this.schema}}.udf_bulk_rest_api_v2(object_construct('sql_source', '{{this.identifier}}', 'external_table', 'ASSET_MARKET_CHART_API/COINGECKO', 'sql_limit', {{var('sql_limit','1000')}}, 'producer_batch_size', {{var('producer_batch_size','1000')}}, 'worker_batch_size', {{var('worker_batch_size','1000')}}, 'sm_secret_name','prod/coingecko/rest'))",
         target = "{{this.schema}}.{{this.identifier}}"
-    ),
-    tags = ['streamline_cg_prices_history']
+    )
 ) }}
 
 WITH assets AS (
 
     SELECT
-        id AS asset_id
+        DISTINCT id AS asset_id
     FROM
         {{ ref('bronze__streamline_asset_metadata_coingecko') }}
     WHERE
@@ -24,33 +23,40 @@ WITH assets AS (
 ),
 run_times AS (
     SELECT
-        asset_id
-    FROM assets
+        asset_id,
+        run_time
+    FROM
+        assets
+        CROSS JOIN {{ ref('streamline__runtimes_daily') }}
+    WHERE
+        run_time >= DATEADD('day', -91, SYSDATE())
+        AND run_time <= DATEADD('day', -1, SYSDATE())
     EXCEPT
     SELECT
-        id AS asset_id
+        id AS asset_id,
+        recorded_date AS run_time
     FROM
         {{ ref('streamline__hourly_prices_coingecko_complete') }}
     WHERE
-        recorded_date >= DATEADD('day', -31, SYSDATE())
-        AND recorded_date <= DATEADD('day', -1, SYSDATE())
-        --replays 90 days of prices from active tokens missing all prices within the last 30 days
+        run_time >= DATEADD('day', -91, SYSDATE())
+        AND run_time <= DATEADD('day', -1, SYSDATE())
+    --active tokens that are missing one day of prices within the last 90 days
+),
+numbered_assets AS (
+    SELECT
+        DISTINCT asset_id,
+        DENSE_RANK() OVER (ORDER BY asset_id ASC) AS row_num
+    FROM
+        run_times
 ),
 calls AS (
     SELECT
-        {% if var("ASSET_ID", false) %}
-            '{{ var("ASSET_ID") }}' AS id
-        {% else %}
-            asset_id AS id
-        {% endif %},
-        CONCAT(
-                '{service}/api/v3/coins/',
-                id,
-                '/market_chart?vs_currency=usd&days=90&interval=hourly&precision=full&x_cg_pro_api_key={Authentication}'
-            ) AS api_url
+        asset_id,
+        '{service}/api/v3/coins/' || asset_id || '/market_chart?vs_currency=usd&days=90&interval=hourly&precision=full&x_cg_pro_api_key={Authentication}' AS api_url
     FROM
-        run_times
-    GROUP BY 1
+        numbered_assets
+    WHERE row_num >= {{ var("RANGE_START", 0) }} 
+        AND row_num <= {{ var("RANGE_END", 1000) }}
 )
 SELECT
     DATE_PART(
