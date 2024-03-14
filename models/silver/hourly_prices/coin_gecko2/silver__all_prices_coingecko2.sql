@@ -176,8 +176,6 @@ final_history AS (
         base_history
     WHERE
         id IS NOT NULL
-        AND close <> 0
-        AND recorded_hour :: DATE <> '1970-01-01'
     GROUP BY
         source,
         recorded_hour,
