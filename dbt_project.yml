@@ -27,8 +27,6 @@ clean-targets: # directories to be removed by `dbt clean`
 on-run-start:
   - "{{ create_sps() }}"
   - '{{ create_udfs() }}'
-  - '{{ sp_create_bulk_get_coin_gecko_asset_metadata() }}'
-  - '{{ sp_create_bulk_get_coin_market_cap_asset_metadata() }}'
   - '{{ sp_refresh_external_table_by_recent_date() }}'
 
 
