@@ -86,6 +86,9 @@ base_prices AS (
         p
         LEFT JOIN all_asset_metadata m
         ON m.id = p.id
+    WHERE
+        p.close <> 0
+        AND p.recorded_hour :: DATE <> '1970-01-01'
 
 {% if is_incremental() %}
 AND p._inserted_timestamp >= (
@@ -128,7 +131,8 @@ imputed_prices AS (
                     AND CURRENT ROW
             )
             ELSE NULL
-        END AS imputed_close, --only impute prices for coingecko supported ranges
+        END AS imputed_close,
+        --only impute prices for coingecko supported ranges
         COALESCE(
             hourly_close,
             imputed_close
@@ -182,5 +186,4 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['recorded_hour','token_address','platform']) }} AS token_prices_coin_gecko_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    final_prices 
-    --add gap testing, retry logic etc.
+    final_prices --add gap testing, retry logic etc.
