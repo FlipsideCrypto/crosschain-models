@@ -32,9 +32,9 @@ run_times AS (
     FROM
         {{ ref('streamline__hourly_prices_coingecko_complete') }}
     WHERE
-        recorded_date >= DATEADD('day', -31, SYSDATE())
+        recorded_date >= DATEADD('day', -91, SYSDATE())
         AND recorded_date <= DATEADD('day', -1, SYSDATE())
-        --replays 90 days of prices from active tokens missing all prices within the last 30 days
+        --replays 90 days of prices from active tokens missing all prices within the last 90 days
 ),
 calls AS (
     SELECT
@@ -42,7 +42,7 @@ calls AS (
             '{{ var("ASSET_ID") }}' AS id
         {% else %}
             asset_id AS id
-        {% endif %},
+        {% endif %}, --pass unique asset_id if necessary
         CONCAT(
                 '{service}/api/v3/coins/',
                 id,
