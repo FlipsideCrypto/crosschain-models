@@ -16,35 +16,46 @@ WITH backfill AS (
         {{ ref(
             'bronze__streamline_hourly_prices_coingecko_backfill'
         ) }}
+    WHERE
+        recorded_date IS NOT NULL
 
 {% if is_incremental() %}
-WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp)
-        FROM
-            {{ this }}
-    )
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
 {% endif %}
 ),
 history AS (
     SELECT
         id,
-        run_time :: DATE AS recorded_date,
+        DATE_TRUNC(
+            'hour',
+            TO_TIMESTAMP(
+                f.value [0] :: STRING
+            )
+        ) AS recorded_date,
         _inserted_timestamp
     FROM
         {{ ref(
             'bronze__streamline_hourly_prices_coingecko_history'
         ) }}
+        s,
+        LATERAL FLATTEN(
+            input => DATA :prices
+        ) f
+    WHERE
+        recorded_date IS NOT NULL
 
 {% if is_incremental() %}
-WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp)
-        FROM
-            {{ this }}
-    )
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
 {% endif %}
 ),
 realtime AS (
