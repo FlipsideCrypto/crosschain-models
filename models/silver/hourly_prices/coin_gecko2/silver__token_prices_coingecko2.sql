@@ -5,17 +5,33 @@
     cluster_by = ['recorded_hour::DATE']
 ) }}
 
-WITH date_hours AS (
+WITH token_asset_metadata AS (
+    --get all assets
 
     SELECT
-        date_hour
+        id,
+        token_address,
+        platform,
+        _inserted_timestamp
+    FROM
+        {{ ref(
+            'silver__token_asset_metadata_coingecko2'
+        ) }}
+),
+base_hours_metadata AS (
+    --generate spine of all possible hours up to the latest supported hour
+    SELECT
+        date_hour,
+        id,
+        token_address,
+        platform
     FROM
         {{ ref(
             'core__dim_date_hours'
         ) }}
+        CROSS JOIN token_asset_metadata
     WHERE
-        date_hour >= '2018-01-01'
-        AND date_hour <= (
+        date_hour <= (
             SELECT
                 MAX(recorded_hour)
             FROM
@@ -33,58 +49,22 @@ AND date_hour >= (
 )
 {% endif %}
 ),
-all_asset_metadata AS (
-    SELECT
-        DISTINCT CASE
-            WHEN LOWER(platform) = 'aptos' THEN token_address
-            WHEN TRIM(token_address) ILIKE '^x%'
-            OR TRIM(token_address) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
-            WHEN id = 'osmosis' THEN 'uosmo'
-            WHEN id = 'algorand' THEN '0'
-            ELSE token_address
-        END AS token_address_adj,
-        id,
-        LOWER(
-            CASE
-                WHEN id = 'osmosis' THEN 'osmosis'
-                WHEN id = 'algorand' THEN 'algorand'
-                WHEN id = 'solana' THEN 'solana'
-                ELSE platform :: STRING
-            END
-        ) AS platform_adj,
-        _inserted_timestamp
-    FROM
-        {{ ref(
-            'silver__token_asset_metadata_coingecko2'
-        ) }}
-        qualify(ROW_NUMBER() over (PARTITION BY token_address_adj, platform_adj
-    ORDER BY
-        _inserted_timestamp DESC)) = 1
-),
-base_date_hours_address AS (
-    SELECT
-        date_hour,
-        token_address_adj AS token_address,
-        id,
-        platform_adj AS platform
-    FROM
-        date_hours
-        CROSS JOIN all_asset_metadata
-),
 base_prices AS (
+    --get all prices and join to asset metadata
     SELECT
         p.recorded_hour,
-        m.token_address_adj AS token_address,
+        m.token_address,
         p.id,
-        m.platform_adj AS platform,
+        m.platform,
         p.close,
+        p.source,
         p._inserted_timestamp
     FROM
         {{ ref(
             'silver__all_prices_coingecko2'
         ) }}
         p
-        LEFT JOIN all_asset_metadata m
+        LEFT JOIN token_asset_metadata m
         ON m.id = p.id
     WHERE
         p.close <> 0
@@ -100,19 +80,20 @@ AND p._inserted_timestamp >= (
 {% endif %}
 ),
 latest_supported_assets AS (
+    --get the latest supported timestamp for each asset
     SELECT
-        token_address_adj AS token_address,
-        platform_adj AS platform,
+        token_address,
+        platform,
         MAX(_inserted_timestamp) AS last_supported_timestamp
     FROM
-        all_asset_metadata
+        token_asset_metadata
     GROUP BY
         1,
         2
 ),
 imputed_prices AS (
+    --impute missing prices, ensuring no gaps
     SELECT
-        --dateadd(hour,1,date_hour) AS recorded_hour, -- use this instead if we want to roll the close price forward 1 hour
         date_hour AS recorded_hour,
         d.token_address,
         d.id,
@@ -121,7 +102,7 @@ imputed_prices AS (
         CASE
             WHEN p.close IS NOT NULL THEN NULL
             WHEN p.close IS NULL
-            AND d.date_hour :: DATE <= C.last_supported_timestamp :: DATE THEN LAST_VALUE(
+            AND d.date_hour :: DATE <= s.last_supported_timestamp :: DATE THEN LAST_VALUE(
                 p.close ignore nulls
             ) over (
                 PARTITION BY d.token_address,
@@ -141,25 +122,34 @@ imputed_prices AS (
             WHEN imputed_close IS NULL THEN FALSE
             ELSE TRUE
         END AS imputed,
+        p.source,
+        s.last_supported_timestamp,
         p._inserted_timestamp
     FROM
-        base_date_hours_address d
+        base_hours_metadata d
         LEFT JOIN base_prices p
         ON p.recorded_hour = d.date_hour
         AND p.token_address = d.token_address
         AND p.platform = d.platform
-        LEFT JOIN latest_supported_assets C
-        ON C.token_address = d.token_address
-        AND C.platform = d.platform
+        LEFT JOIN latest_supported_assets s
+        ON s.token_address = d.token_address
+        AND s.platform = d.platform
 ),
 final_prices AS (
     SELECT
-        recorded_hour,
+        DATEADD(
+            HOUR,
+            1,
+            recorded_hour
+        ) AS recorded_hour,
+        --roll the close price forward 1 hour
         token_address,
         id,
         platform,
         final_close AS CLOSE,
         imputed,
+        source,
+        last_supported_timestamp,
         _inserted_timestamp AS _inserted_timestamp_raw,
         CASE
             WHEN imputed THEN SYSDATE()
@@ -177,6 +167,8 @@ SELECT
     id,
     CLOSE,
     imputed,
+    source,
+    last_supported_timestamp,
     COALESCE(
         _inserted_timestamp_raw,
         _imputed_timestamp
@@ -186,4 +178,4 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['recorded_hour','token_address','platform']) }} AS token_prices_coin_gecko_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    final_prices --add gap testing, retry logic etc.
+    final_prices

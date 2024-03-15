@@ -60,7 +60,7 @@ all_asset_metadata AS (
     ORDER BY
         _inserted_timestamp DESC)) = 1
 ),
-base_date_hours_address AS (
+base_date_hours_metadata AS (
     SELECT
         date_hour,
         token_address_adj AS token_address,
@@ -77,6 +77,7 @@ base_prices AS (
         p.id,
         m.platform_adj AS platform,
         p.close,
+        p.source,
         p._inserted_timestamp
     FROM
         {{ ref(
@@ -111,7 +112,6 @@ latest_supported_assets AS (
 ),
 imputed_prices AS (
     SELECT
-        --dateadd(hour,1,date_hour) AS recorded_hour, -- use this instead if we want to roll the close price forward 1 hour
         date_hour AS recorded_hour,
         d.token_address,
         d.id,
@@ -140,9 +140,11 @@ imputed_prices AS (
             WHEN imputed_close IS NULL THEN FALSE
             ELSE TRUE
         END AS imputed,
+        p.source,
+        C.last_supported_timestamp,
         p._inserted_timestamp
     FROM
-        base_date_hours_address d
+        base_date_hours_metadata d
         LEFT JOIN base_prices p
         ON p.recorded_hour = d.date_hour
         AND p.token_address = d.token_address
@@ -153,12 +155,19 @@ imputed_prices AS (
 ),
 final_prices AS (
     SELECT
-        recorded_hour,
+        DATEADD(
+            HOUR,
+            1,
+            recorded_hour
+        ) AS recorded_hour,
+        --roll the close price forward 1 hour
         token_address,
         id,
         platform,
         final_close AS CLOSE,
         imputed,
+        source,
+        last_supported_timestamp,
         _inserted_timestamp AS _inserted_timestamp_raw,
         CASE
             WHEN imputed THEN SYSDATE()
@@ -176,6 +185,8 @@ SELECT
     id,
     CLOSE,
     imputed,
+    source,
+    last_supported_timestamp,
     COALESCE(
         _inserted_timestamp_raw,
         _imputed_timestamp
