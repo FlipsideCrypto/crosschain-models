@@ -1,10 +1,11 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "_unique_key",
+    unique_key = "asset_metadata_all_providers_id",
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
 ) }}
-
+--delete+insert?
+--incremental logic in CTES?
 WITH coin_gecko AS (
 
     SELECT
@@ -40,7 +41,7 @@ ibc_am AS (
         project_name AS symbol,
         'cosmos' AS platform,
         'onchain' AS provider,
-        '2000-01-01' AS _inserted_timestamp
+        '2000-01-01' :: TIMESTAMP AS _inserted_timestamp
     FROM
         {{ source(
             'osmosis_silver',
@@ -67,42 +68,22 @@ solana_solscan AS (
 ),
 all_providers AS (
     SELECT
-        token_address,
-        id,
-        symbol,
-        platform,
-        provider,
-        _inserted_timestamp
+        *
     FROM
         coin_gecko
-    UNION
+    UNION ALL
     SELECT
-        token_address,
-        id,
-        symbol,
-        platform,
-        provider,
-        _inserted_timestamp
+        *
     FROM
         coin_market_cap
-    UNION
+    UNION ALL
     SELECT
-        token_address,
-        id,
-        symbol,
-        platform,
-        provider,
-        _inserted_timestamp
+        *
     FROM
         ibc_am
-    UNION
+    UNION ALL
     SELECT
-        token_address,
-        id,
-        symbol,
-        platform,
-        provider,
-        _inserted_timestamp
+        *
     FROM
         solana_solscan
 ),
