@@ -13,6 +13,7 @@ WITH base_assets AS (
         NAME,
         symbol,
         p.key :: STRING AS platform,
+        source,
         _inserted_timestamp
     FROM
         {{ ref('silver__all_asset_metadata_coingecko2') }} A,
@@ -88,6 +89,7 @@ assets_adj AS (
             END
             ELSE A.symbol
         END AS symbol,
+        source,
         A._inserted_timestamp
     FROM
         base_assets A
@@ -133,6 +135,7 @@ SELECT
     NAME,
     symbol,
     platform_adj AS platform,
+    source,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
