@@ -130,7 +130,7 @@ SELECT
     CASE
         WHEN token_address_adj ILIKE 'ibc%'
         OR platform_adj = 'solana' THEN token_address_adj
-        ELSE LOWER(token_address)
+        ELSE LOWER(token_address_adj)
     END AS token_address,
     NAME,
     symbol,
