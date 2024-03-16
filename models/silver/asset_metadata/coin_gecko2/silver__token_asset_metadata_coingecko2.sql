@@ -4,7 +4,7 @@
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE']
 ) }}
-
+--restructure to separate solana, ibc
 WITH base_assets AS (
 
     SELECT
