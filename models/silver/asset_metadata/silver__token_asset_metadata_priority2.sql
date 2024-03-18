@@ -29,7 +29,7 @@ WITH all_providers AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '4 hours'
         FROM
             {{ this }}
     )

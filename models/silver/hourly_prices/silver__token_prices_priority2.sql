@@ -37,7 +37,7 @@ WITH all_providers AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '4 hours'
         FROM
             {{ this }}
     )
@@ -53,6 +53,7 @@ SELECT
     provider,
     priority,
     source,
+    _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain']) }} AS token_prices_priority_hourly_id,
