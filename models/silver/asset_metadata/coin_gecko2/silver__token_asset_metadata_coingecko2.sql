@@ -4,7 +4,7 @@
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE']
 ) }}
---restructure to separate solana, ibc
+
 WITH base_assets AS (
 
     SELECT
@@ -31,65 +31,39 @@ WHERE
     )
 {% endif %}
 ),
-assets_adj AS (
+base_adj AS (
     SELECT
-        LOWER(id) AS id_adj,
         LOWER(
-            CASE
-                WHEN id_adj = 'osmosis' THEN 'osmosis'
-                WHEN id_adj = 'algorand' THEN 'algorand'
-                WHEN s.token_address IS NOT NULL THEN 'solana'
-                WHEN (
-                    id IN (
-                        SELECT
-                            id
-                        FROM
-                            {{ ref('silver__ibc_asset_metadata_coingecko') }}
-                    )
-                    OR A.token_address ILIKE 'ibc%'
-                )
-                AND (COALESCE(i.address, A.token_address) ILIKE 'ibc%'
-                OR i.address IN ('uosmo', 'uion')) THEN 'cosmos'
-                ELSE platform :: STRING
-            END
-        ) AS platform_adj,
+            A.id
+        ) AS id_adj,
         CASE
-            WHEN platform_adj = 'aptos' THEN A.token_address
-            WHEN id_adj = 'osmosis' THEN 'uosmo'
-            WHEN id_adj = 'algorand' THEN '0'
-            WHEN COALESCE(
-                i.address,
-                A.token_address
-            ) ILIKE 'ibc%' THEN 'ibc/' || SPLIT_PART(COALESCE(i.address, A.token_address), '/', 2)
+            WHEN LOWER(
+                A.platform
+            ) = 'aptos' THEN A.token_address
             WHEN TRIM(
                 A.token_address
             ) ILIKE '^x%'
             OR TRIM(
                 A.token_address
             ) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(A.token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
+            WHEN A.id = 'osmosis' THEN 'uosmo'
+            WHEN A.id = 'algorand' THEN '0'
             ELSE A.token_address
         END AS token_address_adj,
-        NAME,
-        CASE
-            WHEN A.symbol IS NULL
-            AND platform_adj = 'cosmos' THEN CASE
-                A.id
-                WHEN 'cerberus-2' THEN 'CRBRUS'
-                WHEN 'cheqd-network' THEN 'CHEQ'
-                WHEN 'e-money-eur' THEN 'EEUR'
-                WHEN 'juno-network' THEN 'JUNO'
-                WHEN 'kujira' THEN 'KUJI'
-                WHEN 'medibloc' THEN 'MED'
-                WHEN 'microtick' THEN 'TICK'
-                WHEN 'neta' THEN 'NETA'
-                WHEN 'regen' THEN 'REGEN'
-                WHEN 'sommelier' THEN 'SOMM'
-                WHEN 'terra-luna' THEN 'LUNC'
-                WHEN 'umee' THEN 'UMEE'
+        A.name AS name_adj,
+        A.symbol AS symbol_adj,
+        LOWER(
+            CASE
+                WHEN A.id = 'osmosis' THEN 'osmosis'
+                WHEN A.id = 'algorand' THEN 'algorand'
+                WHEN s.token_address IS NOT NULL THEN 'solana'
+                ELSE A.platform :: STRING
             END
-            ELSE A.symbol
-        END AS symbol,
-        source,
+        ) AS platform_adj,
+        CASE
+            WHEN s.token_address IS NOT NULL THEN 'solana'
+            ELSE source
+        END AS source_adj,
         A._inserted_timestamp
     FROM
         base_assets A
@@ -103,6 +77,51 @@ assets_adj AS (
         ) = LOWER(
             s.token_address
         )
+),
+ibc_adj AS (
+    SELECT
+        LOWER(
+            A.id
+        ) AS id_adj,
+        CASE
+            WHEN COALESCE(
+                i.address,
+                A.token_address
+            ) ILIKE 'ibc%' THEN 'ibc/' || SPLIT_PART(COALESCE(i.address, A.token_address), '/', 2)
+            ELSE COALESCE(
+                i.address,
+                A.token_address
+            )
+        END AS token_address_adj,
+        A.name AS name_adj,
+        LOWER(
+            CASE
+                WHEN A.symbol IS NOT NULL THEN A.symbol
+                ELSE CASE
+                    A.id
+                    WHEN 'cerberus-2' THEN 'CRBRUS'
+                    WHEN 'cheqd-network' THEN 'CHEQ'
+                    WHEN 'e-money-eur' THEN 'EEUR'
+                    WHEN 'juno-network' THEN 'JUNO'
+                    WHEN 'kujira' THEN 'KUJI'
+                    WHEN 'medibloc' THEN 'MED'
+                    WHEN 'microtick' THEN 'TICK'
+                    WHEN 'neta' THEN 'NETA'
+                    WHEN 'regen' THEN 'REGEN'
+                    WHEN 'sommelier' THEN 'SOMM'
+                    WHEN 'terra-luna' THEN 'LUNC'
+                    WHEN 'umee' THEN 'UMEE'
+                END
+            END
+        ) AS symbol_adj,
+        'cosmos' AS platform_adj,
+        CASE
+            WHEN i.project_name IS NOT NULL THEN 'ibc'
+            ELSE source
+        END AS source_adj,
+        A._inserted_timestamp
+    FROM
+        base_assets A
         LEFT JOIN {{ source(
             'osmosis_silver',
             'asset_metadata'
@@ -114,34 +133,72 @@ assets_adj AS (
             i.project_name
         )
     WHERE
-        A.token_address IS NOT NULL
-        AND LENGTH(
-            A.token_address
-        ) > 0
-        AND token_address_adj IS NOT NULL
-        AND LENGTH(token_address_adj) > 0
+        (LOWER(A.id) IN (
+    SELECT
+        id
+    FROM
+        {{ ref('silver__ibc_asset_metadata') }}
+    WHERE
+        provider = 'coingecko')
+        OR A.token_address ILIKE 'ibc%')
+        AND (
+            COALESCE(
+                i.address,
+                A.token_address
+            ) ILIKE 'ibc%'
+            OR i.address IN (
+                'uosmo',
+                'uion'
+            )
+        )
+),
+all_assets_adj AS (
+    SELECT
+        *
+    FROM
+        base_adj
+    WHERE
+        token_address_adj NOT ILIKE 'ibc%'
+    UNION ALL
+    SELECT
+        *
+    FROM
+        ibc_adj
+),
+FINAL AS (
+    SELECT
+        id_adj AS id,
+        CASE
+            WHEN token_address_adj ILIKE 'ibc%'
+            OR platform_adj = 'solana' THEN token_address_adj
+            ELSE LOWER(token_address_adj)
+        END AS token_address,
+        name_adj AS NAME,
+        symbol_adj AS symbol,
+        platform_adj AS platform,
+        source_adj AS source,
+        _inserted_timestamp
+    FROM
+        all_assets_adj
+    WHERE
+        token_address IS NOT NULL
+        AND LENGTH(token_address) > 0
         AND platform IS NOT NULL
         AND LENGTH(platform) > 0
-        AND platform_adj IS NOT NULL
-        AND LENGTH(platform_adj) > 0
 )
 SELECT
-    id_adj AS id,
-    CASE
-        WHEN token_address_adj ILIKE 'ibc%'
-        OR platform_adj = 'solana' THEN token_address_adj
-        ELSE LOWER(token_address_adj)
-    END AS token_address,
+    id,
+    token_address,
     NAME,
     symbol,
-    platform_adj AS platform,
+    platform,
     source,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['token_address_adj','platform_adj']) }} AS asset_metadata_coin_gecko_id,
+    {{ dbt_utils.generate_surrogate_key(['token_address','platform']) }} AS token_asset_metadata_coin_gecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    assets_adj qualify(ROW_NUMBER() over (PARTITION BY token_address_adj, platform_adj
+    FINAL qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
 ORDER BY
     _inserted_timestamp DESC)) = 1 -- specifically built for tokens with token_address (not native/gas tokens)

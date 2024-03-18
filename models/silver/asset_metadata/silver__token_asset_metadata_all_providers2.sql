@@ -1,70 +1,146 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "asset_metadata_all_providers_id",
-    incremental_strategy = 'merge',
-    merge_exclude_columns = ["inserted_timestamp"],
+    unique_key = ['token_address','blockchain','provider'],
+    incremental_strategy = 'delete+insert',
+    cluster_by = ['_inserted_timestamp::DATE']
 ) }}
---delete+insert?
---incremental logic in CTES?
+
 WITH coin_gecko AS (
 
     SELECT
-        token_address,
         id,
-        symbol,
+        token_address,
+        CASE
+            WHEN LENGTH(NAME) <= 0 THEN NULL
+            ELSE NAME
+        END AS NAME,
+        CASE
+            WHEN LENGTH(symbol) <= 0 THEN NULL
+            ELSE symbol
+        END AS symbol,
         platform,
         'coingecko' AS provider,
+        source,
         _inserted_timestamp
     FROM
         {{ ref(
             'silver__token_asset_metadata_coingecko2'
         ) }}
+
+{% if is_incremental() %}
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp)
+        FROM
+            {{ this }}
+    )
+{% endif %}
 ),
 coin_market_cap AS (
-
     SELECT
-        token_address,
         id,
-        symbol,
+        token_address,
+        CASE
+            WHEN LENGTH(NAME) <= 0 THEN NULL
+            ELSE NAME
+        END AS NAME,
+        CASE
+            WHEN LENGTH(symbol) <= 0 THEN NULL
+            ELSE symbol
+        END AS symbol,
         platform,
         'coinmarketcap' AS provider,
+        source,
         _inserted_timestamp
     FROM
         {{ ref(
             'silver__token_asset_metadata_coinmarketcap2'
         ) }}
+
+{% if is_incremental() %}
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp)
+        FROM
+            {{ this }}
+    )
+{% endif %}
 ),
 ibc_am AS (
     SELECT
-        address AS token_address,
         address AS id,
-        project_name AS symbol,
+        address AS token_address,
+        CASE
+            WHEN LENGTH(label) <= 0 THEN NULL
+            ELSE label
+        END AS NAME,
+        CASE
+            WHEN LENGTH(project_name) <= 0 THEN NULL
+            ELSE project_name
+        END AS symbol,
         'cosmos' AS platform,
         'onchain' AS provider,
+        'ibc_am' AS source,
         '2000-01-01' :: TIMESTAMP AS _inserted_timestamp
     FROM
         {{ source(
             'osmosis_silver',
             'asset_metadata'
         ) }}
-    WHERE address IS NOT NULL
-    AND LENGTH(address) > 0
+    WHERE
+        address IS NOT NULL
+        AND LENGTH(address) > 0
+
+{% if is_incremental() %}
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
+{% endif %}
 ),
 solana_solscan AS (
     SELECT
+        LOWER(
+            CASE
+                WHEN LENGTH(coingecko_id) <= 0
+                OR coingecko_id IS NULL THEN token_address
+                ELSE coingecko_id
+            END
+        ) AS id,
         token_address,
-        LOWER(COALESCE(coingecko_id, token_address)) AS id,
-        symbol,
+        CASE
+            WHEN LENGTH(NAME) <= 0 THEN NULL
+            ELSE NAME
+        END AS NAME,
+        CASE
+            WHEN LENGTH(symbol) <= 0 THEN NULL
+            ELSE symbol
+        END AS symbol,
         'solana' AS platform,
         'solscan' AS provider,
+        'solscan' AS source,
         _inserted_timestamp
     FROM
         {{ source(
             'solana_silver',
             'solscan_tokens'
         ) }}
-    WHERE token_address IS NOT NULL
-    AND LENGTH(token_address) > 0
+    WHERE
+        token_address IS NOT NULL
+        AND LENGTH(token_address) > 0
+
+{% if is_incremental() %}
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
+{% endif %}
 ),
 all_providers AS (
     SELECT
@@ -91,6 +167,7 @@ FINAL AS (
     SELECT
         token_address,
         id,
+        NAME,
         symbol,
         CASE
             WHEN platform IN (
@@ -107,7 +184,7 @@ FINAL AS (
                 'binancecoin',
                 'bnb'
             ) THEN 'bsc'
-            WHEN platform IN ('ethereum') THEN 'ethereum'
+            WHEN platform = 'ethereum' THEN 'ethereum'
             WHEN platform IN (
                 'gnosis',
                 'xdai'
@@ -120,8 +197,8 @@ FINAL AS (
                 'polygon',
                 'polygon-pos'
             ) THEN 'polygon'
-            WHEN LOWER(platform) IN ('base') THEN 'base'
-            WHEN LOWER(platform) IN ('blast') THEN 'blast'
+            WHEN platform = 'base' THEN 'base'
+            WHEN platform = 'blast' THEN 'blast'
             WHEN platform IN (
                 'cosmos',
                 'evmos',
@@ -129,50 +206,68 @@ FINAL AS (
                 'terra',
                 'terra-2'
             ) THEN 'cosmos'
-            WHEN LOWER(platform) = 'algorand' THEN 'algorand'
-            WHEN LOWER(platform) = 'solana' THEN 'solana'
-            WHEN LOWER(platform) = 'aptos' THEN 'aptos'
+            WHEN platform = 'algorand' THEN 'algorand'
+            WHEN platform = 'solana' THEN 'solana'
+            WHEN platform = 'aptos' THEN 'aptos'
             ELSE NULL
         END AS blockchain,
         --supported chains only
         provider,
+        source,
         _inserted_timestamp
     FROM
-        all_sources
+        all_providers
     WHERE
         blockchain IS NOT NULL
-
-{% if is_incremental() %}
-AND token_address || blockchain NOT IN (
+),
+FINAL AS (
     SELECT
-        DISTINCT token_address || blockchain
+        token_address,
+        id,
+        NAME,
+        symbol,
+        blockchain,
+        provider,
+        source,
+        _inserted_timestamp
     FROM
-        {{ this }}
-)
-{% endif %}
+        FINAL
+    WHERE
+        NOT (
+            blockchain IN (
+                'arbitrum',
+                'avalanche',
+                'bsc',
+                'ethereum',
+                'gnosis',
+                'optimism',
+                'polygon',
+                'base',
+                'blast'
+            )
+            AND token_address NOT ILIKE '0x%'
+        )
+        AND NOT (
+            blockchain = 'algorand'
+            AND TRY_CAST(
+                token_address AS INT
+            ) IS NULL
+        )
 )
 SELECT
     token_address,
     id,
+    NAME,
     symbol,
     blockchain,
     provider,
+    source,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['token_address','id','symbol','blockchain','provider']) }} AS asset_metadata_all_providers_id, --rework this id to be unique on token_address rather than id
+    {{ dbt_utils.generate_surrogate_key(['token_address','blockchain','provider']) }} AS token_asset_metadata_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    FINAL
-WHERE
-    NOT (LOWER(blockchain) IN ('arbitrum', 'avalanche', 'bsc', 'ethereum', 'gnosis', 'optimism', 'polygon', 'base', 'blast')
-    AND token_address NOT ILIKE '0x%')
-    AND NOT (
-        blockchain = 'algorand'
-        AND TRY_CAST(
-            token_address AS INT
-        ) IS NULL
-    ) --rework this where filter
-qualify(ROW_NUMBER() over (PARTITION BY token_address, id, symbol, blockchain, provider
+    FINAL qualify(ROW_NUMBER() over (PARTITION BY token_address, blockchain, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1
