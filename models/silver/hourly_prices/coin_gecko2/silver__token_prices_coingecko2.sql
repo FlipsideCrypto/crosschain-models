@@ -94,7 +94,7 @@ latest_supported_assets AS (
 imputed_prices AS (
     --impute missing prices, ensuring no gaps
     SELECT
-        date_hour AS recorded_hour,
+        d.date_hour,
         d.token_address,
         d.id,
         d.platform,
@@ -143,7 +143,7 @@ final_prices AS (
         DATEADD(
             HOUR,
             1,
-            recorded_hour
+            date_hour
         ) AS recorded_hour,
         --roll the close price forward 1 hour
         token_address,

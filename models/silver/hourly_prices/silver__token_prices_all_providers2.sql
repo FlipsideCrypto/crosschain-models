@@ -66,7 +66,7 @@ ibc_prices AS (
         'ibc_prices' AS source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__onchain_osmosis_prices') }}
+        {{ ref('silver__onchain_osmosis_prices2') }}
 
 {% if is_incremental() %}
 WHERE
