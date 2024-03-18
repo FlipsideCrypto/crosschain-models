@@ -734,3 +734,8 @@ sources:
       - name: complete_event_abis
       - name: abis
       - name: traces
+  - name: github_actions
+    database: crosschain
+    schema: github_actions
+    tables:
+      - name: workflows

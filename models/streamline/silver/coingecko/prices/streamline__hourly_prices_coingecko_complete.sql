@@ -1,7 +1,7 @@
 {{ config (
     materialized = "incremental",
-    unique_key = ['id','run_time'],
-    cluster_by = "run_time::date",
+    unique_key = ['id','recorded_date'],
+    cluster_by = "recorded_date::date",
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(id)",
     tags = ['streamline_cg_prices_complete']
 ) }}
@@ -10,61 +10,74 @@ WITH backfill AS (
 
     SELECT
         id,
-        run_time :: DATE AS run_time,
+        run_time :: DATE AS recorded_date,
         _inserted_timestamp
     FROM
         {{ ref(
             'bronze__streamline_hourly_prices_coingecko_backfill'
         ) }}
+    WHERE
+        recorded_date IS NOT NULL
 
 {% if is_incremental() %}
-WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp)
-        FROM
-            {{ this }}
-    )
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
 {% endif %}
 ),
 history AS (
     SELECT
         id,
-        run_time :: DATE AS run_time,
+        DATE_TRUNC(
+            'hour',
+            TO_TIMESTAMP(
+                f.value [0] :: STRING
+            )
+        ) AS recorded_date,
         _inserted_timestamp
     FROM
         {{ ref(
             'bronze__streamline_hourly_prices_coingecko_history'
         ) }}
+        s,
+        LATERAL FLATTEN(
+            input => DATA :prices
+        ) f
+    WHERE
+        recorded_date IS NOT NULL
 
 {% if is_incremental() %}
-WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp)
-        FROM
-            {{ this }}
-    )
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
 {% endif %}
 ),
 realtime AS (
     SELECT
         id,
         (
-            CASE
-                WHEN TO_TIMESTAMP(
-                    f.value [0] :: STRING
-                ) = DATE_TRUNC(
-                    'hour',
-                    TO_TIMESTAMP(
+            (
+                CASE
+                    WHEN TO_TIMESTAMP(
+                        f.value [0] :: STRING
+                    ) = DATE_TRUNC(
+                        'hour',
+                        TO_TIMESTAMP(
+                            f.value [0] :: STRING
+                        )
+                    ) THEN TO_TIMESTAMP(
                         f.value [0] :: STRING
                     )
-                ) THEN TO_TIMESTAMP(
-                    f.value [0] :: STRING
-                )
-                ELSE NULL
-            END
-        ) :: DATE AS run_time,
+                    ELSE NULL
+                END
+            ) :: STRING
+        ) :: DATE AS recorded_date,
         _inserted_timestamp
     FROM
         {{ ref('bronze__streamline_hourly_prices_coingecko_realtime') }}
@@ -73,16 +86,15 @@ realtime AS (
             input => DATA
         ) f
     WHERE
-        run_time IS NOT NULL
+        recorded_date IS NOT NULL
 
 {% if is_incremental() %}
-AND
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp)
-        FROM
-            {{ this }}
-    )
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
 {% endif %}
 ),
 all_prices AS (
@@ -103,10 +115,10 @@ all_prices AS (
 )
 SELECT
     id,
-    run_time,
-    {{ dbt_utils.generate_surrogate_key(['id','run_time']) }} AS hourly_prices_coingecko_complete_id,
+    recorded_date,
+    {{ dbt_utils.generate_surrogate_key(['id','recorded_date']) }} AS hourly_prices_coingecko_complete_id,
     _inserted_timestamp
 FROM
-    all_prices qualify(ROW_NUMBER() over (PARTITION BY id, run_time
+    all_prices qualify(ROW_NUMBER() over (PARTITION BY id, recorded_date
 ORDER BY
     _inserted_timestamp DESC)) = 1

@@ -27,8 +27,6 @@ clean-targets: # directories to be removed by `dbt clean`
 on-run-start:
   - "{{ create_sps() }}"
   - '{{ create_udfs() }}'
-  - '{{ sp_create_bulk_get_coin_gecko_asset_metadata() }}'
-  - '{{ sp_create_bulk_get_coin_market_cap_asset_metadata() }}'
   - '{{ sp_refresh_external_table_by_recent_date() }}'
 
 
@@ -51,6 +49,7 @@ vars:
   STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES: False
   UPDATE_UDFS_AND_SPS: False
   HEAL_CURATED_MODEL: []
+  START_GHA_TASKS: False
   API_INTEGRATION: '{{ var("config")[target.name]["API_INTEGRATION"] if var("config")[target.name] else var("config")["dev"]["API_INTEGRATION"] }}' 
   EXTERNAL_FUNCTION_URI: '{{ var("config")[target.name]["EXTERNAL_FUNCTION_URI"] if var("config")[target.name] else var("config")["dev"]["EXTERNAL_FUNCTION_URI"] }}'
   ROLES: |
