@@ -21,6 +21,7 @@ WITH all_providers AS (
             WHEN provider = 'solscan' THEN 4
         END AS priority,
         source,
+        is_deprecated,
         _inserted_timestamp
     FROM
         {{ ref('silver__token_asset_metadata_all_providers2') }}
@@ -44,6 +45,7 @@ SELECT
     provider,
     priority,
     source,
+    is_deprecated,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,

@@ -15,6 +15,7 @@ WITH coin_gecko AS (
         platform,
         'coingecko' AS provider,
         source,
+        is_deprecated,
         _inserted_timestamp
     FROM
         {{ ref(
@@ -40,6 +41,7 @@ coin_market_cap AS (
         platform,
         'coinmarketcap' AS provider,
         source,
+        is_deprecated,
         _inserted_timestamp
     FROM
         {{ ref(
@@ -71,6 +73,7 @@ ibc_am AS (
         'cosmos' AS platform,
         'osmosis-onchain' AS provider,
         'ibc_am' AS source,
+        FALSE AS is_deprecated,
         '2000-01-01' :: TIMESTAMP AS _inserted_timestamp
     FROM
         {{ source(
@@ -111,6 +114,7 @@ solana_solscan AS (
         'solana' AS platform,
         'solscan' AS provider,
         'solscan' AS source,
+        FALSE AS is_deprecated,
         _inserted_timestamp
     FROM
         {{ source(
@@ -202,6 +206,7 @@ supported_chains AS (
         --supported chains only
         provider,
         source,
+        is_deprecated,
         _inserted_timestamp
     FROM
         all_providers
@@ -217,6 +222,7 @@ FINAL AS (
         blockchain,
         provider,
         source,
+        is_deprecated,
         _inserted_timestamp
     FROM
         supported_chains
@@ -250,6 +256,7 @@ SELECT
     blockchain,
     provider,
     source,
+    is_deprecated,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,

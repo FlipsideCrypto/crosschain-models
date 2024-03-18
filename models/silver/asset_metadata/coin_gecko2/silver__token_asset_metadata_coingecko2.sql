@@ -31,6 +31,22 @@ WHERE
     )
 {% endif %}
 ),
+current_supported_assets AS (
+    --get all assets currently supported by coingecko
+    SELECT
+        token_address,
+        platform,
+        _inserted_timestamp
+    FROM
+        base_assets
+    WHERE
+        _inserted_timestamp = (
+            SELECT
+                MAX(_inserted_timestamp)
+            FROM
+                base_assets
+        )
+),
 base_adj AS (
     SELECT
         LOWER(
@@ -64,9 +80,24 @@ base_adj AS (
             WHEN s.token_address IS NOT NULL THEN 'solana'
             ELSE source
         END AS source_adj,
+        CASE
+            WHEN c.token_address IS NOT NULL THEN FALSE
+            ELSE TRUE
+        END AS is_deprecated,
         A._inserted_timestamp
     FROM
         base_assets A
+        LEFT JOIN current_supported_assets c
+        ON LOWER(
+            A.token_address
+        ) = LOWER(
+            c.token_address
+        )
+        AND LOWER(
+            A.platform
+        ) = LOWER(
+            c.platform
+        )
         LEFT JOIN {{ source(
             'solana_silver',
             'token_metadata'
@@ -119,9 +150,24 @@ ibc_adj AS (
             WHEN i.project_name IS NOT NULL THEN 'ibc'
             ELSE source
         END AS source_adj,
+        CASE
+            WHEN c.token_address IS NOT NULL THEN FALSE
+            ELSE TRUE
+        END AS is_deprecated,
         A._inserted_timestamp
     FROM
         base_assets A
+        LEFT JOIN current_supported_assets c
+        ON LOWER(
+            A.token_address
+        ) = LOWER(
+            c.token_address
+        )
+        AND LOWER(
+            A.platform
+        ) = LOWER(
+            c.platform
+        )
         LEFT JOIN {{ source(
             'osmosis_silver',
             'asset_metadata'
@@ -177,6 +223,7 @@ FINAL AS (
         symbol_adj AS symbol,
         platform_adj AS platform,
         source_adj AS source,
+        is_deprecated,
         _inserted_timestamp
     FROM
         all_assets_adj
@@ -199,6 +246,7 @@ SELECT
     END AS symbol,
     platform,
     source,
+    is_deprecated,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
