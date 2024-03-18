@@ -220,25 +220,28 @@ all_assets_adj AS (
 final_adj AS (
     SELECT
         id_adj,
-        CASE
-            WHEN A.token_address_adj ILIKE 'http%' THEN SPLIT_PART(
-                A.token_address_adj,
-                '/',
-                5
-            )
-            WHEN A.token_address_adj ILIKE '%:%' THEN SPLIT_PART(
-                A.token_address_adj,
-                ':',
-                1
-            )
-            WHEN A.token_address_adj ILIKE '%(%'
-            OR A.token_address_adj ILIKE '% %' THEN SPLIT_PART(
-                A.token_address_adj,
-                ' ',
-                1
-            )
-            ELSE A.token_address_adj
-        END AS token_address_adj,
+        TRIM(
+            CASE
+                WHEN A.token_address_adj ILIKE 'http%' THEN SPLIT_PART(
+                    A.token_address_adj,
+                    '/',
+                    5
+                )
+                WHEN A.token_address_adj ILIKE '%:%' THEN SPLIT_PART(
+                    A.token_address_adj,
+                    ':',
+                    1
+                )
+                WHEN A.token_address_adj ILIKE '%(%'
+                OR A.token_address_adj ILIKE '% %' THEN SPLIT_PART(
+                    A.token_address_adj,
+                    ' ',
+                    1
+                )
+                ELSE A.token_address_adj
+            END,
+            '"'
+        ) AS token_address_adj,
         name_adj,
         symbol_adj,
         platform_adj,
