@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver__onchain_osmosis_prices
+  - name: silver__onchain_osmosis_prices2
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
