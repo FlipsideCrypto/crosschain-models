@@ -72,11 +72,6 @@ base_adj AS (
             ) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(A.token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
             WHEN A.id = '12220' THEN 'uosmo'
             WHEN A.id = '4030' THEN '0'
-            WHEN A.token_address ILIKE 'https%' THEN SPLIT_PART(
-                A.token_address,
-                '/',
-                5
-            )
             ELSE A.token_address
         END AS token_address_adj,
         A.name AS name_adj,
@@ -191,14 +186,7 @@ sol_adj AS(
         LOWER(
             A.id
         ) AS id_adj,
-        CASE
-            WHEN A.token_address ILIKE 'https%' THEN SPLIT_PART(
-                A.token_address,
-                '/',
-                5
-            )
-            ELSE A.token_address
-        END AS token_address_adj,
+        A.token_address AS token_address_adj,
         A.name AS name_adj,
         LOWER(
             A.symbol
@@ -251,47 +239,65 @@ all_assets_adj AS (
     FROM
         sol_adj
 ),
-FINAL AS (
+final_adj AS (
     SELECT
-        id_adj AS id,
+        id_adj,
         CASE
-            WHEN token_address_adj ILIKE 'ibc%'
-            OR platform_adj = 'solana' THEN token_address_adj
-            ELSE LOWER(token_address_adj)
-        END AS token_address,
-        name_adj AS NAME,
-        symbol_adj AS symbol,
-        platform_adj AS platform,
+            WHEN A.token_address_adj ILIKE 'http%' THEN SPLIT_PART(
+                A.token_address_adj,
+                '/',
+                5
+            )
+            WHEN A.token_address_adj ILIKE '%:%' THEN SPLIT_PART(
+                A.token_address_adj,
+                ':',
+                1
+            )
+            WHEN A.token_address_adj ILIKE '%(%'
+            OR A.token_address_adj ILIKE '% %' THEN SPLIT_PART(
+                A.token_address_adj,
+                ' ',
+                1
+            )
+            ELSE A.token_address_adj
+        END AS token_address_adj,
+        name_adj,
+        symbol_adj,
+        platform_adj,
         platform_id,
         platform_slug,
         platform_symbol,
-        source_adj AS source,
+        source_adj,
         is_deprecated,
         _inserted_timestamp
     FROM
-        all_assets_adj
+        all_assets_adj A
     WHERE
-        token_address IS NOT NULL
-        AND LENGTH(token_address) > 0
-        AND platform IS NOT NULL
-        AND LENGTH(platform) > 0
+        token_address_adj IS NOT NULL
+        AND LENGTH(token_address_adj) > 0
+        AND platform_adj IS NOT NULL
+        AND LENGTH(platform_adj) > 0
 )
 SELECT
-    id,
-    token_address,
+    id_adj AS id,
     CASE
-        WHEN LENGTH(NAME) <= 0 THEN NULL
-        ELSE NAME
+        WHEN token_address_adj ILIKE 'ibc%'
+        OR platform_adj = 'solana' THEN token_address_adj
+        ELSE LOWER(token_address_adj)
+    END AS token_address,
+    CASE
+        WHEN LENGTH(name_adj) <= 0 THEN NULL
+        ELSE name_adj
     END AS NAME,
     CASE
-        WHEN LENGTH(symbol) <= 0 THEN NULL
-        ELSE symbol
+        WHEN LENGTH(symbol_adj) <= 0 THEN NULL
+        ELSE symbol_adj
     END AS symbol,
-    platform,
+    platform_adj AS platform,
     platform_id,
     platform_slug,
     platform_symbol,
-    source,
+    source_adj AS source,
     is_deprecated,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
@@ -299,6 +305,6 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['token_address','platform']) }} AS token_asset_metadata_coin_market_cap_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    FINAL qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
+    final_adj qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
 ORDER BY
     _inserted_timestamp DESC)) = 1 -- specifically built for tokens with token_address (not native/gas tokens)
