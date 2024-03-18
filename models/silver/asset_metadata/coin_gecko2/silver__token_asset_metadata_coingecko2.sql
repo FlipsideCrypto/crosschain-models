@@ -65,6 +65,11 @@ base_adj AS (
             ) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(A.token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
             WHEN A.id = 'osmosis' THEN 'uosmo'
             WHEN A.id = 'algorand' THEN '0'
+            WHEN A.token_address ILIKE 'https%' THEN SPLIT_PART(
+                A.token_address,
+                '/',
+                5
+            )
             ELSE A.token_address
         END AS token_address_adj,
         A.name AS name_adj,
