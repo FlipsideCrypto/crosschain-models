@@ -191,7 +191,14 @@ sol_adj AS(
         LOWER(
             A.id
         ) AS id_adj,
-        A.token_address AS token_address_adj,
+        CASE
+            WHEN A.token_address ILIKE 'https%' THEN SPLIT_PART(
+                A.token_address,
+                '/',
+                5
+            )
+            ELSE A.token_address
+        END AS token_address_adj,
         A.name AS name_adj,
         LOWER(
             A.symbol
