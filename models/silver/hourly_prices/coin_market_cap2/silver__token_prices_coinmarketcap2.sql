@@ -2,7 +2,8 @@
     materialized = 'incremental',
     unique_key = ['recorded_hour','token_address','platform'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['recorded_hour::DATE']
+    cluster_by = ['recorded_hour::DATE'],
+    tags = ['prices']
 ) }}
 
 WITH token_asset_metadata AS (

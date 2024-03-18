@@ -2,7 +2,7 @@
     materialized = 'incremental',
     unique_key = "cmc_id",
     incremental_strategy = 'merge',
-    merge_exclude_columns = ["inserted_timestamp"],
+    merge_exclude_columns = ["inserted_timestamp"]
 ) }}
 
 WITH base AS (

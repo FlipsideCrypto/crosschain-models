@@ -3,7 +3,8 @@
     unique_key = ['hour','token_address','blockchain'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['hour::DATE'],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, hour, blockchain)"
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, hour, blockchain)",
+    tags = ['prices']
 ) }}
 
 WITH all_providers AS (

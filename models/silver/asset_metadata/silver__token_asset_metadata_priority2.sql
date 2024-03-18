@@ -2,7 +2,8 @@
     materialized = 'incremental',
     unique_key = ['token_address','blockchain'],
     incremental_strategy = 'delete+insert',
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, blockchain)"
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, blockchain)",
+    tags = ['prices']
 ) }}
 
 WITH all_providers AS (

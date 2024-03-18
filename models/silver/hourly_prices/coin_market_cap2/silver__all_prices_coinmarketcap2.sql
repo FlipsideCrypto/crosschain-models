@@ -3,7 +3,8 @@
     materialized = 'incremental',
     unique_key = ['id','recorded_hour'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE']
+    cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
+    tags = ['prices']
 ) }}
 
 WITH legacy AS (

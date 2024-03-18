@@ -3,6 +3,7 @@
     unique_key = "CONCAT_WS('-', id, recorded_hour)",
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE'],
+    tags = ['prices']
 ) }}
 
 WITH base AS (

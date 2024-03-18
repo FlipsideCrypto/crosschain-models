@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   schedule:
     # Runs "every hour" (see https://crontab.guru)
-    - cron: '0 */1 * * *'
+    - cron: '45 */1 * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
@@ -19,13 +19,24 @@ env:
   WAREHOUSE: "${{ vars.WAREHOUSE }}"
   SCHEMA: "${{ vars.SCHEMA }}"
 
-
 jobs:
-  called_workflow_template:
-    uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
-    with:
-      dbt_command: dbt run -s models/silver/hourly_prices+ models/silver/asset_metadata models/silver/near models/silver/defi models/silver/stats+
-      environment: workflow_prod
-      warehouse: ${{ vars.WAREHOUSE }}
-    secrets: inherit 
-          
+  run_dbt_jobs:
+    runs-on: ubuntu-latest
+    environment:
+      name: workflow_prod
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: install dependencies
+        run: |
+          pip install -r requirements.txt
+          dbt deps
+      - name: Run DBT Jobs
+        run: |
+          dbt run -m "crosschain_models,tag:prices" models/silver/hourly_prices+ models/silver/asset_metadata models/silver/near models/silver/defi models/silver/stats+

@@ -2,7 +2,8 @@
     materialized = 'incremental',
     unique_key = ['token_address','blockchain','provider'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['_inserted_timestamp::DATE']
+    cluster_by = ['_inserted_timestamp::DATE'],
+    tags = ['prices']
 ) }}
 
 WITH coin_gecko AS (

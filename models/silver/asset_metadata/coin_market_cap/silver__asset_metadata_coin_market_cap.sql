@@ -1,7 +1,8 @@
 {{ config(
     materialized = 'incremental',
     unique_key = ['token_address', 'platform'],
-    incremental_strategy = 'delete+insert'
+    incremental_strategy = 'delete+insert',
+    tags = ['prices_legacy']
 ) }}
 
 SELECT
