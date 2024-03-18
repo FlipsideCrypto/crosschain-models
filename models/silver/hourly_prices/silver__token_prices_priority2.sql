@@ -27,7 +27,8 @@ WITH all_providers AS (
             AND is_imputed = TRUE THEN 4
             WHEN provider = 'osmosis-pool-balance' THEN 5
             WHEN provider = 'osmosis-swap' THEN 6
-        END AS priority source,
+        END AS priority,
+        source,
         _inserted_timestamp
     FROM
         {{ ref('silver__token_prices_all_providers2') }}
@@ -50,7 +51,8 @@ SELECT
     is_imputed,
     id,
     provider,
-    priority source,
+    priority,
+    source,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain']) }} AS token_prices_priority_hourly_id,

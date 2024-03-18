@@ -4,9 +4,9 @@
     unique_key = ['id','recorded_hour'],
     incremental_strategy = 'merge',
     cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
+    full_refresh = false,
     tags = ['stale']
 ) }}
---    full_refresh = false,
 
 WITH base_legacy AS (
 
