@@ -18,7 +18,9 @@ models:
               partition_by:
                 - TOKEN_ADDRESS
                 - BLOCKCHAIN
+                - PROVIDER
               column_name: HOUR
+              filter: SOURCE <> 'ibc_prices'
       - name: TOKEN_ADDRESS
         tests:
           - not_null

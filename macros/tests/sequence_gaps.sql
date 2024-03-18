@@ -36,11 +36,12 @@ ORDER BY
 {% test hour_sequence_gaps(
             model,
             partition_by,
-            column_name
+            column_name,
+            filter
         ) %}
         {%- set partition_sql = partition_by | join(", ") -%}
         {%- set previous_column = "prev_" ~ column_name -%}
-        WITH source AS (
+        WITH base_source AS (
             SELECT
                 {{ partition_sql }},
                 {{ column_name }},
@@ -54,6 +55,9 @@ ORDER BY
                 ) AS {{ previous_column }}
             FROM
                 {{ model }}
+            {% if filter %}
+                WHERE {{ filter }}
+            {% endif %}
         )
     SELECT
         {{ partition_sql }},
@@ -65,7 +69,7 @@ ORDER BY
             {{ column_name }}
         ) - 1 AS gap
     FROM
-        source
+        base_source
     WHERE
         gap > 0
     ORDER BY

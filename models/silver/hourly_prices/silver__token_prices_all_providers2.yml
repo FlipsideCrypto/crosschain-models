@@ -19,9 +19,8 @@ models:
                 - TOKEN_ADDRESS
                 - BLOCKCHAIN
                 - PROVIDER
-                where: SOURCE <> 'ibc_prices'
               column_name: HOUR
-                where: SOURCE <> 'ibc_prices'
+              filter: SOURCE <> 'ibc_prices'
       - name: TOKEN_ADDRESS
         tests:
           - not_null
