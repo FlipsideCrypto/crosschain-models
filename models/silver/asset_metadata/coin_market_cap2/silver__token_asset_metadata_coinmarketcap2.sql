@@ -186,7 +186,10 @@ sol_adj AS(
         LOWER(
             A.id
         ) AS id_adj,
-        A.token_address AS token_address_adj,
+        COALESCE(
+            s.token_address,
+            A.token_address
+        ) AS token_address_adj,
         A.name AS name_adj,
         LOWER(
             A.symbol
@@ -220,6 +223,8 @@ sol_adj AS(
         ) }}
         s
         ON A.id = s.coin_market_cap_id
+    WHERE
+        token_address_adj NOT ILIKE '%-%'
 ),
 all_assets_adj AS (
     SELECT
