@@ -72,6 +72,11 @@ base_adj AS (
             ) ILIKE '0x%' THEN REGEXP_SUBSTR(REGEXP_REPLACE(A.token_address, '^x', '0x'), '0x[a-zA-Z0-9]*')
             WHEN A.id = '12220' THEN 'uosmo'
             WHEN A.id = '4030' THEN '0'
+            WHEN A.token_address ILIKE 'https%' THEN SPLIT_PART(
+                A.token_address,
+                '/',
+                5
+            )
             ELSE A.token_address
         END AS token_address_adj,
         A.name AS name_adj,
@@ -92,22 +97,22 @@ base_adj AS (
             ELSE source
         END AS source_adj,
         CASE
-            WHEN c.token_address IS NOT NULL THEN FALSE
+            WHEN C.token_address IS NOT NULL THEN FALSE
             ELSE TRUE
         END AS is_deprecated,
         A._inserted_timestamp
     FROM
         base_assets A
-        LEFT JOIN current_supported_assets c
+        LEFT JOIN current_supported_assets C
         ON LOWER(
             A.token_address
         ) = LOWER(
-            c.token_address
+            C.token_address
         )
         AND LOWER(
             A.platform
         ) = LOWER(
-            c.platform
+            C.platform
         )
         LEFT JOIN {{ source(
             'solana_silver',
@@ -144,22 +149,22 @@ ibc_adj AS (
             ELSE source
         END AS source_adj,
         CASE
-            WHEN c.token_address IS NOT NULL THEN FALSE
+            WHEN C.token_address IS NOT NULL THEN FALSE
             ELSE TRUE
         END AS is_deprecated,
         A._inserted_timestamp
     FROM
         base_assets A
-        LEFT JOIN current_supported_assets c
+        LEFT JOIN current_supported_assets C
         ON LOWER(
             A.token_address
         ) = LOWER(
-            c.token_address
+            C.token_address
         )
         AND LOWER(
             A.platform
         ) = LOWER(
-            c.platform
+            C.platform
         )
         LEFT JOIN {{ source(
             'osmosis_silver',
