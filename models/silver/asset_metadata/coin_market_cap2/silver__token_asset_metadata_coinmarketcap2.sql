@@ -85,17 +85,13 @@ base_adj AS (
             CASE
                 WHEN A.id = 'osmosis' THEN 'osmosis'
                 WHEN A.id = 'algorand' THEN 'algorand'
-                WHEN s.token_address IS NOT NULL THEN 'solana'
                 ELSE A.platform :: STRING
             END
         ) AS platform_adj,
         platform_id,
         platform_slug,
         platform_symbol,
-        CASE
-            WHEN s.token_address IS NOT NULL THEN 'solana'
-            ELSE source
-        END AS source_adj,
+        source AS source_adj,
         CASE
             WHEN C.token_address IS NOT NULL THEN FALSE
             ELSE TRUE
@@ -114,12 +110,6 @@ base_adj AS (
         ) = LOWER(
             C.platform
         )
-        LEFT JOIN {{ source(
-            'solana_silver',
-            'token_metadata'
-        ) }}
-        s
-        ON A.id = s.coin_market_cap_id
 ),
 ibc_adj AS (
     SELECT
@@ -196,6 +186,46 @@ ibc_adj AS (
             )
         )
 ),
+sol_adj AS(
+    SELECT
+        LOWER(
+            A.id
+        ) AS id_adj,
+        A.token_address AS token_address_adj,
+        A.name AS name_adj,
+        LOWER(
+            A.symbol
+        ) AS symbol_adj,
+        'solana' AS platform_adj,
+        platform_id,
+        platform_slug,
+        platform_symbol,
+        'solana' AS source_adj,
+        CASE
+            WHEN C.token_address IS NOT NULL THEN FALSE
+            ELSE TRUE
+        END AS is_deprecated,
+        A._inserted_timestamp
+    FROM
+        base_assets A
+        LEFT JOIN current_supported_assets C
+        ON LOWER(
+            A.token_address
+        ) = LOWER(
+            C.token_address
+        )
+        AND LOWER(
+            A.platform
+        ) = LOWER(
+            C.platform
+        )
+        INNER JOIN {{ source(
+            'solana_silver',
+            'token_metadata'
+        ) }}
+        s
+        ON A.id = s.coin_market_cap_id
+),
 all_assets_adj AS (
     SELECT
         *
@@ -208,6 +238,11 @@ all_assets_adj AS (
         *
     FROM
         ibc_adj
+    UNION ALL
+    SELECT
+        *
+    FROM
+        sol_adj
 ),
 FINAL AS (
     SELECT
