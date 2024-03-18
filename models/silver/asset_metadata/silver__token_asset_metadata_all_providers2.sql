@@ -62,7 +62,7 @@ WHERE
 ibc_am AS (
     SELECT
         address AS id,
-        address AS token_address,
+        raw_metadata[0] :denom :: STRING AS token_address,
         CASE
             WHEN LENGTH(label) <= 0 THEN NULL
             ELSE label
