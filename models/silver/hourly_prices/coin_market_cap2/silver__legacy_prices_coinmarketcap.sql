@@ -4,18 +4,16 @@
     unique_key = ['id','recorded_hour'],
     incremental_strategy = 'merge',
     cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
-    full_refresh = false,
     tags = ['stale']
 ) }}
+--    full_refresh = false,
 
 WITH base_legacy AS (
 
     SELECT
         'legacy' AS source,
         recorded_at :: DATE AS _runtime_date,
-        TRY_TO_NUMBER(
-            asset_id :: STRING
-        ) AS id,
+        asset_id :: STRING AS id,
         recorded_at :: TIMESTAMP AS recorded_timestamp,
         DATE_TRUNC(
             'hour',
@@ -64,9 +62,7 @@ base_sp AS (
     SELECT
         'sp' AS source,
         _inserted_date AS _runtime_date,
-        TRY_TO_NUMBER(
-            A.id :: STRING
-        ) AS id,
+        A.id :: STRING AS id,
         b.value :quote :USD :timestamp :: TIMESTAMP AS recorded_timestamp,
         DATE_TRUNC(
             'hour',
@@ -124,7 +120,7 @@ all_prices AS (
         final_sp
 )
 SELECT
-    id :: INTEGER AS id,
+    id,
     recorded_timestamp,
     recorded_hour,
     OPEN,

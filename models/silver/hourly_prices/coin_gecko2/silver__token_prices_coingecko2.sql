@@ -122,7 +122,10 @@ imputed_prices AS (
             WHEN imputed_close IS NULL THEN FALSE
             ELSE TRUE
         END AS imputed,
-        p.source,
+        CASE
+            WHEN imputed THEN 'imputed'
+            ELSE p.source
+        END AS source,
         s.last_supported_timestamp,
         p._inserted_timestamp
     FROM

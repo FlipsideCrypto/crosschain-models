@@ -35,9 +35,7 @@ base_streamline AS (
     SELECT
         'streamline' AS source,
         _inserted_date AS _runtime_date,
-        TRY_TO_NUMBER(
-            b.key :: STRING
-        ) AS id,
+        b.key :: STRING AS id,
         b.value :quotes [0] :quote :USD :timestamp :: TIMESTAMP AS recorded_timestamp,
         DATE_TRUNC(
             'hour',
@@ -100,7 +98,7 @@ all_prices AS (
         final_streamline
 )
 SELECT
-    id :: INTEGER AS id,
+    id,
     recorded_timestamp,
     recorded_hour,
     OPEN,

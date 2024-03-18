@@ -17,9 +17,8 @@ WITH all_providers AS (
         CASE
             WHEN provider = 'coingecko' THEN 1
             WHEN provider = 'coinmarketcap' THEN 2
-            WHEN provider = 'onchain' THEN 3
+            WHEN provider = 'osmosis-onchain' THEN 3
             WHEN provider = 'solscan' THEN 4
-            ELSE 5
         END AS priority,
         source,
         _inserted_timestamp

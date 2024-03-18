@@ -184,8 +184,14 @@ FINAL AS (
 SELECT
     id,
     token_address,
-    NAME,
-    symbol,
+    CASE
+        WHEN LENGTH(NAME) <= 0 THEN NULL
+        ELSE NAME
+    END AS NAME,
+    CASE
+        WHEN LENGTH(symbol) <= 0 THEN NULL
+        ELSE symbol
+    END AS symbol,
     platform,
     platform_id,
     platform_slug,

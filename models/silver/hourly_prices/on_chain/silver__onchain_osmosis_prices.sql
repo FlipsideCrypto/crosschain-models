@@ -15,7 +15,7 @@ WITH base AS (
         A.price_usd AS high,
         A.price_usd AS low,
         A.price_usd AS CLOSE,
-        'swaps' AS source,
+        'osmosis-swap' AS price_source,
         CASE
             WHEN swaps_in_hour IS NULL THEN TRUE
             ELSE FALSE
@@ -38,7 +38,7 @@ WITH base AS (
         A.price_usd AS high,
         A.price_usd AS low,
         A.price_usd AS CLOSE,
-        'pool balance' AS source,
+        'osmosis-pool-balance' AS price_source,
         FALSE AS is_imputed,
         A._inserted_timestamp
     FROM
@@ -55,14 +55,14 @@ SELECT
     high,
     low,
     CLOSE,
-    source,
+    price_source,
     is_imputed,
     _inserted_timestamp,
-    sysdate() as inserted_timestamp,
-    sysdate() as modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['id','recorded_hour','source']) }} AS onchain_osmosis_prices_id,
-    '{{ invocation_id }}' as _invocation_id
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['id','recorded_hour','price_source']) }} AS onchain_osmosis_prices_id,
+    '{{ invocation_id }}' AS _invocation_id
 FROM
-    base qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour, source
+    base qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour, price_source
 ORDER BY
     _inserted_timestamp DESC)) = 1

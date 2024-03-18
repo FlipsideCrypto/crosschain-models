@@ -6,7 +6,7 @@ models:
           combination_of_columns:
             - ID
             - RECORDED_HOUR
-            - SOURCE
+            - PRICE_SOURCE
     columns:
       - name: ID
         description: unique identifier representing the asset
@@ -51,7 +51,7 @@ models:
               column_type_list:
                 - FLOAT
                 - DOUBLE
-      - name: SOURCE
+      - name: PRICE_SOURCE
         description: the source of the price 
         tests:
           - not_null
