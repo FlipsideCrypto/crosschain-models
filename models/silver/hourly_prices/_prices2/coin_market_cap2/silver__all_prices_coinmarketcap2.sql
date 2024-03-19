@@ -99,7 +99,7 @@ all_prices AS (
         final_streamline
 )
 SELECT
-    id,
+    id :: STRING AS id,
     recorded_timestamp,
     recorded_hour,
     OPEN,

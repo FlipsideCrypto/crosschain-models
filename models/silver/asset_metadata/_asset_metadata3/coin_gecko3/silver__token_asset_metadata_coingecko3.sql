@@ -7,7 +7,8 @@
 ) }}
 
 WITH base_assets AS (
--- get all asset metdata
+    -- get all asset metdata
+
     SELECT
         id,
         p.value :: STRING AS token_address,
@@ -33,7 +34,7 @@ WHERE
 {% endif %}
 ),
 current_supported_assets AS (
--- get all assets currently supported
+    -- get all assets currently supported
     SELECT
         token_address,
         platform,
@@ -49,7 +50,7 @@ current_supported_assets AS (
         )
 ),
 base_adj AS (
--- make generic adjustments to asset metadata
+    -- make generic adjustments to asset metadata
     SELECT
         LOWER(
             CASE
@@ -58,28 +59,34 @@ base_adj AS (
             END
         ) AS id_adj,
         CASE
-            WHEN TRIM(A.token_address) ILIKE 'http%' THEN IFF(
+            WHEN TRIM(
+                A.token_address
+            ) ILIKE 'http%' THEN IFF(
                 LENGTH(
                     TRIM(
                         REGEXP_SUBSTR(REGEXP_SUBSTR(TRIM(A.token_address), '[^/]+$'), '^[-a-zA-Z0-9./_]+'),
-                        '-/_')
-                    ) <= 1,
-                    NULL,
-                    TRIM(
-                        REGEXP_SUBSTR(REGEXP_SUBSTR(TRIM(A.token_address), '[^/]+$'), '^[-a-zA-Z0-9./_]+'),
-                        '-/_')
+                        '-/_'
                     )
+                ) <= 1,
+                NULL,
+                TRIM(
+                    REGEXP_SUBSTR(REGEXP_SUBSTR(TRIM(A.token_address), '[^/]+$'), '^[-a-zA-Z0-9./_]+'),
+                    '-/_'
+                )
+            )
             ELSE IFF(
                 LENGTH(
                     TRIM(
                         REGEXP_SUBSTR(TRIM(A.token_address), '^[-a-zA-Z0-9./_]+'),
-                        '-/_')
-                    ) <= 1,
-                    NULL,
-                    TRIM(
-                        REGEXP_SUBSTR(TRIM(A.token_address), '^[-a-zA-Z0-9./_]+'),
-                        '-/_')
+                        '-/_'
                     )
+                ) <= 1,
+                NULL,
+                TRIM(
+                    REGEXP_SUBSTR(TRIM(A.token_address), '^[-a-zA-Z0-9./_]+'),
+                    '-/_'
+                )
+            )
         END AS token_address_adj,
         CASE
             WHEN LENGTH(TRIM(NAME)) <= 0 THEN NULL
@@ -89,24 +96,28 @@ base_adj AS (
             WHEN LENGTH(TRIM(symbol)) <= 0 THEN NULL
             ELSE TRIM(symbol)
         END AS symbol_adj,
-        CASE
-            WHEN LENGTH(TRIM(A.platform)) <= 0 THEN NULL
-            ELSE TRIM(A.platform)
-        END AS platform_adj,
+        LOWER(
+            CASE
+                WHEN LENGTH(TRIM(A.platform)) <= 0 THEN NULL
+                ELSE TRIM(
+                    A.platform
+                )
+            END
+        ) AS platform_adj,
         source,
         CASE
             WHEN C.token_address IS NOT NULL THEN FALSE
             ELSE TRUE
         END AS is_deprecated,
         A._inserted_timestamp
-        FROM
-            base_assets A
-            LEFT JOIN current_supported_assets C
-            ON A.token_address = C.token_address
-            AND A.platform = C.platform
-        WHERE
-            token_address_adj IS NOT NULL
-            AND platform_adj IS NOT NULL
+    FROM
+        base_assets A
+        LEFT JOIN current_supported_assets C
+        ON A.token_address = C.token_address
+        AND A.platform = C.platform
+    WHERE
+        token_address_adj IS NOT NULL
+        AND platform_adj IS NOT NULL
 )
 SELECT
     id_adj AS id,

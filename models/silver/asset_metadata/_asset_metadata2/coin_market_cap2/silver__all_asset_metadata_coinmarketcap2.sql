@@ -74,7 +74,7 @@ all_assets AS (
 SELECT
     VALUE,
     provider,
-    id,
+    id :: STRING AS id,
     symbol,
     NAME,
     first_historical_data,

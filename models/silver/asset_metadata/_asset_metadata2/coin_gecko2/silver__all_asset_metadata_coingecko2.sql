@@ -62,7 +62,7 @@ all_assets AS (
 SELECT
     VALUE,
     provider,
-    id,
+    id :: STRING AS id,
     NAME,
     symbol,
     source,
