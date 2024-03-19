@@ -116,7 +116,7 @@ all_prices AS (
         final_sp
 )
 SELECT
-    id :: STRING AS id,
+    id,
     recorded_hour,
     OPEN,
     high,

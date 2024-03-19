@@ -261,7 +261,7 @@ all_prices AS (
         final_realtime
 )
 SELECT
-    id :: STRING AS id,
+    id,
     recorded_hour,
     OPEN,
     high,
