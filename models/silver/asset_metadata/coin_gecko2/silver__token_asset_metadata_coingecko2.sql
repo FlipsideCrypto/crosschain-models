@@ -109,11 +109,6 @@ base_adj AS (
         ) = LOWER(
             s.token_address
         )
-    WHERE
-        (
-            platform_adj = 'solana'
-            AND token_address_adj NOT ILIKE '0x%'
-        )
 ),
 ibc_adj AS (
     SELECT
