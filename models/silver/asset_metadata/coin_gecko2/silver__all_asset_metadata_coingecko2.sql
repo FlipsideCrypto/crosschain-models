@@ -2,7 +2,8 @@
     materialized = 'incremental',
     unique_key = ['id', '_inserted_timestamp'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['_inserted_timestamp::DATE']
+    cluster_by = ['_inserted_timestamp::DATE'],
+    tags = ['prices']
 ) }}
 
 WITH base_sp AS (

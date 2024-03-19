@@ -19,8 +19,7 @@ models:
       - name: TOKEN_ADDRESS
       - name: PLATFORM
         tests:
-          - not_null:
-              where: token_address IS NOT NULL
+          - not_null
       - name: _INSERTED_TIMESTAMP
         tests:
           - not_null

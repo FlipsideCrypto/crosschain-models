@@ -1,22 +1,19 @@
 version: 2
 models:
-  - name: silver__token_asset_metadata_coingecko2
+  - name: silver__token_asset_metadata_priority2
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - TOKEN_ADDRESS
-            - PLATFORM
+            - BLOCKCHAIN
+          
     columns:
-      - name: ID
+      - name: PROVIDER
         tests:
           - not_null
       - name: TOKEN_ADDRESS
         tests:
           - not_null
-      - name: PLATFORM
+      - name: BLOCKCHAIN
         tests:
           - not_null
-      - name: _INSERTED_TIMESTAMP
-        tests:
-          - not_null
-      

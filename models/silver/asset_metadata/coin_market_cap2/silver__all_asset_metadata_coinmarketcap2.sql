@@ -2,7 +2,8 @@
     materialized = 'incremental',
     unique_key = ['id', '_inserted_timestamp'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['_inserted_timestamp::DATE']
+    cluster_by = ['_inserted_timestamp::DATE'],
+    tags = ['prices']
 ) }}
 
 WITH base_sp AS (
@@ -11,7 +12,7 @@ WITH base_sp AS (
         'sp' AS source,
         VALUE,
         provider,
-        id,
+        id :: STRING AS id,
         symbol,
         NAME,
         first_historical_data,
@@ -35,7 +36,7 @@ base_streamline AS (
         'streamline' AS source,
         VALUE,
         provider,
-        id,
+        id :: STRING AS id,
         symbol,
         NAME,
         first_historical_data,

@@ -3,7 +3,8 @@
     materialized = 'incremental',
     unique_key = ['id','recorded_hour'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE']
+    cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
+    tags = ['prices']
 ) }}
 
 WITH legacy AS (
@@ -35,9 +36,7 @@ base_streamline AS (
     SELECT
         'streamline' AS source,
         _inserted_date AS _runtime_date,
-        TRY_TO_NUMBER(
-            b.key :: STRING
-        ) AS id,
+        b.key :: STRING AS id,
         b.value :quotes [0] :quote :USD :timestamp :: TIMESTAMP AS recorded_timestamp,
         DATE_TRUNC(
             'hour',
@@ -100,7 +99,7 @@ all_prices AS (
         final_streamline
 )
 SELECT
-    id :: INTEGER AS id,
+    id,
     recorded_timestamp,
     recorded_hour,
     OPEN,
