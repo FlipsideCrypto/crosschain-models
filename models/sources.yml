@@ -335,6 +335,11 @@ sources:
       - name: asset_historical_hourly_market_data_coin_gecko_api
       - name: asset_ohlc_coin_gecko_api
       - name: asset_prices_coin_gecko_api
+      - name: asset_ohlc_coin_gecko_api_v2
+      - name: asset_market_chart_coin_gecko_api_v2
+      - name: asset_metadata_coin_gecko_api_v2
+      - name: asset_metadata_coin_market_cap_api_v2
+      - name: asset_ohlc_coin_market_cap_api_v2
   - name: bronze
     database: crosschain
     schema: bronze
@@ -455,6 +460,15 @@ sources:
       - name: transactions_completeness
   - name: optimism_observ
     database: optimism
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: logs_completeness
+      - name: receipts_completeness
+      - name: traces_completeness
+      - name: transactions_completeness
+  - name: blast_observ
+    database: blast
     schema: silver_observability
     tables:
       - name: blocks_completeness
@@ -618,3 +632,110 @@ sources:
     tables: 
       - name: blocks_completeness
       - name: transactions_completeness
+  - name: ethereum_stats
+    database: ethereum
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: optimism_stats
+    database: optimism
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: arbitrum_stats
+    database: arbitrum
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: bsc_stats
+    database: bsc
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: polygon_stats
+    database: polygon
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: base_stats
+    database: base
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: gnosis_stats
+    database: gnosis
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: avalanche_stats
+    database: avalanche
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: sei_stats
+    database: sei
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: cosmos_stats
+    database: cosmos
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: terra_stats
+    database: terra
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: osmosis_stats
+    database: osmosis
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: axelar_stats
+    database: axelar
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: flow_stats
+    database: flow
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: solana_stats
+    database: solana
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: aptos_stats
+    database: aptos
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: near_stats
+    database: near
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: aurora_stats
+    database: aurora
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: bitcoin_stats
+    database: bitcoin
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: blast_silver
+    database: blast
+    schema: silver
+    tables:
+      - name: complete_event_abis
+      - name: abis
+      - name: traces
+  - name: github_actions
+    database: crosschain
+    schema: github_actions
+    tables:
+      - name: workflows

@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "CONCAT_WS('-', id, coalesce(token_address,''))",
+    unique_key = ['token_address', 'platform'],
     incremental_strategy = 'delete+insert'
 ) }}
 
@@ -9,14 +9,14 @@ SELECT
     i.value :: STRING AS token_address,
     NAME,
     symbol,
-    i.key AS platform,
+    i.key :: STRING AS platform,
     _inserted_timestamp,
     sysdate() as inserted_timestamp,
     sysdate() as modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['id','token_address']) }} as asset_metadata_coin_gecko_id,
     '{{ invocation_id }}' as _invocation_id
 FROM
-    {{ ref('bronze__asset_metadata_coin_gecko') }} A,
+    {{ ref('bronze__streamline_asset_metadata_coingecko') }} A,
     TABLE(FLATTEN(A.value :platforms)) i
 
 {% if is_incremental() %}
@@ -37,6 +37,6 @@ WHERE
     )
 {% endif %}
 
-qualify(ROW_NUMBER() over (PARTITION BY id, token_address
+qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
 ORDER BY
     _inserted_timestamp DESC)) = 1

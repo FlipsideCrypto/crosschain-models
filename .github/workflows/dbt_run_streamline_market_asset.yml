@@ -3,8 +3,8 @@ run-name: dbt_run_streamline_market_asset
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '30 1 * * *'
+  # schedule:
+  #   - cron: '30 1 * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
