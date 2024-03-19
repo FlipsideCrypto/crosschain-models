@@ -12,12 +12,18 @@ WITH base_sp AS (
         'sp' AS source,
         VALUE,
         provider,
-        id,
-        NAME,
+        id :: STRING AS id,
         symbol,
+        NAME,
+        first_historical_data,
+        last_historical_data,
+        is_active,
+        platform,
+        RANK,
+        slug,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__streamline_asset_metadata_coingecko_sp') }}
+        {{ ref('bronze__streamline_asset_metadata_coinmarketcap_sp') }}
     WHERE
         id IS NOT NULL
 
@@ -30,12 +36,18 @@ base_streamline AS (
         'streamline' AS source,
         VALUE,
         provider,
-        id,
-        NAME,
+        id :: STRING AS id,
         symbol,
+        NAME,
+        first_historical_data,
+        last_historical_data,
+        is_active,
+        platform,
+        RANK,
+        slug,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__streamline_asset_metadata_coingecko') }}
+        {{ ref('bronze__streamline_asset_metadata_coinmarketcap') }}
     WHERE
         id IS NOT NULL
 
@@ -62,9 +74,15 @@ all_assets AS (
 SELECT
     VALUE,
     provider,
-    id,
-    NAME,
+    id :: STRING AS id,
     symbol,
+    NAME,
+    first_historical_data,
+    last_historical_data,
+    is_active,
+    platform,
+    RANK,
+    slug,
     source,
     _inserted_timestamp
 FROM

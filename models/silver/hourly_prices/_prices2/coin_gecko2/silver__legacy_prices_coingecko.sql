@@ -1,12 +1,11 @@
--- depends_on: {{ ref('bronze__streamline_hourly_prices_coinmarketcap_sp') }}
 {{ config(
     materialized = 'incremental',
     unique_key = ['id','recorded_hour'],
     incremental_strategy = 'merge',
     cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
-    full_refresh = false,
     tags = ['stale']
 ) }}
+--    full_refresh = false,
 
 WITH base_legacy AS (
 
@@ -32,8 +31,7 @@ WITH base_legacy AS (
             'legacy_prices'
         ) }}
     WHERE
-        provider = 'coinmarketcap'
-        AND recorded_at < '2022-07-20'
+        provider = 'coingecko'
 
 {% if is_incremental() %}
 AND 1 = 2
@@ -42,14 +40,11 @@ AND 1 = 2
 final_legacy AS (
     SELECT
         id,
-        recorded_timestamp,
         recorded_hour,
         OPEN,
         high,
         low,
         CLOSE,
-        volume,
-        market_cap,
         source,
         _runtime_date,
         _inserted_timestamp
@@ -61,27 +56,31 @@ final_legacy AS (
 base_sp AS (
     SELECT
         'sp' AS source,
-        _inserted_date AS _runtime_date,
-        A.id :: STRING AS id,
-        b.value :quote :USD :timestamp :: TIMESTAMP AS recorded_timestamp,
-        DATE_TRUNC(
-            'hour',
-            recorded_timestamp
-        ) AS recorded_hour,
-        b.value :quote :USD :open :: FLOAT AS OPEN,
-        b.value :quote :USD :high :: FLOAT AS high,
-        b.value :quote :USD :low :: FLOAT AS low,
-        b.value :quote :USD :close :: FLOAT AS CLOSE,
-        b.value :quote :USD :volume :: FLOAT AS volume,
-        b.value :quote :USD :market_cap :: FLOAT AS market_cap,
+        _runtime_date,
+        id :: STRING AS id,
+        TO_TIMESTAMP(
+            f.value [0] :: STRING
+        ) AS recorded_timestamp,
+        CASE
+            WHEN recorded_timestamp = DATE_TRUNC(
+                'hour',
+                recorded_timestamp
+            ) THEN recorded_timestamp
+            ELSE NULL
+        END AS recorded_hour,
+        f.value [1] :: FLOAT AS OPEN,
+        f.value [2] :: FLOAT AS high,
+        f.value [3] :: FLOAT AS low,
+        f.value [4] :: FLOAT AS CLOSE,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__streamline_hourly_prices_coinmarketcap_sp') }} A,
+        {{ ref('bronze__streamline_hourly_prices_coingecko_sp') }}
+        s,
         LATERAL FLATTEN(
-            input => DATA :quotes
-        ) b
+            input => DATA
+        ) f
     WHERE
-        _inserted_date >= '2022-07-20'
+        recorded_hour IS NOT NULL
         AND DATA :: STRING <> '[]'
         AND DATA IS NOT NULL
 
@@ -92,14 +91,11 @@ AND 1 = 2
 final_sp AS (
     SELECT
         id,
-        recorded_timestamp,
         recorded_hour,
         OPEN,
         high,
         low,
         CLOSE,
-        volume,
-        market_cap,
         source,
         _runtime_date,
         _inserted_timestamp
@@ -121,14 +117,11 @@ all_prices AS (
 )
 SELECT
     id,
-    recorded_timestamp,
     recorded_hour,
     OPEN,
     high,
     low,
     CLOSE,
-    volume,
-    market_cap,
     source,
     _runtime_date,
     _inserted_timestamp
