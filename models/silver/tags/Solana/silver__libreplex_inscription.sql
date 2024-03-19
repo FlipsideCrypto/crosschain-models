@@ -8,7 +8,8 @@ WITH libreplex_txs AS (
 
     SELECT
         block_timestamp,
-        f_inner.value :accounts [2] :: STRING AS non_fungible_mint
+        f_inner.value :accounts [2] :: STRING AS non_fungible_mint,
+        _INSERTED_TIMESTAMP
     FROM
         {{ source(
             'solana_silver',
@@ -41,13 +42,13 @@ WITH libreplex_txs AS (
 AND _inserted_timestamp :: DATE >= (
     SELECT
         MAX(
-            inserted_timestamp
+            _inserted_timestamp
         )
     FROM
         {{ this }}
 )
 {% else %}
-    AND _inserted_timestamp :: DATE > '2023-11-13'
+    AND _inserted_timestamp :: DATE > '2023-11-12'
 {% endif %}
 )
 SELECT
@@ -59,10 +60,12 @@ SELECT
     block_timestamp AS start_date,
     NULL AS end_date,
     SYSDATE() AS tag_created_at,
+    _inserted_timestamp AS _inserted_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['address','tag_name','start_date']) }} AS libreplex_inscription_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['address','tag_name','start_date']) }} AS tags_libreplex_id,
     '{{ invocation_id }}' AS _invocation_id
+
 FROM
     libreplex_txs
 
