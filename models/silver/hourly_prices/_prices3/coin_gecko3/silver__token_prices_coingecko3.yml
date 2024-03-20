@@ -6,7 +6,7 @@ models:
           combination_of_columns:
             - RECORDED_HOUR
             - TOKEN_ADDRESS
-            - PLATFORM
+            - PLATFORM_ID
 
     columns:
       - name: RECORDED_HOUR
@@ -14,7 +14,7 @@ models:
           - hour_sequence_gaps:
               partition_by:
                 - TOKEN_ADDRESS
-                - PLATFORM
+                - PLATFORM_ID
               column_name: RECORDED_HOUR
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
@@ -23,6 +23,9 @@ models:
         tests:
           - not_null
       - name: PLATFORM
+        tests:
+          - not_null
+      - name: PLATFORM_ID
         tests:
           - not_null
       - name: CLOSE

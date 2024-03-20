@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['recorded_hour','token_address','platform'],
+    unique_key = ['recorded_hour','token_address','platform_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE'],
     tags = ['prices']
@@ -13,6 +13,7 @@ WITH token_asset_metadata AS (
         id,
         token_address,
         platform,
+        platform_id,
         _inserted_timestamp
     FROM
         {{ ref(
@@ -25,7 +26,8 @@ base_hours_metadata AS (
         date_hour,
         id,
         token_address,
-        platform
+        platform,
+        platform_id
     FROM
         {{ ref(
             'core__dim_date_hours'
@@ -57,6 +59,7 @@ base_prices AS (
         m.token_address,
         p.id,
         m.platform,
+        m.platform_id,
         p.close,
         p.source,
         p._inserted_timestamp
@@ -84,7 +87,7 @@ latest_supported_assets AS (
     --get the latest supported timestamp for each asset
     SELECT
         token_address,
-        platform,
+        platform_id,
         MAX(_inserted_timestamp) AS last_supported_timestamp
     FROM
         token_asset_metadata
@@ -99,6 +102,7 @@ imputed_prices AS (
         d.token_address,
         d.id,
         d.platform,
+        d.platform_id,
         p.close AS hourly_close,
         CASE
             WHEN p.close IS NOT NULL THEN NULL
@@ -107,7 +111,7 @@ imputed_prices AS (
                 p.close ignore nulls
             ) over (
                 PARTITION BY d.token_address,
-                d.platform
+                d.platform_id
                 ORDER BY
                     d.date_hour rows BETWEEN unbounded preceding
                     AND CURRENT ROW
@@ -134,10 +138,10 @@ imputed_prices AS (
         LEFT JOIN base_prices p
         ON p.recorded_hour = d.date_hour
         AND p.token_address = d.token_address
-        AND p.platform = d.platform
+        AND p.platform_id = d.platform_id
         LEFT JOIN latest_supported_assets s
         ON s.token_address = d.token_address
-        AND s.platform = d.platform
+        AND s.platform_id = d.platform_id
 ),
 final_prices AS (
     SELECT
@@ -150,6 +154,7 @@ final_prices AS (
         token_address,
         id,
         platform,
+        platform_id,
         final_close AS CLOSE,
         imputed,
         source,
@@ -167,8 +172,9 @@ final_prices AS (
 SELECT
     recorded_hour,
     token_address,
-    platform,
     id,
+    platform,
+    platform_id,
     CLOSE,
     imputed,
     source,
@@ -179,9 +185,9 @@ SELECT
     ) AS _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','token_address','platform']) }} AS token_prices_coin_market_cap_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','token_address','platform_id']) }} AS token_prices_coin_market_cap_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    final_prices qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, token_address, platform
+    final_prices qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, token_address, platform_id
 ORDER BY
     _inserted_timestamp DESC)) = 1
