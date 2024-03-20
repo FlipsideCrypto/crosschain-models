@@ -121,6 +121,101 @@ base_adj AS (
     WHERE
         token_address_adj IS NOT NULL
         AND platform_adj IS NOT NULL
+),
+solana_adj AS (
+    --add solana specific adjustments
+    SELECT
+        A.id_adj,
+        COALESCE(
+            s.token_address,
+            A.token_address_adj
+        ) AS token_address_adj,
+        A.name_adj,
+        A.symbol_adj,
+        'solana' AS platform_adj,
+        'solana' AS source,
+        A.is_deprecated,
+        A._inserted_timestamp
+    FROM
+        base_adj A
+        INNER JOIN {{ source(
+            'solana_silver',
+            'token_metadata'
+        ) }}
+        s
+        ON A.id_adj = LOWER(TRIM(s.coin_market_cap_id))
+    WHERE
+        token_address_adj NOT ILIKE '%-%'
+),
+ibc_adj AS (
+    --add ibc specific adjustments
+    SELECT
+        A.id_adj,
+        CASE
+            WHEN COALESCE(
+                i.address,
+                A.token_address_adj
+            ) ILIKE 'ibc%' THEN 'ibc/' || SPLIT_PART(COALESCE(i.address, A.token_address_adj), '/', 2)
+            ELSE COALESCE(
+                i.address,
+                A.token_address_adj
+            )
+        END AS token_address_adj,
+        A.name_adj,
+        A.symbol_adj,
+        'cosmos' AS platform_adj,
+        'ibc' AS source,
+        A.is_deprecated,
+        A._inserted_timestamp
+    FROM
+        base_adj A
+        INNER JOIN {{ source(
+            'osmosis_silver',
+            'asset_metadata'
+        ) }}
+        i
+        ON LOWER(
+            A.symbol_adj
+        ) = LOWER(
+            i.project_name
+        )
+    WHERE
+        (A.id_adj IN (
+    SELECT
+        id
+    FROM
+        {{ ref('silver__ibc_asset_metadata') }}
+    WHERE
+        provider = 'coinmarketcap')
+        OR A.token_address_adj ILIKE 'ibc%')
+        AND (
+            COALESCE(
+                i.address,
+                A.token_address_adj
+            ) ILIKE 'ibc%'
+            OR i.address IN (
+                'uosmo',
+                'uion'
+            )
+        )
+),
+all_assets AS (
+    SELECT
+        *
+    FROM
+        base_adj
+    WHERE
+        token_address_adj NOT ILIKE 'ibc%'
+    UNION ALL
+    SELECT
+        *
+    FROM
+        solana_adj
+    UNION ALL
+    SELECT
+        *
+    FROM
+        ibc_adj
 )
 SELECT
     id_adj AS id,
@@ -136,6 +231,6 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['token_address','platform']) }} AS token_asset_metadata_coin_market_cap_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    base_adj qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
+    all_assets qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
 ORDER BY
     _inserted_timestamp DESC)) = 1 -- built for tokens with token_address (not native/gas tokens)
