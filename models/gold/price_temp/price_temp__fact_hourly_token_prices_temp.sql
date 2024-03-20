@@ -8,8 +8,15 @@ WITH base AS (
 
     SELECT
         HOUR,
-        token_address,
-        TRIM(REPLACE(REPLACE(blockchain, '-', ''), ' ', '')) AS blockchain_adj,
+        CASE
+            WHEN p.token_address ILIKE 'ibc%'
+            OR p.blockchain = 'solana' THEN p.token_address
+            ELSE LOWER(
+                p.token_address
+            )
+        END AS token_address,
+        p.blockchain AS blockchain_name,
+        TRIM(REPLACE(REPLACE(blockchain_name, '-', ''), ' ', '')) AS blockchain_adj,
         CASE
             WHEN blockchain_adj IN (
                 'arbitrumnova',
@@ -103,12 +110,13 @@ WITH base AS (
         modified_timestamp,
         token_prices_all_providers_hourly_id AS fact_hourly_token_prices_id
     FROM
-        {{ ref('silver__token_prices_all_providers3') }}
+        {{ ref('silver__token_prices_all_providers3') }} p
 )
 SELECT
     hour,
     token_address,
     blockchain,
+    blockchain_name,
     blockchain_id,
     provider,
     price,

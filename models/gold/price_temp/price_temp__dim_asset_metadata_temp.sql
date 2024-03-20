@@ -7,11 +7,18 @@
 WITH base AS (
 
     SELECT
-        token_address,
+        CASE
+            WHEN A.token_address ILIKE 'ibc%'
+            OR A.blockchain = 'solana' THEN A.token_address
+            ELSE LOWER(
+                A.token_address
+            )
+        END AS token_address,
         id,
         symbol,
         NAME,
-        TRIM(REPLACE(REPLACE(blockchain, '-', ''), ' ', '')) AS blockchain_adj,
+        A.blockchain AS blockchain_name,
+        TRIM(REPLACE(REPLACE(blockchain_name, '-', ''), ' ', '')) AS blockchain_adj,
         CASE
             WHEN blockchain_adj IN (
                 'arbitrumnova',
@@ -104,7 +111,7 @@ WITH base AS (
         modified_timestamp,
         token_asset_metadata_all_providers_id AS dim_asset_metadata_id
     FROM
-        {{ ref('silver__token_asset_metadata_all_providers3') }}
+        {{ ref('silver__token_asset_metadata_all_providers3') }} A
 )
 SELECT
     token_address,
@@ -119,6 +126,7 @@ SELECT
     ) AS NAME,
     decimals,
     s.blockchain,
+    blockchain_name,
     blockchain_id,
     provider,
     is_deprecated,

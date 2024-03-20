@@ -21,9 +21,11 @@ models:
       - name: TOKEN_ADDRESS
         description: The specific address representing the asset in a specific platform.
       - name: BLOCKCHAIN
-        description: The platform where this asset has a token address.
+        description: The Blockchain, Network, or Platform where this asset has a token address. This column is derived by manually grouping blockchain_name, for reference purposes.
+      - name: BLOCKCHAIN_NAME
+        description: The name of the Blockchain, Network, or Platform where this asset has a token address. This may differ by provider.
       - name: BLOCKCHAIN_ID
-        description: The unique identifier for the platform where this asset has a token address.
+        description: The unique identifier of the Blockchain, Network, or Platform where this asset has a token address.
       - name: DECIMALS
         description: The number of decimal places the token needs adjusted where token values exist.
       - name: IS_DEPRECATED

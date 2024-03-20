@@ -19,9 +19,11 @@ models:
       - name: DECIMALS
         description: The number of decimals for token contract
       - name: BLOCKCHAIN
-        description: Blockchain, Network, or Platform the token price is recorded on.
+        description: The Blockchain, Network, or Platform where this asset has a token address. This column is derived by manually grouping blockchain_name, for reference purposes.
+      - name: BLOCKCHAIN_NAME
+        description: The name of the Blockchain, Network, or Platform where this asset has a token address. This may differ by provider.
       - name: BLOCKCHAIN_ID
-        description: The unique identifier for the Blockchain, Network, or Platform the token price is recorded on.
+        description: The unique identifier of the Blockchain, Network, or Platform where this asset has a token address.
       - name: PRICE
         description: Closing price of the recorded hour in USD
       - name: IS_DEPRECATED

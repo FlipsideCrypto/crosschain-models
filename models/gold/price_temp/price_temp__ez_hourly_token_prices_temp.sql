@@ -8,11 +8,18 @@ WITH base AS (
 
     SELECT
         HOUR,
-        p.token_address,
+        CASE
+            WHEN p.token_address ILIKE 'ibc%'
+            OR p.blockchain = 'solana' THEN p.token_address
+            ELSE LOWER(
+                p.token_address
+            )
+        END AS token_address,
         symbol,
         decimals,
         price,
-        TRIM(REPLACE(REPLACE(p.blockchain, '-', ''), ' ', '')) AS blockchain_adj,
+        p.blockchain AS blockchain_name,
+        TRIM(REPLACE(REPLACE(blockchain_name, '-', ''), ' ', '')) AS blockchain_adj,
         CASE
             WHEN blockchain_adj IN (
                 'arbitrumnova',
@@ -96,9 +103,10 @@ WITH base AS (
                 'songbird',
                 'songbirdnetwork'
             ) THEN 'songbird'
-            ELSE blockchain_adj
+            ELSE TRIM(REPLACE(REPLACE(p.blockchain, '-', ''), ' ', ''))
         END AS blockchain,
         p.blockchain_id AS blockchain_id,
+        provider,
         is_imputed,
         CASE
             WHEN is_deprecated IS NULL THEN FALSE
@@ -122,7 +130,9 @@ SELECT
     decimals,
     price,
     blockchain,
+    blockchain_name,
     blockchain_id,
+    provider,
     is_imputed,
     is_deprecated,
     inserted_timestamp,
