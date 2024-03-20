@@ -99,6 +99,7 @@ WITH base_priority AS (
         END AS blockchain,
         blockchain_id,
         priority,
+        is_deprecated,
         inserted_timestamp,
         modified_timestamp,
         token_asset_metadata_priority_id AS ez_asset_metadata_id
@@ -119,6 +120,7 @@ SELECT
     decimals,
     s.blockchain,
     blockchain_id,
+    is_deprecated,
     GREATEST(COALESCE(s.inserted_timestamp, '2000-01-01'), COALESCE(C.inserted_timestamp, '2000-01-01')) AS inserted_timestamp,
     GREATEST(COALESCE(s.modified_timestamp, '2000-01-01'), COALESCE(C.modified_timestamp, '2000-01-01')) AS modified_timestamp,
     ez_asset_metadata_id

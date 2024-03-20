@@ -24,6 +24,8 @@ models:
         description: The unique identifier for the Blockchain, Network, or Platform the token price is recorded on.
       - name: PRICE
         description: Closing price of the recorded hour in USD
+      - name: IS_DEPRECATED
+        description: A flag indicating if the asset is deprecated or no longer supported by the provider.
       - name: EZ_HOURLY_TOKEN_PRICES_ID
         description: '{{ doc("pk") }}'   
         tests:

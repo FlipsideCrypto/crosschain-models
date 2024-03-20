@@ -23,6 +23,8 @@ models:
         description: The unique identifier for the platform where this asset has a token address.
       - name: DECIMALS
         description: The number of decimal places the token needs adjusted where token values exist.
+      - name: IS_DEPRECATED
+        description: A flag indicating if the asset is deprecated or no longer supported by the provider.
       - name: EZ_ASSET_METADATA_ID
         description: '{{ doc("pk") }}'   
         tests:

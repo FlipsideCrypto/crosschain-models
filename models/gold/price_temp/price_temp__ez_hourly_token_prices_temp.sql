@@ -100,6 +100,10 @@ WITH base AS (
         END AS blockchain,
         p.blockchain_id AS blockchain_id,
         is_imputed,
+        CASE
+            WHEN is_deprecated IS NULL THEN FALSE
+            ELSE is_deprecated
+        END AS is_deprecated,
         GREATEST(COALESCE(p.inserted_timestamp, '2000-01-01'), COALESCE(m.inserted_timestamp, '2000-01-01')) AS inserted_timestamp,
         GREATEST(COALESCE(p.modified_timestamp, '2000-01-01'), COALESCE(m.modified_timestamp, '2000-01-01')) AS modified_timestamp,
         token_prices_priority_hourly_id AS ez_hourly_token_prices_id
@@ -112,7 +116,7 @@ WITH base AS (
         AND p.blockchain_id = m.blockchain_id
 )
 SELECT
-    hour,
+    HOUR,
     token_address,
     symbol,
     decimals,
@@ -120,6 +124,7 @@ SELECT
     blockchain,
     blockchain_id,
     is_imputed,
+    is_deprecated,
     inserted_timestamp,
     modified_timestamp,
     ez_hourly_token_prices_id

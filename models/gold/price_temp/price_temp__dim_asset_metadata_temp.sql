@@ -99,6 +99,7 @@ WITH base AS (
         END AS blockchain,
         blockchain_id,
         provider,
+        is_deprecated,
         inserted_timestamp,
         modified_timestamp,
         token_asset_metadata_all_providers_id AS dim_asset_metadata_id
@@ -120,6 +121,7 @@ SELECT
     s.blockchain,
     blockchain_id,
     provider,
+    is_deprecated,
     GREATEST(COALESCE(s.inserted_timestamp, '2000-01-01'), COALESCE(C.inserted_timestamp, '2000-01-01')) AS inserted_timestamp,
     GREATEST(COALESCE(s.modified_timestamp, '2000-01-01'), COALESCE(C.modified_timestamp, '2000-01-01')) AS modified_timestamp,
     dim_asset_metadata_id
