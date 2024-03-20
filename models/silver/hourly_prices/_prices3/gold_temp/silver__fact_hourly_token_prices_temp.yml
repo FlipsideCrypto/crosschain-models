@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: price_temp__fact_hourly_token_prices_temp
+  - name: silver__fact_hourly_token_prices_temp
     description: A comprehensive fact table holding provider and blockchain specific hourly token prices.
 
     columns:
