@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['token_address','blockchain','provider'],
+    unique_key = ['token_address','blockchain_id','provider'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -14,6 +14,7 @@ WITH coin_gecko AS (
         NAME,
         symbol,
         platform,
+        platform_id,
         'coingecko' AS provider,
         source,
         is_deprecated,
@@ -40,6 +41,7 @@ coin_market_cap AS (
         NAME,
         symbol,
         platform,
+        platform_id,
         'coinmarketcap' AS provider,
         source,
         is_deprecated,
@@ -72,6 +74,7 @@ ibc_am AS (
             ELSE project_name
         END AS symbol,
         'cosmos' AS platform,
+        'cosmos' AS platform_id,
         'osmosis-onchain' AS provider,
         'ibc_am' AS source,
         FALSE AS is_deprecated,
@@ -113,6 +116,7 @@ solana_solscan AS (
             ELSE symbol
         END AS symbol,
         'solana' AS platform,
+        'solana' AS platform_id,
         'solscan' AS provider,
         'solscan' AS source,
         FALSE AS is_deprecated,
@@ -162,15 +166,16 @@ SELECT
     NAME,
     symbol,
     platform AS blockchain,
+    platform_id AS blockchain_id,
     provider,
     source,
     is_deprecated,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['token_address','blockchain','provider']) }} AS token_asset_metadata_all_providers_id,
+    {{ dbt_utils.generate_surrogate_key(['token_address','blockchain_id','provider']) }} AS token_asset_metadata_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers qualify(ROW_NUMBER() over (PARTITION BY token_address, blockchain, provider
+    all_providers qualify(ROW_NUMBER() over (PARTITION BY token_address, blockchain_id, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

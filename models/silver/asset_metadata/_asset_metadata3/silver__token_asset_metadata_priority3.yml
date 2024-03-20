@@ -5,7 +5,7 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - TOKEN_ADDRESS
-            - BLOCKCHAIN
+            - BLOCKCHAIN_ID
           
     columns:
       - name: PROVIDER
@@ -15,5 +15,8 @@ models:
         tests:
           - not_null
       - name: BLOCKCHAIN
+        tests:
+          - not_null
+      - name: BLOCKCHAIN_ID
         tests:
           - not_null

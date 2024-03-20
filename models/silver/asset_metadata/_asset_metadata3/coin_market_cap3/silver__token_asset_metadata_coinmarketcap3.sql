@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['token_address', 'platform'],
+    unique_key = ['token_address', 'platform_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -40,7 +40,7 @@ current_supported_assets AS (
     -- get all assets currently supported
     SELECT
         token_address,
-        platform,
+        platform_id,
         _inserted_timestamp
     FROM
         base_assets
@@ -107,6 +107,14 @@ base_adj AS (
                 )
             END
         ) AS platform_adj,
+        LOWER(
+            CASE
+                WHEN LENGTH(TRIM(A.platform_id)) <= 0 THEN NULL
+                ELSE TRIM(
+                    A.platform_id
+                )
+            END
+        ) AS platform_id_adj,
         source,
         CASE
             WHEN C.token_address IS NOT NULL THEN FALSE
@@ -117,10 +125,11 @@ base_adj AS (
         base_assets A
         LEFT JOIN current_supported_assets C
         ON A.token_address = C.token_address
-        AND A.platform = C.platform
+        AND A.platform_id = C.platform_id
     WHERE
         token_address_adj IS NOT NULL
         AND platform_adj IS NOT NULL
+        AND platform_id_adj IS NOT NULL
 ),
 solana_adj AS (
     --add solana specific adjustments
@@ -133,6 +142,7 @@ solana_adj AS (
         A.name_adj,
         A.symbol_adj,
         'solana' AS platform_adj,
+        'solana' AS platform_id_adj,
         'solana' AS source,
         A.is_deprecated,
         A._inserted_timestamp
@@ -164,6 +174,7 @@ ibc_adj AS (
         A.name_adj,
         A.symbol_adj,
         'cosmos' AS platform_adj,
+        'cosmos' AS platform_id_adj,
         'ibc' AS source,
         A.is_deprecated,
         A._inserted_timestamp
@@ -223,14 +234,15 @@ SELECT
     name_adj AS NAME,
     symbol_adj AS symbol,
     platform_adj AS platform,
+    platform_id_adj AS platform_id,
     source,
     is_deprecated,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['token_address','platform']) }} AS token_asset_metadata_coin_market_cap_id,
+    {{ dbt_utils.generate_surrogate_key(['token_address','platform_id']) }} AS token_asset_metadata_coin_market_cap_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_assets qualify(ROW_NUMBER() over (PARTITION BY token_address, platform
+    all_assets qualify(ROW_NUMBER() over (PARTITION BY token_address, platform_id
 ORDER BY
     _inserted_timestamp DESC)) = 1 -- built for tokens with token_address (not native/gas tokens)
