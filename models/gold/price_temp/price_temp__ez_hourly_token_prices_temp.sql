@@ -28,7 +28,6 @@ WITH base AS (
                 'binancecoin',
                 'bnb'
             ) THEN 'bsc'
-            WHEN blockchain_adj = 'ethereum' THEN 'ethereum'
             WHEN blockchain_adj IN (
                 'gnosis',
                 'xdai',
@@ -42,8 +41,6 @@ WITH base AS (
                 'polygon',
                 'polygonpos'
             ) THEN 'polygon'
-            WHEN blockchain_adj = 'base' THEN 'base'
-            WHEN blockchain_adj = 'blast' THEN 'blast'
             WHEN blockchain_adj IN (
                 'cosmos',
                 'evmos',
@@ -51,9 +48,6 @@ WITH base AS (
                 'terra',
                 'terra2'
             ) THEN 'cosmos'
-            WHEN blockchain_adj = 'algorand' THEN 'algorand'
-            WHEN blockchain_adj = 'solana' THEN 'solana'
-            WHEN blockchain_adj = 'aptos' THEN 'aptos'
             WHEN blockchain_adj IN (
                 'bnbbeaconchain(bep2)',
                 'bnbsmartchain(bep20)'
