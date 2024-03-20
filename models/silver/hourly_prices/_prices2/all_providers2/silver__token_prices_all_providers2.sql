@@ -20,7 +20,7 @@ WITH coin_gecko AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__token_prices_coingecko3') }}
+        {{ ref('silver__token_prices_coingecko2') }}
 
 {% if is_incremental() %}
 WHERE
@@ -45,7 +45,7 @@ coin_market_cap AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__token_prices_coinmarketcap3') }}
+        {{ ref('silver__token_prices_coinmarketcap2') }}
 
 {% if is_incremental() %}
 WHERE

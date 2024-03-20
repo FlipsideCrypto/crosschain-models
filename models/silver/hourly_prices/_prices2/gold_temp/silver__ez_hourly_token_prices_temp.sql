@@ -116,9 +116,9 @@ WITH base AS (
         GREATEST(COALESCE(p.modified_timestamp, '2000-01-01'), COALESCE(m.modified_timestamp, '2000-01-01')) AS modified_timestamp,
         token_prices_priority_hourly_id AS ez_hourly_token_prices_id
     FROM
-        {{ ref('silver__token_prices_priority3') }}
+        {{ ref('silver__token_prices_priority2') }}
         p
-        LEFT JOIN {{ ref('price_temp__ez_asset_metadata_temp') }}
+        LEFT JOIN {{ ref('silver__ez_asset_metadata_temp') }}
         m
         ON p.token_address = m.token_address
         AND p.blockchain_id = m.blockchain_id
@@ -132,7 +132,6 @@ SELECT
     blockchain,
     blockchain_name,
     blockchain_id,
-    provider,
     is_imputed,
     is_deprecated,
     inserted_timestamp,

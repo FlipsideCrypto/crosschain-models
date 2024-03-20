@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['token_address','blockchain','provider'],
+    unique_key = ['token_address','blockchain_id','provider'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -14,6 +14,7 @@ WITH coin_gecko AS (
         NAME,
         symbol,
         platform,
+        platform_id,
         'coingecko' AS provider,
         source,
         is_deprecated,
@@ -40,6 +41,7 @@ coin_market_cap AS (
         NAME,
         symbol,
         platform,
+        platform_id,
         'coinmarketcap' AS provider,
         source,
         is_deprecated,
@@ -72,6 +74,7 @@ ibc_am AS (
             ELSE project_name
         END AS symbol,
         'cosmos' AS platform,
+        'cosmos' AS platform_id,
         'osmosis-onchain' AS provider,
         'ibc_am' AS source,
         FALSE AS is_deprecated,
@@ -113,6 +116,7 @@ solana_solscan AS (
             ELSE symbol
         END AS symbol,
         'solana' AS platform,
+        'solana' AS platform_id,
         'solscan' AS provider,
         'solscan' AS source,
         FALSE AS is_deprecated,
@@ -155,115 +159,23 @@ all_providers AS (
         *
     FROM
         solana_solscan
-),
-supported_chains AS (
-    SELECT
-        token_address,
-        id,
-        NAME,
-        symbol,
-        CASE
-            WHEN platform IN (
-                'arbitrum-nova',
-                'arbitrum-one',
-                'arbitrum'
-            ) THEN 'arbitrum'
-            WHEN platform IN (
-                'avalanche',
-                'avalanche c-chain'
-            ) THEN 'avalanche'
-            WHEN platform IN (
-                'binance-smart-chain',
-                'binancecoin',
-                'bnb'
-            ) THEN 'bsc'
-            WHEN platform = 'ethereum' THEN 'ethereum'
-            WHEN platform IN (
-                'gnosis',
-                'xdai'
-            ) THEN 'gnosis'
-            WHEN platform IN (
-                'optimism',
-                'optimistic-ethereum'
-            ) THEN 'optimism'
-            WHEN platform IN (
-                'polygon',
-                'polygon-pos'
-            ) THEN 'polygon'
-            WHEN platform = 'base' THEN 'base'
-            WHEN platform = 'blast' THEN 'blast'
-            WHEN platform IN (
-                'cosmos',
-                'evmos',
-                'osmosis',
-                'terra',
-                'terra-2'
-            ) THEN 'cosmos'
-            WHEN platform = 'algorand' THEN 'algorand'
-            WHEN platform = 'solana' THEN 'solana'
-            WHEN platform = 'aptos' THEN 'aptos'
-            ELSE NULL
-        END AS blockchain,
-        --supported chains only
-        provider,
-        source,
-        is_deprecated,
-        _inserted_timestamp
-    FROM
-        all_providers
-    WHERE
-        blockchain IS NOT NULL
-),
-FINAL AS (
-    SELECT
-        token_address,
-        id,
-        NAME,
-        symbol,
-        blockchain,
-        provider,
-        source,
-        is_deprecated,
-        _inserted_timestamp
-    FROM
-        supported_chains
-    WHERE
-        NOT (
-            blockchain IN (
-                'arbitrum',
-                'avalanche',
-                'bsc',
-                'ethereum',
-                'gnosis',
-                'optimism',
-                'polygon',
-                'base',
-                'blast'
-            )
-            AND token_address NOT ILIKE '0x%'
-        )
-        AND NOT (
-            blockchain = 'algorand'
-            AND TRY_CAST(
-                token_address AS INT
-            ) IS NULL
-        )
 )
 SELECT
     token_address,
     id,
     NAME,
     symbol,
-    blockchain,
+    platform AS blockchain,
+    platform_id AS blockchain_id,
     provider,
     source,
     is_deprecated,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['token_address','blockchain','provider']) }} AS token_asset_metadata_all_providers_id,
+    {{ dbt_utils.generate_surrogate_key(['token_address','blockchain_id','provider']) }} AS token_asset_metadata_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    FINAL qualify(ROW_NUMBER() over (PARTITION BY token_address, blockchain, provider
+    all_providers qualify(ROW_NUMBER() over (PARTITION BY token_address, blockchain_id, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

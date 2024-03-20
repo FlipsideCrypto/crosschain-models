@@ -33,7 +33,7 @@ WITH all_providers AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__token_prices_all_providers3') }}
+        {{ ref('silver__token_prices_all_providers2') }}
 
 {% if is_incremental() %}
 WHERE

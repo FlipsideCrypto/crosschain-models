@@ -1,42 +1,42 @@
 version: 2
 models:
-  - name: silver__token_prices_coingecko3
+  - name: silver__token_prices_priority2
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - RECORDED_HOUR
+            - HOUR
             - TOKEN_ADDRESS
-            - PLATFORM_ID
+            - BLOCKCHAIN_ID
 
     columns:
-      - name: RECORDED_HOUR
+      - name: HOUR
         tests:
-          - hour_sequence_gaps:
-              partition_by:
-                - TOKEN_ADDRESS
-                - PLATFORM_ID
-              column_name: RECORDED_HOUR
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
               interval: 1
+          - hour_sequence_gaps:
+              partition_by:
+                - TOKEN_ADDRESS
+                - BLOCKCHAIN_ID
+              column_name: HOUR
+              filter: SOURCE <> 'ibc_prices'
       - name: TOKEN_ADDRESS
         tests:
           - not_null
-      - name: PLATFORM
+      - name: BLOCKCHAIN
         tests:
           - not_null
-      - name: PLATFORM_ID
+      - name: BLOCKCHAIN_ID
         tests:
           - not_null
-      - name: CLOSE
+      - name: PROVIDER
+        tests:
+          - not_null
+      - name: PRICE
         tests: 
           - not_null
-      - name: IMPUTED
-        description: Whether the price was imputed from an earlier record (generally used for low trade volume tokens)
+      - name: IS_IMPUTED
         tests: 
-          - not_null
-      - name: TOKEN_PRICES_COIN_GECKO_HOURLY_ID
-        tests:
           - not_null
       - name: _INSERTED_TIMESTAMP
         tests:

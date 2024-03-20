@@ -113,7 +113,7 @@ WITH base_priority AS (
         modified_timestamp,
         token_asset_metadata_priority_id AS ez_asset_metadata_id
     FROM
-        {{ ref('silver__token_asset_metadata_priority3') }} A
+        {{ ref('silver__token_asset_metadata_priority2') }} A
 )
 SELECT
     token_address,

@@ -7,15 +7,17 @@
 WITH base AS (
 
     SELECT
-        HOUR,
         CASE
-            WHEN p.token_address ILIKE 'ibc%'
-            OR p.blockchain = 'solana' THEN p.token_address
+            WHEN A.token_address ILIKE 'ibc%'
+            OR A.blockchain = 'solana' THEN A.token_address
             ELSE LOWER(
-                p.token_address
+                A.token_address
             )
         END AS token_address,
-        p.blockchain AS blockchain_name,
+        id,
+        symbol,
+        NAME,
+        A.blockchain AS blockchain_name,
         TRIM(REPLACE(REPLACE(blockchain_name, '-', ''), ' ', '')) AS blockchain_adj,
         CASE
             WHEN blockchain_adj IN (
@@ -104,25 +106,41 @@ WITH base AS (
         END AS blockchain,
         blockchain_id,
         provider,
-        price,
-        is_imputed,
+        is_deprecated,
         inserted_timestamp,
         modified_timestamp,
-        token_prices_all_providers_hourly_id AS fact_hourly_token_prices_id
+        token_asset_metadata_all_providers_id AS dim_asset_metadata_id
     FROM
-        {{ ref('silver__token_prices_all_providers3') }} p
+        {{ ref('silver__token_asset_metadata_all_providers2') }} A
 )
 SELECT
-    hour,
     token_address,
-    blockchain,
+    id,
+    COALESCE(
+        C.symbol,
+        s.symbol
+    ) AS symbol,
+    COALESCE(
+        C.name,
+        s.name
+    ) AS NAME,
+    decimals,
+    s.blockchain,
     blockchain_name,
     blockchain_id,
     provider,
-    price,
-    is_imputed,
-    inserted_timestamp,
-    modified_timestamp,
-    fact_hourly_token_prices_id
+    is_deprecated,
+    GREATEST(COALESCE(s.inserted_timestamp, '2000-01-01'), COALESCE(C.inserted_timestamp, '2000-01-01')) AS inserted_timestamp,
+    GREATEST(COALESCE(s.modified_timestamp, '2000-01-01'), COALESCE(C.modified_timestamp, '2000-01-01')) AS modified_timestamp,
+    dim_asset_metadata_id
 FROM
-    base
+    base s
+    LEFT JOIN {{ ref('core__dim_contracts') }} C
+    ON LOWER(
+        C.address
+    ) = LOWER(
+        s.token_address
+    )
+    AND C.blockchain = s.blockchain qualify(ROW_NUMBER() over (PARTITION BY token_address, blockchain_id, provider
+ORDER BY
+    GREATEST(COALESCE(s.inserted_timestamp, '2000-01-01'), COALESCE(C.inserted_timestamp, '2000-01-01')) DESC)) = 1

@@ -1,13 +1,13 @@
 version: 2
 models:
-  - name: silver__token_prices_priority2
+  - name: silver__token_prices_all_providers2
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - HOUR
             - TOKEN_ADDRESS
-            - BLOCKCHAIN
-
+            - BLOCKCHAIN_ID
+            - PROVIDER
     columns:
       - name: HOUR
         tests:
@@ -17,13 +17,17 @@ models:
           - hour_sequence_gaps:
               partition_by:
                 - TOKEN_ADDRESS
-                - BLOCKCHAIN
+                - BLOCKCHAIN_ID
+                - PROVIDER
               column_name: HOUR
               filter: SOURCE <> 'ibc_prices'
       - name: TOKEN_ADDRESS
         tests:
           - not_null
       - name: BLOCKCHAIN
+        tests:
+          - not_null
+      - name: BLOCKCHAIN_ID
         tests:
           - not_null
       - name: PROVIDER
