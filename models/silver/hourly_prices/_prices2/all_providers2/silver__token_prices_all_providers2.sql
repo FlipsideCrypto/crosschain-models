@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['hour','token_address','blockchain','provider'],
+    unique_key = ['hour','token_address','blockchain_id','provider'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['hour::DATE'],
     tags = ['prices']
@@ -12,6 +12,7 @@ WITH coin_gecko AS (
         recorded_hour AS HOUR,
         token_address,
         platform,
+        platform_id,
         CLOSE AS price,
         imputed AS is_imputed,
         id,
@@ -19,7 +20,7 @@ WITH coin_gecko AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__token_prices_coingecko3') }}
+        {{ ref('silver__token_prices_coingecko2') }}
 
 {% if is_incremental() %}
 WHERE
@@ -36,6 +37,7 @@ coin_market_cap AS (
         recorded_hour AS HOUR,
         token_address,
         platform,
+        platform_id,
         CLOSE AS price,
         imputed AS is_imputed,
         id,
@@ -43,7 +45,7 @@ coin_market_cap AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__token_prices_coinmarketcap3') }}
+        {{ ref('silver__token_prices_coinmarketcap2') }}
 
 {% if is_incremental() %}
 WHERE
@@ -60,6 +62,7 @@ ibc_prices AS (
         recorded_hour AS HOUR,
         token_address,
         'cosmos' AS platform,
+        'cosmos' AS platform_id,
         CLOSE AS price,
         is_imputed,
         id,
@@ -99,6 +102,7 @@ SELECT
     HOUR,
     token_address,
     platform AS blockchain,
+    platform_id AS blockchain_id,
     price,
     is_imputed,
     id,
@@ -107,9 +111,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain','provider']) }} AS token_prices_all_providers_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain_id','provider']) }} AS token_prices_all_providers_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain, provider
+    all_providers qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain_id, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1
