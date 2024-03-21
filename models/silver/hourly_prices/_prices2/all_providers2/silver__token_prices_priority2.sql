@@ -59,9 +59,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain_id']) }} AS token_prices_priority_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['hour','LOWER(token_address)','blockchain_id']) }} AS token_prices_priority_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain_id
+    all_providers qualify(ROW_NUMBER() over (PARTITION BY HOUR, LOWER(token_address), blockchain_id
 ORDER BY
     priority ASC)) = 1

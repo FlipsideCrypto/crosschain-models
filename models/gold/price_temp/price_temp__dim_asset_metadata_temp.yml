@@ -1,0 +1,39 @@
+version: 2
+models:
+  - name: price_temp__dim_asset_metadata_temp
+    description: A comprehensive dimensional table holding all provider asset metadata and other relevant details pertaining to each token_address.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - PROVIDER
+            - TOKEN_ADDRESS
+            - BLOCKCHAIN_ID
+
+    columns:
+      - name: PROVIDER
+        description: The provider or source of the data.
+      - name: ID
+        description: The unique identifier representing the asset.
+      - name: NAME
+        description: The name of asset.
+      - name: SYMBOL
+        description: The symbol of asset.
+      - name: TOKEN_ADDRESS
+        description: The specific address representing the asset in a specific platform.
+      - name: BLOCKCHAIN
+        description: The Blockchain, Network, or Platform where this asset has a token address. This column is derived by manually grouping blockchain_name, for reference purposes.
+      - name: BLOCKCHAIN_NAME
+        description: The name of the Blockchain, Network, or Platform where this asset has a token address. This may differ by provider.
+      - name: BLOCKCHAIN_ID
+        description: The unique identifier of the Blockchain, Network, or Platform where this asset has a token address.
+      - name: DECIMALS
+        description: The number of decimal places the token needs adjusted where token values exist.
+      - name: IS_DEPRECATED
+        description: A flag indicating if the asset is deprecated or no longer supported by the provider.
+      - name: DIM_ASSET_METADATA_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 
+      

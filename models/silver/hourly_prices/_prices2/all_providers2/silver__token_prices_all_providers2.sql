@@ -111,9 +111,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain_id','provider']) }} AS token_prices_all_providers_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['hour','LOWER(token_address)','blockchain_id','provider']) }} AS token_prices_all_providers_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain_id, provider
+    all_providers qualify(ROW_NUMBER() over (PARTITION BY HOUR, LOWER(token_address), blockchain_id, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1
