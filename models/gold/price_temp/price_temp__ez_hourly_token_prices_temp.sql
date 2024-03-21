@@ -90,6 +90,7 @@ SELECT
     blockchain_id,
     is_imputed,
     is_deprecated,
+    provider,
     inserted_timestamp,
     modified_timestamp,
     ez_hourly_token_prices_id
