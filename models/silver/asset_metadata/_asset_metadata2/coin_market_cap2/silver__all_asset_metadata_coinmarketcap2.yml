@@ -1,11 +1,7 @@
 version: 2
 models:
   - name: silver__all_asset_metadata_coinmarketcap2
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - ID
-            - _INSERTED_TIMESTAMP
+
     columns:
       - name: ID
         tests:

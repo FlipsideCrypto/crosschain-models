@@ -1,7 +1,5 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['id', '_inserted_timestamp'],
-    incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
 ) }}
@@ -74,7 +72,7 @@ all_assets AS (
 SELECT
     VALUE,
     provider,
-    id :: STRING AS id,
+    id,
     symbol,
     NAME,
     first_historical_data,
@@ -86,6 +84,4 @@ SELECT
     source,
     _inserted_timestamp
 FROM
-    all_assets qualify(ROW_NUMBER() over (PARTITION BY id
-ORDER BY
-    _inserted_timestamp DESC)) = 1
+    all_assets

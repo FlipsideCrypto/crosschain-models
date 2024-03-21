@@ -52,9 +52,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['token_address','blockchain_id']) }} AS token_asset_metadata_priority_id,
+    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','blockchain_id']) }} AS token_asset_metadata_priority_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers qualify(ROW_NUMBER() over (PARTITION BY token_address, blockchain_id
+    all_providers qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain_id
 ORDER BY
     priority ASC)) = 1
