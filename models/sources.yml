@@ -33,6 +33,12 @@ sources:
     tables:
       - name: ez_dex_swaps
       - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
   - name: ethereum_silver
     database: ethereum
     schema: silver
@@ -111,6 +117,12 @@ sources:
     tables:
       - name: ez_dex_swaps
       - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
   - name: avalanche_silver
     database: avalanche
     schema: silver
@@ -137,6 +149,12 @@ sources:
     tables:
       - name: ez_dex_swaps
       - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws      
   - name: polygon_silver
     database: polygon
     schema: silver
@@ -163,6 +181,12 @@ sources:
     tables:
       - name: ez_dex_swaps
       - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
   - name: optimism_silver
     database: optimism
     schema: silver
@@ -189,6 +213,12 @@ sources:
     tables:
       - name: ez_dex_swaps
       - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
   - name: bsc_silver
     database: bsc
     schema: silver
@@ -215,6 +245,12 @@ sources:
     tables:
       - name: ez_dex_swaps
       - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
   - name: thorchain_defi
     database: thorchain
     schema: defi
@@ -517,6 +553,12 @@ sources:
     tables: 
       - name: ez_dex_swaps
       - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
   - name: gnosis_silver
     database: gnosis
     schema: silver
@@ -542,6 +584,12 @@ sources:
     tables:
       - name: ez_dex_swaps
       - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
   - name: gnosis_observ
     database: gnosis
     schema: silver_observability
