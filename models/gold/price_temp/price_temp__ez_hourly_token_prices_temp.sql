@@ -15,6 +15,7 @@ WITH base AS (
                 p.token_address
             )
         END AS token_address,
+        p.id,
         symbol,
         decimals,
         price,
@@ -82,6 +83,7 @@ WITH base AS (
 SELECT
     HOUR,
     token_address,
+    id,
     symbol,
     decimals,
     price,

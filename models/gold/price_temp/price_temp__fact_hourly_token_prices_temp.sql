@@ -15,6 +15,7 @@ WITH base AS (
                 p.token_address
             )
         END AS token_address,
+        id,
         p.blockchain AS blockchain_name,
         CASE
             WHEN p.blockchain IN (
@@ -71,6 +72,7 @@ WITH base AS (
 SELECT
     hour,
     token_address,
+    id,
     blockchain_adj AS blockchain,
     blockchain_name,
     blockchain_id,
