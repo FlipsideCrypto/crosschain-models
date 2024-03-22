@@ -6,6 +6,7 @@ models:
           combination_of_columns:
             - ID
             - RECORDED_HOUR
+            - PROVIDER
     columns:
       - name: PROVIDER
         tests:

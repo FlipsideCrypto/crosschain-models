@@ -62,10 +62,16 @@ all_assets AS (
 FINAL AS (
     SELECT
         id,
-        p.value :: STRING AS token_address,
+        CASE
+            WHEN p.value :: STRING = 'null' THEN NULL
+            ELSE p.value :: STRING
+        END AS token_address,
         NAME,
         symbol,
-        p.key :: STRING AS platform,
+        CASE
+            WHEN p.key :: STRING = 'null' THEN NULL
+            ELSE p.key :: STRING
+        END AS platform,
         platform AS platform_id,
         source,
         p.value,

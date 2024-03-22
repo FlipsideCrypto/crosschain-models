@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: price_temp__dim_asset_metadata_temp
+  - name: price_temp__dim_provider_asset_metadata_temp
     description: A comprehensive dimensional table holding all provider asset metadata and other relevant details pertaining to each id.
 
     columns:
