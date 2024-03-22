@@ -28,13 +28,12 @@ WITH base_assets AS (
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > '2023-07-01'
-    {# (
+    (
         SELECT
             MAX(_inserted_timestamp)
         FROM
             {{ this }}
-    ) #}
+    )
 {% endif %}
 ),
 current_supported_assets AS (
