@@ -11,18 +11,15 @@ WITH base_assets AS (
 
     SELECT
         id,
-        p.value :: STRING AS token_address,
+        token_address,
         NAME,
         symbol,
-        p.key :: STRING AS platform,
+        platform,
         platform AS platform_id,
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__all_asset_metadata_coingecko2') }} A,
-        LATERAL FLATTEN(
-            input => VALUE :platforms
-        ) p
+        {{ ref('silver__all_asset_metadata_coingecko2') }}
 
 {% if is_incremental() %}
 WHERE

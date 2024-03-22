@@ -1,12 +1,12 @@
 version: 2
 models:
-  - name: silver__token_asset_metadata_all_providers2
+  - name: silver__token_asset_metadata_priority2
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - LOWER(TOKEN_ADDRESS)
+            - TOKEN_ADDRESS
             - BLOCKCHAIN_ID
-            - PROVIDER
+          
     columns:
       - name: PROVIDER
         tests:

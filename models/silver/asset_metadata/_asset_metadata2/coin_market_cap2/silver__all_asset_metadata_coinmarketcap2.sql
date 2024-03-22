@@ -1,87 +1,52 @@
 {{ config(
     materialized = 'incremental',
+    unique_key = ['id','token_address','name','symbol','platform','platform_id'],
+    incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
 ) }}
 
-WITH base_sp AS (
+WITH base AS (
 
     SELECT
-        'sp' AS source,
-        VALUE,
-        provider,
-        id :: STRING AS id,
-        symbol,
+        id,
+        p.this :token_address :: STRING AS token_address,
         NAME,
-        first_historical_data,
-        last_historical_data,
-        is_active,
-        platform,
-        RANK,
-        slug,
+        symbol,
+        p.this :name :: STRING AS platform,
+        p.this :id :: STRING AS platform_id,
+        p.this :slug :: STRING AS platform_slug,
+        p.this :symbol :: STRING AS platform_symbol,
+        source,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__streamline_asset_metadata_coinmarketcap_sp') }}
-    WHERE
-        id IS NOT NULL
+        {{ ref('bronze__all_asset_metadata_coinmarketcap2') }} A,
+        LATERAL FLATTEN(
+            input => VALUE :platform
+        ) p
 
 {% if is_incremental() %}
-AND 1 = 2
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp)
+        FROM
+            {{ this }}
+    )
 {% endif %}
-),
-base_streamline AS (
-    SELECT
-        'streamline' AS source,
-        VALUE,
-        provider,
-        id :: STRING AS id,
-        symbol,
-        NAME,
-        first_historical_data,
-        last_historical_data,
-        is_active,
-        platform,
-        RANK,
-        slug,
-        _inserted_timestamp
-    FROM
-        {{ ref('bronze__streamline_asset_metadata_coinmarketcap') }}
-    WHERE
-        id IS NOT NULL
-
-{% if is_incremental() %}
-AND _inserted_timestamp > (
-    SELECT
-        MAX(_inserted_timestamp)
-    FROM
-        {{ this }}
-)
-{% endif %}
-),
-all_assets AS (
-    SELECT
-        *
-    FROM
-        base_sp
-    UNION ALL
-    SELECT
-        *
-    FROM
-        base_streamline
 )
 SELECT
-    VALUE,
-    provider,
     id,
-    symbol,
+    token_address,
     NAME,
-    first_historical_data,
-    last_historical_data,
-    is_active,
+    symbol,
     platform,
-    RANK,
-    slug,
+    platform_id,
+    platform_slug,
+    platform_symbol,
     source,
     _inserted_timestamp
 FROM
-    all_assets
+    base qualify(ROW_NUMBER() over (PARTITION BY id, token_address, NAME, symbol, platform, platform_id
+ORDER BY
+    _inserted_timestamp DESC)) = 1

@@ -97,12 +97,76 @@ all_providers AS (
         *
     FROM
         ibc_prices
+),
+mapping AS (
+    SELECT
+        HOUR,
+        CASE
+            WHEN p.token_address ILIKE 'ibc%'
+            OR platform = 'solana' THEN p.token_address
+            ELSE LOWER(
+                p.token_address
+            )
+        END AS token_address,
+        CASE
+            WHEN platform IN (
+                'arbitrum',
+                'arbitrum nova',
+                'arbitrum-nova',
+                'arbitrum-one'
+            ) THEN 'arbitrum'
+            WHEN platform IN (
+                'avalanche',
+                'avalanche c-chain'
+            ) THEN 'avalanche'
+            WHEN platform IN (
+                'binance-smart-chain',
+                'binancecoin',
+                'bnb'
+            ) THEN 'bsc'
+            WHEN platform IN (
+                'bitcoin',
+                'bitcoin sv'
+            ) THEN 'bitcoin'
+            WHEN platform IN (
+                'gnosis',
+                'xdai',
+                'gnosis chain'
+            ) THEN 'gnosis'
+            WHEN platform IN (
+                'optimism',
+                'optimistic-ethereum'
+            ) THEN 'optimism'
+            WHEN platform IN (
+                'polygon',
+                'polygon-pos'
+            ) THEN 'polygon'
+            WHEN platform IN (
+                'cosmos',
+                'evmos',
+                'osmosis',
+                'terra',
+                'terra2'
+            ) THEN 'cosmos'
+            ELSE platform
+        END AS blockchain,
+        platform AS blockchain_name,
+        platform_id AS blockchain_id,
+        price,
+        is_imputed,
+        id,
+        provider,
+        source,
+        _inserted_timestamp
+    FROM
+        all_providers p
 )
 SELECT
     HOUR,
     token_address,
-    platform AS blockchain,
-    platform_id AS blockchain_id,
+    blockchain,
+    blockchain_name,
+    blockchain_id,
     price,
     is_imputed,
     id,
@@ -111,9 +175,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['hour','LOWER(token_address)','blockchain_id','provider']) }} AS token_prices_all_providers_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain_id','provider']) }} AS token_prices_all_providers_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers qualify(ROW_NUMBER() over (PARTITION BY HOUR, LOWER(token_address), blockchain_id, provider
+    mapping qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain_id, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1
