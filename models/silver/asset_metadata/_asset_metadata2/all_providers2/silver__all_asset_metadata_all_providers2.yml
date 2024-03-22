@@ -18,9 +18,3 @@ models:
       - name: ID
         tests:
           - not_null
-      - name: PLATFORM
-        tests:
-          - not_null
-      - name: PLATFORM_ID
-        tests:
-          - not_null

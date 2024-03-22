@@ -20,6 +20,15 @@ WITH coingecko AS (
         _inserted_timestamp
     FROM
         {{ ref('bronze__all_prices_coingecko2') }}
+
+{% if is_incremental() %}
+WHERE _inserted_timestamp > (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
+{% endif %}
 ),
 coinmarketcap AS (
     SELECT
@@ -34,6 +43,15 @@ coinmarketcap AS (
         _inserted_timestamp
     FROM
         {{ ref('bronze__all_prices_coinmarketcap2') }}
+
+{% if is_incremental() %}
+WHERE _inserted_timestamp > (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
+{% endif %}
 ),
 all_providers AS (
     SELECT
@@ -61,4 +79,6 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['id','recorded_hour']) }} AS all_prices_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers
+    all_providers qualify(ROW_NUMBER() over(PARTITION BY id, recorded_hour, provider
+ORDER BY
+    _inserted_timestamp DESC)) = 1

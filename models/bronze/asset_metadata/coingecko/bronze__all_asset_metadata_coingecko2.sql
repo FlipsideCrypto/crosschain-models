@@ -74,7 +74,10 @@ FINAL AS (
         END AS platform,
         platform AS platform_id,
         source,
-        p.value,
+        CASE
+            WHEN p.value = 'null' THEN NULL
+            ELSE p.value
+        END AS VALUE,
         _inserted_timestamp
     FROM
         all_assets A,

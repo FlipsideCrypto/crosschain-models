@@ -20,6 +20,16 @@ WITH coingecko AS (
         _inserted_timestamp
     FROM
         {{ ref('bronze__all_asset_metadata_coingecko2') }}
+
+{% if is_incremental() %}
+WHERE
+    _inserted_timestamp > (
+        SELECT
+            MAX(_inserted_timestamp)
+        FROM
+            {{ this }}
+    )
+{% endif %}
 ),
 coinmarketcap AS (
     SELECT
@@ -34,6 +44,16 @@ coinmarketcap AS (
         _inserted_timestamp
     FROM
         {{ ref('bronze__all_asset_metadata_coinmarketcap2') }}
+
+{% if is_incremental() %}
+WHERE
+    _inserted_timestamp > (
+        SELECT
+            MAX(_inserted_timestamp)
+        FROM
+            {{ this }}
+    )
+{% endif %}
 ),
 all_providers AS (
     SELECT
@@ -61,4 +81,6 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['id','token_address','name','symbol','platform','platform_id','provider']) }} AS all_asset_metadata_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers
+    all_providers qualify(ROW_NUMBER() over (PARTITION BY id, token_address, NAME, symbol, platform, platform_id, provider
+ORDER BY
+    _inserted_timestamp DESC)) = 1
