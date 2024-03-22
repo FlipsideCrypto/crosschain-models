@@ -39,7 +39,7 @@ base_hours_metadata AS (
                 MAX(recorded_hour)
             FROM
                 {{ ref(
-                    'silver__all_prices_coinmarketcap2'
+                    'bronze__all_prices_coinmarketcap2'
                 ) }}
         )
 
@@ -65,7 +65,7 @@ base_prices AS (
         p._inserted_timestamp
     FROM
         {{ ref(
-            'silver__all_prices_coinmarketcap2'
+            'bronze__all_prices_coinmarketcap2'
         ) }}
         p
         LEFT JOIN token_asset_metadata m

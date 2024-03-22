@@ -15,11 +15,11 @@ WITH base_assets AS (
         NAME,
         symbol,
         platform,
-        platform AS platform_id,
+        platform_id,
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__all_asset_metadata_coingecko2') }}
+        {{ ref('bronze__all_asset_metadata_coingecko2') }}
 
 {% if is_incremental() %}
 WHERE

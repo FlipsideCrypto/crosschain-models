@@ -16,12 +16,10 @@ WITH base_assets AS (
         symbol,
         platform,
         platform_id,
-        platform_slug,
-        platform_symbol,
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__all_asset_metadata_coinmarketcap2') }}
+        {{ ref('bronze__all_asset_metadata_coinmarketcap2') }}
 
 {% if is_incremental() %}
 WHERE

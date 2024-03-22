@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['id','token_address','name','symbol','platform','platform_id','provider'],
+    unique_key = ['id','recorded_hour'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -10,30 +10,30 @@ WITH coingecko AS (
 
     SELECT
         id,
-        token_address,
-        NAME,
-        symbol,
-        platform,
-        platform_id,
+        recorded_hour,
+        OPEN,
+        high,
+        low,
+        CLOSE,
         'coingecko' AS provider,
         source,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__all_asset_metadata_coingecko2') }}
+        {{ ref('bronze__all_prices_coingecko2') }}
 ),
 coinmarketcap AS (
     SELECT
         id,
-        token_address,
-        NAME,
-        symbol,
-        platform,
-        platform_id,
+        recorded_hour,
+        OPEN,
+        high,
+        low,
+        CLOSE,
         'coinmarketcap' AS provider,
         source,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__all_asset_metadata_coinmarketcap2') }}
+        {{ ref('bronze__all_prices_coinmarketcap2') }}
 ),
 all_providers AS (
     SELECT
@@ -48,17 +48,17 @@ all_providers AS (
 )
 SELECT
     id,
-    token_address,
-    NAME,
-    symbol,
-    platform,
-    platform_id,
+    recorded_hour,
+    OPEN,
+    high,
+    low,
+    CLOSE,
     provider,
     source,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['id','token_address','name','symbol','platform','platform_id','provider']) }} AS all_asset_metadata_all_providers_id,
+    {{ dbt_utils.generate_surrogate_key(['id','recorded_hour']) }} AS all_prices_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     all_providers

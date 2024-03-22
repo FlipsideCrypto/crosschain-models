@@ -1,0 +1,18 @@
+version: 2
+models:
+  - name: silver__all_prices_all_providers2
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ID
+            - RECORDED_HOUR
+    columns:
+      - name: PROVIDER
+        tests:
+          - not_null
+      - name: ID
+        tests:
+          - not_null
+      - name: RECORDED_HOUR
+        tests:
+          - not_null

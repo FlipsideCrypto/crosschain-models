@@ -9,10 +9,9 @@ SELECT
     id,
     symbol,
     NAME,
-    platform,
-    platform_id,
+    platform AS blockchain,
+    platform_id AS blockchain_id,
     provider,
-    is_deprecated,
     inserted_timestamp,
     modified_timestamp,
     all_asset_metadata_all_providers_id AS dim_asset_metadata_id

@@ -1,5 +1,7 @@
 {{ config(
     materialized = 'incremental',
+    unique_key = ['id','token_address','name','symbol','platform','platform_id'],
+    incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
 ) }}
@@ -56,14 +58,35 @@ all_assets AS (
         *
     FROM
         base_streamline
+),
+FINAL AS (
+    SELECT
+        id,
+        p.value :: STRING AS token_address,
+        NAME,
+        symbol,
+        p.key :: STRING AS platform,
+        platform AS platform_id,
+        source,
+        p.value,
+        _inserted_timestamp
+    FROM
+        all_assets A,
+        LATERAL FLATTEN(
+            input => VALUE :platforms
+        ) p
 )
 SELECT
-    VALUE,
-    provider,
     id,
+    token_address,
     NAME,
     symbol,
+    platform,
+    platform_id,
     source,
+    VALUE,
     _inserted_timestamp
 FROM
-    all_assets
+    FINAL qualify(ROW_NUMBER() over (PARTITION BY id, token_address, NAME, symbol, platform, platform_id
+ORDER BY
+    _inserted_timestamp DESC)) = 1

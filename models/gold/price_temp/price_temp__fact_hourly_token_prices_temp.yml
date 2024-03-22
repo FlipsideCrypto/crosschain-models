@@ -1,29 +1,23 @@
 version: 2
 models:
   - name: price_temp__fact_hourly_token_prices_temp
-    description: A comprehensive fact table holding provider and blockchain specific hourly token prices.
+    description: A comprehensive fact table holding id and provider specific open, high, low, close hourly token prices.
 
     columns:
       - name: HOUR
         description: Hour that the price was recorded at
-      - name: TOKEN_ADDRESS
-        description: Address of the token
-      - name: BLOCKCHAIN
-        description: The Blockchain, Network, or Platform where this asset has a token address. This column is derived by manually grouping blockchain_name, for reference purposes.
-      - name: BLOCKCHAIN_NAME
-        description: The name of the Blockchain, Network, or Platform where this asset has a token address. This may differ by provider.
-      - name: BLOCKCHAIN_ID
-        description: The unique identifier of the Blockchain, Network, or Platform where this asset has a token address.
-      - name: PROVIDER
-        description: Source of the token price.
-      - name: PRICE
+      - name: ID
+        description: Unique identifier for the hourly token price record
+      - name: OPEN
+        description: Opening price of the recorded hour in USD
+      - name: HIGH
+        description: Highest price of the recorded hour in USD
+      - name: LOW
+        description: Lowest price of the recorded hour in USD
+      - name: CLOSE
         description: Closing price of the recorded hour in USD
-      - name: IS_IMPUTED
-        description: A flag indicating if the price was imputed, or derived, from the last arriving record. This is generally used for tokens with low-liquidity or inconsistent reporting.
       - name: FACT_HOURLY_TOKEN_PRICES_ID
         description: '{{ doc("pk") }}'   
-        tests:
-          - unique
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   
       - name: MODIFIED_TIMESTAMP
