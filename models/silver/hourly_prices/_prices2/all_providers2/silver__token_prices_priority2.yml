@@ -6,7 +6,7 @@ models:
           combination_of_columns:
             - HOUR
             - TOKEN_ADDRESS
-            - BLOCKCHAIN_ID
+            - BLOCKCHAIN
 
     columns:
       - name: HOUR
@@ -17,7 +17,7 @@ models:
           - hour_sequence_gaps:
               partition_by:
                 - TOKEN_ADDRESS
-                - BLOCKCHAIN_ID
+                - BLOCKCHAIN
               column_name: HOUR
               filter: SOURCE <> 'ibc_prices'
       - name: TOKEN_ADDRESS

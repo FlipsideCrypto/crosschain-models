@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: price_temp__fact_provider_token_prices_temp
+  - name: price_temp__fact_provider_prices_hourly_temp
     description: A comprehensive fact table holding id and provider specific open, high, low, close hourly token prices.
 
     columns:

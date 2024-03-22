@@ -62,6 +62,6 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain_id']) }} AS token_prices_priority_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain_id
+    all_providers qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain
 ORDER BY
-    priority ASC)) = 1
+    priority ASC, id ASC, blockchain_id ASC, _inserted_timestamp DESC)) = 1
