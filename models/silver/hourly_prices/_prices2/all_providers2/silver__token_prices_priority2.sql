@@ -64,4 +64,5 @@ SELECT
 FROM
     all_providers qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain
 ORDER BY
-    priority ASC, id ASC, blockchain_id ASC, _inserted_timestamp DESC)) = 1
+    priority ASC, id ASC, blockchain_id ASC NULLS LAST, _inserted_timestamp DESC)) = 1
+-- need to fill the gaps between coingecko and coinmarketcap (e.g. prices between the hours when one provider stops reporting and the other starts)
