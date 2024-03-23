@@ -19,7 +19,6 @@ models:
                 - TOKEN_ADDRESS
                 - BLOCKCHAIN
               column_name: HOUR
-              filter: SOURCE <> 'ibc_prices'
       - name: TOKEN_ADDRESS
         tests:
           - not_null

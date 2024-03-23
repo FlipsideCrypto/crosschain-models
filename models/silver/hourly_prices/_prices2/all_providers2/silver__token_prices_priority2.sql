@@ -7,10 +7,10 @@
     tags = ['prices']
 ) }}
 
-WITH all_providers AS (
+WITH priority_prices AS (
 
     SELECT
-        HOUR,
+        HOUR :: TIMESTAMP AS HOUR,
         token_address,
         blockchain,
         blockchain_id,
@@ -44,25 +44,137 @@ WHERE
             {{ this }}
     )
 {% endif %}
-)
-SELECT
-    HOUR,
-    token_address,
-    blockchain,
-    blockchain_id,
-    price,
-    is_imputed,
-    id,
-    provider,
-    priority,
-    source,
-    _inserted_timestamp,
-    SYSDATE() AS inserted_timestamp,
-    SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain']) }} AS token_prices_priority_hourly_id,
-    '{{ invocation_id }}' AS _invocation_id
-FROM
-    all_providers qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain
+
+qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain
 ORDER BY
-    priority ASC, id ASC, blockchain_id ASC NULLS LAST, _inserted_timestamp DESC)) = 1
--- need to fill the gaps between coingecko and coinmarketcap (e.g. prices between the hours when one provider stops reporting and the other starts)
+    priority ASC, id ASC, blockchain_id ASC nulls last, _inserted_timestamp DESC)) = 1
+),
+token_asset_metadata AS (
+    SELECT
+        id,
+        token_address,
+        blockchain,
+        blockchain_id,
+        provider,
+        _inserted_timestamp
+    FROM
+        {{ ref(
+            'silver__token_asset_metadata_all_providers2'
+        ) }}
+),
+date_hours AS (
+    SELECT
+        date_hour :: TIMESTAMP AS date_hour,
+        token_address,
+        blockchain,
+        blockchain_id,
+        id,
+        provider
+    FROM
+        {{ ref('core__dim_date_hours') }}
+        CROSS JOIN token_asset_metadata
+    WHERE
+        date_hour <= (
+            SELECT
+                MAX(HOUR)
+            FROM
+                {{ ref('silver__token_prices_all_providers2') }}
+        )
+
+{% if is_incremental() %}
+AND date_hour >= (
+    SELECT
+        MAX(hour) - INTERVAL '36 hours'
+    FROM
+        {{ this }}
+)
+{% endif %}
+),
+latest_supported_assets AS (
+    SELECT
+        token_address,
+        blockchain,
+        DATE_TRUNC('hour', MAX(_inserted_timestamp)) AS last_supported_timestamp
+    FROM
+        token_asset_metadata
+    GROUP BY
+        1,
+        2),
+        imputed_prices AS (
+            SELECT
+                d.date_hour,
+                d.token_address,
+                d.blockchain,
+                d.blockchain_id,
+                CASE
+                    WHEN d.date_hour <= s.last_supported_timestamp THEN p.price
+                    ELSE NULL
+                END AS hourly_price,
+                CASE
+                    WHEN hourly_price IS NOT NULL THEN NULL
+                    WHEN hourly_price IS NULL
+                    AND d.date_hour <= s.last_supported_timestamp THEN LAST_VALUE(
+                        hourly_price ignore nulls
+                    ) over (
+                        PARTITION BY d.token_address,
+                        d.blockchain
+                        ORDER BY
+                            d.date_hour rows BETWEEN unbounded preceding
+                            AND CURRENT ROW
+                    )
+                    ELSE NULL
+                END AS imputed_price,
+                CASE
+                    WHEN imputed_price IS NOT NULL THEN TRUE
+                    ELSE p.is_imputed
+                END AS imputed,
+                COALESCE(
+                    hourly_price,
+                    imputed_price
+                ) AS final_price,
+                d.id,
+                d.provider,
+                CASE
+                    WHEN imputed_price IS NOT NULL THEN 'imputed'
+                    ELSE p.source
+                END AS source,
+                CASE
+                    WHEN imputed_price IS NOT NULL THEN 7
+                    ELSE p.priority
+                END AS priority,
+                CASE
+                    WHEN imputed_price IS NOT NULL THEN SYSDATE()
+                    ELSE p._inserted_timestamp
+                END AS _inserted_timestamp
+            FROM
+                date_hours d
+                LEFT JOIN priority_prices p
+                ON d.date_hour = p.hour
+                AND d.token_address = p.token_address
+                AND d.blockchain = p.blockchain
+                LEFT JOIN latest_supported_assets s
+                ON s.token_address = d.token_address
+                AND s.blockchain = d.blockchain
+        )
+    SELECT
+        date_hour AS HOUR,
+        token_address,
+        blockchain,
+        blockchain_id,
+        final_price AS price,
+        imputed AS is_imputed,
+        id,
+        provider,
+        priority,
+        source,
+        _inserted_timestamp,
+        SYSDATE() AS inserted_timestamp,
+        SYSDATE() AS modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain']) }} AS token_prices_priority_hourly_id,
+        '{{ invocation_id }}' AS _invocation_id
+    FROM
+        imputed_prices
+    WHERE
+        final_price IS NOT NULL qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain
+    ORDER BY
+        priority ASC, id ASC, blockchain_id ASC nulls last, _inserted_timestamp DESC)) = 1
