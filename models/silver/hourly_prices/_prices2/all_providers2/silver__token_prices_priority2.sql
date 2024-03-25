@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['hour','token_address','blockchain'],
+    unique_key = ['token_prices_priority_hourly_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['hour::DATE'],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, hour, blockchain)",
@@ -35,7 +35,7 @@ WITH priority_prices AS (
     FROM
         {{ ref('silver__token_prices_all_providers2') }}
 
-qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain
+qualify(ROW_NUMBER() over (PARTITION BY HOUR, LOWER(token_address), blockchain
 ORDER BY
     priority ASC, id ASC, blockchain_id ASC nulls last, _inserted_timestamp DESC)) = 1
 ),
@@ -162,7 +162,7 @@ latest_supported_assets AS (
         _inserted_timestamp,
         SYSDATE() AS inserted_timestamp,
         SYSDATE() AS modified_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain']) }} AS token_prices_priority_hourly_id,
+        {{ dbt_utils.generate_surrogate_key(['hour','LOWER(token_address)','blockchain']) }} AS token_prices_priority_hourly_id,
         '{{ invocation_id }}' AS _invocation_id
     FROM
         imputed_prices

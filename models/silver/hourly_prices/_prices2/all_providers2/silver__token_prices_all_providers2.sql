@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['hour','token_address','blockchain_id','provider'],
+    unique_key = ['token_prices_all_providers_hourly_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['hour::DATE'],
     tags = ['prices']
@@ -175,9 +175,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['hour','token_address','blockchain_id','provider']) }} AS token_prices_all_providers_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['hour','LOWER(token_address)','blockchain_id','provider']) }} AS token_prices_all_providers_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    mapping qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain_id, provider
+    mapping qualify(ROW_NUMBER() over (PARTITION BY HOUR, LOWER(token_address), blockchain_id, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

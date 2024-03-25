@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['recorded_hour','token_address','platform_id'],
+    unique_key = ['token_prices_coin_market_cap_hourly_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE'],
     tags = ['prices']
@@ -187,9 +187,9 @@ latest_supported_assets AS (
         ) AS _inserted_timestamp,
         SYSDATE() AS inserted_timestamp,
         SYSDATE() AS modified_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['recorded_hour','token_address','platform_id']) }} AS token_prices_coin_market_cap_hourly_id,
+        {{ dbt_utils.generate_surrogate_key(['recorded_hour','LOWER(token_address)','platform_id']) }} AS token_prices_coin_market_cap_hourly_id,
         '{{ invocation_id }}' AS _invocation_id
     FROM
-        final_prices qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, token_address, platform_id
+        final_prices qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, LOWER(token_address), platform_id
     ORDER BY
         _inserted_timestamp DESC)) = 1
