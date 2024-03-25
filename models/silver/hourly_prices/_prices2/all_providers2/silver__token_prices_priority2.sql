@@ -35,16 +35,6 @@ WITH priority_prices AS (
     FROM
         {{ ref('silver__token_prices_all_providers2') }}
 
-{% if is_incremental() %}
-WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp) - INTERVAL '4 hours'
-        FROM
-            {{ this }}
-    )
-{% endif %}
-
 qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain
 ORDER BY
     priority ASC, id ASC, blockchain_id ASC nulls last, _inserted_timestamp DESC)) = 1
@@ -59,7 +49,7 @@ token_asset_metadata AS (
         _inserted_timestamp
     FROM
         {{ ref(
-            'silver__token_asset_metadata_all_providers2'
+            'silver__token_asset_metadata_priority2'
         ) }}
 ),
 date_hours AS (
@@ -84,7 +74,7 @@ date_hours AS (
 {% if is_incremental() %}
 AND date_hour >= (
     SELECT
-        MAX(hour) - INTERVAL '36 hours'
+        MIN(HOUR)
     FROM
         {{ this }}
 )
@@ -142,6 +132,7 @@ latest_supported_assets AS (
                     WHEN imputed_price IS NOT NULL THEN 7
                     ELSE p.priority
                 END AS priority,
+                last_supported_timestamp,
                 CASE
                     WHEN imputed_price IS NOT NULL THEN SYSDATE()
                     ELSE p._inserted_timestamp
@@ -167,6 +158,7 @@ latest_supported_assets AS (
         provider,
         priority,
         source,
+        last_supported_timestamp,
         _inserted_timestamp,
         SYSDATE() AS inserted_timestamp,
         SYSDATE() AS modified_timestamp,
@@ -175,6 +167,4 @@ latest_supported_assets AS (
     FROM
         imputed_prices
     WHERE
-        final_price IS NOT NULL qualify(ROW_NUMBER() over (PARTITION BY HOUR, token_address, blockchain
-    ORDER BY
-        priority ASC, id ASC, blockchain_id ASC nulls last, _inserted_timestamp DESC)) = 1
+        final_price IS NOT NULL
