@@ -30,4 +30,6 @@ FROM
     ) = LOWER(
         A.token_address
     )
-    AND C.blockchain = A.blockchain
+    AND C.blockchain = A.blockchain qualify(ROW_NUMBER() over (PARTITION BY A.token_address, A.blockchain
+ORDER BY
+    A._inserted_timestamp DESC)) = 1

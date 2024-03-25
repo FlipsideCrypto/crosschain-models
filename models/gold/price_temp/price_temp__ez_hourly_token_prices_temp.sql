@@ -27,4 +27,6 @@ FROM
     LEFT JOIN {{ ref('price_temp__ez_asset_metadata_temp') }}
     m
     ON p.token_address = m.token_address
-    AND p.blockchain = m.blockchain
+    AND p.blockchain = m.blockchain qualify(ROW_NUMBER() over (PARTITION BY p.token_address, p.blockchain, HOUR
+ORDER BY
+    p._inserted_timestamp DESC)) = 1
