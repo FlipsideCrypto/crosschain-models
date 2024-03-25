@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['token_address', 'platform_id'],
+    unique_key = ['token_asset_metadata_coin_gecko_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -11,18 +11,15 @@ WITH base_assets AS (
 
     SELECT
         id,
-        p.value :: STRING AS token_address,
+        token_address,
         NAME,
         symbol,
-        p.key :: STRING AS platform,
-        platform AS platform_id,
+        platform,
+        platform_id,
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__all_asset_metadata_coingecko2') }} A,
-        LATERAL FLATTEN(
-            input => VALUE :platforms
-        ) p
+        {{ ref('bronze__all_asset_metadata_coingecko2') }}
 
 {% if is_incremental() %}
 WHERE

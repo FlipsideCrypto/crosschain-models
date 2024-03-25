@@ -23,7 +23,7 @@ WITH legacy AS (
         _runtime_date,
         _inserted_timestamp
     FROM
-        {{ ref('silver__legacy_prices_coinmarketcap') }}
+        {{ ref('bronze__legacy_prices_coinmarketcap') }}
     WHERE
         id IS NOT NULL
         AND recorded_hour IS NOT NULL

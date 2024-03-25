@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['token_address', 'platform_id'],
+    unique_key = ['token_asset_metadata_coin_market_cap_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -11,20 +11,15 @@ WITH base_assets AS (
 
     SELECT
         id,
-        p.this :token_address :: STRING AS token_address,
+        token_address,
         NAME,
         symbol,
-        p.this :name :: STRING AS platform,
-        p.this :id :: STRING AS platform_id,
-        p.this :slug :: STRING AS platform_slug,
-        p.this :symbol :: STRING AS platform_symbol,
+        platform,
+        platform_id,
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__all_asset_metadata_coinmarketcap2') }} A,
-        LATERAL FLATTEN(
-            input => VALUE :platform
-        ) p
+        {{ ref('bronze__all_asset_metadata_coinmarketcap2') }}
 
 {% if is_incremental() %}
 WHERE
