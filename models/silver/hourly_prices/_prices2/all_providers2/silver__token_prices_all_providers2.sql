@@ -2,14 +2,14 @@
     materialized = 'incremental',
     unique_key = ['token_prices_all_providers_hourly_id'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['hour::DATE'],
+    cluster_by = ['recorded_hour::DATE'],
     tags = ['prices']
 ) }}
 
 WITH coin_gecko AS (
 
     SELECT
-        recorded_hour AS HOUR,
+        recorded_hour,
         token_address,
         platform,
         platform_id,
@@ -34,7 +34,7 @@ WHERE
 ),
 coin_market_cap AS (
     SELECT
-        recorded_hour AS HOUR,
+        recorded_hour,
         token_address,
         platform,
         platform_id,
@@ -59,7 +59,7 @@ WHERE
 ),
 ibc_prices AS (
     SELECT
-        recorded_hour AS HOUR,
+        recorded_hour,
         token_address,
         'cosmos' AS platform,
         'cosmos' AS platform_id,
@@ -100,7 +100,7 @@ all_providers AS (
 ),
 mapping AS (
     SELECT
-        HOUR,
+        recorded_hour,
         CASE
             WHEN p.token_address ILIKE 'ibc%'
             OR platform = 'solana' THEN p.token_address
@@ -162,7 +162,7 @@ mapping AS (
         all_providers p
 )
 SELECT
-    HOUR,
+    recorded_hour,
     token_address,
     blockchain,
     blockchain_name,
@@ -175,9 +175,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['hour','LOWER(token_address)','blockchain_id','provider']) }} AS token_prices_all_providers_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','LOWER(token_address)','blockchain_id','provider']) }} AS token_prices_all_providers_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    mapping qualify(ROW_NUMBER() over (PARTITION BY HOUR, LOWER(token_address), blockchain_id, provider
+    mapping qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, LOWER(token_address), blockchain_id, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

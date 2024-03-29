@@ -147,12 +147,7 @@ latest_supported_assets AS (
         ),
         final_prices AS (
             SELECT
-                DATEADD(
-                    HOUR,
-                    1,
-                    date_hour
-                ) AS recorded_hour,
-                --roll the close price forward 1 hour
+                date_hour AS recorded_hour,
                 token_address,
                 id,
                 platform,

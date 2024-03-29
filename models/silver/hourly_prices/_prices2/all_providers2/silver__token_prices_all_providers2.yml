@@ -4,12 +4,12 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - HOUR
+            - RECORDED_HOUR
             - LOWER(TOKEN_ADDRESS)
             - BLOCKCHAIN_ID
             - PROVIDER
     columns:
-      - name: HOUR
+      - name: RECORDED_HOUR
         tests:
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
@@ -19,7 +19,7 @@ models:
                 - TOKEN_ADDRESS
                 - BLOCKCHAIN_ID
                 - PROVIDER
-              column_name: HOUR
+              column_name: RECORDED_HOUR
               filter: SOURCE <> 'ibc_prices'
       - name: TOKEN_ADDRESS
         tests:

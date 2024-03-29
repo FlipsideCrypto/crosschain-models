@@ -3,14 +3,14 @@
     unique_key = ['token_prices_priority_hourly_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['hour::DATE'],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, hour, blockchain)",
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, recorded_hour, blockchain)",
     tags = ['prices']
 ) }}
 
 WITH priority_prices AS (
 
     SELECT
-        HOUR :: TIMESTAMP AS HOUR,
+        recorded_hour :: TIMESTAMP AS recorded_hour,
         token_address,
         blockchain,
         blockchain_id,
@@ -59,7 +59,7 @@ WHERE
     )
 {% endif %}
 
-qualify(ROW_NUMBER() over (PARTITION BY HOUR, LOWER(token_address), blockchain
+qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, LOWER(token_address), blockchain
 ORDER BY
     priority ASC, id ASC, blockchain_id ASC nulls last, _inserted_timestamp DESC)) = 1),
     token_asset_metadata AS (
@@ -89,7 +89,7 @@ ORDER BY
         WHERE
             date_hour <= (
                 SELECT
-                    MAX(HOUR)
+                    MAX(recorded_hour)
                 FROM
                     {{ ref('silver__token_prices_all_providers2') }}
             )
@@ -97,7 +97,7 @@ ORDER BY
 {% if is_incremental() %}
 AND date_hour >= (
     SELECT
-        MIN(HOUR)
+        MIN(recorded_hour)
     FROM
         {{ this }}
 )
@@ -166,7 +166,7 @@ imputed_prices AS (
     FROM
         date_hours d
         LEFT JOIN priority_prices p
-        ON d.date_hour = p.hour
+        ON d.date_hour = p.recorded_hour
         AND d.token_address = p.token_address
         AND d.blockchain = p.blockchain
         LEFT JOIN latest_supported_assets s
@@ -174,7 +174,7 @@ imputed_prices AS (
         AND s.blockchain = d.blockchain
 )
 SELECT
-    date_hour AS HOUR,
+    date_hour AS recorded_hour,
     token_address,
     blockchain,
     blockchain_id,
@@ -188,7 +188,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['hour','LOWER(token_address)','blockchain']) }} AS token_prices_priority_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','LOWER(token_address)','blockchain']) }} AS token_prices_priority_hourly_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     imputed_prices
