@@ -19,7 +19,7 @@ WITH legacy AS (
         _runtime_date,
         _inserted_timestamp
     FROM
-        {{ ref('silver__legacy_prices_coingecko') }}
+        {{ ref('bronze__legacy_prices_coingecko') }}
 
 {% if is_incremental() %}
 WHERE 1 = 2

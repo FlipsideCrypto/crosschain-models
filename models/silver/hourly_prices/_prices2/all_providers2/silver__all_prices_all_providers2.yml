@@ -1,22 +1,19 @@
 version: 2
 models:
-  - name: silver__token_asset_metadata_priority2
+  - name: silver__all_prices_all_providers2
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - LOWER(TOKEN_ADDRESS)
-            - BLOCKCHAIN_ID
-          
+            - ID
+            - RECORDED_HOUR
+            - PROVIDER
     columns:
       - name: PROVIDER
         tests:
           - not_null
-      - name: TOKEN_ADDRESS
+      - name: ID
         tests:
           - not_null
-      - name: BLOCKCHAIN
-        tests:
-          - not_null
-      - name: BLOCKCHAIN_ID
+      - name: RECORDED_HOUR
         tests:
           - not_null

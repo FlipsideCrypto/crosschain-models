@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['recorded_hour','token_address','platform_id'],
+    unique_key = ['token_prices_coin_market_cap_hourly_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE'],
     tags = ['prices']
@@ -39,7 +39,7 @@ base_hours_metadata AS (
                 MAX(recorded_hour)
             FROM
                 {{ ref(
-                    'silver__all_prices_coinmarketcap2'
+                    'bronze__all_prices_coinmarketcap2'
                 ) }}
         )
 
@@ -65,7 +65,7 @@ base_prices AS (
         p._inserted_timestamp
     FROM
         {{ ref(
-            'silver__all_prices_coinmarketcap2'
+            'bronze__all_prices_coinmarketcap2'
         ) }}
         p
         LEFT JOIN token_asset_metadata m
@@ -147,12 +147,7 @@ latest_supported_assets AS (
         ),
         final_prices AS (
             SELECT
-                DATEADD(
-                    HOUR,
-                    1,
-                    date_hour
-                ) AS recorded_hour,
-                --roll the close price forward 1 hour
+                date_hour AS recorded_hour,
                 token_address,
                 id,
                 platform,
@@ -187,9 +182,9 @@ latest_supported_assets AS (
         ) AS _inserted_timestamp,
         SYSDATE() AS inserted_timestamp,
         SYSDATE() AS modified_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['recorded_hour','token_address','platform_id']) }} AS token_prices_coin_market_cap_hourly_id,
+        {{ dbt_utils.generate_surrogate_key(['recorded_hour','LOWER(token_address)','platform_id']) }} AS token_prices_coin_market_cap_hourly_id,
         '{{ invocation_id }}' AS _invocation_id
     FROM
-        final_prices qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, token_address, platform_id
+        final_prices qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, LOWER(token_address), platform_id
     ORDER BY
         _inserted_timestamp DESC)) = 1
