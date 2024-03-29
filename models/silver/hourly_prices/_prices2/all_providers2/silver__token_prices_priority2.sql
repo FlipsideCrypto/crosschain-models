@@ -74,32 +74,75 @@ ORDER BY
             {{ ref(
                 'silver__token_asset_metadata_priority2'
             ) }}
-    ),
-    date_hours AS (
+
+{% if is_incremental() %}
+WHERE
+    CONCAT(
+        token_address,
+        '-',
+        blockchain
+    ) IN (
         SELECT
-            date_hour :: TIMESTAMP AS date_hour,
-            token_address,
-            blockchain,
-            blockchain_id,
-            id,
-            provider
-        FROM
-            {{ ref('core__dim_date_hours') }}
-            CROSS JOIN token_asset_metadata
-        WHERE
-            date_hour <= (
-                SELECT
-                    MAX(recorded_hour)
-                FROM
-                    {{ ref('silver__token_prices_all_providers2') }}
+            CONCAT(
+                token_address,
+                '-',
+                blockchain
             )
+        FROM
+            priority_prices
+    )
+{% endif %}
+),
+date_hours AS (
+    SELECT
+        date_hour :: TIMESTAMP AS date_hour,
+        token_address,
+        blockchain,
+        blockchain_id,
+        id,
+        provider
+    FROM
+        {{ ref('core__dim_date_hours') }}
+        CROSS JOIN token_asset_metadata
+    WHERE
+        date_hour <= (
+            SELECT
+                MAX(recorded_hour)
+            FROM
+                {{ ref('silver__token_prices_all_providers2') }}
+        )
 
 {% if is_incremental() %}
 AND date_hour >= (
     SELECT
-        MIN(recorded_hour)
+        MIN(max_recorded_hour) AS min_recorded_hour
     FROM
-        {{ this }}
+        (
+            SELECT
+                token_address,
+                blockchain,
+                MAX(recorded_hour) AS max_recorded_hour
+            FROM
+                {{ this }}
+            WHERE
+                CONCAT(
+                    token_address,
+                    '-',
+                    blockchain
+                ) IN (
+                    SELECT
+                        CONCAT(
+                            token_address,
+                            '-',
+                            blockchain
+                        )
+                    FROM
+                        priority_prices
+                )
+            GROUP BY
+                1,
+                2
+        )
 )
 {% endif %}
 ),
