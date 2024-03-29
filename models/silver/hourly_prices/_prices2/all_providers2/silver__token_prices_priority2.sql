@@ -2,7 +2,7 @@
     materialized = 'incremental',
     unique_key = ['token_prices_priority_hourly_id'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['hour::DATE'],
+    cluster_by = ['recorded_hour::DATE'],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, recorded_hour, blockchain)",
     tags = ['prices']
 ) }}
