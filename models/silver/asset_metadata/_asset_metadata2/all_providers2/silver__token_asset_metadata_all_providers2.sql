@@ -96,6 +96,32 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
+UNION ALL
+SELECT
+    DISTINCT id,
+    token_address,
+    NULL AS NAME,
+    NULL AS symbol,
+    'cosmos' AS platform,
+    'cosmos' AS platform_id,
+    'osmosis-onchain' AS provider,
+    'ibc_am' AS source,
+    FALSE AS is_deprecated,
+    '2000-01-01' :: TIMESTAMP AS _inserted_timestamp
+FROM
+    {{ ref('silver__onchain_osmosis_prices2') }}
+WHERE
+    token_address IS NOT NULL
+    AND LENGTH(token_address) > 0
+
+{% if is_incremental() %}
+AND _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
+{% endif %}
 ),
 solana_solscan AS (
     SELECT

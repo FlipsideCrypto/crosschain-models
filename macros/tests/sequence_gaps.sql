@@ -75,3 +75,46 @@ ORDER BY
     ORDER BY
         gap DESC
 {% endtest %}
+
+{% test priority_hour_sequence_gaps(
+            model,
+            partition_by,
+            column_name,
+            filter
+        ) %}
+        {%- set partition_sql = partition_by | join(", ") -%}
+        {%- set previous_column = "prev_" ~ column_name -%}
+        WITH base_source AS (
+            SELECT
+                {{ partition_sql }},
+                {{ column_name }},
+                LAG(
+                    {{ column_name }},
+                    1
+                ) over (
+                    PARTITION BY LOWER(TOKEN_ADDRESS), BLOCKCHAIN
+                    ORDER BY
+                        {{ column_name }} ASC
+                ) AS {{ previous_column }}
+            FROM
+                {{ model }}
+            {% if filter %}
+                WHERE {{ filter }}
+            {% endif %}
+        )
+    SELECT
+        {{ partition_sql }},
+        {{ previous_column }},
+        {{ column_name }},
+        DATEDIFF(
+            HOUR,
+            {{ previous_column }},
+            {{ column_name }}
+        ) - 1 AS gap
+    FROM
+        base_source
+    WHERE
+        gap > 0
+    ORDER BY
+        gap DESC
+{% endtest %}
