@@ -42,7 +42,7 @@ WITH priority_prices AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '12 hours'
+            MAX(_inserted_timestamp) - INTERVAL '8 hours'
         FROM
             {{ this }}
     )
