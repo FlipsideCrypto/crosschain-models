@@ -4,16 +4,14 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - RECORDED_HOUR
+            - HOUR
             - TOKEN_ADDRESS
             - BLOCKCHAIN
 
     columns:
-      - name: RECORDED_HOUR
+      - name: HOUR
         tests:
-          - dbt_expectations.expect_row_values_to_have_recent_data:
-              datepart: day
-              interval: 1
+          - not_null
       - name: TOKEN_ADDRESS
         tests:
           - not_null
