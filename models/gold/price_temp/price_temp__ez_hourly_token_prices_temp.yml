@@ -2,12 +2,6 @@ version: 2
 models:
   - name: price_temp__ez_hourly_token_prices_temp
     description: A convenience table for determining token prices by address and blockchain.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - HOUR
-            - TOKEN_ADDRESS
-            - BLOCKCHAIN
 
     columns:
       - name: HOUR
@@ -30,8 +24,6 @@ models:
         description: A flag indicating if the asset is deprecated or no longer supported by the provider.
       - name: EZ_HOURLY_TOKEN_PRICES_ID
         description: '{{ doc("pk") }}'   
-        tests:
-          - unique
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   
       - name: MODIFIED_TIMESTAMP

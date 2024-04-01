@@ -1,41 +1,36 @@
 version: 2
 models:
-  - name: silver__token_prices_coinmarketcap2
+  - name: silver__complete_token_prices
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - RECORDED_HOUR
-            - LOWER(TOKEN_ADDRESS)
-            - PLATFORM_ID
+            - TOKEN_ADDRESS
+            - BLOCKCHAIN
 
     columns:
       - name: RECORDED_HOUR
         tests:
-          - price_hour_sequence_gaps:
-              partition_by_1: TOKEN_ADDRESS
-              partition_by_2: PLATFORM_ID
-              column_name: RECORDED_HOUR
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
               interval: 1
       - name: TOKEN_ADDRESS
         tests:
           - not_null
-      - name: PLATFORM
+      - name: BLOCKCHAIN
         tests:
           - not_null
-      - name: PLATFORM_ID
+      - name: BLOCKCHAIN_ID
         tests:
           - not_null
-      - name: CLOSE
+      - name: PROVIDER
+        tests:
+          - not_null
+      - name: PRICE
         tests: 
           - not_null
       - name: IS_IMPUTED
-        description: Whether the price was imputed from an earlier record (generally used for low trade volume tokens)
         tests: 
-          - not_null
-      - name: TOKEN_PRICES_COINMARKETCAP_ID
-        tests:
           - not_null
       - name: _INSERTED_TIMESTAMP
         tests:

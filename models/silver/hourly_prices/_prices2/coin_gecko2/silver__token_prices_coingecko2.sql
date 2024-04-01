@@ -1,14 +1,15 @@
 -- depends_on: {{ ref('core__dim_date_hours') }}
 {{ config(
     materialized = 'incremental',
-    unique_key = ['token_prices_coin_gecko_hourly_id'],
+    unique_key = ['token_prices_coingecko_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE'],
     tags = ['prices']
 ) }}
 
 WITH base_prices AS (
-     -- get all prices and join to asset metadata
+    -- get all prices and join to asset metadata
+
     SELECT
         p.recorded_hour,
         m.token_address,
@@ -37,7 +38,7 @@ WITH base_prices AS (
 {% if is_incremental() %}
 AND p._inserted_timestamp >= (
     SELECT
-        MAX(_inserted_timestamp) - INTERVAL '8 hours'
+        MAX(_inserted_timestamp)
     FROM
         {{ this }}
 )
@@ -45,28 +46,8 @@ AND p._inserted_timestamp >= (
 )
 
 {% if is_incremental() %},
-identify_gaps AS (
-    -- identify missing prices by token_address and platform_id
-    SELECT
-        token_address,
-        platform_id,
-        platform,
-        recorded_hour,
-        LAG(
-            recorded_hour,
-            1
-        ) over (PARTITION BY LOWER(token_address), platform_id
-    ORDER BY
-        recorded_hour ASC) AS prev_RECORDED_HOUR,
-        DATEDIFF(
-            HOUR,
-            prev_RECORDED_HOUR,
-            recorded_hour
-        ) - 1 AS gap
-    FROM
-        {{ this }}
-),
 price_gaps AS (
+    -- identify missing prices by token_address and platform_id
     SELECT
         token_address,
         platform_id,
@@ -74,7 +55,25 @@ price_gaps AS (
         prev_recorded_hour,
         gap
     FROM
-        identify_gaps
+        (
+            SELECT
+                token_address,
+                platform_id,
+                recorded_hour,
+                LAG(
+                    recorded_hour,
+                    1
+                ) over (PARTITION BY LOWER(token_address), platform_id
+            ORDER BY
+                recorded_hour ASC) AS prev_RECORDED_HOUR,
+                DATEDIFF(
+                    HOUR,
+                    prev_RECORDED_HOUR,
+                    recorded_hour
+                ) - 1 AS gap
+            FROM
+                {{ this }}
+        )
     WHERE
         gap > 0
 ),
@@ -216,7 +215,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','LOWER(token_address)','platform_id']) }} AS token_prices_coin_gecko_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','LOWER(token_address)','platform_id']) }} AS token_prices_coingecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     FINAL qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, LOWER(token_address), platform_id

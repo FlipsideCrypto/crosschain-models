@@ -2,7 +2,7 @@
 -- depends_on: {{ ref('silver__token_asset_metadata_priority2') }}
 {{ config(
     materialized = 'incremental',
-    unique_key = ['token_prices_priority_hourly_id'],
+    unique_key = ['token_prices_priority_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE'],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(token_address, recorded_hour, blockchain)",
@@ -10,7 +10,8 @@
 ) }}
 
 WITH priority_prices AS (
--- get all prices and qualify by priority
+    -- get all prices and qualify by priority
+
     SELECT
         recorded_hour,
         token_address,
@@ -41,7 +42,7 @@ WITH priority_prices AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '8 hours'
+            MAX(_inserted_timestamp)
         FROM
             {{ this }}
     )
@@ -52,30 +53,8 @@ ORDER BY
     priority ASC, id ASC, blockchain_id ASC nulls last, _inserted_timestamp DESC)) = 1)
 
 {% if is_incremental() %},
-identify_gaps AS (
-    -- identify missing prices by token_address and blockchain, gaps most likely to exist between providers
-    SELECT
-        token_address,
-        blockchain,
-        recorded_hour,
-        LAG(
-            recorded_hour,
-            1
-        ) over (
-            PARTITION BY LOWER(token_address),
-            blockchain
-            ORDER BY
-                recorded_hour ASC
-        ) AS prev_RECORDED_HOUR,
-        DATEDIFF(
-            HOUR,
-            prev_RECORDED_HOUR,
-            recorded_hour
-        ) - 1 AS gap
-    FROM
-        {{ this }}
-),
 price_gaps AS (
+    -- identify missing prices by token_address and blockchain, gaps most likely to exist between providers
     SELECT
         token_address,
         blockchain,
@@ -83,7 +62,25 @@ price_gaps AS (
         prev_recorded_hour,
         gap
     FROM
-        identify_gaps
+        (
+            SELECT
+                token_address,
+                blockchain,
+                recorded_hour,
+                LAG(
+                    recorded_hour,
+                    1
+                ) over (PARTITION BY LOWER(token_address), blockchain
+            ORDER BY
+                recorded_hour ASC) AS prev_RECORDED_HOUR,
+                DATEDIFF(
+                    HOUR,
+                    prev_RECORDED_HOUR,
+                    recorded_hour
+                ) - 1 AS gap
+            FROM
+                {{ this }}
+        )
     WHERE
         gap > 0
 ),
@@ -264,7 +261,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','LOWER(token_address)','blockchain']) }} AS token_prices_priority_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','LOWER(token_address)','blockchain']) }} AS token_prices_priority_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     FINAL

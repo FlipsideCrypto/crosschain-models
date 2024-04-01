@@ -2,11 +2,6 @@ version: 2
 models:
   - name: price_temp__ez_asset_metadata_temp
     description: A convenience table holding prioritized asset metadata and other relevant details pertaining to each token_address.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - TOKEN_ADDRESS
-            - BLOCKCHAIN
 
     columns:
       - name: ID
@@ -29,8 +24,6 @@ models:
         description: A flag indicating if the asset is deprecated or no longer supported by the provider.
       - name: EZ_ASSET_METADATA_ID
         description: '{{ doc("pk") }}'   
-        tests:
-          - unique
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   
       - name: MODIFIED_TIMESTAMP

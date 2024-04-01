@@ -34,7 +34,7 @@ models:
         description: Whether the price was imputed from an earlier record (generally used for low trade volume tokens)
         tests: 
           - not_null
-      - name: TOKEN_PRICES_COIN_GECKO_HOURLY_ID
+      - name: TOKEN_PRICES_COINGECKO_ID
         tests:
           - not_null
       - name: _INSERTED_TIMESTAMP
