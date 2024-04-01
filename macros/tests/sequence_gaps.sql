@@ -76,23 +76,24 @@ ORDER BY
         gap DESC
 {% endtest %}
 
-{% test priority_hour_sequence_gaps(
+{% test price_hour_sequence_gaps(
             model,
-            partition_by,
+            partition_by_1,
+            partition_by_2,
             column_name,
             filter
         ) %}
-        {%- set partition_sql = partition_by | join(", ") -%}
         {%- set previous_column = "prev_" ~ column_name -%}
         WITH base_source AS (
             SELECT
-                {{ partition_sql }},
+                {{ partition_by_1 }},
+                {{ partition_by_2 }},
                 {{ column_name }},
                 LAG(
                     {{ column_name }},
                     1
                 ) over (
-                    PARTITION BY LOWER(TOKEN_ADDRESS), BLOCKCHAIN
+                    PARTITION BY LOWER({{ partition_by_1 }}), {{ partition_by_2 }}
                     ORDER BY
                         {{ column_name }} ASC
                 ) AS {{ previous_column }}
@@ -103,7 +104,8 @@ ORDER BY
             {% endif %}
         )
     SELECT
-        {{ partition_sql }},
+        {{ partition_by_1 }},
+        {{ partition_by_2 }},
         {{ previous_column }},
         {{ column_name }},
         DATEDIFF(

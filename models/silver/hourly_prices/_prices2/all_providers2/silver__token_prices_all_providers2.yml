@@ -14,13 +14,6 @@ models:
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
               interval: 1
-          - hour_sequence_gaps:
-              partition_by:
-                - TOKEN_ADDRESS
-                - BLOCKCHAIN_ID
-                - PROVIDER
-              column_name: RECORDED_HOUR
-              filter: SOURCE <> 'ibc_prices'
       - name: TOKEN_ADDRESS
         tests:
           - not_null

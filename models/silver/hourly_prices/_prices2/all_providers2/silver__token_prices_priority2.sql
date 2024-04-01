@@ -1,6 +1,5 @@
--- depends_on: {{ ref('silver__token_asset_metadata_priority2') }}
 -- depends_on: {{ ref('core__dim_date_hours') }}
--- depends_on: {{ ref('silver__token_asset_metadata_all_providers2') }}
+-- depends_on: {{ ref('silver__token_asset_metadata_priority2') }}
 {{ config(
     materialized = 'incremental',
     unique_key = ['token_prices_priority_hourly_id'],
@@ -11,7 +10,7 @@
 ) }}
 
 WITH priority_prices AS (
-
+-- get all prices and qualify by priority
     SELECT
         recorded_hour,
         token_address,
@@ -54,6 +53,7 @@ ORDER BY
 
 {% if is_incremental() %},
 identify_gaps AS (
+    -- identify missing prices by token_address and blockchain, gaps most likely to exist between providers
     SELECT
         token_address,
         blockchain,
@@ -62,7 +62,7 @@ identify_gaps AS (
             recorded_hour,
             1
         ) over (
-            PARTITION BY token_address,
+            PARTITION BY LOWER(token_address),
             blockchain
             ORDER BY
                 recorded_hour ASC
@@ -88,6 +88,7 @@ price_gaps AS (
         gap > 0
 ),
 token_asset_metadata AS (
+    -- get all token metadata for tokens with missing prices
     SELECT
         token_address,
         blockchain
@@ -125,6 +126,7 @@ token_asset_metadata AS (
                 )
         ),
         imputed_prices AS (
+            -- impute missing prices
             SELECT
                 d.date_hour,
                 d.token_address,
