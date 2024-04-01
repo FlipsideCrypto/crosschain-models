@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['token_prices_all_providers_hourly_id'],
+    unique_key = ['token_prices_all_providers_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE'],
     tags = ['prices']
@@ -14,7 +14,7 @@ WITH coin_gecko AS (
         platform,
         platform_id,
         CLOSE AS price,
-        imputed AS is_imputed,
+        is_imputed,
         id,
         'coingecko' AS provider,
         source,
@@ -39,7 +39,7 @@ coin_market_cap AS (
         platform,
         platform_id,
         CLOSE AS price,
-        imputed AS is_imputed,
+        is_imputed,
         id,
         'coinmarketcap' AS provider,
         source,
@@ -175,7 +175,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','LOWER(token_address)','blockchain_id','provider']) }} AS token_prices_all_providers_hourly_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','LOWER(token_address)','blockchain_id','provider']) }} AS token_prices_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     mapping qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, LOWER(token_address), blockchain_id, provider

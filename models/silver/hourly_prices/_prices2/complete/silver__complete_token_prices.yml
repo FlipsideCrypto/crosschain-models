@@ -1,19 +1,17 @@
 version: 2
 models:
-  - name: silver__token_prices_all_providers2
+  - name: silver__complete_token_prices
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - RECORDED_HOUR
-            - LOWER(TOKEN_ADDRESS)
-            - BLOCKCHAIN_ID
-            - PROVIDER
+            - HOUR
+            - TOKEN_ADDRESS
+            - BLOCKCHAIN
+
     columns:
-      - name: RECORDED_HOUR
+      - name: HOUR
         tests:
-          - dbt_expectations.expect_row_values_to_have_recent_data:
-              datepart: day
-              interval: 1
+          - not_null
       - name: TOKEN_ADDRESS
         tests:
           - not_null

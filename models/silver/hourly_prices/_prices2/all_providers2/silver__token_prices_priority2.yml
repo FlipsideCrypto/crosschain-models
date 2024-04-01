@@ -14,10 +14,9 @@ models:
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
               interval: 1
-          - hour_sequence_gaps:
-              partition_by:
-                - TOKEN_ADDRESS
-                - BLOCKCHAIN
+          - price_hour_sequence_gaps:
+              partition_by_1: TOKEN_ADDRESS
+              partition_by_2: BLOCKCHAIN
               column_name: RECORDED_HOUR
       - name: TOKEN_ADDRESS
         tests:

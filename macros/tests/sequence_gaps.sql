@@ -75,3 +75,48 @@ ORDER BY
     ORDER BY
         gap DESC
 {% endtest %}
+
+{% test price_hour_sequence_gaps(
+            model,
+            partition_by_1,
+            partition_by_2,
+            column_name,
+            filter
+        ) %}
+        {%- set previous_column = "prev_" ~ column_name -%}
+        WITH base_source AS (
+            SELECT
+                {{ partition_by_1 }},
+                {{ partition_by_2 }},
+                {{ column_name }},
+                LAG(
+                    {{ column_name }},
+                    1
+                ) over (
+                    PARTITION BY LOWER({{ partition_by_1 }}), {{ partition_by_2 }}
+                    ORDER BY
+                        {{ column_name }} ASC
+                ) AS {{ previous_column }}
+            FROM
+                {{ model }}
+            {% if filter %}
+                WHERE {{ filter }}
+            {% endif %}
+        )
+    SELECT
+        {{ partition_by_1 }},
+        {{ partition_by_2 }},
+        {{ previous_column }},
+        {{ column_name }},
+        DATEDIFF(
+            HOUR,
+            {{ previous_column }},
+            {{ column_name }}
+        ) - 1 AS gap
+    FROM
+        base_source
+    WHERE
+        gap > 0
+    ORDER BY
+        gap DESC
+{% endtest %}

@@ -11,10 +11,9 @@ models:
     columns:
       - name: RECORDED_HOUR
         tests:
-          - hour_sequence_gaps:
-              partition_by:
-                - TOKEN_ADDRESS
-                - PLATFORM_ID
+          - price_hour_sequence_gaps:
+              partition_by_1: TOKEN_ADDRESS
+              partition_by_2: PLATFORM_ID
               column_name: RECORDED_HOUR
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
@@ -31,11 +30,11 @@ models:
       - name: CLOSE
         tests: 
           - not_null
-      - name: IMPUTED
+      - name: IS_IMPUTED
         description: Whether the price was imputed from an earlier record (generally used for low trade volume tokens)
         tests: 
           - not_null
-      - name: TOKEN_PRICES_COIN_MARKET_CAP_HOURLY_ID
+      - name: TOKEN_PRICES_COINMARKETCAP_ID
         tests:
           - not_null
       - name: _INSERTED_TIMESTAMP
