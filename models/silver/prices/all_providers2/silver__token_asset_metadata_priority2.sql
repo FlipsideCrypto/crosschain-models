@@ -14,6 +14,7 @@ WITH all_providers AS (
         NAME,
         symbol,
         blockchain,
+        blockchain_name,
         blockchain_id,
         provider,
         CASE
@@ -44,6 +45,7 @@ SELECT
     NAME,
     symbol,
     blockchain,
+    blockchain_name,
     blockchain_id,
     provider,
     priority,

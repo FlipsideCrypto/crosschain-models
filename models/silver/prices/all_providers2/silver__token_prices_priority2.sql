@@ -16,6 +16,7 @@ WITH priority_prices AS (
         recorded_hour,
         token_address,
         blockchain,
+        blockchain_name,
         blockchain_id,
         price,
         is_imputed,
@@ -163,6 +164,18 @@ token_asset_metadata AS (
                 END AS id,
                 CASE
                     WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
+                        p.blockchain_name ignore nulls
+                    ) over (
+                        PARTITION BY d.token_address,
+                        d.blockchain
+                        ORDER BY
+                            d.date_hour rows BETWEEN unbounded preceding
+                            AND CURRENT ROW
+                    )
+                    ELSE p.blockchain_name
+                END AS blockchain_name,
+                CASE
+                    WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
                         p.blockchain_id ignore nulls
                     ) over (
                         PARTITION BY d.token_address,
@@ -215,6 +228,7 @@ token_asset_metadata AS (
             recorded_hour,
             token_address,
             blockchain,
+            blockchain_name,
             blockchain_id,
             price,
             is_imputed,
@@ -232,6 +246,7 @@ SELECT
     date_hour AS recorded_hour,
     token_address,
     blockchain,
+    blockchain_name,
     blockchain_id,
     final_price AS price,
     imputed AS is_imputed,
@@ -251,6 +266,7 @@ SELECT
     recorded_hour,
     token_address,
     blockchain,
+    blockchain_name,
     blockchain_id,
     price,
     is_imputed,

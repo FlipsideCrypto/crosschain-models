@@ -12,6 +12,7 @@ SELECT
     decimals,
     price,
     blockchain,
+    blockchain_name,
     blockchain_id,
     is_imputed,
     is_deprecated,
