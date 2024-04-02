@@ -27,6 +27,7 @@ SELECT
         ELSE m.is_deprecated
     END AS is_deprecated,
     p.provider,
+    p.source,
     p._inserted_timestamp,
     GREATEST(COALESCE(p.inserted_timestamp, '2000-01-01'), COALESCE(m.inserted_timestamp, '2000-01-01')) AS inserted_timestamp,
     GREATEST(COALESCE(p.modified_timestamp, '2000-01-01'), COALESCE(m.modified_timestamp, '2000-01-01')) AS modified_timestamp,
