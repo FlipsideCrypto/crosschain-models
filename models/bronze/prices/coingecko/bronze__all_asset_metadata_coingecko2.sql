@@ -82,7 +82,7 @@ FINAL AS (
     FROM
         all_assets A,
         LATERAL FLATTEN(
-            input => VALUE :platforms
+            input => VALUE :platforms, OUTER => TRUE
         ) p
 )
 SELECT
