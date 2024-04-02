@@ -19,6 +19,7 @@ SELECT
     ) AS NAME,
     decimals,
     A.blockchain,
+    blockchain_name,
     blockchain_id,
     is_deprecated,
     A.provider,

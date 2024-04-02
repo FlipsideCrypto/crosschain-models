@@ -43,6 +43,20 @@ AND p._inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
+),
+latest_supported_assets AS (
+    -- get the latest supported timestamp for each asset
+    SELECT
+        token_address,
+        platform_id,
+        DATE_TRUNC('hour', MAX(_inserted_timestamp)) AS last_supported_timestamp
+    FROM
+        {{ ref(
+            'silver__token_asset_metadata_coingecko2'
+        ) }}
+    GROUP BY
+        1,
+        2
 )
 
 {% if is_incremental() %},
@@ -83,7 +97,8 @@ token_asset_metadata AS (
         token_address,
         id,
         platform,
-        platform_id
+        platform_id,
+        _inserted_timestamp
     FROM
         {{ ref(
             'silver__token_asset_metadata_coingecko2'
@@ -128,9 +143,13 @@ token_asset_metadata AS (
                 d.id,
                 d.platform,
                 d.platform_id,
-                p.close AS hourly_price,
                 CASE
-                    WHEN hourly_price IS NULL THEN LAST_VALUE(
+                    WHEN d.date_hour <= s.last_supported_timestamp THEN p.close
+                    ELSE NULL
+                END AS hourly_price,
+                CASE
+                    WHEN hourly_price IS NULL
+                    AND d.date_hour <= s.last_supported_timestamp THEN LAST_VALUE(
                         hourly_price ignore nulls
                     ) over (
                         PARTITION BY d.token_address,
@@ -168,21 +187,33 @@ token_asset_metadata AS (
                 )
                 AND d.platform_id = p.platform_id
                 AND d.date_hour = p.recorded_hour
+                LEFT JOIN latest_supported_assets s
+                ON LOWER(d.token_address) = LOWER(s.token_address)
+                AND d.platform_id = s.platform_id
         )
     {% endif %},
     FINAL AS (
         SELECT
-            recorded_hour,
-            token_address,
-            id,
-            platform,
-            platform_id,
-            CLOSE,
+            p.recorded_hour,
+            p.token_address,
+            p.id,
+            p.platform,
+            p.platform_id,
+            CASE
+                WHEN p.recorded_hour <= s.last_supported_timestamp THEN p.close
+                ELSE NULL
+            END AS close_price,
+            -- only include prices during supported ranges
             FALSE AS is_imputed,
-            source,
-            _inserted_timestamp
+            p.source,
+            p._inserted_timestamp
         FROM
-            base_prices
+            base_prices p
+            LEFT JOIN latest_supported_assets s
+            ON LOWER(p.token_address) = LOWER(s.token_address)
+            AND p.platform_id = s.platform_id
+        WHERE
+            close_price IS NOT NULL
 
 {% if is_incremental() %}
 UNION ALL
@@ -192,14 +223,14 @@ SELECT
     id,
     platform,
     platform_id,
-    final_price AS CLOSE,
+    final_price AS close_price,
     imputed AS is_imputed,
     source,
     _inserted_timestamp
 FROM
     imputed_prices
 WHERE
-    final_price IS NOT NULL
+    close_price IS NOT NULL
     AND is_imputed
 {% endif %}
 )
@@ -209,7 +240,7 @@ SELECT
     id,
     platform,
     platform_id,
-    CLOSE,
+    close_price AS CLOSE,
     is_imputed,
     source,
     _inserted_timestamp,

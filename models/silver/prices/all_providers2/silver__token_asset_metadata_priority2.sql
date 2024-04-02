@@ -14,6 +14,7 @@ WITH all_providers AS (
         NAME,
         symbol,
         blockchain,
+        blockchain_name,
         blockchain_id,
         provider,
         CASE
@@ -44,6 +45,7 @@ SELECT
     NAME,
     symbol,
     blockchain,
+    blockchain_name,
     blockchain_id,
     provider,
     priority,
@@ -57,4 +59,5 @@ SELECT
 FROM
     all_providers qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain
 ORDER BY
-    priority ASC, id ASC, blockchain_id ASC NULLS LAST, _inserted_timestamp DESC)) = 1
+    _inserted_timestamp DESC, priority ASC, id ASC, blockchain_id ASC nulls last)) = 1
+-- select the last inserted record (latest supported provider), then by priority etc.

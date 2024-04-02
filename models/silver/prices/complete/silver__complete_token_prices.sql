@@ -20,6 +20,7 @@ SELECT
     decimals,
     price,
     p.blockchain,
+    p.blockchain_name,
     p.blockchain_id,
     is_imputed,
     CASE

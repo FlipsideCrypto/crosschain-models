@@ -78,7 +78,7 @@ ibc_am AS (
         'osmosis-onchain' AS provider,
         'ibc_am' AS source,
         FALSE AS is_deprecated,
-        '2000-01-01' :: TIMESTAMP AS _inserted_timestamp
+        _inserted_timestamp
     FROM
         {{ source(
             'osmosis_silver',
@@ -107,7 +107,7 @@ SELECT
     'osmosis-onchain' AS provider,
     'ibc_am' AS source,
     FALSE AS is_deprecated,
-    '2000-01-01' :: TIMESTAMP AS _inserted_timestamp
+    MAX(_inserted_timestamp) AS _inserted_timestamp
 FROM
     {{ ref('silver__onchain_osmosis_prices2') }}
 WHERE
@@ -122,6 +122,8 @@ AND _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
+GROUP BY
+    ALL
 ),
 solana_solscan AS (
     SELECT

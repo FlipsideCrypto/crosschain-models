@@ -11,6 +11,7 @@ SELECT
     NAME,
     decimals,
     blockchain,
+    blockchain_name,
     blockchain_id,
     is_deprecated,
     inserted_timestamp,
