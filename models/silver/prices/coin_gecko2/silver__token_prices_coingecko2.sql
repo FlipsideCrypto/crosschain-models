@@ -150,7 +150,7 @@ token_asset_metadata AS (
                     imputed_price
                 ) AS final_price,
                 CASE
-                    WHEN imputed_price IS NOT NULL THEN 'imputed'
+                    WHEN imputed_price IS NOT NULL THEN 'cg_imputed'
                     ELSE p.source
                 END AS source,
                 CASE

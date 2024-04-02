@@ -186,7 +186,7 @@ token_asset_metadata AS (
                     ELSE p.provider
                 END AS provider,
                 CASE
-                    WHEN imputed_price IS NOT NULL THEN 'imputed'
+                    WHEN imputed_price IS NOT NULL THEN 'imputed_priority'
                     ELSE p.source
                 END AS source,
                 CASE
