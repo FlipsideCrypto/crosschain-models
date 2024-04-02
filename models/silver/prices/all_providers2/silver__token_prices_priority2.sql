@@ -89,7 +89,8 @@ token_asset_metadata AS (
     -- get all token metadata for tokens with missing prices
     SELECT
         token_address,
-        blockchain
+        blockchain,
+        _inserted_timestamp
     FROM
         {{ ref(
             'silver__token_asset_metadata_priority2'
@@ -101,144 +102,170 @@ token_asset_metadata AS (
             FROM
                 price_gaps)
         ),
-        date_hours AS (
+        latest_supported_assets AS (
+            --get the latest supported timestamp for each asset with missing prices
             SELECT
-                date_hour,
                 token_address,
-                blockchain
+                blockchain,
+                DATE_TRUNC('hour', MAX(_inserted_timestamp)) AS last_supported_timestamp
             FROM
-                {{ ref('core__dim_date_hours') }}
-                CROSS JOIN token_asset_metadata
-            WHERE
-                date_hour <= (
+                token_asset_metadata
+            GROUP BY
+                1,
+                2),
+                date_hours AS (
                     SELECT
-                        MAX(recorded_hour)
+                        date_hour,
+                        token_address,
+                        blockchain
                     FROM
-                        price_gaps
-                )
-                AND date_hour >= (
+                        {{ ref('core__dim_date_hours') }}
+                        CROSS JOIN token_asset_metadata
+                    WHERE
+                        date_hour <= (
+                            SELECT
+                                MAX(recorded_hour)
+                            FROM
+                                price_gaps
+                        )
+                        AND date_hour >= (
+                            SELECT
+                                MIN(prev_recorded_hour)
+                            FROM
+                                price_gaps
+                        )
+                ),
+                imputed_prices AS (
+                    -- impute missing prices
                     SELECT
-                        MIN(prev_recorded_hour)
+                        d.date_hour,
+                        d.token_address,
+                        d.blockchain,
+                        CASE
+                            WHEN d.date_hour <= s.last_supported_timestamp
+                            OR source = 'ibc_prices' THEN p.price
+                            ELSE NULL
+                        END AS hourly_price,
+                        CASE
+                            WHEN hourly_price IS NULL
+                            AND (
+                                d.date_hour <= s.last_supported_timestamp
+                                OR source = 'ibc_prices'
+                            ) THEN LAST_VALUE(
+                                hourly_price ignore nulls
+                            ) over (
+                                PARTITION BY d.token_address,
+                                d.blockchain
+                                ORDER BY
+                                    d.date_hour rows BETWEEN unbounded preceding
+                                    AND CURRENT ROW
+                            )
+                            ELSE NULL
+                        END AS imputed_price,
+                        CASE
+                            WHEN imputed_price IS NOT NULL THEN TRUE
+                            ELSE p.is_imputed
+                        END AS imputed,
+                        COALESCE(
+                            hourly_price,
+                            imputed_price
+                        ) AS final_price,
+                        CASE
+                            WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
+                                p.id ignore nulls
+                            ) over (
+                                PARTITION BY d.token_address,
+                                d.blockchain
+                                ORDER BY
+                                    d.date_hour rows BETWEEN unbounded preceding
+                                    AND CURRENT ROW
+                            )
+                            ELSE p.id
+                        END AS id,
+                        CASE
+                            WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
+                                p.blockchain_name ignore nulls
+                            ) over (
+                                PARTITION BY d.token_address,
+                                d.blockchain
+                                ORDER BY
+                                    d.date_hour rows BETWEEN unbounded preceding
+                                    AND CURRENT ROW
+                            )
+                            ELSE p.blockchain_name
+                        END AS blockchain_name,
+                        CASE
+                            WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
+                                p.blockchain_id ignore nulls
+                            ) over (
+                                PARTITION BY d.token_address,
+                                d.blockchain
+                                ORDER BY
+                                    d.date_hour rows BETWEEN unbounded preceding
+                                    AND CURRENT ROW
+                            )
+                            ELSE p.blockchain_id
+                        END AS blockchain_id,
+                        CASE
+                            WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
+                                p.provider ignore nulls
+                            ) over (
+                                PARTITION BY d.token_address,
+                                d.blockchain
+                                ORDER BY
+                                    d.date_hour rows BETWEEN unbounded preceding
+                                    AND CURRENT ROW
+                            )
+                            ELSE p.provider
+                        END AS provider,
+                        CASE
+                            WHEN imputed_price IS NOT NULL THEN 'imputed_priority'
+                            ELSE p.source
+                        END AS source,
+                        CASE
+                            WHEN imputed_price IS NOT NULL THEN 7
+                            ELSE p.priority
+                        END AS priority,
+                        CASE
+                            WHEN imputed_price IS NOT NULL THEN SYSDATE()
+                            ELSE p._inserted_timestamp
+                        END AS _inserted_timestamp
                     FROM
-                        price_gaps
+                        date_hours d
+                        LEFT JOIN {{ this }}
+                        p
+                        ON LOWER(
+                            d.token_address
+                        ) = LOWER(
+                            p.token_address
+                        )
+                        AND d.blockchain = p.blockchain
+                        AND d.date_hour = p.recorded_hour
+                        LEFT JOIN latest_supported_assets s
+                        ON LOWER(
+                            d.token_address
+                        ) = LOWER(
+                            s.token_address
+                        )
+                        AND d.blockchain = s.blockchain
                 )
-        ),
-        imputed_prices AS (
-            -- impute missing prices
-            SELECT
-                d.date_hour,
-                d.token_address,
-                d.blockchain,
-                p.price AS hourly_price,
-                CASE
-                    WHEN hourly_price IS NULL THEN LAST_VALUE(
-                        hourly_price ignore nulls
-                    ) over (
-                        PARTITION BY d.token_address,
-                        d.blockchain
-                        ORDER BY
-                            d.date_hour rows BETWEEN unbounded preceding
-                            AND CURRENT ROW
-                    )
-                    ELSE NULL
-                END AS imputed_price,
-                CASE
-                    WHEN imputed_price IS NOT NULL THEN TRUE
-                    ELSE p.is_imputed
-                END AS imputed,
-                COALESCE(
-                    hourly_price,
-                    imputed_price
-                ) AS final_price,
-                CASE
-                    WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
-                        p.id ignore nulls
-                    ) over (
-                        PARTITION BY d.token_address,
-                        d.blockchain
-                        ORDER BY
-                            d.date_hour rows BETWEEN unbounded preceding
-                            AND CURRENT ROW
-                    )
-                    ELSE p.id
-                END AS id,
-                CASE
-                    WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
-                        p.blockchain_name ignore nulls
-                    ) over (
-                        PARTITION BY d.token_address,
-                        d.blockchain
-                        ORDER BY
-                            d.date_hour rows BETWEEN unbounded preceding
-                            AND CURRENT ROW
-                    )
-                    ELSE p.blockchain_name
-                END AS blockchain_name,
-                CASE
-                    WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
-                        p.blockchain_id ignore nulls
-                    ) over (
-                        PARTITION BY d.token_address,
-                        d.blockchain
-                        ORDER BY
-                            d.date_hour rows BETWEEN unbounded preceding
-                            AND CURRENT ROW
-                    )
-                    ELSE p.blockchain_id
-                END AS blockchain_id,
-                CASE
-                    WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
-                        p.provider ignore nulls
-                    ) over (
-                        PARTITION BY d.token_address,
-                        d.blockchain
-                        ORDER BY
-                            d.date_hour rows BETWEEN unbounded preceding
-                            AND CURRENT ROW
-                    )
-                    ELSE p.provider
-                END AS provider,
-                CASE
-                    WHEN imputed_price IS NOT NULL THEN 'imputed_priority'
-                    ELSE p.source
-                END AS source,
-                CASE
-                    WHEN imputed_price IS NOT NULL THEN 7
-                    ELSE p.priority
-                END AS priority,
-                CASE
-                    WHEN imputed_price IS NOT NULL THEN SYSDATE()
-                    ELSE p._inserted_timestamp
-                END AS _inserted_timestamp
-            FROM
-                date_hours d
-                LEFT JOIN {{ this }}
-                p
-                ON LOWER(
-                    d.token_address
-                ) = LOWER(
-                    p.token_address
-                )
-                AND d.blockchain = p.blockchain
-                AND d.date_hour = p.recorded_hour
-        )
-    {% endif %},
-    FINAL AS (
-        SELECT
-            recorded_hour,
-            token_address,
-            blockchain,
-            blockchain_name,
-            blockchain_id,
-            price,
-            is_imputed,
-            id,
-            provider,
-            priority,
-            source,
-            _inserted_timestamp
-        FROM
-            priority_prices
+            {% endif %},
+            FINAL AS (
+                SELECT
+                    recorded_hour,
+                    token_address,
+                    blockchain,
+                    blockchain_name,
+                    blockchain_id,
+                    price,
+                    is_imputed,
+                    id,
+                    provider,
+                    priority,
+                    source,
+                    _inserted_timestamp
+                FROM
+                    priority_prices
 
 {% if is_incremental() %}
 UNION ALL
@@ -258,7 +285,7 @@ SELECT
 FROM
     imputed_prices
 WHERE
-    final_price IS NOT NULL
+    price IS NOT NULL
     AND is_imputed
 {% endif %}
 )
