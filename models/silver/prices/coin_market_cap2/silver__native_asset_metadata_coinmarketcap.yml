@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver__native_asset_metadata_coingecko
+  - name: silver__native_asset_metadata_coinmarketcap
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
