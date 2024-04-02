@@ -16,7 +16,7 @@ models:
         description: Lowest price of the recorded hour in USD
       - name: CLOSE
         description: Closing price of the recorded hour in USD
-      - name: FACT_HOURLY_TOKEN_PRICES_ID
+      - name: FACT_PROVIDER_PRICES_HOURLY_ID
         description: '{{ doc("pk") }}'   
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   

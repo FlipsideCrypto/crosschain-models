@@ -14,6 +14,6 @@ SELECT
     provider,
     inserted_timestamp,
     modified_timestamp,
-    all_prices_all_providers_id AS fact_hourly_token_prices_id
+    all_prices_all_providers_id AS fact_provider_prices_hourly_id
 FROM
     {{ ref('silver__all_prices_all_providers2') }}
