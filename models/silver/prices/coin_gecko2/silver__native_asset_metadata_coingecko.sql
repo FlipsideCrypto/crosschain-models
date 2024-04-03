@@ -35,7 +35,7 @@ WITH base_assets AS (
         ) = LOWER(n.symbol)
 
 {% if is_incremental() %}
-AND _inserted_timestamp > (
+AND _inserted_timestamp >= (
     SELECT
         MAX(_inserted_timestamp)
     FROM

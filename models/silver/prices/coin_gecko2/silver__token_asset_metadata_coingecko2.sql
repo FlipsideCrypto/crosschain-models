@@ -23,7 +23,7 @@ WITH base_assets AS (
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
             MAX(_inserted_timestamp)
         FROM
