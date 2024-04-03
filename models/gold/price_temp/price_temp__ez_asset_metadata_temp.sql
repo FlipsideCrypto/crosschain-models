@@ -6,6 +6,7 @@
 
 SELECT
     token_address,
+    asset_id AS id, -- id column pending deprecation
     asset_id,
     symbol,
     NAME,
