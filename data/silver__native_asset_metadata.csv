@@ -1,7 +1,0 @@
-provider,id,name,symbol,platform
-coingecko,bitcoin,bitcoin,btc,bitcoin
-coingecko,ethereum,ethereum,eth,ethereum
-coingecko,binancecoin,bnb,bnb,bsc
-coinmarketcap,1,bitcoin,btc,bitcoin
-coinmarketcap,1027,ethereum,eth,ethereum
-coinmarketcap,1839,bnb,bnb,bsc
