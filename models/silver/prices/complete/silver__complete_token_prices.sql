@@ -16,7 +16,7 @@ SELECT
     --roll the close price forward 1 hour
     p.token_address,
     p.id,
-    symbol,
+    UPPER(symbol) AS symbol,
     decimals,
     price,
     p.blockchain,

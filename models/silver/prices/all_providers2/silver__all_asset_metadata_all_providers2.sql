@@ -23,7 +23,7 @@ WITH coingecko AS (
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
             MAX(_inserted_timestamp)
         FROM
@@ -47,7 +47,7 @@ coinmarketcap AS (
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
             MAX(_inserted_timestamp)
         FROM

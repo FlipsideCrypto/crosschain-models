@@ -9,10 +9,7 @@
 SELECT
     token_address,
     id,
-    COALESCE(
-        C.symbol,
-        A.symbol
-    ) AS symbol,
+    UPPER(COALESCE(C.symbol, A.symbol)) AS symbol,
     COALESCE(
         C.name,
         A.name

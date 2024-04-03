@@ -22,7 +22,7 @@ WITH coingecko AS (
         {{ ref('bronze__all_prices_coingecko2') }}
 
 {% if is_incremental() %}
-WHERE _inserted_timestamp > (
+WHERE _inserted_timestamp >= (
     SELECT
         MAX(_inserted_timestamp)
     FROM
@@ -45,7 +45,7 @@ coinmarketcap AS (
         {{ ref('bronze__all_prices_coinmarketcap2') }}
 
 {% if is_incremental() %}
-WHERE _inserted_timestamp > (
+WHERE _inserted_timestamp >= (
     SELECT
         MAX(_inserted_timestamp)
     FROM
