@@ -40,7 +40,7 @@ base_streamline AS (
         id IS NOT NULL
 
 {% if is_incremental() %}
-AND _inserted_timestamp > (
+AND _inserted_timestamp >= (
     SELECT
         MAX(_inserted_timestamp)
     FROM

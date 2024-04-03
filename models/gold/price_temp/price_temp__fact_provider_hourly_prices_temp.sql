@@ -5,7 +5,7 @@
 ) }}
 
 SELECT
-    id,
+    asset_id,
     recorded_hour AS HOUR,
     OPEN,
     high,
@@ -14,6 +14,6 @@ SELECT
     provider,
     inserted_timestamp,
     modified_timestamp,
-    all_prices_all_providers_id AS fact_provider_prices_hourly_id
+    complete_provider_prices_id AS fact_provider_prices_hourly_id
 FROM
-    {{ ref('silver__all_prices_all_providers2') }}
+    {{ ref('silver__complete_provider_prices') }}

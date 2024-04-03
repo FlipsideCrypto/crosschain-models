@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['token_asset_metadata_coin_gecko_id'],
+    unique_key = ['token_asset_metadata_coingecko_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -23,7 +23,7 @@ WITH base_assets AS (
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
             MAX(_inserted_timestamp)
         FROM
@@ -293,7 +293,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','platform_id']) }} AS token_asset_metadata_coin_gecko_id,
+    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','platform_id']) }} AS token_asset_metadata_coingecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     all_assets

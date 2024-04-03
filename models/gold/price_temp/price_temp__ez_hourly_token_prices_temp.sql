@@ -7,7 +7,6 @@
 SELECT
     HOUR,
     token_address,
-    id,
     symbol,
     decimals,
     price,

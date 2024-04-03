@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['token_asset_metadata_coin_market_cap_id'],
+    unique_key = ['token_asset_metadata_coinmarketcap_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -276,7 +276,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','platform_id']) }} AS token_asset_metadata_coin_market_cap_id,
+    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','platform_id']) }} AS token_asset_metadata_coinmarketcap_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     all_assets

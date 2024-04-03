@@ -5,6 +5,8 @@ models:
 
     columns:
       - name: ID
+        description: Deprecating soon! Please use the ASSET_ID column instead.
+      - name: ASSET_ID
         description: The unique identifier representing the asset.
       - name: NAME
         description: The name of asset.

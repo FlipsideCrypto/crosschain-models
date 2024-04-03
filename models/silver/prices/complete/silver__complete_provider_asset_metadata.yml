@@ -1,10 +1,10 @@
 version: 2
 models:
-  - name: silver__all_asset_metadata_all_providers2
+  - name: silver__complete_provider_asset_metadata
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - ID
+            - ASSET_ID
             - TOKEN_ADDRESS
             - NAME
             - SYMBOL
@@ -15,6 +15,6 @@ models:
       - name: PROVIDER
         tests:
           - not_null
-      - name: ID
+      - name: ASSET_ID
         tests:
           - not_null
