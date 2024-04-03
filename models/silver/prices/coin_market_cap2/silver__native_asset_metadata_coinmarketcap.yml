@@ -1,0 +1,25 @@
+version: 2
+models:
+  - name: silver__native_asset_metadata_coinmarketcap
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ID
+            - PLATFORM
+    columns:
+      - name: ID
+        tests:
+          - not_null
+      - name: NAME
+        tests:
+          - not_null
+      - name: SYMBOL
+        tests:
+          - not_null
+      - name: PLATFORM
+        tests:
+          - not_null
+      - name: _INSERTED_TIMESTAMP
+        tests:
+          - not_null
+      
