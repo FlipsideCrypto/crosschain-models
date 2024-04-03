@@ -51,5 +51,5 @@ SELECT
 FROM
     all_providers qualify(ROW_NUMBER() over (PARTITION BY symbol, blockchain
 ORDER BY
-    _inserted_timestamp DESC, priority ASC)) = 1
+    _inserted_timestamp DESC, priority ASC, id ASC)) = 1
 -- select the last inserted record (latest supported provider), then by priority etc.

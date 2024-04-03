@@ -10,6 +10,7 @@ WITH coin_gecko AS (
 
     SELECT
         recorded_hour,
+        symbol,
         id,
         platform,
         CLOSE AS price,
@@ -33,6 +34,7 @@ WHERE
 coin_market_cap AS (
     SELECT
         recorded_hour,
+        symbol,
         id,
         platform,
         CLOSE AS price,
@@ -66,6 +68,7 @@ all_providers AS (
 )
 SELECT
     recorded_hour,
+    symbol,
     id,
     platform AS blockchain,
     price,
@@ -75,9 +78,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','id','blockchain','provider']) }} AS native_prices_all_providers_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','symbol','blockchain','provider']) }} AS native_prices_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, id, blockchain, provider
+    all_providers qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol, blockchain, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

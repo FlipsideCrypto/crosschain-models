@@ -12,6 +12,7 @@ WITH base_prices AS (
 
     SELECT
         p.recorded_hour,
+        m.symbol,
         p.id,
         m.platform,
         p.close,
@@ -43,7 +44,7 @@ AND p._inserted_timestamp >= (
 latest_supported_assets AS (
     -- get the latest supported timestamp for each asset
     SELECT
-        id,
+        symbol,
         platform,
         DATE_TRUNC('hour', MAX(_inserted_timestamp)) AS last_supported_timestamp
     FROM
@@ -59,7 +60,7 @@ latest_supported_assets AS (
 price_gaps AS (
     -- identify missing prices by id and platform
     SELECT
-        id,
+        symbol,
         platform,
         recorded_hour,
         prev_recorded_hour,
@@ -67,7 +68,7 @@ price_gaps AS (
     FROM
         (
             SELECT
-                id,
+                symbol,
                 platform,
                 recorded_hour,
                 LAG(
@@ -90,6 +91,7 @@ price_gaps AS (
 native_asset_metadata AS (
     -- get all metadata for assets with missing prices
     SELECT
+        symbol,
         id,
         platform,
         _inserted_timestamp
@@ -98,9 +100,9 @@ native_asset_metadata AS (
             'silver__native_asset_metadata_coingecko'
         ) }}
     WHERE
-        CONCAT(id, '-', platform) IN (
+        CONCAT(symbol, '-', platform) IN (
             SELECT
-                CONCAT(id, '-', platform)
+                CONCAT(symbol, '-', platform)
             FROM
                 price_gaps)
         ),
@@ -108,6 +110,7 @@ native_asset_metadata AS (
             -- generate spine of all possible hours, between gaps
             SELECT
                 date_hour,
+                symbol,
                 id,
                 platform
             FROM
@@ -131,6 +134,7 @@ native_asset_metadata AS (
             -- impute missing prices
             SELECT
                 d.date_hour,
+                d.symbol,
                 d.id,
                 d.platform,
                 CASE
@@ -142,7 +146,7 @@ native_asset_metadata AS (
                     AND d.date_hour <= s.last_supported_timestamp THEN LAST_VALUE(
                         hourly_price ignore nulls
                     ) over (
-                        PARTITION BY d.id,
+                        PARTITION BY d.symbol,
                         d.platform
                         ORDER BY
                             d.date_hour rows BETWEEN unbounded preceding
@@ -170,19 +174,18 @@ native_asset_metadata AS (
                 date_hours d
                 LEFT JOIN {{ this }}
                 p
-                ON 
-                    d.id  = 
-                    p.id
+                ON d.symbol = p.symbol
                 AND d.platform = p.platform
                 AND d.date_hour = p.recorded_hour
                 LEFT JOIN latest_supported_assets s
-                ON d.id = s.id
+                ON d.symbol = s.symbol
                 AND d.platform = s.platform
         )
     {% endif %},
     FINAL AS (
         SELECT
             p.recorded_hour,
+            p.symbol,
             p.id,
             p.platform,
             CASE
@@ -196,7 +199,7 @@ native_asset_metadata AS (
         FROM
             base_prices p
             LEFT JOIN latest_supported_assets s
-            ON p.id = s.id
+            ON p.symbol = s.symbol
             AND p.platform = s.platform
         WHERE
             close_price IS NOT NULL
@@ -205,6 +208,7 @@ native_asset_metadata AS (
 UNION ALL
 SELECT
     date_hour AS recorded_hour,
+    symbol,
     id,
     platform,
     final_price AS close_price,
@@ -220,6 +224,7 @@ WHERE
 )
 SELECT
     recorded_hour,
+    symbol,
     id,
     platform,
     close_price AS CLOSE,
@@ -228,9 +233,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','id','platform']) }} AS native_prices_coingecko_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','symbol','platform']) }} AS native_prices_coingecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    FINAL qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, id, platform
+    FINAL qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol, platform
 ORDER BY
     _inserted_timestamp DESC)) = 1

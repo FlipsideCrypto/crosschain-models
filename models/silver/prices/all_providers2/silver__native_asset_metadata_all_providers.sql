@@ -70,8 +70,8 @@ all_providers AS (
 )
 SELECT
     id,
-    LOWER(NAME) AS name,
-    UPPER(symbol) AS symbol,
+    name,
+    symbol,
     platform AS blockchain,
     provider,
     source,
@@ -79,9 +79,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['id','blockchain','provider']) }} AS native_asset_metadata_all_providers_id,
+    {{ dbt_utils.generate_surrogate_key(['symbol','blockchain','provider']) }} AS native_asset_metadata_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers p qualify(ROW_NUMBER() over (PARTITION BY id, blockchain, provider
+    all_providers p qualify(ROW_NUMBER() over (PARTITION BY symbol, blockchain, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

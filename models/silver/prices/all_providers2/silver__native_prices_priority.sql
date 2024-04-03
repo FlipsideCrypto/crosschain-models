@@ -14,6 +14,7 @@ WITH priority_prices AS (
 
     SELECT
         recorded_hour,
+        symbol,
         id,
         blockchain,
         price,
@@ -32,7 +33,7 @@ WITH priority_prices AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__native_prices_all_providers') }} --join in for symbol? join earlier?
+        {{ ref('silver__native_prices_all_providers') }}
 
 {% if is_incremental() %}
 WHERE
@@ -44,15 +45,15 @@ WHERE
     )
 {% endif %}
 
-qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, id, blockchain
+qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol, blockchain
 ORDER BY
-    priority ASC, _inserted_timestamp DESC)) = 1)
+    priority ASC, id ASC, _inserted_timestamp DESC)) = 1)
 
 {% if is_incremental() %},
 price_gaps AS (
-    -- identify missing prices by token_address and blockchain, gaps most likely to exist between providers
+    -- identify missing prices by symbol and blockchain, gaps most likely to exist between providers
     SELECT
-        token_address,
+        symbol,
         blockchain,
         recorded_hour,
         prev_recorded_hour,
@@ -60,13 +61,13 @@ price_gaps AS (
     FROM
         (
             SELECT
-                token_address,
+                symbol,
                 blockchain,
                 recorded_hour,
                 LAG(
                     recorded_hour,
                     1
-                ) over (PARTITION BY LOWER(token_address), blockchain
+                ) over (PARTITION BY symbol, blockchain
             ORDER BY
                 recorded_hour ASC) AS prev_RECORDED_HOUR,
                 DATEDIFF(
@@ -80,42 +81,42 @@ price_gaps AS (
     WHERE
         gap > 0
 ),
-token_asset_metadata AS (
+native_asset_metadata AS (
     -- get all token metadata for tokens with missing prices
     SELECT
-        token_address,
+        symbol,
         blockchain,
         _inserted_timestamp
     FROM
         {{ ref(
-            'silver__token_asset_metadata_priority2'
+            'silver__native_asset_metadata_priority'
         ) }}
     WHERE
-        CONCAT(LOWER(token_address), '-', blockchain) IN (
+        CONCAT(symbol, '-', blockchain) IN (
             SELECT
-                CONCAT(LOWER(token_address), '-', blockchain)
+                CONCAT(symbol, '-', blockchain)
             FROM
                 price_gaps)
         ),
         latest_supported_assets AS (
             --get the latest supported timestamp for each asset with missing prices
             SELECT
-                token_address,
+                symbol,
                 blockchain,
                 DATE_TRUNC('hour', MAX(_inserted_timestamp)) AS last_supported_timestamp
             FROM
-                token_asset_metadata
+                native_asset_metadata
             GROUP BY
                 1,
                 2),
                 date_hours AS (
                     SELECT
                         date_hour,
-                        token_address,
+                        symbol,
                         blockchain
                     FROM
                         {{ ref('core__dim_date_hours') }}
-                        CROSS JOIN token_asset_metadata
+                        CROSS JOIN native_asset_metadata
                     WHERE
                         date_hour <= (
                             SELECT
@@ -134,22 +135,22 @@ token_asset_metadata AS (
                     -- impute missing prices
                     SELECT
                         d.date_hour,
-                        d.token_address,
+                        d.symbol,
                         d.blockchain,
                         CASE
                             WHEN d.date_hour <= s.last_supported_timestamp
-                            OR source = 'ibc_prices' THEN p.price
+                    THEN p.price
                             ELSE NULL
                         END AS hourly_price,
                         CASE
                             WHEN hourly_price IS NULL
                             AND (
                                 d.date_hour <= s.last_supported_timestamp
-                                OR source = 'ibc_prices'
+                                
                             ) THEN LAST_VALUE(
                                 hourly_price ignore nulls
                             ) over (
-                                PARTITION BY d.token_address,
+                                PARTITION BY d.symbol,
                                 d.blockchain
                                 ORDER BY
                                     d.date_hour rows BETWEEN unbounded preceding
@@ -169,7 +170,7 @@ token_asset_metadata AS (
                             WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
                                 p.id ignore nulls
                             ) over (
-                                PARTITION BY d.token_address,
+                                PARTITION BY d.symbol,
                                 d.blockchain
                                 ORDER BY
                                     d.date_hour rows BETWEEN unbounded preceding
@@ -179,33 +180,9 @@ token_asset_metadata AS (
                         END AS id,
                         CASE
                             WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
-                                p.blockchain_name ignore nulls
-                            ) over (
-                                PARTITION BY d.token_address,
-                                d.blockchain
-                                ORDER BY
-                                    d.date_hour rows BETWEEN unbounded preceding
-                                    AND CURRENT ROW
-                            )
-                            ELSE p.blockchain_name
-                        END AS blockchain_name,
-                        CASE
-                            WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
-                                p.blockchain_id ignore nulls
-                            ) over (
-                                PARTITION BY d.token_address,
-                                d.blockchain
-                                ORDER BY
-                                    d.date_hour rows BETWEEN unbounded preceding
-                                    AND CURRENT ROW
-                            )
-                            ELSE p.blockchain_id
-                        END AS blockchain_id,
-                        CASE
-                            WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
                                 p.provider ignore nulls
                             ) over (
-                                PARTITION BY d.token_address,
+                                PARTITION BY d.symbol,
                                 d.blockchain
                                 ORDER BY
                                     d.date_hour rows BETWEEN unbounded preceding
@@ -230,17 +207,17 @@ token_asset_metadata AS (
                         LEFT JOIN {{ this }}
                         p
                         ON LOWER(
-                            d.token_address
+                            d.symbol
                         ) = LOWER(
-                            p.token_address
+                            p.symbol
                         )
                         AND d.blockchain = p.blockchain
                         AND d.date_hour = p.recorded_hour
                         LEFT JOIN latest_supported_assets s
                         ON LOWER(
-                            d.token_address
+                            d.symbol
                         ) = LOWER(
-                            s.token_address
+                            s.symbol
                         )
                         AND d.blockchain = s.blockchain
                 )
@@ -248,10 +225,8 @@ token_asset_metadata AS (
             FINAL AS (
                 SELECT
                     recorded_hour,
-                    token_address,
+                    symbol,
                     blockchain,
-                    blockchain_name,
-                    blockchain_id,
                     price,
                     is_imputed,
                     id,
@@ -266,10 +241,8 @@ token_asset_metadata AS (
 UNION ALL
 SELECT
     date_hour AS recorded_hour,
-    token_address,
+    symbol,
     blockchain,
-    blockchain_name,
-    blockchain_id,
     final_price AS price,
     imputed AS is_imputed,
     id,
@@ -286,10 +259,8 @@ WHERE
 )
 SELECT
     recorded_hour,
-    token_address,
+    symbol,
     blockchain,
-    blockchain_name,
-    blockchain_id,
     price,
     is_imputed,
     id,
@@ -299,13 +270,13 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','LOWER(token_address)','blockchain']) }} AS token_prices_priority_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','symbol','blockchain']) }} AS token_prices_priority_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     FINAL
 
 {% if is_incremental() %}
-qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, LOWER(token_address), blockchain
+qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol, blockchain
 ORDER BY
-    priority ASC, id ASC, blockchain_id ASC nulls last, _inserted_timestamp DESC)) = 1
+    priority ASC, id ASC, _inserted_timestamp DESC)) = 1
 {% endif %}

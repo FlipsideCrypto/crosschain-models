@@ -12,7 +12,7 @@ WITH base_assets AS (
     SELECT
         A.id,
         A.name,
-        A.symbol,
+        LOWER(A.symbol) AS symbol,
         n.platform,
         source,
         _inserted_timestamp
@@ -46,7 +46,7 @@ AND _inserted_timestamp >= (
 current_supported_assets AS (
     -- get all assets currently supported
     SELECT
-        id,
+        symbol,
         platform,
         _inserted_timestamp
     FROM
@@ -75,8 +75,8 @@ base_adj AS (
             ELSE TRIM(NAME)
         END AS name_adj,
         CASE
-            WHEN LENGTH(TRIM(symbol)) <= 0 THEN NULL
-            ELSE TRIM(symbol)
+            WHEN LENGTH(TRIM(A.symbol)) <= 0 THEN NULL
+            ELSE TRIM(A.symbol)
         END AS symbol_adj,
         LOWER(
             CASE
@@ -88,14 +88,14 @@ base_adj AS (
         ) AS platform_adj,
         source,
         CASE
-            WHEN C.id IS NOT NULL THEN FALSE
+            WHEN C.symbol IS NOT NULL THEN FALSE
             ELSE TRUE
         END AS is_deprecated,
         A._inserted_timestamp
     FROM
         base_assets A
         LEFT JOIN current_supported_assets C
-        ON A.id = C.id
+        ON A.symbol = C.symbol
         AND A.platform = C.platform
 )
 SELECT
@@ -108,12 +108,12 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['id','platform']) }} AS native_asset_metadata_coingecko_id,
+    {{ dbt_utils.generate_surrogate_key(['symbol','platform']) }} AS native_asset_metadata_coingecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     base_adj
 WHERE
-    id IS NOT NULL
-    AND platform IS NOT NULL qualify(ROW_NUMBER() over (PARTITION BY id, platform
+    symbol IS NOT NULL
+    AND platform IS NOT NULL qualify(ROW_NUMBER() over (PARTITION BY symbol, platform
 ORDER BY
     _inserted_timestamp DESC)) = 1 -- built for native assets
