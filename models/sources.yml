@@ -45,6 +45,7 @@ sources:
       - name: abis
       - name: contracts
       - name: complete_event_abis
+      - name: blocks
   - name: ethereum_ens
     database: ethereum
     schema: ens
@@ -97,6 +98,7 @@ sources:
       - name: decoded_logs
       - name: abis
       - name: complete_nft_sales
+      - name: blocks
   - name: arbitrum_core
     database: arbitrum
     schema: core
@@ -123,6 +125,7 @@ sources:
       - name: contracts
       - name: complete_event_abis
       - name: complete_nft_sales
+      - name: blocks
   - name: avalanche_core
     database: avalanche
     schema: core
@@ -149,6 +152,7 @@ sources:
       - name: contracts
       - name: complete_event_abis
       - name: complete_nft_sales
+      - name: blocks
   - name: polygon_core
     database: polygon
     schema: core
@@ -175,6 +179,7 @@ sources:
       - name: decoded_logs
       - name: abis
       - name: complete_nft_sales
+      - name: blocks
   - name: optimism_core
     database: optimism
     schema: core
@@ -201,6 +206,7 @@ sources:
       - name: complete_event_abis
       - name: decoded_logs
       - name: complete_nft_sales
+      - name: blocks
   - name: bsc_core
     database: bsc
     schema: core
@@ -497,6 +503,7 @@ sources:
       - name: contracts
       - name: complete_event_abis
       - name: complete_nft_sales
+      - name: blocks
   - name: base_silver_dex
     database: base
     schema: silver_dex
@@ -525,6 +532,7 @@ sources:
       - name: abis
       - name: contracts
       - name: traces
+      - name: blocks
   - name: gnosis_silver_dex
     database: gnosis
     schema: silver_dex
@@ -734,6 +742,7 @@ sources:
       - name: complete_event_abis
       - name: abis
       - name: traces
+      - name: blocks
   - name: github_actions
     database: crosschain
     schema: github_actions
