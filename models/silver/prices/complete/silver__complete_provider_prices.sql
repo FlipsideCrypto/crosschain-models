@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['id','recorded_hour'],
+    unique_key = 'complete_provider_prices_id',
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -65,7 +65,7 @@ all_providers AS (
         coinmarketcap
 )
 SELECT
-    id,
+    id AS asset_id,
     recorded_hour,
     OPEN,
     high,
@@ -76,9 +76,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['id','recorded_hour']) }} AS all_prices_all_providers_id,
+    {{ dbt_utils.generate_surrogate_key(['asset_id','recorded_hour']) }} AS complete_provider_prices_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers qualify(ROW_NUMBER() over(PARTITION BY id, recorded_hour, provider
+    all_providers qualify(ROW_NUMBER() over(PARTITION BY asset_id, recorded_hour, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

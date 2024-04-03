@@ -8,7 +8,7 @@
 
 SELECT
     token_address,
-    id,
+    id AS asset_id,
     UPPER(COALESCE(C.symbol, A.symbol)) AS symbol,
     COALESCE(
         C.name,

@@ -1,12 +1,12 @@
 version: 2
 models:
-  - name: price_temp__fact_provider_prices_hourly_temp
+  - name: price_temp__fact_provider_hourly_prices_temp
     description: A comprehensive fact table holding id and provider specific open, high, low, close hourly token prices.
 
     columns:
       - name: HOUR
         description: Hour that the price was recorded at
-      - name: ID
+      - name: ASSET_ID
         description: Unique identifier for the hourly token price record
       - name: OPEN
         description: Opening price of the recorded hour in USD

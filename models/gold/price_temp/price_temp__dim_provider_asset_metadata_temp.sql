@@ -6,7 +6,7 @@
 
 SELECT
     token_address,
-    id,
+    asset_id,
     symbol,
     NAME,
     platform AS blockchain,
@@ -14,6 +14,6 @@ SELECT
     provider,
     inserted_timestamp,
     modified_timestamp,
-    all_asset_metadata_all_providers_id AS dim_provider_asset_metadata_id
+    complete_provider_asset_metadata_id AS dim_provider_asset_metadata_id
 FROM
-    {{ ref('silver__all_asset_metadata_all_providers2') }} A
+    {{ ref('silver__complete_provider_asset_metadata') }} A
