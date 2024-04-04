@@ -5,7 +5,7 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - SYMBOL
-            - PLATFORM
+            - NAME
     columns:
       - name: ID
         tests:
@@ -14,9 +14,6 @@ models:
         tests:
           - not_null
       - name: SYMBOL
-        tests:
-          - not_null
-      - name: PLATFORM
         tests:
           - not_null
       - name: _INSERTED_TIMESTAMP

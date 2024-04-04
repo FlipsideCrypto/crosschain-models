@@ -1,7 +1,202 @@
-provider,id,name,symbol,platform
-coingecko,bitcoin,bitcoin,btc,bitcoin
-coingecko,ethereum,ethereum,eth,ethereum
-coingecko,binancecoin,bnb,bnb,bsc
-coinmarketcap,1,bitcoin,btc,bitcoin
-coinmarketcap,1027,ethereum,eth,ethereum
-coinmarketcap,1839,bnb,bnb,bsc
+provider,name,symbol,id
+coingecko,Bitcoin,BTC,bitcoin
+coingecko,Ethereum,ETH,ethereum
+coingecko,BNB,BNB,binancecoin
+coingecko,Solana,SOL,solana
+coingecko,Cardano,ADA,cardano
+coingecko,Avalanche,AVAX,avalanche-2
+coingecko,Toncoin,TON,the-open-network
+coingecko,Bitcoin Cash,BCH,bitcoin-cash
+coingecko,TRON,TRX,tron
+coingecko,NEAR Protocol,NEAR,near
+coingecko,Aptos,APT,aptos
+coingecko,Filecoin,FIL,filecoin
+coingecko,Cosmos Hub,ATOM,cosmos
+coingecko,Cronos,CRO,crypto-com-chain
+coingecko,Hedera,HBAR,hedera-hashgraph
+coingecko,Kaspa,KAS,kaspa
+coingecko,Injective,INJ,injective-protocol
+coingecko,Fantom,FTM,fantom
+coingecko,Monero,XMR,monero
+coingecko,Arweave,AR,arweave
+coingecko,Sui,SUI,sui
+coingecko,GALA,GALA,gala
+coingecko,Core,CORE,coredaoorg
+coingecko,Sei,SEI,sei-network
+coingecko,Algorand,ALGO,algorand
+coingecko,Flow,FLOW,flow
+coingecko,MultiversX,EGLD,elrond-erd-2
+coingecko,Flare,FLR,flare-networks
+coingecko,eCash,XEC,ecash
+coingecko,Chiliz,CHZ,chiliz
+coingecko,Tezos,XTZ,tezos
+coingecko,Ronin,RON,ronin
+coingecko,Kava,KAVA,kava
+coingecko,Klaytn,KLAY,klay-token
+coingecko,AIOZ Network,AIOZ,aioz-network
+coingecko,Gnosis,GNO,gnosis
+coingecko,Oasis Network,ROSE,oasis-network
+coingecko,Radix,XRD,radix
+coingecko,Astar,ASTR,astar
+coingecko,Enjin Coin,ENJ,enjincoin
+coingecko,MANTRA,OM,mantra-dao
+coingecko,ZetaChain,ZETA,zetachain
+coingecko,Chia,XCH,chia
+coingecko,Decred,DCR,decred
+coingecko,Moonbeam,GLMR,moonbeam
+coingecko,Vanar Chain,VANRY,vanar-chain
+coingecko,Kadena,KDA,kadena
+coingecko,Chromia,CHR,chromaway
+coingecko,Aleph Zero,AZERO,aleph-zero
+coingecko,WAX,WAXP,wax
+coingecko,Dusk,DUSK,dusk-network
+coingecko,Oraichain,ORAI,oraichain-token
+coingecko,Syscoin,SYS,syscoin
+coingecko,Alephium,ALPH,alephium
+coingecko,Humans.ai,HEART,humans-ai
+coingecko,Tectum,TET,tectum
+coingecko,Moonriver,MOVR,moonriver
+coingecko,Hive,HIVE,hive
+coingecko,Oasys,OAS,oasys
+coingecko,QANplatform,QANX,qanplatform
+coingecko,Cudos,CUDOS,cudos
+coingecko,Ergo,ERG,ergo
+coingecko,CANTO,CANTO,canto
+coingecko,LUKSO,LYX,lukso-token-2
+coingecko,LTO Network,LTO,lto-network
+coingecko,Viction,VIC,tomochain
+coingecko,Agoric,BLD,agoric
+coingecko,MELD,MELD,meld-2
+coingecko,Picasso,PICA,picasso
+coingecko,Concordium,CCD,concordium
+coingecko,Archway,ARCH,archway
+coingecko,Jackal Protocol,JKL,jackal-protocol
+coingecko,Zano,ZANO,zano
+coingecko,Thought,THT,thought
+coingecko,Taraxa,TARA,taraxa
+coingecko,OctaSpace,OCTA,octaspace
+coingecko,Evmos,EVMOS,evmos
+coingecko,AirDAO,AMB,amber
+coingecko,Neurai,XNA,neurai
+coingecko,FIO Protocol,FIO,fio-protocol
+coingecko,Nexa,NEXA,nexacoin
+coingecko,Phantasma,SOUL,phantasma
+coingecko,Radiant,RXD,radiant
+coingecko,Electra Protocol,XEP,electra-protocol
+coingecko,KIRA Network,KEX,kira-network
+coingecko,Fuse,FUSE,fuse-network-token
+coingecko,Saito,SAITO,saito
+coingecko,Hacash,HAC,hacash
+coingecko,Chihuahua Chain,HUAHUA,chihuahua-token
+coingecko,MainnetZ,NETZ,mainnetz
+coingecko,Aura Network,AURA,aura-network
+coingecko,Witnet,WIT,witnet
+coingecko,White Whale,WHALE,white-whale
+coingecko,Script Network,SCPT,script-network
+coingecko,Diamond,DMD,diamond
+coingecko,Interlay,INTR,interlay
+coingecko,MultiVAC,MTV,multivac
+coingecko,LiquidLayer,LILA,liquidlayer
+coingecko,Epic Cash,EPIC,epic-cash
+coingecko,Unique Network,UNQ,unique-network
+coinmarketcap,Bitcoin,BTC,1
+coinmarketcap,Ethereum,ETH,1027
+coinmarketcap,BNB,BNB,1839
+coinmarketcap,Solana,SOL,5426
+coinmarketcap,Cardano,ADA,2010
+coinmarketcap,Avalanche,AVAX,5805
+coinmarketcap,Toncoin,TON,11419
+coinmarketcap,Bitcoin Cash,BCH,1831
+coinmarketcap,Polkadot,DOT,6636
+coinmarketcap,TRON,TRX,1958
+coinmarketcap,Internet Computer,ICP,8916
+coinmarketcap,NEAR Protocol,NEAR,6535
+coinmarketcap,Aptos,APT,21794
+coinmarketcap,Cosmos,ATOM,3794
+coinmarketcap,Cronos,CRO,3635
+coinmarketcap,Hedera,HBAR,4642
+coinmarketcap,Injective,INJ,7226
+coinmarketcap,Kaspa,KAS,20396
+coinmarketcap,Theta Network,THETA,2416
+coinmarketcap,Fantom,FTM,3513
+coinmarketcap,Sui,SUI,20947
+coinmarketcap,Sei,SEI,23149
+coinmarketcap,Algorand,ALGO,4030
+coinmarketcap,Flow,FLOW,4558
+coinmarketcap,MultiversX,EGLD,6892
+coinmarketcap,eCash,XEC,10791
+coinmarketcap,Chiliz,CHZ,4066
+coinmarketcap,Tezos,XTZ,2011
+coinmarketcap,Ronin,RON,14101
+coinmarketcap,Kava,KAVA,4846
+coinmarketcap,Klaytn,KLAY,4256
+coinmarketcap,Gnosis,GNO,1659
+coinmarketcap,AIOZ Network,AIOZ,9104
+coinmarketcap,Radix,XRD,11948
+coinmarketcap,Astar,ASTR,12885
+coinmarketcap,XDC Network,XDC,2634
+coinmarketcap,Enjin Coin,ENJ,2130
+coinmarketcap,ZetaChain,ZETA,21259
+coinmarketcap,Casper,CSPR,5899
+coinmarketcap,OriginTrail,TRAC,2467
+coinmarketcap,Chia,XCH,9258
+coinmarketcap,Kadena,KDA,5647
+coinmarketcap,Chromia,CHR,3978
+coinmarketcap,WAX,WAXP,2300
+coinmarketcap,Stride,STRD,21781
+coinmarketcap,Aleph Zero,AZERO,11976
+coinmarketcap,Syscoin,SYS,541
+coinmarketcap,Alephium,ALPH,14878
+coinmarketcap,Dusk,DUSK,4092
+coinmarketcap,Hive,HIVE,5370
+coinmarketcap,Oraichain,ORAI,7533
+coinmarketcap,Moonriver,MOVR,9285
+coinmarketcap,Oasys,OAS,22265
+coinmarketcap,NYM,NYM,17591
+coinmarketcap,Ergo,ERG,1762
+coinmarketcap,Tectum,TET,21964
+coinmarketcap,CUDOS,CUDOS,8258
+coinmarketcap,LUKSO,LYX,27622
+coinmarketcap,LTO Network,LTO,3714
+coinmarketcap,The Root Network,ROOT,28479
+coinmarketcap,Dynex,DNX,22858
+coinmarketcap,Coreum,COREUM,16399
+coinmarketcap,KYVE Network,KYVE,27766
+coinmarketcap,Concordium,CCD,18031
+coinmarketcap,Graphlinq Chain,GLQ,9029
+coinmarketcap,Zano,ZANO,4691
+coinmarketcap,AirDAO,AMB,2081
+coinmarketcap,Taraxa,TARA,8715
+coinmarketcap,OctaSpace,OCTA,24261
+coinmarketcap,FIO Protocol,FIO,5865
+coinmarketcap,Abelian,ABEL,25232
+coinmarketcap,Openfabric AI,OFN,28245
+coinmarketcap,Neurai,XNA,27195
+coinmarketcap,Phantasma,SOUL,2827
+coinmarketcap,Matrix AI Network,MAN,2474
+coinmarketcap,Radiant,RXD,22866
+coinmarketcap,Electra Protocol,XEP,8216
+coinmarketcap,Fuse,FUSE,5634
+coinmarketcap,Saito,SAITO,9194
+coinmarketcap,Nexa,NEXA,23380
+coinmarketcap,Areon Network,AREA,23262
+coinmarketcap,Script Network,SCPT,12621
+coinmarketcap,Humanode,HMND,23806
+coinmarketcap,Zenon,ZNN,4003
+coinmarketcap,MultiVAC,MTV,3853
+coinmarketcap,MainnetZ,NetZ,28659
+coinmarketcap,Epic Cash,EPIC,5435
+coinmarketcap,Integritee Network,TEER,13323
+coinmarketcap,Interlay,INTR,20366
+coinmarketcap,Busy DAO,BUSY,9002
+coinmarketcap,Qubic,QUBIC,29169
+coinmarketcap,Picasso,PICA,13678
+coinmarketcap,QANplatform,QANX,5858
+coinmarketcap,Evmos,EVMOS,19899
+coinmarketcap,CANTO,CANTO,21516
+coinmarketcap,LiquidLayer,LILA,28498
+coinmarketcap,MELD,MELD,13397
+coinmarketcap,ULTRON,ULX,21524
+coinmarketcap,Chihuahua,HUAHUA,17208
+coinmarketcap,Karlsen,KLS,29968
+coinmarketcap,Jackal Protocol,JKL,25261
