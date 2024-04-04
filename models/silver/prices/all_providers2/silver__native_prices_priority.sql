@@ -45,17 +45,16 @@ WHERE
     )
 {% endif %}
 
-qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol, blockchain
+qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol
 ORDER BY
-    priority ASC, id ASC, _inserted_timestamp DESC)) = 1
+    priority ASC, id ASC, blockchain ASC, _inserted_timestamp DESC)) = 1
 )
 
 {% if is_incremental() %},
 price_gaps AS (
-    -- identify missing prices by symbol and blockchain, gaps most likely to exist between providers
+    -- identify missing prices by symbol, gaps most likely to exist between providers
     SELECT
         symbol,
-        blockchain,
         recorded_hour,
         prev_recorded_hour,
         gap
@@ -63,7 +62,6 @@ price_gaps AS (
         (
             SELECT
                 symbol,
-                blockchain,
                 recorded_hour,
                 LAG(
                     recorded_hour,
@@ -89,24 +87,15 @@ native_asset_metadata AS (
     -- get all token metadata for tokens with missing prices
     SELECT
         symbol,
-        blockchain,
         _inserted_timestamp
     FROM
         {{ ref(
             'silver__native_asset_metadata_priority'
         ) }}
     WHERE
-        CONCAT(
-            symbol,
-            '-',
-            blockchain
-        ) IN (
+        symbol IN (
             SELECT
-                CONCAT(
-                    symbol,
-                    '-',
-                    blockchain
-                )
+                symbol
             FROM
                 price_gaps
         )
@@ -115,18 +104,15 @@ latest_supported_assets AS (
     --get the latest supported timestamp for each asset with missing prices
     SELECT
         symbol,
-        blockchain,
         DATE_TRUNC('hour', MAX(_inserted_timestamp)) AS last_supported_timestamp
     FROM
         native_asset_metadata
     GROUP BY
-        1,
-        2),
+        1),
         date_hours AS (
             SELECT
                 date_hour,
-                symbol,
-                blockchain
+                symbol
             FROM
                 {{ ref('core__dim_date_hours') }}
                 CROSS JOIN native_asset_metadata
@@ -149,7 +135,6 @@ latest_supported_assets AS (
             SELECT
                 d.date_hour,
                 d.symbol,
-                d.blockchain,
                 CASE
                     WHEN d.date_hour <= s.last_supported_timestamp THEN p.price
                     ELSE NULL
@@ -161,8 +146,7 @@ latest_supported_assets AS (
                     ) THEN LAST_VALUE(
                         hourly_price ignore nulls
                     ) over (
-                        PARTITION BY d.symbol,
-                        d.blockchain
+                        PARTITION BY d.symbol
                         ORDER BY
                             d.date_hour rows BETWEEN unbounded preceding
                             AND CURRENT ROW
@@ -179,10 +163,20 @@ latest_supported_assets AS (
                 ) AS final_price,
                 CASE
                     WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
+                        p.blockchain ignore nulls
+                    ) over (
+                        PARTITION BY d.symbol
+                        ORDER BY
+                            d.date_hour rows BETWEEN unbounded preceding
+                            AND CURRENT ROW
+                    )
+                    ELSE p.blockchain
+                END AS blockchain,
+                CASE
+                    WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
                         p.id ignore nulls
                     ) over (
-                        PARTITION BY d.symbol,
-                        d.blockchain
+                        PARTITION BY d.symbol
                         ORDER BY
                             d.date_hour rows BETWEEN unbounded preceding
                             AND CURRENT ROW
@@ -193,8 +187,7 @@ latest_supported_assets AS (
                     WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
                         p.provider ignore nulls
                     ) over (
-                        PARTITION BY d.symbol,
-                        d.blockchain
+                        PARTITION BY d.symbol
                         ORDER BY
                             d.date_hour rows BETWEEN unbounded preceding
                             AND CURRENT ROW
@@ -222,7 +215,6 @@ latest_supported_assets AS (
                 ) = LOWER(
                     p.symbol
                 )
-                AND d.blockchain = p.blockchain
                 AND d.date_hour = p.recorded_hour
                 LEFT JOIN latest_supported_assets s
                 ON LOWER(
@@ -230,7 +222,6 @@ latest_supported_assets AS (
                 ) = LOWER(
                     s.symbol
                 )
-                AND d.blockchain = s.blockchain
         )
     {% endif %},
     FINAL AS (
@@ -281,13 +272,13 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','symbol','blockchain']) }} AS native_prices_priority_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','symbol']) }} AS native_prices_priority_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     FINAL
 
 {% if is_incremental() %}
-qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol, blockchain
+qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol
 ORDER BY
     priority ASC, id ASC, _inserted_timestamp DESC)) = 1
 {% endif %}

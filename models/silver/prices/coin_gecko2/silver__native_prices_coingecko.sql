@@ -14,7 +14,7 @@ WITH base_prices AS (
         p.recorded_hour,
         m.symbol,
         p.id,
-        m.platform,
+        m.name,
         p.close,
         p.source,
         p._inserted_timestamp
@@ -45,23 +45,20 @@ latest_supported_assets AS (
     -- get the latest supported timestamp for each asset
     SELECT
         symbol,
-        platform,
         DATE_TRUNC('hour', MAX(_inserted_timestamp)) AS last_supported_timestamp
     FROM
         {{ ref(
             'silver__native_asset_metadata_coingecko'
         ) }}
     GROUP BY
-        1,
-        2
+        1
 )
 
 {% if is_incremental() %},
 price_gaps AS (
-    -- identify missing prices by id and platform
+    -- identify missing prices by symbol
     SELECT
         symbol,
-        platform,
         recorded_hour,
         prev_recorded_hour,
         gap
@@ -69,14 +66,12 @@ price_gaps AS (
         (
             SELECT
                 symbol,
-                platform,
                 recorded_hour,
                 LAG(
                     recorded_hour,
                     1
                 ) over (
-                    PARTITION BY id,
-                    platform
+                    PARTITION BY symbol
                     ORDER BY
                         recorded_hour ASC
                 ) AS prev_RECORDED_HOUR,
@@ -96,24 +91,16 @@ native_asset_metadata AS (
     SELECT
         symbol,
         id,
-        platform,
+        NAME,
         _inserted_timestamp
     FROM
         {{ ref(
             'silver__native_asset_metadata_coingecko'
         ) }}
     WHERE
-        CONCAT(
-            symbol,
-            '-',
-            platform
-        ) IN (
+        symbol IN (
             SELECT
-                CONCAT(
-                    symbol,
-                    '-',
-                    platform
-                )
+                symbol
             FROM
                 price_gaps
         )
@@ -124,7 +111,7 @@ date_hours AS (
         date_hour,
         symbol,
         id,
-        platform
+        NAME
     FROM
         {{ ref('core__dim_date_hours') }}
         CROSS JOIN native_asset_metadata
@@ -148,7 +135,7 @@ imputed_prices AS (
         d.date_hour,
         d.symbol,
         d.id,
-        d.platform,
+        d.name,
         CASE
             WHEN d.date_hour <= s.last_supported_timestamp THEN p.close
             ELSE NULL
@@ -158,8 +145,7 @@ imputed_prices AS (
             AND d.date_hour <= s.last_supported_timestamp THEN LAST_VALUE(
                 hourly_price ignore nulls
             ) over (
-                PARTITION BY d.symbol,
-                d.platform
+                PARTITION BY d.symbol
                 ORDER BY
                     d.date_hour rows BETWEEN unbounded preceding
                     AND CURRENT ROW
@@ -187,11 +173,9 @@ imputed_prices AS (
         LEFT JOIN {{ this }}
         p
         ON d.symbol = p.symbol
-        AND d.platform = p.platform
         AND d.date_hour = p.recorded_hour
         LEFT JOIN latest_supported_assets s
         ON d.symbol = s.symbol
-        AND d.platform = s.platform
 )
 {% endif %},
 FINAL AS (
@@ -199,7 +183,7 @@ FINAL AS (
         p.recorded_hour,
         p.symbol,
         p.id,
-        p.platform,
+        p.name,
         CASE
             WHEN p.recorded_hour <= s.last_supported_timestamp THEN p.close
             ELSE NULL
@@ -212,7 +196,6 @@ FINAL AS (
         base_prices p
         LEFT JOIN latest_supported_assets s
         ON p.symbol = s.symbol
-        AND p.platform = s.platform
     WHERE
         close_price IS NOT NULL
 
@@ -222,7 +205,7 @@ SELECT
     date_hour AS recorded_hour,
     symbol,
     id,
-    platform,
+    NAME,
     final_price AS close_price,
     imputed AS is_imputed,
     source,
@@ -238,16 +221,16 @@ SELECT
     recorded_hour,
     symbol,
     id,
-    platform,
+    NAME,
     close_price AS CLOSE,
     is_imputed,
     source,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','symbol','platform']) }} AS native_prices_coingecko_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','symbol']) }} AS native_prices_coingecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    FINAL qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol, platform
+    FINAL qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol
 ORDER BY
     _inserted_timestamp DESC)) = 1

@@ -11,12 +11,10 @@ models:
     columns:
       - name: ASSET_ID
         description: The unique identifier representing the asset.
-      - name: NAME
-        description: The name of asset.
       - name: SYMBOL
         description: The symbol of asset.
       - name: BLOCKCHAIN
-        description: The platform where this asset has a token address.
+        description: The Blockchain, Network, or Platform where this asset is native to. This column is derived from the name column in dim_provider_asset_metadata.
       - name: EZ_NATIVE_ASSET_METADATA_ID
         description: '{{ doc("pk") }}'   
         tests:

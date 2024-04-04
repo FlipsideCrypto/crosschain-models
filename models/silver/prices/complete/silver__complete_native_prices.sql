@@ -18,7 +18,6 @@ SELECT
     UPPER(
         p.symbol
     ) AS symbol,
-    m.name AS NAME,
     price,
     p.blockchain,
     is_imputed,
@@ -39,7 +38,6 @@ FROM
     ) = LOWER(
         m.symbol
     )
-    AND p.blockchain = m.blockchain
 
 {% if is_incremental() %}
 WHERE
@@ -51,6 +49,6 @@ WHERE
     )
 {% endif %}
 
-qualify(ROW_NUMBER() over (PARTITION BY p.symbol, p.blockchain, HOUR
+qualify(ROW_NUMBER() over (PARTITION BY p.symbol, HOUR
 ORDER BY
     p._inserted_timestamp DESC)) = 1

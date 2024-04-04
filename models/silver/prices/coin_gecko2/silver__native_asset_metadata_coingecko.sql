@@ -11,7 +11,9 @@ WITH base_assets AS (
 
     SELECT
         A.id,
-        A.name,
+        LOWER(
+            A.name
+        ) AS NAME,
         LOWER(
             A.symbol
         ) AS symbol,
@@ -48,7 +50,6 @@ current_supported_assets AS (
     -- get all assets currently supported
     SELECT
         symbol,
-        name,
         _inserted_timestamp
     FROM
         base_assets
@@ -72,8 +73,10 @@ base_adj AS (
             END
         ) AS id_adj,
         CASE
-            WHEN LENGTH(TRIM(NAME)) <= 0 THEN NULL
-            ELSE TRIM(NAME)
+            WHEN LENGTH(TRIM(A.name)) <= 0 THEN NULL
+            ELSE TRIM(
+                A.name
+            )
         END AS name_adj,
         CASE
             WHEN LENGTH(TRIM(A.symbol)) <= 0 THEN NULL
@@ -91,7 +94,6 @@ base_adj AS (
         base_assets A
         LEFT JOIN current_supported_assets C
         ON A.symbol = C.symbol
-        AND A.name = C.name
 )
 SELECT
     id_adj AS id,
@@ -102,12 +104,12 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['symbol','name']) }} AS native_asset_metadata_coingecko_id,
+    {{ dbt_utils.generate_surrogate_key(['symbol']) }} AS native_asset_metadata_coingecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     base_adj
 WHERE
     symbol IS NOT NULL
-    AND name IS NOT NULL qualify(ROW_NUMBER() over (PARTITION BY symbol, name
+    AND NAME IS NOT NULL qualify(ROW_NUMBER() over (PARTITION BY symbol
 ORDER BY
     _inserted_timestamp DESC)) = 1 -- built for native assets

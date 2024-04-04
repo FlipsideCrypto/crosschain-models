@@ -6,7 +6,6 @@ models:
           combination_of_columns:
             - RECORDED_HOUR
             - SYMBOL
-            - BLOCKCHAIN
             - PROVIDER
     columns:
       - name: RECORDED_HOUR

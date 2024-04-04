@@ -11,11 +11,12 @@ WITH base_assets AS (
 
     SELECT
         A.id,
-        A.name,
+        LOWER(
+            A.name
+        ) AS NAME,
         LOWER(
             A.symbol
         ) AS symbol,
-        n.platform,
         source,
         _inserted_timestamp
     FROM
@@ -49,7 +50,6 @@ current_supported_assets AS (
     -- get all assets currently supported
     SELECT
         symbol,
-        platform,
         _inserted_timestamp
     FROM
         base_assets
@@ -73,8 +73,10 @@ base_adj AS (
             END
         ) AS id_adj,
         CASE
-            WHEN LENGTH(TRIM(NAME)) <= 0 THEN NULL
-            ELSE TRIM(NAME)
+            WHEN LENGTH(TRIM(A.name)) <= 0 THEN NULL
+            ELSE TRIM(
+                A.name
+            )
         END AS name_adj,
         CASE
             WHEN LENGTH(TRIM(A.symbol)) <= 0 THEN NULL
@@ -82,14 +84,6 @@ base_adj AS (
                 A.symbol
             )
         END AS symbol_adj,
-        LOWER(
-            CASE
-                WHEN LENGTH(TRIM(A.platform)) <= 0 THEN NULL
-                ELSE TRIM(
-                    A.platform
-                )
-            END
-        ) AS platform_adj,
         source,
         CASE
             WHEN C.symbol IS NOT NULL THEN FALSE
@@ -100,24 +94,22 @@ base_adj AS (
         base_assets A
         LEFT JOIN current_supported_assets C
         ON A.symbol = C.symbol
-        AND A.platform = C.platform
 )
 SELECT
     id_adj AS id,
     name_adj AS NAME,
     symbol_adj AS symbol,
-    platform_adj AS platform,
     source,
     is_deprecated,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['symbol','platform']) }} AS native_asset_metadata_coinmarketcap_id,
+    {{ dbt_utils.generate_surrogate_key(['symbol']) }} AS native_asset_metadata_coinmarketcap_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     base_adj
 WHERE
     symbol IS NOT NULL
-    AND platform IS NOT NULL qualify(ROW_NUMBER() over (PARTITION BY symbol, platform
+    AND NAME IS NOT NULL qualify(ROW_NUMBER() over (PARTITION BY symbol
 ORDER BY
     _inserted_timestamp DESC)) = 1 -- built for native assets

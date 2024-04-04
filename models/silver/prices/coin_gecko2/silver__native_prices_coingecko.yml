@@ -6,14 +6,12 @@ models:
           combination_of_columns:
             - RECORDED_HOUR
             - SYMBOL
-            - PLATFORM
 
     columns:
       - name: RECORDED_HOUR
         tests:
           - price_hour_sequence_gaps:
               partition_by_1: SYMBOL
-              partition_by_2: PLATFORM
               column_name: RECORDED_HOUR
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
@@ -24,7 +22,7 @@ models:
       - name: SYMBOL
         tests:
           - not_null
-      - name: PLATFORM
+      - name: NAME
         tests:
           - not_null
       - name: CLOSE

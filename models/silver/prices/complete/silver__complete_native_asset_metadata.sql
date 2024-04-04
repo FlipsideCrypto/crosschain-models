@@ -9,7 +9,6 @@
 SELECT
     id AS asset_id,
     UPPER(symbol) AS symbol,
-    LOWER(NAME) AS NAME,
     blockchain,
     is_deprecated,
     provider,

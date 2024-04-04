@@ -9,7 +9,7 @@ models:
       - name: SYMBOL
         description: Symbol of the token
       - name: BLOCKCHAIN
-        description: The Blockchain, Network, or Platform where this asset has a token address. This column is derived by manually grouping blockchain_name, for reference purposes.
+        description: The Blockchain, Network, or Platform where this asset is native to. This column is derived from the name column in dim_provider_asset_metadata.
       - name: PRICE
         description: Closing price of the recorded hour in USD
       - name: IS_IMPUTED

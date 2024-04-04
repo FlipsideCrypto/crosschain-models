@@ -7,7 +7,6 @@
 SELECT
     asset_id,
     symbol,
-    NAME,
     blockchain,
     is_deprecated,
     inserted_timestamp,

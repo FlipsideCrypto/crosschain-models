@@ -12,7 +12,7 @@ WITH coin_gecko AS (
         recorded_hour,
         symbol,
         id,
-        platform,
+        NAME,
         CLOSE AS price,
         is_imputed,
         'coingecko' AS provider,
@@ -36,7 +36,7 @@ coin_market_cap AS (
         recorded_hour,
         symbol,
         id,
-        platform,
+        NAME,
         CLOSE AS price,
         is_imputed,
         'coinmarketcap' AS provider,
@@ -70,7 +70,7 @@ SELECT
     recorded_hour,
     symbol,
     id,
-    platform AS blockchain,
+    NAME AS blockchain,
     price,
     is_imputed,
     provider,
@@ -78,9 +78,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','symbol','blockchain','provider']) }} AS native_prices_all_providers_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','symbol','provider']) }} AS native_prices_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol, blockchain, provider
+    all_providers qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

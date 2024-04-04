@@ -12,7 +12,6 @@ WITH coin_gecko AS (
         id,
         NAME,
         symbol,
-        platform,
         'coingecko' AS provider,
         source,
         is_deprecated,
@@ -37,7 +36,6 @@ coin_market_cap AS (
         id,
         NAME,
         symbol,
-        platform,
         'coinmarketcap' AS provider,
         source,
         is_deprecated,
@@ -70,18 +68,17 @@ all_providers AS (
 )
 SELECT
     id,
-    NAME,
+    NAME AS blockchain,
     symbol,
-    platform AS blockchain,
     provider,
     source,
     is_deprecated,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['symbol','blockchain','provider']) }} AS native_asset_metadata_all_providers_id,
+    {{ dbt_utils.generate_surrogate_key(['symbol','provider']) }} AS native_asset_metadata_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers p qualify(ROW_NUMBER() over (PARTITION BY symbol, blockchain, provider
+    all_providers p qualify(ROW_NUMBER() over (PARTITION BY symbol, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

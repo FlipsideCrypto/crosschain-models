@@ -6,7 +6,6 @@ models:
           combination_of_columns:
             - RECORDED_HOUR
             - SYMBOL
-            - BLOCKCHAIN
 
     columns:
       - name: RECORDED_HOUR
@@ -16,7 +15,6 @@ models:
               interval: 1
           - price_hour_sequence_gaps:
               partition_by_1: SYMBOL
-              partition_by_2: BLOCKCHAIN
               column_name: RECORDED_HOUR
       - name: ID
         tests:

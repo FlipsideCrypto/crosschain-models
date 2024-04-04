@@ -6,7 +6,6 @@ models:
           combination_of_columns:
             - HOUR
             - SYMBOL
-            - BLOCKCHAIN
 
     columns:
       - name: HOUR
