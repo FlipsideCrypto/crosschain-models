@@ -99,6 +99,9 @@ coingecko,MultiVAC,MTV,multivac
 coingecko,LiquidLayer,LILA,liquidlayer
 coingecko,Epic Cash,EPIC,epic-cash
 coingecko,Unique Network,UNQ,unique-network
+coingecko,THORChain,RUNE,thorchain
+coingecko,Axelar,AXL,axelar
+coingecko,Osmosis,OSMO,osmosis
 coinmarketcap,Bitcoin,BTC,1
 coinmarketcap,Ethereum,ETH,1027
 coinmarketcap,BNB,BNB,1839
@@ -200,3 +203,6 @@ coinmarketcap,ULTRON,ULX,21524
 coinmarketcap,Chihuahua,HUAHUA,17208
 coinmarketcap,Karlsen,KLS,29968
 coinmarketcap,Jackal Protocol,JKL,25261
+coinmarketcap,THORChain,RUNE,4157
+coinmarketcap,Axelar,AXL,17799
+coinmarketcap,Osmosis,OSMO,12220

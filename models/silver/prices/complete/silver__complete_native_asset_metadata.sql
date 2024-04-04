@@ -6,9 +6,11 @@
     tags = ['prices']
 ) }}
 
+WITH base_assets AS (
+    
 SELECT
     id AS asset_id,
-    UPPER(symbol) AS symbol,
+    UPPER(symbol) AS symbol_adj,
     blockchain,
     is_deprecated,
     provider,
@@ -28,4 +30,24 @@ WHERE
         FROM
             {{ this }}
     )
+    OR symbol_adj NOT IN (
+        SELECT
+            DISTINCT symbol
+        FROM
+            {{ this }}
+    ) --load all data for new assets
 {% endif %}
+)
+
+SELECT
+    asset_id,
+    symbol_adj AS symbol,
+    blockchain,
+    is_deprecated,
+    provider,
+    source,
+    _inserted_timestamp,
+    inserted_timestamp,
+    modified_timestamp,
+    complete_native_asset_metadata_id
+FROM base_assets

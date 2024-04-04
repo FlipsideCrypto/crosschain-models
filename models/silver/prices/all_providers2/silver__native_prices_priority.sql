@@ -43,6 +43,12 @@ WHERE
         FROM
             {{ this }}
     )
+    OR symbol NOT IN (
+        SELECT
+            DISTINCT symbol
+        FROM
+            {{ this }}
+    )  --load all data for new assets
 {% endif %}
 
 qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol

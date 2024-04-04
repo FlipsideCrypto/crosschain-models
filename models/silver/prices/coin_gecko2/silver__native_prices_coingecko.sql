@@ -29,15 +29,25 @@ WITH base_prices AS (
         m
         ON m.id = LOWER(TRIM(p.id))
     WHERE
-        p.close <> 0
-        AND p.recorded_hour :: DATE <> '1970-01-01'
+        (
+            p.close <> 0
+            AND p.recorded_hour :: DATE <> '1970-01-01'
+        )
 
 {% if is_incremental() %}
-AND p._inserted_timestamp >= (
-    SELECT
-        MAX(_inserted_timestamp)
-    FROM
-        {{ this }}
+AND (
+    p._inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp)
+        FROM
+            {{ this }}
+    )
+    OR p.id NOT IN (
+        SELECT
+            DISTINCT id
+        FROM
+            {{ this }}
+    ) --load all data for new assets
 )
 {% endif %}
 ),

@@ -21,7 +21,7 @@ WITH base_assets AS (
         _inserted_timestamp
     FROM
         {{ ref('bronze__all_asset_metadata_coinmarketcap2') }} A
-        INNER JOIN {{ ref('silver__native_asset_metadata') }}
+        INNER JOIN {{ ref('silver__native_asset_metadata_seed') }}
         n
         ON LOWER(
             A.id
@@ -38,12 +38,19 @@ WITH base_assets AS (
         ) = LOWER(n.symbol)
 
 {% if is_incremental() %}
-AND _inserted_timestamp >= (
-    SELECT
-        MAX(_inserted_timestamp)
-    FROM
-        {{ this }}
-)
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp)
+        FROM
+            {{ this }}
+    )
+    OR A.id NOT IN (
+        SELECT
+            DISTINCT id
+        FROM
+            {{ this }}
+    ) --load all data for new assets
 {% endif %}
 ),
 current_supported_assets AS (

@@ -7,7 +7,6 @@
 ) }}
 
 WITH all_providers AS (
-
     SELECT
         id,
         symbol,
@@ -31,6 +30,12 @@ WHERE
         FROM
             {{ this }}
     )
+    OR symbol NOT IN (
+        SELECT
+            DISTINCT symbol
+        FROM
+            {{ this }}
+    )  --load all data for new assets
 {% endif %}
 )
 SELECT
@@ -49,5 +54,4 @@ SELECT
 FROM
     all_providers qualify(ROW_NUMBER() over (PARTITION BY symbol
 ORDER BY
-    _inserted_timestamp DESC, priority ASC, blockchain ASC, id ASC)) = 1 
-    -- select the last inserted record (latest supported provider), then by priority etc.
+    _inserted_timestamp DESC, priority ASC, blockchain ASC, id ASC)) = 1 -- select the last inserted record (latest supported provider), then by priority etc.

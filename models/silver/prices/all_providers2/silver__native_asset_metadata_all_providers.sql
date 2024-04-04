@@ -29,6 +29,12 @@ WHERE
         FROM
             {{ this }}
     )
+    OR id NOT IN (
+        SELECT
+            DISTINCT id
+        FROM
+            {{ this }}
+    )  --load all data for new assets
 {% endif %}
 ),
 coin_market_cap AS (
@@ -53,6 +59,12 @@ WHERE
         FROM
             {{ this }}
     )
+    OR id NOT IN (
+        SELECT
+            DISTINCT id
+        FROM
+            {{ this }}
+    )  --load all data for new assets
 {% endif %}
 ),
 all_providers AS (
