@@ -74,9 +74,12 @@ price_gaps AS (
                 LAG(
                     recorded_hour,
                     1
-                ) over (PARTITION BY id, platform
-            ORDER BY
-                recorded_hour ASC) AS prev_RECORDED_HOUR,
+                ) over (
+                    PARTITION BY id,
+                    platform
+                    ORDER BY
+                        recorded_hour ASC
+                ) AS prev_RECORDED_HOUR,
                 DATEDIFF(
                     HOUR,
                     prev_RECORDED_HOUR,
@@ -100,109 +103,118 @@ native_asset_metadata AS (
             'silver__native_asset_metadata_coinmarketcap'
         ) }}
     WHERE
-        CONCAT(symbol, '-', platform) IN (
+        CONCAT(
+            symbol,
+            '-',
+            platform
+        ) IN (
             SELECT
-                CONCAT(symbol, '-', platform)
-            FROM
-                price_gaps)
-        ),
-        date_hours AS (
-            -- generate spine of all possible hours, between gaps
-            SELECT
-                date_hour,
-                symbol,
-                id,
-                platform
-            FROM
-                {{ ref('core__dim_date_hours') }}
-                CROSS JOIN native_asset_metadata
-            WHERE
-                date_hour <= (
-                    SELECT
-                        MAX(recorded_hour)
-                    FROM
-                        price_gaps
+                CONCAT(
+                    symbol,
+                    '-',
+                    platform
                 )
-                AND date_hour >= (
-                    SELECT
-                        MIN(prev_recorded_hour)
-                    FROM
-                        price_gaps
-                )
-        ),
-        imputed_prices AS (
-            -- impute missing prices
-            SELECT
-                d.date_hour,
-                d.symbol,
-                d.id,
-                d.platform,
-                CASE
-                    WHEN d.date_hour <= s.last_supported_timestamp THEN p.close
-                    ELSE NULL
-                END AS hourly_price,
-                CASE
-                    WHEN hourly_price IS NULL
-                    AND d.date_hour <= s.last_supported_timestamp THEN LAST_VALUE(
-                        hourly_price ignore nulls
-                    ) over (
-                        PARTITION BY d.symbol,
-                        d.platform
-                        ORDER BY
-                            d.date_hour rows BETWEEN unbounded preceding
-                            AND CURRENT ROW
-                    )
-                    ELSE NULL
-                END AS imputed_price,
-                CASE
-                    WHEN imputed_price IS NOT NULL THEN TRUE
-                    ELSE p.is_imputed
-                END AS imputed,
-                COALESCE(
-                    hourly_price,
-                    imputed_price
-                ) AS final_price,
-                CASE
-                    WHEN imputed_price IS NOT NULL THEN 'imputed_cg'
-                    ELSE p.source
-                END AS source,
-                CASE
-                    WHEN imputed_price IS NOT NULL THEN SYSDATE()
-                    ELSE p._inserted_timestamp
-                END AS _inserted_timestamp
             FROM
-                date_hours d
-                LEFT JOIN {{ this }}
-                p
-                ON d.symbol = p.symbol
-                AND d.platform = p.platform
-                AND d.date_hour = p.recorded_hour
-                LEFT JOIN latest_supported_assets s
-                ON d.symbol = s.symbol
-                AND d.platform = s.platform
+                price_gaps
         )
-    {% endif %},
-    FINAL AS (
-        SELECT
-            p.recorded_hour,
-            p.symbol,
-            p.id,
-            p.platform,
-            CASE
-                WHEN p.recorded_hour <= s.last_supported_timestamp THEN p.close
-                ELSE NULL
-            END AS close_price,
-            -- only include prices during supported ranges
-            FALSE AS is_imputed,
-            p.source,
-            p._inserted_timestamp
-        FROM
-            base_prices p
-            LEFT JOIN latest_supported_assets s
-            ON p.symbol = s.symbol
-            AND p.platform = s.platform
-        WHERE
-            close_price IS NOT NULL
+),
+date_hours AS (
+    -- generate spine of all possible hours, between gaps
+    SELECT
+        date_hour,
+        symbol,
+        id,
+        platform
+    FROM
+        {{ ref('core__dim_date_hours') }}
+        CROSS JOIN native_asset_metadata
+    WHERE
+        date_hour <= (
+            SELECT
+                MAX(recorded_hour)
+            FROM
+                price_gaps
+        )
+        AND date_hour >= (
+            SELECT
+                MIN(prev_recorded_hour)
+            FROM
+                price_gaps
+        )
+),
+imputed_prices AS (
+    -- impute missing prices
+    SELECT
+        d.date_hour,
+        d.symbol,
+        d.id,
+        d.platform,
+        CASE
+            WHEN d.date_hour <= s.last_supported_timestamp THEN p.close
+            ELSE NULL
+        END AS hourly_price,
+        CASE
+            WHEN hourly_price IS NULL
+            AND d.date_hour <= s.last_supported_timestamp THEN LAST_VALUE(
+                hourly_price ignore nulls
+            ) over (
+                PARTITION BY d.symbol,
+                d.platform
+                ORDER BY
+                    d.date_hour rows BETWEEN unbounded preceding
+                    AND CURRENT ROW
+            )
+            ELSE NULL
+        END AS imputed_price,
+        CASE
+            WHEN imputed_price IS NOT NULL THEN TRUE
+            ELSE p.is_imputed
+        END AS imputed,
+        COALESCE(
+            hourly_price,
+            imputed_price
+        ) AS final_price,
+        CASE
+            WHEN imputed_price IS NOT NULL THEN 'imputed_cg'
+            ELSE p.source
+        END AS source,
+        CASE
+            WHEN imputed_price IS NOT NULL THEN SYSDATE()
+            ELSE p._inserted_timestamp
+        END AS _inserted_timestamp
+    FROM
+        date_hours d
+        LEFT JOIN {{ this }}
+        p
+        ON d.symbol = p.symbol
+        AND d.platform = p.platform
+        AND d.date_hour = p.recorded_hour
+        LEFT JOIN latest_supported_assets s
+        ON d.symbol = s.symbol
+        AND d.platform = s.platform
+)
+{% endif %},
+FINAL AS (
+    SELECT
+        p.recorded_hour,
+        p.symbol,
+        p.id,
+        p.platform,
+        CASE
+            WHEN p.recorded_hour <= s.last_supported_timestamp THEN p.close
+            ELSE NULL
+        END AS close_price,
+        -- only include prices during supported ranges
+        FALSE AS is_imputed,
+        p.source,
+        p._inserted_timestamp
+    FROM
+        base_prices p
+        LEFT JOIN latest_supported_assets s
+        ON p.symbol = s.symbol
+        AND p.platform = s.platform
+    WHERE
+        close_price IS NOT NULL
 
 {% if is_incremental() %}
 UNION ALL

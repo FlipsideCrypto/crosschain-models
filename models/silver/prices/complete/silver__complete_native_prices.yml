@@ -1,24 +1,15 @@
 version: 2
 models:
-  - name: silver__native_prices_priority
+  - name: silver__complete_native_prices
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - RECORDED_HOUR
+            - HOUR
             - SYMBOL
             - BLOCKCHAIN
 
     columns:
-      - name: RECORDED_HOUR
-        tests:
-          - dbt_expectations.expect_row_values_to_have_recent_data:
-              datepart: day
-              interval: 1
-          - price_hour_sequence_gaps:
-              partition_by_1: SYMBOL
-              partition_by_2: BLOCKCHAIN
-              column_name: RECORDED_HOUR
-      - name: ID
+      - name: HOUR
         tests:
           - not_null
       - name: SYMBOL

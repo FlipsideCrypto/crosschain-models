@@ -1,0 +1,28 @@
+version: 2
+models:
+  - name: price_temp__ez_native_asset_metadata_temp
+    description: A convenience table holding prioritized asset metadata and other relevant details pertaining to each native asset.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - SYMBOL
+            - BLOCKCHAIN
+
+    columns:
+      - name: ASSET_ID
+        description: The unique identifier representing the asset.
+      - name: NAME
+        description: The name of asset.
+      - name: SYMBOL
+        description: The symbol of asset.
+      - name: BLOCKCHAIN
+        description: The platform where this asset has a token address.
+      - name: EZ_NATIVE_ASSET_METADATA_ID
+        description: '{{ doc("pk") }}'   
+        tests:
+          - unique
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 
+      

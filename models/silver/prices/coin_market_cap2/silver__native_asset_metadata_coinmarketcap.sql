@@ -12,7 +12,9 @@ WITH base_assets AS (
     SELECT
         A.id,
         A.name,
-        LOWER(A.symbol) AS symbol,
+        LOWER(
+            A.symbol
+        ) AS symbol,
         n.platform,
         source,
         _inserted_timestamp
@@ -76,7 +78,9 @@ base_adj AS (
         END AS name_adj,
         CASE
             WHEN LENGTH(TRIM(A.symbol)) <= 0 THEN NULL
-            ELSE TRIM(A.symbol)
+            ELSE TRIM(
+                A.symbol
+            )
         END AS symbol_adj,
         LOWER(
             CASE

@@ -5,7 +5,7 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - RECORDED_HOUR
-            - ID
+            - SYMBOL
             - BLOCKCHAIN
             - PROVIDER
     columns:
@@ -15,6 +15,9 @@ models:
               datepart: day
               interval: 1
       - name: ID
+        tests:
+          - not_null
+      - name: SYMBOL
         tests:
           - not_null
       - name: BLOCKCHAIN

@@ -70,7 +70,7 @@ all_providers AS (
 )
 SELECT
     id,
-    name,
+    NAME,
     symbol,
     platform AS blockchain,
     provider,

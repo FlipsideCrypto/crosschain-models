@@ -2,7 +2,7 @@
     materialized = 'incremental',
     unique_key = ['native_asset_metadata_priority_id'],
     incremental_strategy = 'delete+insert',
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(id, blockchain)",
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(symbol, blockchain)",
     tags = ['prices']
 ) }}
 
@@ -51,5 +51,5 @@ SELECT
 FROM
     all_providers qualify(ROW_NUMBER() over (PARTITION BY symbol, blockchain
 ORDER BY
-    _inserted_timestamp DESC, priority ASC, id ASC)) = 1
--- select the last inserted record (latest supported provider), then by priority etc.
+    _inserted_timestamp DESC, priority ASC, id ASC)) = 1 
+    -- select the last inserted record (latest supported provider), then by priority etc.

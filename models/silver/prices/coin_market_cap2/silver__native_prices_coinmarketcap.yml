@@ -5,20 +5,23 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - RECORDED_HOUR
-            - ID
+            - SYMBOL
             - PLATFORM
 
     columns:
       - name: RECORDED_HOUR
         tests:
           - price_hour_sequence_gaps:
-              partition_by_1: ID
+              partition_by_1: SYMBOL
               partition_by_2: PLATFORM
               column_name: RECORDED_HOUR
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
               interval: 1
       - name: ID
+        tests:
+          - not_null
+      - name: SYMBOL
         tests:
           - not_null
       - name: PLATFORM
