@@ -20,3 +20,20 @@ SELECT
     complete_token_asset_metadata_id AS ez_asset_metadata_id
 FROM
     {{ ref('silver__complete_token_asset_metadata') }}
+UNION ALL
+SELECT
+    NULL AS token_address,
+    asset_id AS id, -- id column pending deprecation
+    asset_id,
+    symbol,
+    blockchain AS NAME,
+    NULL decimals,
+    blockchain,
+    blockchain AS blockchain_name,
+    blockchain AS blockchain_id,
+    is_deprecated,
+    inserted_timestamp,
+    modified_timestamp,
+    complete_native_asset_metadata_id AS ez_asset_metadata_id
+FROM
+    {{ ref('silver__complete_native_asset_metadata')}}
