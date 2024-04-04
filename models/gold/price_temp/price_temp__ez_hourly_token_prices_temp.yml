@@ -11,7 +11,7 @@ models:
       - name: SYMBOL
         description: Symbol of the token
       - name: DECIMALS
-        description: The number of decimals for token contract. May be NULL if referring to a native asset.
+        description: The number of decimals for token contract. May be NULL or 'native' if referring to a native asset.
       - name: BLOCKCHAIN
         description: The Blockchain, Network, or Platform where this asset has a token address. This column is derived by manually grouping blockchain_name, for reference purposes. 
       - name: BLOCKCHAIN_NAME

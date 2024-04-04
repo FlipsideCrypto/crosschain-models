@@ -22,12 +22,12 @@ FROM
     {{ ref('silver__complete_token_asset_metadata') }}
 UNION ALL
 SELECT
-    NULL AS token_address,
+    'native' AS token_address,
     asset_id AS id, -- id column pending deprecation
     asset_id,
     symbol,
     blockchain AS NAME,
-    NULL decimals,
+    NULL AS decimals,
     blockchain,
     blockchain AS blockchain_name,
     blockchain AS blockchain_id,

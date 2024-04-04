@@ -23,7 +23,7 @@ FROM
 UNION ALL
 SELECT
     HOUR,
-    NULL AS token_address,
+    'native' AS token_address,
     symbol,
     NULL AS decimals,
     price,
