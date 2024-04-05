@@ -7,7 +7,7 @@ models:
       - name: HOUR
         description: Hour that the price was recorded at
       - name: TOKEN_ADDRESS
-        description: Address of the token. May be NULL if referring to a native asset.
+        description: Address of the token. This will be NULL if referring to a native asset.
       - name: SYMBOL
         description: Symbol of the token
       - name: DECIMALS
