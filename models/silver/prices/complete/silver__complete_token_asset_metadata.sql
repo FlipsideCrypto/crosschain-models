@@ -22,9 +22,10 @@ SELECT
     A.provider,
     A.source,
     A._inserted_timestamp,
-    GREATEST(COALESCE(A.inserted_timestamp, '2000-01-01'), COALESCE(C.inserted_timestamp, '2000-01-01')) AS inserted_timestamp,
-    GREATEST(COALESCE(A.modified_timestamp, '2000-01-01'), COALESCE(C.modified_timestamp, '2000-01-01')) AS modified_timestamp,
-    token_asset_metadata_priority_id AS complete_token_asset_metadata_id
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','A.blockchain']) }} AS complete_token_asset_metadata_id,
+    '{{ invocation_id }}' AS _invocation_id
 FROM
     {{ ref('silver__token_asset_metadata_priority2') }} A
     LEFT JOIN {{ ref('core__dim_contracts') }} C
