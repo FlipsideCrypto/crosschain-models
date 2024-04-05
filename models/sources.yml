@@ -743,6 +743,11 @@ sources:
       - name: abis
       - name: traces
       - name: blocks
+  - name: blast_core
+    database: blast
+    schema: core
+    tables:
+      - name: dim_contracts
   - name: github_actions
     database: crosschain
     schema: github_actions
