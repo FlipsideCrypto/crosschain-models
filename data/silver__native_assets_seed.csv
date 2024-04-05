@@ -1,17 +1,17 @@
 provider,name,symbol,id,decimals
-coingecko,Bitcoin,BTC,bitcoin
+coingecko,Bitcoin,BTC,bitcoin,8
 coingecko,Ethereum,ETH,ethereum,18
 coingecko,BNB,BNB,binancecoin,18
-coingecko,Solana,SOL,solana
+coingecko,Solana,SOL,solana,18
 coingecko,Cardano,ADA,cardano
 coingecko,Avalanche,AVAX,avalanche-2,18
 coingecko,Toncoin,TON,the-open-network
 coingecko,Bitcoin Cash,BCH,bitcoin-cash
 coingecko,TRON,TRX,tron
-coingecko,NEAR Protocol,NEAR,near
-coingecko,Aptos,APT,aptos
+coingecko,NEAR Protocol,NEAR,near,18
+coingecko,Aptos,APT,aptos,18
 coingecko,Filecoin,FIL,filecoin
-coingecko,Cosmos Hub,ATOM,cosmos
+coingecko,Cosmos Hub,ATOM,cosmos,18
 coingecko,Cronos,CRO,crypto-com-chain
 coingecko,Hedera,HBAR,hedera-hashgraph
 coingecko,Kaspa,KAS,kaspa
@@ -22,9 +22,9 @@ coingecko,Arweave,AR,arweave
 coingecko,Sui,SUI,sui
 coingecko,GALA,GALA,gala
 coingecko,Core,CORE,coredaoorg
-coingecko,Sei,SEI,sei-network
+coingecko,Sei,SEI,sei-network,18
 coingecko,Algorand,ALGO,algorand
-coingecko,Flow,FLOW,flow
+coingecko,Flow,FLOW,flow,18
 coingecko,MultiversX,EGLD,elrond-erd-2
 coingecko,Flare,FLR,flare-networks
 coingecko,eCash,XEC,ecash
@@ -99,13 +99,13 @@ coingecko,MultiVAC,MTV,multivac
 coingecko,LiquidLayer,LILA,liquidlayer
 coingecko,Epic Cash,EPIC,epic-cash
 coingecko,Unique Network,UNQ,unique-network
-coingecko,THORChain,RUNE,thorchain
+coingecko,THORChain,RUNE,thorchain,18
 coingecko,Axelar,AXL,axelar,18
 coingecko,Osmosis,OSMO,osmosis,18
-coinmarketcap,Bitcoin,BTC,1
+coinmarketcap,Bitcoin,BTC,1,8
 coinmarketcap,Ethereum,ETH,1027,18
 coinmarketcap,BNB,BNB,1839,18
-coinmarketcap,Solana,SOL,5426
+coinmarketcap,Solana,SOL,5426,18
 coinmarketcap,Cardano,ADA,2010
 coinmarketcap,Avalanche,AVAX,5805,18
 coinmarketcap,Toncoin,TON,11419
@@ -113,9 +113,9 @@ coinmarketcap,Bitcoin Cash,BCH,1831
 coinmarketcap,Polkadot,DOT,6636
 coinmarketcap,TRON,TRX,1958
 coinmarketcap,Internet Computer,ICP,8916
-coinmarketcap,NEAR Protocol,NEAR,6535
-coinmarketcap,Aptos,APT,21794
-coinmarketcap,Cosmos,ATOM,3794
+coinmarketcap,NEAR Protocol,NEAR,6535,18
+coinmarketcap,Aptos,APT,21794,18
+coinmarketcap,Cosmos,ATOM,3794,18
 coinmarketcap,Cronos,CRO,3635
 coinmarketcap,Hedera,HBAR,4642
 coinmarketcap,Injective,INJ,7226
@@ -123,9 +123,9 @@ coinmarketcap,Kaspa,KAS,20396
 coinmarketcap,Theta Network,THETA,2416
 coinmarketcap,Fantom,FTM,3513,18
 coinmarketcap,Sui,SUI,20947
-coinmarketcap,Sei,SEI,23149
+coinmarketcap,Sei,SEI,23149,18
 coinmarketcap,Algorand,ALGO,4030
-coinmarketcap,Flow,FLOW,4558
+coinmarketcap,Flow,FLOW,4558,18
 coinmarketcap,MultiversX,EGLD,6892
 coinmarketcap,eCash,XEC,10791
 coinmarketcap,Chiliz,CHZ,4066
@@ -203,6 +203,6 @@ coinmarketcap,ULTRON,ULX,21524
 coinmarketcap,Chihuahua,HUAHUA,17208
 coinmarketcap,Karlsen,KLS,29968
 coinmarketcap,Jackal Protocol,JKL,25261
-coinmarketcap,THORChain,RUNE,4157
-coinmarketcap,Axelar,AXL,17799
-coinmarketcap,Osmosis,OSMO,12220
+coinmarketcap,THORChain,RUNE,4157,18
+coinmarketcap,Axelar,AXL,17799,18
+coinmarketcap,Osmosis,OSMO,12220,18
