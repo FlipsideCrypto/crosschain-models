@@ -17,11 +17,12 @@ WITH base_assets AS (
         LOWER(
             A.symbol
         ) AS symbol,
+        decimals,
         source,
         _inserted_timestamp
     FROM
         {{ ref('bronze__all_asset_metadata_coinmarketcap2') }} A
-        INNER JOIN {{ ref('silver__native_asset_metadata_seed') }}
+        INNER JOIN {{ ref('silver__native_assets_seed') }}
         n
         ON LOWER(
             A.id
@@ -91,6 +92,7 @@ base_adj AS (
                 A.symbol
             )
         END AS symbol_adj,
+        decimals,
         source,
         CASE
             WHEN C.symbol IS NOT NULL THEN FALSE
@@ -106,6 +108,7 @@ SELECT
     id_adj AS id,
     name_adj AS NAME,
     symbol_adj AS symbol,
+    decimals,
     source,
     is_deprecated,
     _inserted_timestamp,

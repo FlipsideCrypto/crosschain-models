@@ -15,6 +15,7 @@ WITH base_prices AS (
         m.symbol,
         p.id,
         m.name,
+        m.decimals,
         p.close,
         p.source,
         p._inserted_timestamp
@@ -102,6 +103,7 @@ native_asset_metadata AS (
         symbol,
         id,
         NAME,
+        decimals,
         _inserted_timestamp
     FROM
         {{ ref(
@@ -121,7 +123,8 @@ date_hours AS (
         date_hour,
         symbol,
         id,
-        NAME
+        NAME,
+        decimals
     FROM
         {{ ref('core__dim_date_hours') }}
         CROSS JOIN native_asset_metadata
@@ -146,6 +149,7 @@ imputed_prices AS (
         d.symbol,
         d.id,
         d.name,
+        d.decimals,
         CASE
             WHEN d.date_hour <= s.last_supported_timestamp THEN p.close
             ELSE NULL
@@ -194,6 +198,7 @@ FINAL AS (
         p.symbol,
         p.id,
         p.name,
+        p.decimals,
         CASE
             WHEN p.recorded_hour <= s.last_supported_timestamp THEN p.close
             ELSE NULL
@@ -216,6 +221,7 @@ SELECT
     symbol,
     id,
     NAME,
+    decimals,
     final_price AS close_price,
     imputed AS is_imputed,
     source,
@@ -232,6 +238,7 @@ SELECT
     symbol,
     id,
     NAME,
+    decimals,
     close_price AS CLOSE,
     is_imputed,
     source,

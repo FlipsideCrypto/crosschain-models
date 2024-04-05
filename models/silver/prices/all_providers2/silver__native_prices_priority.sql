@@ -15,7 +15,9 @@ WITH priority_prices AS (
     SELECT
         recorded_hour,
         symbol,
+        name,
         id,
+        decimals,
         blockchain,
         price,
         is_imputed,
@@ -93,6 +95,8 @@ native_asset_metadata AS (
     -- get all token metadata for tokens with missing prices
     SELECT
         symbol,
+        name,
+        decimals,
         _inserted_timestamp
     FROM
         {{ ref(
@@ -118,7 +122,9 @@ latest_supported_assets AS (
         date_hours AS (
             SELECT
                 date_hour,
-                symbol
+                symbol,
+                name,
+                decimals
             FROM
                 {{ ref('core__dim_date_hours') }}
                 CROSS JOIN native_asset_metadata
@@ -141,6 +147,8 @@ latest_supported_assets AS (
             SELECT
                 d.date_hour,
                 d.symbol,
+                d.name,
+                d.decimals,
                 CASE
                     WHEN d.date_hour <= s.last_supported_timestamp THEN p.price
                     ELSE NULL
@@ -234,6 +242,8 @@ latest_supported_assets AS (
         SELECT
             recorded_hour,
             symbol,
+            name,
+            decimals,
             blockchain,
             price,
             is_imputed,
@@ -250,6 +260,8 @@ UNION ALL
 SELECT
     date_hour AS recorded_hour,
     symbol,
+    name,
+    decimals,
     blockchain,
     final_price AS price,
     imputed AS is_imputed,
@@ -268,6 +280,8 @@ WHERE
 SELECT
     recorded_hour,
     symbol,
+    name,
+    decimals,
     blockchain,
     price,
     is_imputed,

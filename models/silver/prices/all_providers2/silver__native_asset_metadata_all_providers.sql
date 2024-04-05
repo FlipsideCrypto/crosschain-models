@@ -12,6 +12,7 @@ WITH coin_gecko AS (
         id,
         NAME,
         symbol,
+        decimals,
         'coingecko' AS provider,
         source,
         is_deprecated,
@@ -34,7 +35,7 @@ WHERE
             DISTINCT id
         FROM
             {{ this }}
-    )  --load all data for new assets
+    ) --load all data for new assets
 {% endif %}
 ),
 coin_market_cap AS (
@@ -42,6 +43,7 @@ coin_market_cap AS (
         id,
         NAME,
         symbol,
+        decimals,
         'coinmarketcap' AS provider,
         source,
         is_deprecated,
@@ -64,7 +66,7 @@ WHERE
             DISTINCT id
         FROM
             {{ this }}
-    )  --load all data for new assets
+    ) --load all data for new assets
 {% endif %}
 ),
 all_providers AS (
@@ -80,8 +82,13 @@ all_providers AS (
 )
 SELECT
     id,
-    NAME AS blockchain,
+    CASE
+        WHEN NAME ilike 'bnb' THEN 'bsc'
+        ELSE NAME
+    END AS blockchain,
     symbol,
+    name,
+    decimals,
     provider,
     source,
     is_deprecated,

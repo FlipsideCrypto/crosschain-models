@@ -17,6 +17,7 @@ SELECT
     p.token_address,
     p.id AS asset_id,
     UPPER(symbol) AS symbol,
+    name,
     decimals,
     price,
     p.blockchain,

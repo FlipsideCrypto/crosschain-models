@@ -13,6 +13,7 @@ WITH coin_gecko AS (
         symbol,
         id,
         NAME,
+        decimals,
         CLOSE AS price,
         is_imputed,
         'coingecko' AS provider,
@@ -43,6 +44,7 @@ coin_market_cap AS (
         symbol,
         id,
         NAME,
+        decimals,
         CLOSE AS price,
         is_imputed,
         'coinmarketcap' AS provider,
@@ -81,8 +83,13 @@ all_providers AS (
 SELECT
     recorded_hour,
     symbol,
+    name,
     id,
-    NAME AS blockchain,
+    decimals,
+    CASE
+        WHEN NAME ilike 'bnb' THEN 'bsc'
+        ELSE NAME
+    END AS blockchain,
     price,
     is_imputed,
     provider,

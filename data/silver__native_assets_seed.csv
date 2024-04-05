@@ -1,10 +1,10 @@
-provider,name,symbol,id
+provider,name,symbol,id,decimals
 coingecko,Bitcoin,BTC,bitcoin
-coingecko,Ethereum,ETH,ethereum
-coingecko,BNB,BNB,binancecoin
+coingecko,Ethereum,ETH,ethereum,18
+coingecko,BNB,BNB,binancecoin,18
 coingecko,Solana,SOL,solana
 coingecko,Cardano,ADA,cardano
-coingecko,Avalanche,AVAX,avalanche-2
+coingecko,Avalanche,AVAX,avalanche-2,18
 coingecko,Toncoin,TON,the-open-network
 coingecko,Bitcoin Cash,BCH,bitcoin-cash
 coingecko,TRON,TRX,tron
@@ -16,7 +16,7 @@ coingecko,Cronos,CRO,crypto-com-chain
 coingecko,Hedera,HBAR,hedera-hashgraph
 coingecko,Kaspa,KAS,kaspa
 coingecko,Injective,INJ,injective-protocol
-coingecko,Fantom,FTM,fantom
+coingecko,Fantom,FTM,fantom,18
 coingecko,Monero,XMR,monero
 coingecko,Arweave,AR,arweave
 coingecko,Sui,SUI,sui
@@ -34,7 +34,7 @@ coingecko,Ronin,RON,ronin
 coingecko,Kava,KAVA,kava
 coingecko,Klaytn,KLAY,klay-token
 coingecko,AIOZ Network,AIOZ,aioz-network
-coingecko,Gnosis,GNO,gnosis
+coingecko,Gnosis,GNO,gnosis,18
 coingecko,Oasis Network,ROSE,oasis-network
 coingecko,Radix,XRD,radix
 coingecko,Astar,ASTR,astar
@@ -100,14 +100,14 @@ coingecko,LiquidLayer,LILA,liquidlayer
 coingecko,Epic Cash,EPIC,epic-cash
 coingecko,Unique Network,UNQ,unique-network
 coingecko,THORChain,RUNE,thorchain
-coingecko,Axelar,AXL,axelar
-coingecko,Osmosis,OSMO,osmosis
+coingecko,Axelar,AXL,axelar,18
+coingecko,Osmosis,OSMO,osmosis,18
 coinmarketcap,Bitcoin,BTC,1
-coinmarketcap,Ethereum,ETH,1027
-coinmarketcap,BNB,BNB,1839
+coinmarketcap,Ethereum,ETH,1027,18
+coinmarketcap,BNB,BNB,1839,18
 coinmarketcap,Solana,SOL,5426
 coinmarketcap,Cardano,ADA,2010
-coinmarketcap,Avalanche,AVAX,5805
+coinmarketcap,Avalanche,AVAX,5805,18
 coinmarketcap,Toncoin,TON,11419
 coinmarketcap,Bitcoin Cash,BCH,1831
 coinmarketcap,Polkadot,DOT,6636
@@ -121,7 +121,7 @@ coinmarketcap,Hedera,HBAR,4642
 coinmarketcap,Injective,INJ,7226
 coinmarketcap,Kaspa,KAS,20396
 coinmarketcap,Theta Network,THETA,2416
-coinmarketcap,Fantom,FTM,3513
+coinmarketcap,Fantom,FTM,3513,18
 coinmarketcap,Sui,SUI,20947
 coinmarketcap,Sei,SEI,23149
 coinmarketcap,Algorand,ALGO,4030
@@ -133,7 +133,7 @@ coinmarketcap,Tezos,XTZ,2011
 coinmarketcap,Ronin,RON,14101
 coinmarketcap,Kava,KAVA,4846
 coinmarketcap,Klaytn,KLAY,4256
-coinmarketcap,Gnosis,GNO,1659
+coinmarketcap,Gnosis,GNO,1659,18
 coinmarketcap,AIOZ Network,AIOZ,9104
 coinmarketcap,Radix,XRD,11948
 coinmarketcap,Astar,ASTR,12885

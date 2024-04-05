@@ -10,6 +10,8 @@ WITH all_providers AS (
     SELECT
         id,
         symbol,
+        name,
+        decimals,
         blockchain,
         provider,
         CASE
@@ -41,6 +43,8 @@ WHERE
 SELECT
     id,
     symbol,
+    name,
+    decimals,
     blockchain,
     provider,
     priority,

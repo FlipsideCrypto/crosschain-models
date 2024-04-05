@@ -20,6 +20,8 @@ WITH base_prices AS (
         UPPER(
             p.symbol
         ) AS symbol_adj,
+        m.name,
+        m.decimals,
         price,
         p.blockchain,
         is_imputed,
@@ -68,6 +70,8 @@ SELECT
     HOUR,
     asset_id,
     symbol_adj AS symbol,
+    name,
+    decimals,
     price,
     blockchain,
     is_imputed,

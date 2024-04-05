@@ -27,8 +27,8 @@ SELECT
     asset_id AS id, -- id column pending deprecation
     asset_id,
     symbol,
-    blockchain AS NAME,
-    NULL AS decimals,
+    name,
+    decimals,
     blockchain,
     blockchain AS blockchain_name,
     blockchain AS blockchain_id,

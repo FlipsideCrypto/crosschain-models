@@ -11,6 +11,8 @@ WITH base_assets AS (
 SELECT
     id AS asset_id,
     UPPER(symbol) AS symbol_adj,
+    name,
+    decimals,
     blockchain,
     is_deprecated,
     provider,
@@ -42,6 +44,8 @@ WHERE
 SELECT
     asset_id,
     symbol_adj AS symbol,
+    name,
+    decimals,
     blockchain,
     is_deprecated,
     provider,
