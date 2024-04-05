@@ -14,6 +14,7 @@ SELECT
     blockchain,
     blockchain_name,
     blockchain_id,
+    FALSE AS is_native,
     is_deprecated,
     inserted_timestamp,
     modified_timestamp,
@@ -22,7 +23,7 @@ FROM
     {{ ref('silver__complete_token_asset_metadata') }}
 UNION ALL
 SELECT
-    'native' AS token_address,
+    NULL AS token_address,
     asset_id AS id, -- id column pending deprecation
     asset_id,
     symbol,
@@ -31,6 +32,7 @@ SELECT
     blockchain,
     blockchain AS blockchain_name,
     blockchain AS blockchain_id,
+    TRUE AS is_native,
     is_deprecated,
     inserted_timestamp,
     modified_timestamp,

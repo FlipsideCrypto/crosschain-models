@@ -13,6 +13,7 @@ SELECT
     blockchain,
     blockchain_name,
     blockchain_id,
+    FALSE AS is_native,
     is_imputed,
     is_deprecated,
     inserted_timestamp,
@@ -23,13 +24,14 @@ FROM
 UNION ALL
 SELECT
     HOUR,
-    'native' AS token_address,
+    NULL AS token_address,
     symbol,
     NULL AS decimals,
     price,
     blockchain,
     blockchain AS blockchain_name,
     blockchain AS blockchain_id,
+    TRUE AS is_native,
     is_imputed,
     is_deprecated,
     inserted_timestamp,
