@@ -1,0 +1,39 @@
+version: 2
+models:
+  - name: silver__native_prices_priority
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - RECORDED_HOUR
+            - SYMBOL
+
+    columns:
+      - name: RECORDED_HOUR
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+          - price_hour_sequence_gaps:
+              partition_by_1: SYMBOL
+              column_name: RECORDED_HOUR
+      - name: ID
+        tests:
+          - not_null
+      - name: SYMBOL
+        tests:
+          - not_null
+      - name: BLOCKCHAIN
+        tests:
+          - not_null
+      - name: PROVIDER
+        tests:
+          - not_null
+      - name: PRICE
+        tests: 
+          - not_null
+      - name: IS_IMPUTED
+        tests: 
+          - not_null
+      - name: _INSERTED_TIMESTAMP
+        tests:
+          - not_null

@@ -13,7 +13,7 @@ models:
       - name: SYMBOL
         description: The symbol of asset.
       - name: TOKEN_ADDRESS
-        description: The specific address representing the asset in a specific platform.
+        description: Address of the token. This will be NULL if referring to a native asset.
       - name: BLOCKCHAIN
         description: The Blockchain, Network, or Platform where this asset has a token address. This column is derived by manually grouping blockchain_name, for reference purposes.
       - name: BLOCKCHAIN_NAME
@@ -21,7 +21,9 @@ models:
       - name: BLOCKCHAIN_ID
         description: The unique identifier of the Blockchain, Network, or Platform where this asset has a token address.
       - name: DECIMALS
-        description: The number of decimal places the token needs adjusted where token values exist.
+        description: The number of decimals for token contract. May be NULL if referring to a native asset.
+      - name: IS_NATIVE
+        description: A flag indicating assets native to the respective blockchain.
       - name: IS_DEPRECATED
         description: A flag indicating if the asset is deprecated or no longer supported by the provider.
       - name: EZ_ASSET_METADATA_ID

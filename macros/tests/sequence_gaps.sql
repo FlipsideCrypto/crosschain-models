@@ -86,14 +86,14 @@ ORDER BY
         {%- set previous_column = "prev_" ~ column_name -%}
         WITH base_source AS (
             SELECT
-                {{ partition_by_1 }},
-                {{ partition_by_2 }},
+                {{ partition_by_1 }}
+                {% if partition_by_2 %}, {{ partition_by_2 }} {% endif %},
                 {{ column_name }},
                 LAG(
                     {{ column_name }},
                     1
                 ) over (
-                    PARTITION BY LOWER({{ partition_by_1 }}), {{ partition_by_2 }}
+                    PARTITION BY LOWER({{ partition_by_1 }}) {% if partition_by_2 %}, {{ partition_by_2 }} {% endif %}
                     ORDER BY
                         {{ column_name }} ASC
                 ) AS {{ previous_column }}
@@ -104,8 +104,8 @@ ORDER BY
             {% endif %}
         )
     SELECT
-        {{ partition_by_1 }},
-        {{ partition_by_2 }},
+        {{ partition_by_1 }}
+        {% if partition_by_2 %}, {{ partition_by_2 }} {% endif %},
         {{ previous_column }},
         {{ column_name }},
         DATEDIFF(
