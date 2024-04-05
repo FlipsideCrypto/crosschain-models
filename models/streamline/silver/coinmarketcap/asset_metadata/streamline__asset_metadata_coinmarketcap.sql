@@ -13,17 +13,13 @@ WITH calls AS (
         '{service}/v1/cryptocurrency/map' AS api_url
 )
 SELECT
-    DATE_PART('EPOCH', SYSDATE())::INTEGER AS partition_key,
-    ARRAY_CONSTRUCT(
-        partition_key,
-        ARRAY_CONSTRUCT(
-            'GET',
-            api_url,
-            PARSE_JSON('{"Accept": "application/json", "Accept-Encoding": "deflate, gzip", "X-CMC_PRO_API_KEY": "{Authentication}"}'),
-            PARSE_JSON('{}'),
-            ''
-        ) 
+    DATE_PART('EPOCH', SYSDATE()) :: INTEGER AS partition_key,
+    {{ target.database }}.live.udf_api(
+        'GET',
+        api_url,
+        PARSE_JSON('{"Accept": "application/json", "Accept-Encoding": "deflate, gzip", "X-CMC_PRO_API_KEY": "{Authentication}"}'),
+        {},
+        'vault/prod/prices/coinmarketcap'
     ) AS request
 FROM
-    calls
-    -- needs to run 10-15 min prior to prices workflows (asset metadata referenced in history + realtime models)
+    calls -- needs to run 10-15 min prior to prices workflows (asset metadata referenced in history + realtime models)
