@@ -31,9 +31,10 @@ SELECT
     p.provider,
     p.source,
     p._inserted_timestamp,
-    GREATEST(COALESCE(p.inserted_timestamp, '2000-01-01'), COALESCE(m.inserted_timestamp, '2000-01-01')) AS inserted_timestamp,
-    GREATEST(COALESCE(p.modified_timestamp, '2000-01-01'), COALESCE(m.modified_timestamp, '2000-01-01')) AS modified_timestamp,
-    token_prices_priority_id AS complete_token_prices_id
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['HOUR','LOWER(p.token_address)','p.blockchain']) }} AS complete_token_prices_id,
+    '{{ invocation_id }}' AS _invocation_id
 FROM
     {{ ref('silver__token_prices_priority2') }}
     p

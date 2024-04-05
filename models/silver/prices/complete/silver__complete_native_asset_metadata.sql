@@ -7,22 +7,19 @@
 ) }}
 
 WITH base_assets AS (
-    
-SELECT
-    id AS asset_id,
-    UPPER(symbol) AS symbol_adj,
-    name,
-    decimals,
-    blockchain,
-    is_deprecated,
-    provider,
-    source,
-    _inserted_timestamp,
-    inserted_timestamp,
-    modified_timestamp,
-    native_asset_metadata_priority_id AS complete_native_asset_metadata_id
-FROM
-    {{ ref('silver__native_asset_metadata_priority') }}
+
+    SELECT
+        id AS asset_id,
+        UPPER(symbol) AS symbol_adj,
+        NAME,
+        decimals,
+        blockchain,
+        is_deprecated,
+        provider,
+        source,
+        _inserted_timestamp
+    FROM
+        {{ ref('silver__native_asset_metadata_priority') }}
 
 {% if is_incremental() %}
 WHERE
@@ -40,18 +37,19 @@ WHERE
     ) --load all data for new assets
 {% endif %}
 )
-
 SELECT
     asset_id,
     symbol_adj AS symbol,
-    name,
+    NAME,
     decimals,
     blockchain,
     is_deprecated,
     provider,
     source,
     _inserted_timestamp,
-    inserted_timestamp,
-    modified_timestamp,
-    complete_native_asset_metadata_id
-FROM base_assets
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['symbol']) }} AS complete_native_asset_metadata_id,
+    '{{ invocation_id }}' AS _invocation_id
+FROM
+    base_assets
