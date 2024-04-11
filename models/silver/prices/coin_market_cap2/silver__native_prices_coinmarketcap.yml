@@ -13,6 +13,11 @@ models:
           - price_hour_sequence_gaps:
               partition_by_1: SYMBOL
               column_name: RECORDED_HOUR
+              config:
+                severity: warn
+                warn_if: ">0"
+                severity: error
+                error_if: ">500"
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
               interval: 1

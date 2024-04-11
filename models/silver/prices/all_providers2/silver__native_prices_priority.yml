@@ -16,6 +16,11 @@ models:
           - price_hour_sequence_gaps:
               partition_by_1: SYMBOL
               column_name: RECORDED_HOUR
+              config:
+                severity: warn
+                warn_if: ">0"
+                severity: error
+                error_if: ">1000"
       - name: ID
         tests:
           - not_null
