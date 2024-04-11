@@ -57,12 +57,12 @@ SELECT
         'EPOCH',
         DATEADD('day', -91, SYSDATE()) :: DATE) AS partition_key,
         {{ target.database }}.live.udf_api(
-        'GET',
-        api_url,
-        NULL,
-        NULL,
-        'vault/prod/coingecko/rest'
-    ) AS request
+            'GET',
+            api_url,
+            NULL,
+            NULL,
+            'vault/prod/coingecko/rest'
+        ) AS request
 FROM
     calls
 ORDER BY
