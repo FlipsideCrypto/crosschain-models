@@ -17,8 +17,8 @@ SELECT
     {{ target.database }}.live.udf_api(
         'GET',
         api_url,
-        {},
-        {},
+        NULL,
+        NULL,
         'vault/prod/coingecko/rest'
     ) AS request
 FROM

@@ -1,7 +1,7 @@
 {{ config (
     materialized = "view",
     post_hook = if_data_call_function(
-        func = "{{this.schema}}.udf_bulk_rest_api_v2(object_construct('sql_source', '{{this.identifier}}', 'external_table', 'ASSET_OHLC_API/COINMARKETCAP', 'sql_limit', {{var('sql_limit','50000')}}, 'producer_batch_size', {{var('producer_batch_size','50000')}}, 'worker_batch_size', {{var('worker_batch_size','25000')}}, 'sm_secret_name','prod/prices/coinmarketcap'))",
+        func = "{{this.schema}}.udf_bulk_rest_api_v2(object_construct('sql_source', '{{this.identifier}}', 'external_table', 'ASSET_OHLC_API/COINMARKETCAP', 'sql_limit', {{var('sql_limit','50000')}}, 'producer_batch_size', {{var('producer_batch_size','50000')}}, 'worker_batch_size', {{var('worker_batch_size','25000')}}))",
         target = "{{this.schema}}.{{this.identifier}}"
     ),
     tags = ['streamline_cmc_prices_realtime']
@@ -74,15 +74,12 @@ calls AS (
 )
 SELECT
     end_time_epoch AS partition_key,
-    ARRAY_CONSTRUCT(
-        partition_key,
-        ARRAY_CONSTRUCT(
-            'GET',
-            api_url,
-            PARSE_JSON('{"Accept": "application/json", "Accept-Encoding": "deflate, gzip", "X-CMC_PRO_API_KEY": "{Authentication}"}'),
-            PARSE_JSON('{}'),
-            ''
-        )
+    {{ target.database }}.live.udf_api(
+        'GET',
+        api_url,
+        PARSE_JSON('{"Accept": "application/json", "Accept-Encoding": "deflate, gzip", "X-CMC_PRO_API_KEY": "{Authentication}"}'),
+        NULL,
+        'vault/prod/prices/coinmarketcap'
     ) AS request
 FROM
     calls

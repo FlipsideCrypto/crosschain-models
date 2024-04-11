@@ -6,9 +6,9 @@ packages:
 - package: dbt-labs/dbt_utils
   version: 1.0.0
 - git: https://github.com/FlipsideCrypto/fsc-utils.git
-  revision: 827fba91abc6a5956b6e06432a7f49ac659ceef3
+  revision: 06ad39d50ceb0243fb31dfbc1d1697b34e139924
 - package: calogica/dbt_date
   version: 0.7.2
 - git: https://github.com/FlipsideCrypto/livequery-models.git
-  revision: 883675b4021cc9a777e12fe6be8114ab039ab365
-sha1_hash: 79412049d713a846fb2ca60687a4481776c1788a
+  revision: 8b105444ef516f94efd6b9a420e62fe9f69277f9
+sha1_hash: 9c9528146d8f3d43b7efae0dfd6ba7a1bbd80382
