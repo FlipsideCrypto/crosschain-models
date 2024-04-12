@@ -18,13 +18,13 @@ WHERE
         SELECT
             MAX(
                 _inserted_timestamp :: DATE
-            ) - INTERVAL '31 days'
+            )
         FROM
             {{ this }}
     )
     AND _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '31 days'
+            MAX(_inserted_timestamp)
         FROM
             {{ this }}
     )
