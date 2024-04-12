@@ -18,39 +18,48 @@ WHERE
         SELECT
             MAX(
                 _inserted_timestamp :: DATE
-            )
+            ) - INTERVAL '31 days'
         FROM
             {{ this }}
     )
-    AND _inserted_timestamp > (
+    AND _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '31 days'
         FROM
             {{ this }}
     )
 {% else %}
-WHERE _inserted_date >= '2022-07-22'
+WHERE
+    _inserted_date >= '2022-07-22'
 {% endif %}
+),
+FINAL AS (
+    SELECT
+        TRY_TO_NUMBER(
+            f.key :: STRING
+        ) AS id,
+        DATE_TRUNC(
+            'hour',
+            f.value :quotes [0] :quote :USD :timestamp :: timestamp_ntz
+        ) AS recorded_hour,
+        f.value :quotes [0] :quote :USD :open :: FLOAT AS OPEN,
+        f.value :quotes [0] :quote :USD :high :: FLOAT AS high,
+        f.value :quotes [0] :quote :USD :low :: FLOAT AS low,
+        f.value :quotes [0] :quote :USD :close :: FLOAT AS CLOSE,
+        f.value :quotes [0] :quote :USD :volume :: FLOAT AS volume,
+        f.value :quotes [0] :quote :USD :market_cap :: FLOAT AS market_cap,
+        A._inserted_timestamp,
+        SYSDATE() AS inserted_timestamp,
+        SYSDATE() AS modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['id','recorded_hour']) }} AS hourly_prices_coin_market_cap_id,
+        '{{ invocation_id }}' AS _invocation_id
+    FROM
+        base A,
+        TABLE(FLATTEN(DATA :data)) f
 )
 SELECT
-    TRY_TO_NUMBER(f.key :: STRING) AS id,
-    DATE_TRUNC(
-        'hour',
-        f.value :quotes[0] :quote :USD :timestamp :: timestamp_ntz
-    ) AS recorded_hour,
-    f.value :quotes[0] :quote :USD :open::float AS OPEN,
-    f.value :quotes[0] :quote :USD :high::float AS high,
-    f.value :quotes[0] :quote :USD :low::float AS low,
-    f.value :quotes[0] :quote :USD :close::float AS CLOSE,
-    f.value :quotes[0] :quote :USD :volume::float AS volume,
-    f.value :quotes[0] :quote :USD :market_cap::float AS market_cap,
-    A._inserted_timestamp,
-    sysdate() as inserted_timestamp,
-    sysdate() as modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['id','recorded_hour']) }} AS hourly_prices_coin_market_cap_id,
-    '{{ invocation_id }}' as _invocation_id
+    *
 FROM
-    base A,
-    TABLE(FLATTEN(DATA :data)) f qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
+    FINAL qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
 ORDER BY
     _inserted_timestamp DESC)) = 1
