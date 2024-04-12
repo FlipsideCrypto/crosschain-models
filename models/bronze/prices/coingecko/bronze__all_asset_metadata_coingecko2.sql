@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['id','token_address','name','symbol','platform','platform_id'],
+    unique_key = ['all_asset_metadata_coingecko_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -94,6 +94,7 @@ SELECT
     platform_id,
     source,
     VALUE,
+    {{ dbt_utils.generate_surrogate_key(['id','token_address','name','symbol','platform','platform_id']) }} AS all_asset_metadata_coingecko_id,
     _inserted_timestamp
 FROM
     FINAL qualify(ROW_NUMBER() over (PARTITION BY id, token_address, NAME, symbol, platform, platform_id

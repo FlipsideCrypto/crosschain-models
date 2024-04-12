@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['id','recorded_hour'],
+    unique_key = ['all_prices_coingecko_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -276,6 +276,7 @@ SELECT
     source,
     priority,
     _runtime_date,
+    {{ dbt_utils.generate_surrogate_key(['id','recorded_hour']) }} AS all_prices_coingecko_id,
     _inserted_timestamp
 FROM
     all_prices qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
