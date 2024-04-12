@@ -11,6 +11,7 @@ WITH legacy AS (
     SELECT
         id,
         recorded_hour,
+        1 AS priority,
         OPEN,
         high,
         low,
@@ -22,7 +23,8 @@ WITH legacy AS (
         {{ ref('bronze__legacy_prices_coingecko') }}
 
 {% if is_incremental() %}
-WHERE 1 = 2
+WHERE
+    1 = 2
 {% endif %}
 ),
 base_backfill AS (
@@ -69,13 +71,15 @@ base_backfill AS (
         LATERAL FLATTEN(input => DATA :prices) f
 
 {% if is_incremental() %}
-WHERE 1 = 2
+WHERE
+    1 = 2
 {% endif %}
 ),
 final_backfill AS (
     SELECT
         id,
         recorded_hour,
+        1 AS priority,
         MAX(
             CASE
                 WHEN rn_open = 1 THEN price
@@ -158,6 +162,7 @@ final_history AS (
     SELECT
         id,
         recorded_hour,
+        1 AS priority,
         MAX(
             CASE
                 WHEN rn_open = 1 THEN price
@@ -191,13 +196,10 @@ base_realtime AS (
         TO_TIMESTAMP(
             f.value [0] :: STRING
         ) AS recorded_timestamp,
-        CASE
-            WHEN recorded_timestamp = DATE_TRUNC(
-                'hour',
-                recorded_timestamp
-            ) THEN recorded_timestamp
-            ELSE NULL
-        END AS recorded_hour,
+        DATE_TRUNC(
+            'hour',
+            recorded_timestamp
+        ) AS recorded_hour,
         f.value [1] :: FLOAT AS OPEN,
         f.value [2] :: FLOAT AS high,
         f.value [3] :: FLOAT AS low,
@@ -227,6 +229,10 @@ final_realtime AS (
     SELECT
         id,
         recorded_hour,
+        CASE
+            WHEN recorded_timestamp = recorded_hour THEN 1
+            ELSE 2
+        END AS priority,
         OPEN,
         high,
         low,
@@ -268,9 +274,10 @@ SELECT
     low,
     CLOSE,
     source,
+    priority,
     _runtime_date,
     _inserted_timestamp
 FROM
     all_prices qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
 ORDER BY
-    _inserted_timestamp DESC)) = 1 -- `backfill` data will eventually be merged into `history` external table
+    _inserted_timestamp DESC, priority ASC)) = 1 -- `backfill` data will eventually be merged into `history` external table
