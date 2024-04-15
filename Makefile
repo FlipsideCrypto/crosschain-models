@@ -5,7 +5,7 @@ DBT_TARGET ?= dev
 AWS_LAMBDA_ROLE ?= aws_lambda_crosschain_api_dev
 INVOKE_STREAMS ?= True
 
-dbt-console: 
+dbt-console:
 	docker-compose run dbt_console
 
 .PHONY: dbt-console
@@ -17,7 +17,7 @@ sl-api-integrations:
 	--profiles-dir ~/.dbt/
 
 udfs:
-	dbt run-operation fsc_utils.create_udf_bulk_rest_api_v2 --debug \
+	dbt run-operation fsc_utils.create_udf_bulk_rest_api_v2 \
 	--vars '{"UPDATE_UDFS_AND_SPS":True}' \
 	--profile crosschain \
 	--target $(DBT_TARGET) \

@@ -1,7 +1,7 @@
 {{ config (
     materialized = "view",
     post_hook = if_data_call_function(
-        func = "{{this.schema}}.udf_bulk_rest_api_v2(object_construct('sql_source', '{{this.identifier}}', 'external_table', 'ASSET_OHLC_API/COINGECKO', 'sql_limit', {{var('sql_limit','50000')}}, 'producer_batch_size', {{var('producer_batch_size','50000')}}, 'worker_batch_size', {{var('worker_batch_size','25000')}}, 'sm_secret_name','prod/coingecko/rest'))",
+        func = "{{this.schema}}.udf_bulk_rest_api_v2(object_construct('sql_source', '{{this.identifier}}', 'external_table', 'ASSET_OHLC_API/COINGECKO', 'sql_limit', {{var('sql_limit','50000')}}, 'producer_batch_size', {{var('producer_batch_size','50000')}}, 'worker_batch_size', {{var('worker_batch_size','25000')}}))",
         target = "{{this.schema}}.{{this.identifier}}"
     ),
     tags = ['streamline_cg_prices_realtime']
@@ -30,15 +30,12 @@ calls AS (
 )
 SELECT
     DATE_PART('EPOCH', SYSDATE()) :: INTEGER AS partition_key,
-    ARRAY_CONSTRUCT(
-        partition_key,
-        ARRAY_CONSTRUCT(
-            'GET',
-            api_url,
-            PARSE_JSON('{}'),
-            PARSE_JSON('{}'),
-            ''
-        )
+    {{ target.database }}.live.udf_api(
+        'GET',
+        api_url,
+        NULL,
+        NULL,
+        'vault/prod/coingecko/rest'
     ) AS request
 FROM
     calls
