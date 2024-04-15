@@ -1,5 +1,5 @@
 workflow_name,workflow_schedule
-dbt_run_prices,"40 * * * *"
+dbt_run_scheduled_prices,"40 * * * *"
 dbt_run_streamline_prices_history,"55 1 * * *"
 dbt_run_streamline_prices_realtime,"25 * * * *"
 dbt_run_streamline_asset_metadata,"5 * * * *"
