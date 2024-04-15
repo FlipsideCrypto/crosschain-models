@@ -62,4 +62,4 @@ vars:
 
     prod:
       API_INTEGRATION: AWS_CROSSCHAIN_API_PROD
-      EXTERNAL_FUNCTION_URI: 35hm1qhag9.execute-api.us-east-1.amazonaws.com/prod/
+      EXTERNAL_FUNCTION_URI: y4vgsb5jk5.execute-api.us-east-1.amazonaws.com/prod/
