@@ -73,4 +73,3 @@ FROM
     calls
 ORDER BY
     partition_key ASC
-LIMIT 2
