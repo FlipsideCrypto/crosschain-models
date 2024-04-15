@@ -199,11 +199,10 @@ SELECT
     id,
     NAME,
     symbol,
+    TRIM(REPLACE(platform, '-', ' ')) AS platform_adj,
     CASE
         WHEN platform IN (
             'arbitrum',
-            'arbitrum nova',
-            'arbitrum-nova',
             'arbitrum-one'
         ) THEN 'arbitrum'
         WHEN platform IN (
@@ -239,7 +238,7 @@ SELECT
             'terra',
             'terra2'
         ) THEN 'cosmos'
-        ELSE platform
+        ELSE platform_adj
     END AS blockchain,
     platform AS blockchain_name,
     platform_id AS blockchain_id,

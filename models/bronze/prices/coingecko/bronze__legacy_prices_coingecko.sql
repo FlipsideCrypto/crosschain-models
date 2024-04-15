@@ -1,11 +1,11 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['id','recorded_hour'],
+    unique_key = ['legacy_prices_coingecko_id'],
     incremental_strategy = 'merge',
     cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
-    full_refresh = false,
     tags = ['stale']
 ) }}
+--     full_refresh = false,
 
 WITH base_legacy AS (
 
@@ -124,6 +124,7 @@ SELECT
     CLOSE,
     source,
     _runtime_date,
+    {{ dbt_utils.generate_surrogate_key(['id','recorded_hour']) }} AS legacy_prices_coingecko_id,
     _inserted_timestamp
 FROM
     all_prices qualify(ROW_NUMBER() over (PARTITION BY id, recorded_hour
