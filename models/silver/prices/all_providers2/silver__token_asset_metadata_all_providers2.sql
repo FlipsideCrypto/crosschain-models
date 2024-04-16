@@ -191,7 +191,11 @@ all_providers AS (
 SELECT
     CASE
         WHEN p.token_address ILIKE 'ibc%'
-        OR platform = 'solana' THEN p.token_address
+        OR platform IN (
+            'solana',
+            'bitcoin',
+            'flow'
+        ) THEN p.token_address
         ELSE LOWER(
             p.token_address
         )
@@ -214,10 +218,6 @@ SELECT
             'binancecoin',
             'bnb'
         ) THEN 'bsc'
-        WHEN platform IN (
-            'bitcoin',
-            'bitcoin sv'
-        ) THEN 'bitcoin'
         WHEN platform IN (
             'gnosis',
             'xdai',
