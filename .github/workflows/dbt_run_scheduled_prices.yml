@@ -3,8 +3,8 @@ run-name: dbt_run_scheduled_prices
 
 on:
   workflow_dispatch:
-    branches:
-      - "main"
+  schedule:
+    - cron: '40 * * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
