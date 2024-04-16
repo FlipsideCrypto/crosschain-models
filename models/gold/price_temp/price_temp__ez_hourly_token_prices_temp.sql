@@ -6,9 +6,19 @@
 
 SELECT
     HOUR,
-    token_address,
+    CASE
+        WHEN p.token_address ILIKE 'ibc%'
+        OR blockchain IN (
+            'solana',
+            'bitcoin',
+            'flow'
+        ) THEN p.token_address
+        ELSE LOWER(
+            p.token_address
+        )
+    END AS token_address,
     symbol,
-    name,
+    NAME,
     decimals,
     price,
     blockchain,
@@ -21,13 +31,13 @@ SELECT
     modified_timestamp,
     complete_token_prices_id AS ez_hourly_token_prices_id
 FROM
-    {{ ref('silver__complete_token_prices') }}
+    {{ ref('silver__complete_token_prices') }} p
 UNION ALL
 SELECT
     HOUR,
     NULL AS token_address,
     symbol,
-    name,
+    NAME,
     decimals,
     price,
     blockchain,

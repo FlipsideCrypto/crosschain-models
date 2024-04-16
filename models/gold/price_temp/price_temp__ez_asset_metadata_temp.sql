@@ -5,7 +5,17 @@
 ) }}
 
 SELECT
-    token_address,
+    CASE
+        WHEN A.token_address ILIKE 'ibc%'
+        OR blockchain IN (
+            'solana',
+            'bitcoin',
+            'flow'
+        ) THEN A.token_address
+        ELSE LOWER(
+            A.token_address
+        )
+    END AS token_address,
     asset_id AS id, -- id column pending deprecation
     asset_id,
     symbol,
@@ -20,14 +30,14 @@ SELECT
     modified_timestamp,
     complete_token_asset_metadata_id AS ez_asset_metadata_id
 FROM
-    {{ ref('silver__complete_token_asset_metadata') }}
+    {{ ref('silver__complete_token_asset_metadata') }} A
 UNION ALL
 SELECT
     NULL AS token_address,
     asset_id AS id, -- id column pending deprecation
     asset_id,
     symbol,
-    name,
+    NAME,
     decimals,
     blockchain,
     blockchain AS blockchain_name,
@@ -38,4 +48,4 @@ SELECT
     modified_timestamp,
     complete_native_asset_metadata_id AS ez_asset_metadata_id
 FROM
-    {{ ref('silver__complete_native_asset_metadata')}}
+    {{ ref('silver__complete_native_asset_metadata') }}

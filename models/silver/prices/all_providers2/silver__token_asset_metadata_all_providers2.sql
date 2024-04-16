@@ -189,17 +189,7 @@ all_providers AS (
         solana_solscan
 )
 SELECT
-    CASE
-        WHEN p.token_address ILIKE 'ibc%'
-        OR platform IN (
-            'solana',
-            'bitcoin',
-            'flow'
-        ) THEN p.token_address
-        ELSE LOWER(
-            p.token_address
-        )
-    END AS token_address,
+    token_address,
     id,
     NAME,
     symbol,
@@ -251,6 +241,6 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','blockchain_id','provider']) }} AS token_asset_metadata_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers p qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain_id, provider
+    all_providers qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain_id, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

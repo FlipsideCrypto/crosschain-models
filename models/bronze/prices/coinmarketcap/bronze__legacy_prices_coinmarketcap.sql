@@ -4,9 +4,9 @@
     unique_key = ['legacy_prices_coinmarketcap_id'],
     incremental_strategy = 'merge',
     cluster_by = ['recorded_hour::DATE','_inserted_timestamp::DATE'],
+    full_refresh = false,
     tags = ['stale']
-) }}
---    full_refresh = false,
+) }} 
 
 WITH base_legacy AS (
 

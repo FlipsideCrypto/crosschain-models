@@ -101,17 +101,7 @@ all_providers AS (
 mapping AS (
     SELECT
         recorded_hour,
-        CASE
-            WHEN p.token_address ILIKE 'ibc%'
-            OR platform IN (
-                'solana',
-                'bitcoin',
-                'flow'
-            ) THEN p.token_address
-            ELSE LOWER(
-                p.token_address
-            )
-        END AS token_address,
+        token_address,
         TRIM(REPLACE(platform, '-', ' ')) AS platform_adj,
         CASE
             WHEN platform IN (
@@ -158,7 +148,7 @@ mapping AS (
         source,
         _inserted_timestamp
     FROM
-        all_providers p
+        all_providers
 )
 SELECT
     recorded_hour,
