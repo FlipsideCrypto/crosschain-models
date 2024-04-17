@@ -531,7 +531,7 @@ FROM
     all_chains_dex d
     LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
     p_in
-    AND REPLACE(
+    ON REPLACE(
         d.blockchain,
         'osmosis',
         'cosmos'
@@ -543,7 +543,7 @@ FROM
     ) = p_in.hour
     LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
     p_out
-    AND REPLACE(
+    ON REPLACE(
         d.blockchain,
         'osmosis',
         'cosmos'
