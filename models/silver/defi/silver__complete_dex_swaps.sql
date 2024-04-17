@@ -1,7 +1,7 @@
 {{ config(
     materialized = 'incremental',
     incremental_strategy = 'delete+insert',
-    unique_key = ['blockchain','block_number','platform'],
+    unique_key = ['_unique_key'],
     cluster_by = ['block_timestamp::DATE']
 ) }}
 
@@ -25,7 +25,8 @@ WITH ethereum AS (
         amount_out,
         _log_id,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
+        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'ethereum_defi',
@@ -61,7 +62,8 @@ optimism AS (
         amount_out,
         _log_id,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
+        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'optimism_defi',
@@ -97,7 +99,8 @@ avalanche AS (
         amount_out,
         _log_id,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
+        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'avalanche_defi',
@@ -133,7 +136,8 @@ polygon AS (
         amount_out,
         _log_id,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
+        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'polygon_defi',
@@ -169,7 +173,8 @@ bsc AS (
         amount_out,
         _log_id,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
+        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'bsc_defi',
@@ -205,7 +210,8 @@ arbitrum AS (
         amount_out,
         _log_id,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
+        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'arbitrum_defi',
@@ -241,7 +247,8 @@ base AS (
         amount_out,
         _log_id,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
+        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'base_defi',
@@ -277,7 +284,8 @@ gnosis AS (
         amount_out,
         _log_id,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id
+        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'gnosis_defi',
@@ -327,7 +335,8 @@ osmosis AS (
             s._BODY_INDEX
         ) AS _log_id,
         s.modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['fact_swaps_id','blockchain']) }} AS complete_dex_swaps_id
+        {{ dbt_utils.generate_surrogate_key(['fact_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'osmosis_defi',
@@ -370,7 +379,8 @@ solana AS (
         amount_out_raw AS amount_out,
         _log_id,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['_log_id','blockchain']) }} AS complete_dex_swaps_id
+        {{ dbt_utils.generate_surrogate_key(['_log_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['_log_id','blockchain']) }} AS _unique_key
     FROM
         {{ source(
             'solana_defi',
@@ -407,7 +417,8 @@ near AS (
         amount_out,
         ez_dex_swaps_id AS _log_id,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['_log_id','blockchain']) }} AS complete_dex_swaps_id
+        {{ dbt_utils.generate_surrogate_key(['_log_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['_log_id','blockchain']) }} AS _unique_key
     FROM
         {{ source(
             'near_defi',
@@ -514,12 +525,12 @@ SELECT
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     d._inserted_timestamp,
-    complete_dex_swaps_id
+    complete_dex_swaps_id,
+    d._unique_key
 FROM
     all_chains_dex d
     LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
     p_in
-    ON d.blockchain <> 'near'
     AND REPLACE(
         d.blockchain,
         'osmosis',
@@ -532,7 +543,6 @@ FROM
     ) = p_in.hour
     LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
     p_out
-    ON d.blockchain <> 'near'
     AND REPLACE(
         d.blockchain,
         'osmosis',
