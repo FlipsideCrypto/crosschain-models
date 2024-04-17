@@ -46,6 +46,6 @@ WHERE
     )
 {% endif %}
 
-qualify(ROW_NUMBER() over (PARTITION BY A.token_address, A.blockchain
+qualify(ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), A.blockchain
 ORDER BY
     A._inserted_timestamp DESC)) = 1

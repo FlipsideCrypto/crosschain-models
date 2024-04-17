@@ -262,6 +262,7 @@ sources:
     tables:
       - name: fact_transfers
       - name: ez_dex_swaps
+      - name: dim_ft_contract_metadata
   - name: near_defi
     database: near
     schema: defi

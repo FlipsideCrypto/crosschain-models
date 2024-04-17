@@ -17,7 +17,7 @@ SELECT
     p.token_address,
     p.id AS asset_id,
     UPPER(symbol) AS symbol,
-    name,
+    NAME,
     decimals,
     price,
     p.blockchain,
@@ -40,7 +40,11 @@ FROM
     p
     LEFT JOIN {{ ref('silver__complete_token_asset_metadata') }}
     m
-    ON p.token_address = m.token_address
+    ON LOWER(
+        p.token_address
+    ) = LOWER(
+        m.token_address
+    )
     AND p.blockchain = m.blockchain
 
 {% if is_incremental() %}
@@ -53,6 +57,6 @@ WHERE
     )
 {% endif %}
 
-qualify(ROW_NUMBER() over (PARTITION BY p.token_address, p.blockchain, HOUR
+qualify(ROW_NUMBER() over (PARTITION BY LOWER(p.token_address), p.blockchain, HOUR
 ORDER BY
     p._inserted_timestamp DESC)) = 1

@@ -209,10 +209,10 @@ WITH base AS (
         symbol,
         NAME,
         decimals,
-        NULL AS created_block_number,
-        NULL AS created_block_timestamp,
-        NULL AS created_tx_hash,
-        NULL AS creator_address,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
         'gnosis' AS blockchain,
         COALESCE(
             inserted_timestamp,
@@ -302,6 +302,31 @@ WITH base AS (
         {{ source(
             'aptos_core',
             'dim_tokens'
+        ) }}
+    UNION ALL
+    SELECT
+        contract_address AS address,
+        symbol,
+        NAME,
+        decimals,
+        NULL AS created_block_number,
+        NULL AS created_block_timestamp,
+        NULL AS created_tx_hash,
+        NULL AS creator_address,
+        'near' AS blockchain,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
+    FROM
+        {{ source(
+            'near_core',
+            'dim_ft_contract_metadata'
         ) }}
 )
 SELECT

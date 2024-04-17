@@ -38,5 +38,5 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt test -m ./models
+          dbt test -m models/bronze models/silver models/gold
           

@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: price_temp__ez_hourly_token_prices_temp
+  - name: price_temp__ez_prices_hourly
     description: A convenience table for determining token prices by address and blockchain.
 
     columns:

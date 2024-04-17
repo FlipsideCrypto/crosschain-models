@@ -154,7 +154,9 @@ token_asset_metadata AS (
                             ) THEN LAST_VALUE(
                                 hourly_price ignore nulls
                             ) over (
-                                PARTITION BY d.token_address,
+                                PARTITION BY LOWER(
+                                    d.token_address
+                                ),
                                 d.blockchain
                                 ORDER BY
                                     d.date_hour rows BETWEEN unbounded preceding
@@ -174,7 +176,9 @@ token_asset_metadata AS (
                             WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
                                 p.id ignore nulls
                             ) over (
-                                PARTITION BY d.token_address,
+                                PARTITION BY LOWER(
+                                    d.token_address
+                                ),
                                 d.blockchain
                                 ORDER BY
                                     d.date_hour rows BETWEEN unbounded preceding
@@ -186,7 +190,9 @@ token_asset_metadata AS (
                             WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
                                 p.blockchain_name ignore nulls
                             ) over (
-                                PARTITION BY d.token_address,
+                                PARTITION BY LOWER(
+                                    d.token_address
+                                ),
                                 d.blockchain
                                 ORDER BY
                                     d.date_hour rows BETWEEN unbounded preceding
@@ -198,7 +204,9 @@ token_asset_metadata AS (
                             WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
                                 p.blockchain_id ignore nulls
                             ) over (
-                                PARTITION BY d.token_address,
+                                PARTITION BY LOWER(
+                                    d.token_address
+                                ),
                                 d.blockchain
                                 ORDER BY
                                     d.date_hour rows BETWEEN unbounded preceding
@@ -210,7 +218,9 @@ token_asset_metadata AS (
                             WHEN imputed_price IS NOT NULL THEN LAST_VALUE(
                                 p.provider ignore nulls
                             ) over (
-                                PARTITION BY d.token_address,
+                                PARTITION BY LOWER(
+                                    d.token_address
+                                ),
                                 d.blockchain
                                 ORDER BY
                                     d.date_hour rows BETWEEN unbounded preceding
