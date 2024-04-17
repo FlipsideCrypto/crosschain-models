@@ -19,7 +19,6 @@ on:
           - DBT
           - DBT_CLOUD
           - DBT_EMERGENCY
-          - DBT_MEGA
         default: DBT
       dbt_command:
         type: string
