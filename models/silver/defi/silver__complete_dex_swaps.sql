@@ -524,9 +524,6 @@ SELECT
     d._log_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    --add back after FR
-    {# _inserted_timestamp AS inserted_timestamp,
-    _inserted_timestamp AS modified_timestamp, #}
     d._inserted_timestamp,
     complete_dex_swaps_id,
     d._unique_key
