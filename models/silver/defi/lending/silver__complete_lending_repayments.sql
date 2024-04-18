@@ -1,7 +1,7 @@
 {{ config(
     materialized = 'incremental',
     incremental_strategy = 'delete+insert',
-    unique_key = ['blockchain','block_number','platform'],
+    unique_key = ['_unique_key'],
     cluster_by = ['block_timestamp::DATE']
 ) }}
 
@@ -24,11 +24,11 @@ WITH ethereum as (
         amount_unadj as amount_raw,
         amount,
         amount_usd,
+        modified_timestamp as _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
                 ['ez_lending_repayments_id', 'blockchain']
         )}} AS complete_lending_repayments_id,
-        inserted_timestamp,
-        modified_timestamp as _inserted_timestamp
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM 
         {{ source(
             'ethereum_defi',
@@ -64,11 +64,11 @@ arbitrum as (
         amount_unadj as amount_raw,
         amount,
         amount_usd,
+        modified_timestamp as _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
                 ['ez_lending_repayments_id', 'blockchain']
         )}} AS complete_lending_repayments_id,
-        inserted_timestamp,
-        modified_timestamp as _inserted_timestamp
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM 
         {{ source(
             'arbitrum_defi',
@@ -104,11 +104,11 @@ optimism as (
         amount_unadj as amount_raw,
         amount,
         amount_usd,
+        modified_timestamp as _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
                 ['ez_lending_repayments_id', 'blockchain']
         )}} AS complete_lending_repayments_id,
-        inserted_timestamp,
-        modified_timestamp as _inserted_timestamp
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM 
         {{ source(
             'optimism_defi',
@@ -144,11 +144,11 @@ bsc as (
         amount_unadj as amount_raw,
         amount,
         amount_usd,
+        modified_timestamp as _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
                 ['ez_lending_repayments_id', 'blockchain']
         )}} AS complete_lending_repayments_id,
-        inserted_timestamp,
-        modified_timestamp as _inserted_timestamp
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM 
         {{ source(
             'bsc_defi',
@@ -184,11 +184,11 @@ polygon as (
         amount_unadj as amount_raw,
         amount,
         amount_usd,
+        modified_timestamp as _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
                 ['ez_lending_repayments_id', 'blockchain']
         )}} AS complete_lending_repayments_id,
-        inserted_timestamp,
-        modified_timestamp as _inserted_timestamp
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM 
         {{ source(
             'polygon_defi',
@@ -224,11 +224,11 @@ base as (
         amount_unadj as amount_raw,
         amount,
         amount_usd,
+        modified_timestamp as _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
                 ['ez_lending_repayments_id', 'blockchain']
         )}} AS complete_lending_repayments_id,
-        inserted_timestamp,
-        modified_timestamp as _inserted_timestamp
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM 
         {{ source(
             'base_defi',
@@ -264,11 +264,11 @@ avalanche as (
         amount_unadj as amount_raw,
         amount,
         amount_usd,
+        modified_timestamp as _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
                 ['ez_lending_repayments_id', 'blockchain']
         )}} AS complete_lending_repayments_id,
-        inserted_timestamp,
-        modified_timestamp as _inserted_timestamp
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM 
         {{ source(
             'avalanche_defi',
@@ -304,11 +304,11 @@ gnosis as (
         amount_unadj as amount_raw,
         amount,
         amount_usd,
+        modified_timestamp as _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
                 ['ez_lending_repayments_id', 'blockchain']
         )}} AS complete_lending_repayments_id,
-        inserted_timestamp,
-        modified_timestamp as _inserted_timestamp
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM 
         {{ source(
             'gnosis_defi',
@@ -387,6 +387,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    complete_lending_repayments_id
+    complete_lending_repayments_id,
+    _unique_key
 FROM
     all_chains_repayments d
