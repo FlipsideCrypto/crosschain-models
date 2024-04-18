@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: price_temp__ez_prices_hourly
-    description: A convenience table for determining token prices by address and blockchain.
+    description: A convenience table for determining token prices by address and blockchain, and native asset prices by symbol and blockchain.
 
     columns:
       - name: HOUR
@@ -26,7 +26,7 @@ models:
         description: A flag indicating if the price was imputed, or derived, from the last arriving record. This is generally used for tokens with low-liquidity or inconsistent reporting.
       - name: IS_DEPRECATED
         description: A flag indicating if the asset is deprecated or no longer supported by the provider.
-      - name: EZ_HOURLY_TOKEN_PRICES_ID
+      - name: EZ_PRICES_HOURLY_ID
         description: '{{ doc("pk") }}'   
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   

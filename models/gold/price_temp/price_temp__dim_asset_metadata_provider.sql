@@ -14,6 +14,6 @@ SELECT
     provider,
     inserted_timestamp,
     modified_timestamp,
-    complete_provider_asset_metadata_id AS dim_provider_asset_metadata_id
+    complete_provider_asset_metadata_id AS dim_asset_metadata_provider_id
 FROM
     {{ ref('silver__complete_provider_asset_metadata') }} A
