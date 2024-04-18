@@ -666,6 +666,11 @@ sources:
     schema: stats
     tables:
       - name: ez_core_metrics_hourly
+  - name: blast_stats
+    database: blast
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
   - name: base_stats
     database: base
     schema: stats
