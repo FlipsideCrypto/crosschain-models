@@ -1,31 +1,27 @@
 version: 2
 models:
   - name: price_temp__ez_asset_metadata
-    description: A convenience table holding prioritized asset metadata and other relevant details pertaining to each token_address and native asset.
+    description: Deprecating soon! Note, only the ID column is changing. The ez_asset_metadata table itself is not being deprecated. '{{ doc("prices_ez_asset_metadata_table_doc") }}'
 
     columns:
       - name: ID
-        description: Deprecating soon! Please use the ASSET_ID column instead.
+        description: '{{ doc("prices_id_deprecation")}}'
       - name: ASSET_ID
-        description: The unique identifier representing the asset.
+        description: '{{ doc("prices_asset_id") }}'
       - name: NAME
-        description: The name of asset.
+        description: '{{ doc("prices_name") }}'
       - name: SYMBOL
-        description: The symbol of asset.
+        description: '{{ doc("prices_symbol") }}'
       - name: TOKEN_ADDRESS
-        description: Address of the token. This will be NULL if referring to a native asset.
+        description: '{{ doc("prices_token_address") }}'
       - name: BLOCKCHAIN
-        description: The Blockchain, Network, or Platform where this asset has a token address. This column is derived by manually grouping blockchain_name, for reference purposes.
-      - name: BLOCKCHAIN_NAME
-        description: The name of the Blockchain, Network, or Platform where this asset has a token address. This may differ by provider.
-      - name: BLOCKCHAIN_ID
-        description: The unique identifier of the Blockchain, Network, or Platform where this asset has a token address.
+        description: '{{ doc("prices_blockchain") }}'
       - name: DECIMALS
-        description: The number of decimals for token contract. May be NULL if referring to a native asset.
+        description: '{{ doc("prices_decimals") }}'
       - name: IS_NATIVE
-        description: A flag indicating assets native to the respective blockchain.
+        description: '{{ doc("prices_is_native") }}'
       - name: IS_DEPRECATED
-        description: A flag indicating if the asset is deprecated or no longer supported by the provider.
+        description: '{{ doc("prices_is_deprecated") }}'
       - name: EZ_ASSET_METADATA_ID
         description: '{{ doc("pk") }}'   
       - name: INSERTED_TIMESTAMP
