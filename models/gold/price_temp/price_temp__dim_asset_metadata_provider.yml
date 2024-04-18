@@ -20,7 +20,7 @@ models:
         description: The unique identifier of the Blockchain, Network, or Platform where this asset has an id.
       - name: DECIMALS
         description: The number of decimal places the token needs adjusted where token values exist.
-      - name: DIM_PROVIDER_ASSET_METADATA_ID
+      - name: DIM_ASSET_METADATA_PROVIDER_ID
         description: '{{ doc("pk") }}'   
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   
