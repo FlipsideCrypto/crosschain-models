@@ -1,31 +1,27 @@
 version: 2
 models:
   - name: price_temp__ez_prices_hourly
-    description: A convenience table for determining token prices by address and blockchain, and native asset prices by symbol and blockchain.
+    description: '{{ doc("prices_ez_prices_hourly_table_doc") }}'
 
     columns:
       - name: HOUR
-        description: Hour that the price was recorded at
+        description: '{{ doc("prices_hour")}}'
       - name: TOKEN_ADDRESS
-        description: Address of the token. This will be NULL if referring to a native asset.
+        description: '{{ doc("prices_token_address") }}'
       - name: SYMBOL
-        description: Symbol of the token
-      - name: DECIMALS
-        description: The number of decimals for token contract. May be NULL if referring to a native asset.
+        description: '{{ doc("prices_symbol") }}'
       - name: BLOCKCHAIN
-        description: The Blockchain, Network, or Platform where this asset has a token address. This column is derived by manually grouping blockchain_name, for reference purposes. 
-      - name: BLOCKCHAIN_NAME
-        description: The name of the Blockchain, Network, or Platform where this asset has a token address. This may differ by provider.
-      - name: BLOCKCHAIN_ID
-        description: The unique identifier of the Blockchain, Network, or Platform where this asset has a token address.
+        description: '{{ doc("prices_blockchain") }}'
+      - name: DECIMALS
+        description: '{{ doc("prices_decimals") }}'
       - name: PRICE
-        description: Closing price of the recorded hour in USD
+        description: '{{ doc("prices_price") }}'
       - name: IS_NATIVE
-        description: A flag indicating assets native to the respective blockchain.
+        description: '{{ doc("prices_is_native") }}'
       - name: IS_IMPUTED
-        description: A flag indicating if the price was imputed, or derived, from the last arriving record. This is generally used for tokens with low-liquidity or inconsistent reporting.
+        description: '{{ doc("prices_is_imputed") }}'
       - name: IS_DEPRECATED
-        description: A flag indicating if the asset is deprecated or no longer supported by the provider.
+        description: '{{ doc("prices_is_deprecated") }}'
       - name: EZ_PRICES_HOURLY_ID
         description: '{{ doc("pk") }}'   
       - name: INSERTED_TIMESTAMP
