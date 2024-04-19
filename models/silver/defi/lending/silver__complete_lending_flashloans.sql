@@ -382,8 +382,6 @@ SELECT
     block_timestamp,
     tx_hash,
     contract_address,
-    origin_from_address,
-    origin_to_address,
     protocol_market,
     initiator,
     target,

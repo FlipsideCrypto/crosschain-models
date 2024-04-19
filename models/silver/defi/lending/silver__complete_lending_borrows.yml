@@ -24,6 +24,9 @@ models:
       - name: CONTRACT_ADDRESS
         tests:
           - dbt_expectations.expect_column_to_exist
+      - name: PROTOCOL_MARKET
+        tests:
+          - dbt_expectations.expect_column_to_exist
       - name: BORROWER
         tests:
           - dbt_expectations.expect_column_to_exist
