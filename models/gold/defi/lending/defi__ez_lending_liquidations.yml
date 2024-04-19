@@ -12,10 +12,6 @@ models:
         description: '{{ doc("cross_chain_tx_hash") }}'
       - name: CONTRACT_ADDRESS
         description: '{{ doc("contract_address") }}'
-      - name: ORIGIN_FROM_ADDRESS
-        description: '{{ doc("origin_from") }}'
-      - name: ORIGIN_TO_ADDRESS
-        description: '{{ doc("origin_to") }}'
       - name: PLATFORM
         description: '{{ doc("complete_lending_platform") }}'
       - name: LIQUIDATOR
