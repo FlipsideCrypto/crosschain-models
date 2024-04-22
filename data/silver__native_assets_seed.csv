@@ -103,8 +103,8 @@ coingecko,THORChain,RUNE,thorchain,18
 coingecko,Axelar,AXL,axelar,18
 coingecko,Osmosis,OSMO,osmosis,18
 coingecko,Polygon,MATIC,matic-network,18
-coingecko,Polygon,POL,polygon-ecosystem-token,18
-coingecko,Gnosis,XDAI,xdai,18
+coingecko,Polygon Ecosystem Token,POL,polygon-ecosystem-token,18
+coingecko,XDAI,XDAI,xdai,18
 coinmarketcap,Bitcoin,BTC,1,8
 coinmarketcap,Ethereum,ETH,1027,18
 coinmarketcap,BNB,BNB,1839,18
@@ -210,5 +210,5 @@ coinmarketcap,THORChain,RUNE,4157,18
 coinmarketcap,Axelar,AXL,17799,18
 coinmarketcap,Osmosis,OSMO,12220,18
 coinmarketcap,Polygon,MATIC,3890,18
-coinmarketcap,Polygon,POL,28321,18
-coinmarketcap,Gnosis,XDAI,8635,18
+coinmarketcap,Polygon Ecosystem Token,POL,28321,18
+coinmarketcap,xDAI,XDAI,8635,18
