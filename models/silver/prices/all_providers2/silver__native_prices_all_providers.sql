@@ -88,6 +88,8 @@ SELECT
     decimals,
     CASE
         WHEN NAME ilike 'bnb' THEN 'bsc'
+        WHEN NAME ilike 'xdai' THEN 'gnosis'
+        WHEN name ilike 'polygon ecosystem token' THEN 'polygon'
         ELSE NAME
     END AS blockchain,
     price,
