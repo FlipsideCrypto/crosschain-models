@@ -30,11 +30,6 @@ WITH base_assets AS (
             n.id
         )
         AND LOWER(
-            A.name
-        ) = LOWER(
-            n.name
-        )
-        AND LOWER(
             A.symbol
         ) = LOWER(n.symbol)
 
