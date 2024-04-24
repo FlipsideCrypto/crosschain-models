@@ -341,86 +341,26 @@ all_chains_deposits AS (
         *
     FROM
         gnosis
-),
-depo_agg as (
-
-    {% if is_incremental() %}
-    SELECT
-        depositor,
-        sum(amount_usd) as amount_usd
-    FROM
-        {{ this }}
-    UNION ALL
-    {% endif %}
-    SELECT
-        depositor,
-        sum(amount_usd) as amount_usd
-    FROM
-        all_chains_deposits
-    group by 1
-),
-percentile_calc as (
-
-    SELECT
-        APPROX_PERCENTILE(amount_usd, 0.9999) AS percentile_99_99,
-    FROM
-    (SELECT * FROM depo_agg)
-),
-top_addresses as (
-    SELECT
-        *
-    FROM
-        depo_agg
-    WHERE
-        amount_usd >= (SELECT percentile_99_99 FROM percentile_calc)
 )
-SELECT
-    blockchain,
-    platform,
-    block_number,
-    block_timestamp,
-    tx_hash,
-    contract_address,
-    protocol_market,
-    'outlier' as outlier_flag,
-    depositor,
-    token_address,
-    token_symbol,
-    amount_raw,
-    amount,
-    amount_usd,
-    _inserted_timestamp,
-    SYSDATE() AS inserted_timestamp,
-    SYSDATE() AS modified_timestamp,
-    complete_lending_deposits_id,
-    _unique_key
-FROM
-    all_chains_deposits d
-WHERE
-    depositor in (SELECT depositor FROM top_addresses)
-UNION ALL
-SELECT
-    blockchain,
-    platform,
-    block_number,
-    block_timestamp,
-    tx_hash,
-    contract_address,
-    protocol_market,
-    'normal' as outlier_flag,
-    depositor,
-    token_address,
-    token_symbol,
-    amount_raw,
-    amount,
-    amount_usd,
-    _inserted_timestamp,
-    SYSDATE() AS inserted_timestamp,
-    SYSDATE() AS modified_timestamp,
-    complete_lending_deposits_id,
-    _unique_key
-FROM
-    all_chains_deposits d
-WHERE
-    depositor not in (SELECT depositor FROM top_addresses);
 
+SELECT
+    blockchain,
+    platform,
+    block_number,
+    block_timestamp,
+    tx_hash,
+    contract_address,
+    protocol_market,
+    depositor,
+    token_address,
+    token_symbol,
+    amount_raw,
+    amount,
+    amount_usd,
+    _inserted_timestamp,
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
+    complete_lending_deposits_id,
+    _unique_key
+FROM
+    all_chains_deposits d
