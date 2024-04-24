@@ -38,5 +38,3 @@ jobs:
       - name: Run DBT Jobs
         run: |
           dbt run-operation run_sp_create_prod_clone
-          dbt run-operation fsc_utils.create_udf_bulk_rest_api_v2 --vars '{"UPDATE_UDFS_AND_SPS":True}' --target dev
-          dbt run -s livequery_models.deploy.core._live --vars '{"UPDATE_UDFS_AND_SPS":True}' --target dev
