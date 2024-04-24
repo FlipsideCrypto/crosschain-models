@@ -357,7 +357,7 @@ SELECT
     amount_raw,
     amount,
     amount_usd,
-    _inserted_timestamp
+    _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     complete_lending_deposits_id,
