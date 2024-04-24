@@ -18,7 +18,7 @@ env:
   SCHEMA: "${{ vars.SCHEMA }}"
 
 jobs:
-  run_dbt_jobs:
+  run_dbt_jobs_refresh:
     runs-on: ubuntu-latest
     environment:
       name: workflow_prod
@@ -38,3 +38,28 @@ jobs:
       - name: Run DBT Jobs
         run: |
           dbt run-operation run_sp_create_prod_clone
+
+  run_dbt_jobs_udf:
+    runs-on: ubuntu-latest
+    environment:
+      name: workflow_dev
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: install dependencies
+        run: |
+          pip install -r requirements.txt
+          dbt deps
+      - name: Run DBT Jobs
+        run: |
+          dbt run-operation fsc_utils.create_udf_bulk_rest_api_v2 --vars '{"UPDATE_UDFS_AND_SPS":True}'
+          dbt run -s livequery_models.deploy.core._live --vars '{"UPDATE_UDFS_AND_SPS":True}'
+
+
+          
