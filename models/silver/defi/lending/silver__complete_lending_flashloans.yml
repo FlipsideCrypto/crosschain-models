@@ -1,0 +1,68 @@
+version: 2
+models:
+  - name: silver__complete_lending_flashloans
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - COMPLETE_LENDING_FLASHLOANS_ID
+    columns:
+      - name: BLOCKCHAIN
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: PLATFORM
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: BLOCK_NUMBER
+        tests:
+          - dbt_expectations.expect_column_to_exist          
+      - name: BLOCK_TIMESTAMP
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TX_HASH
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: CONTRACT_ADDRESS
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: PROTOCOL_MARKET
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: INITIATOR
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: TARGET
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: FLASHLOAN_TOKEN
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: FLASHLOAN_TOKEN_SYMBOL
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: FLASHLOAN_AMOUNT_RAW
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: FLASHLOAN_AMOUNT
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: FLASHLOAN_AMOUNT_USD
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: PREMIUM_AMOUNT_RAW
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: PREMIUM_AMOUNT
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: PREMIUM_AMOUNT_USD
+        tests:
+          - dbt_expectations.expect_column_to_exist
+      - name: COMPLETE_LENDING_FLASHLOANS_ID
+        tests:
+          - not_null
+      - name: INSERTED_TIMESTAMP
+        tests:
+          - not_null
+      - name: MODIFIED_TIMESTAMP
+        tests:
+          - not_null
