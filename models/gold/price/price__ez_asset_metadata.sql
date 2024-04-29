@@ -4,48 +4,44 @@
     "columns": true }
 ) }}
 
-WITH base_priority AS (
-
-    SELECT
-        token_address,
-        id,
-        COALESCE(
-            C.symbol,
-            s.symbol
-        ) AS symbol,
-        NAME,
-        decimals,
-        s.blockchain,
-        provider,
-        CASE
-            WHEN provider = 'coingecko' THEN 1
-            WHEN provider = 'coinmarketcap' THEN 2
-        END AS priority,
-        GREATEST(COALESCE(s.inserted_timestamp,'2000-01-01'), COALESCE(C.inserted_timestamp,'2000-01-01')) as inserted_timestamp,
-        GREATEST(COALESCE(s.modified_timestamp,'2000-01-01'), COALESCE(C.modified_timestamp,'2000-01-01')) as modified_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['token_address','s.blockchain']) }} AS ez_asset_metadata_id
-    FROM
-        {{ ref('silver__asset_metadata_priority') }}
-        s
-        LEFT JOIN {{ ref('core__dim_contracts') }} C
-        ON LOWER(
-            C.address
-        ) = LOWER(
-            s.token_address
-        )
-        AND C.blockchain = s.blockchain
-)
 SELECT
-    token_address,
-    id,
+    CASE
+        WHEN A.token_address ILIKE 'ibc%'
+        OR blockchain IN (
+            'solana',
+            'bitcoin',
+            'flow'
+        ) THEN A.token_address
+        ELSE LOWER(
+            A.token_address
+        )
+    END AS token_address,
+    asset_id AS id, -- id column pending deprecation
+    asset_id,
     symbol,
     NAME,
     decimals,
     blockchain,
+    FALSE AS is_native,
+    is_deprecated,
     inserted_timestamp,
     modified_timestamp,
-    ez_asset_metadata_id
+    complete_token_asset_metadata_id AS ez_asset_metadata_id
 FROM
-    base_priority qualify(ROW_NUMBER() over (PARTITION BY token_address, blockchain
-ORDER BY
-    priority ASC)) = 1
+    {{ ref('silver__complete_token_asset_metadata') }} A
+UNION ALL
+SELECT
+    NULL AS token_address,
+    asset_id AS id, -- id column pending deprecation
+    asset_id,
+    symbol,
+    NAME,
+    decimals,
+    blockchain,
+    TRUE AS is_native,
+    is_deprecated,
+    inserted_timestamp,
+    modified_timestamp,
+    complete_native_asset_metadata_id AS ez_asset_metadata_id
+FROM
+    {{ ref('silver__complete_native_asset_metadata') }}

@@ -495,7 +495,7 @@ SELECT
     complete_bridge_activity_id
 FROM
     all_chains_bridge b
-    LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
+    LEFT JOIN {{ ref('price__ez_prices_hourly') }}
     p
     ON b.blockchain = p.blockchain
     AND b.token_address = p.token_address

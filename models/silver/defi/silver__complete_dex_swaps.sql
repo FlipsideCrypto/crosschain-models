@@ -529,7 +529,7 @@ SELECT
     d._unique_key
 FROM
     all_chains_dex d
-    LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
+    LEFT JOIN {{ ref('price__ez_prices_hourly') }}
     p_in
     ON REPLACE(
         d.blockchain,
@@ -541,7 +541,7 @@ FROM
         'hour',
         d.block_timestamp
     ) = p_in.hour
-    LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
+    LEFT JOIN {{ ref('price__ez_prices_hourly') }}
     p_out
     ON REPLACE(
         d.blockchain,
