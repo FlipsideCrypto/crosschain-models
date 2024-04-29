@@ -311,7 +311,7 @@ solana AS (
             ELSE NULL
         END AS destination_address,
         direction,
-        LOWER(mint) AS token_address,
+        mint AS token_address,
         NULL AS token_symbol,
         amount AS amount_raw,
         amount,
