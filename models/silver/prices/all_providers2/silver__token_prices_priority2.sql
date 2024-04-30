@@ -47,11 +47,17 @@ WHERE
         FROM
             {{ this }}
     )
+    OR modified_timestamp >= (
+        SELECT
+            MAX(modified_timestamp)
+        FROM
+            {{ this }}
+    )
 {% endif %}
 
 qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, LOWER(token_address), blockchain
 ORDER BY
-    priority ASC, id ASC, blockchain_id ASC nulls last, _inserted_timestamp DESC)) = 1)
+    priority ASC, id ASC, blockchain_id ASC nulls last, _inserted_timestamp DESC, modified_timestamp DESC)) = 1)
 
 {% if is_incremental() %},
 price_gaps AS (

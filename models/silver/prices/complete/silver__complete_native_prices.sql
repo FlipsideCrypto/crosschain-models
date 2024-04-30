@@ -46,6 +46,12 @@ WHERE
         FROM
             {{ this }}
     )
+    OR p.modified_timestamp >= (
+        SELECT
+            MAX(modified_timestamp)
+        FROM
+            {{ this }}
+    )
     OR symbol_adj NOT IN (
         SELECT
             symbol
@@ -61,7 +67,7 @@ WHERE
 
 qualify(ROW_NUMBER() over (PARTITION BY symbol_adj, HOUR
 ORDER BY
-    p._inserted_timestamp DESC)) = 1
+    p._inserted_timestamp DESC, p.modified_timestamp DESC)) = 1
 )
 SELECT
     HOUR,

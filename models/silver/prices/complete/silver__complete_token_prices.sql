@@ -55,8 +55,14 @@ WHERE
         FROM
             {{ this }}
     )
+    OR p.modified_timestamp >= (
+        SELECT
+            MAX(modified_timestamp)
+        FROM
+            {{ this }}
+    )
 {% endif %}
 
 qualify(ROW_NUMBER() over (PARTITION BY LOWER(p.token_address), p.blockchain, HOUR
 ORDER BY
-    p._inserted_timestamp DESC)) = 1
+    p._inserted_timestamp DESC, p.modified_timestamp DESC)) = 1
