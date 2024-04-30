@@ -105,6 +105,7 @@ coingecko,Osmosis,OSMO,osmosis,18
 coingecko,Polygon,MATIC,matic-network,18
 coingecko,Polygon Ecosystem Token,POL,polygon-ecosystem-token,18
 coingecko,XDAI,XDAI,xdai,18
+coingecko,Aurora,AURORA,aurora-near,18
 coinmarketcap,Bitcoin,BTC,1,8
 coinmarketcap,Ethereum,ETH,1027,18
 coinmarketcap,BNB,BNB,1839,18
@@ -212,3 +213,4 @@ coinmarketcap,Osmosis,OSMO,12220,18
 coinmarketcap,Polygon,MATIC,3890,18
 coinmarketcap,Polygon Ecosystem Token,POL,28321,18
 coinmarketcap,xDAI,XDAI,8635,18
+coinmarketcap,Aurora,AURORA,14803,18
