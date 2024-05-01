@@ -72,6 +72,7 @@ base_adj AS (
                     '-/_'
                 )
             )
+            WHEN A.platform = 'aptos' THEN A.token_address
             ELSE IFF(
                 LENGTH(
                     TRIM(

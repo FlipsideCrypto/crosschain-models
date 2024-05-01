@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: price_temp__ez_prices_hourly
+  - name: price__ez_prices_hourly
     description: '{{ doc("prices_ez_prices_hourly_table_doc") }}'
 
     columns:

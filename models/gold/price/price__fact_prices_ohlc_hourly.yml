@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: price_temp__fact_prices_ohlc_hourly
+  - name: price__fact_prices_ohlc_hourly
     description: '{{ doc("prices_fact_prices_ohlc_hourly_table_doc") }}'
 
     columns:

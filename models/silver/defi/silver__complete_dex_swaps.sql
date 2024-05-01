@@ -369,11 +369,11 @@ solana AS (
         tx_id AS tx_hash,
         program_id AS contract_address,
         swapper AS trader,
-        LOWER(swap_from_mint) AS token_in,
+        swap_from_mint AS token_in,
         NULL AS symbol_in,
         swap_from_amount AS amount_in_raw,
         amount_in_raw AS amount_in,
-        LOWER(swap_to_mint) AS token_out,
+        swap_to_mint AS token_out,
         NULL AS symbol_out,
         swap_to_amount AS amount_out_raw,
         amount_out_raw AS amount_out,
@@ -529,7 +529,7 @@ SELECT
     d._unique_key
 FROM
     all_chains_dex d
-    LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
+    LEFT JOIN {{ ref('price__ez_prices_hourly') }}
     p_in
     ON REPLACE(
         d.blockchain,
@@ -541,7 +541,7 @@ FROM
         'hour',
         d.block_timestamp
     ) = p_in.hour
-    LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
+    LEFT JOIN {{ ref('price__ez_prices_hourly') }}
     p_out
     ON REPLACE(
         d.blockchain,

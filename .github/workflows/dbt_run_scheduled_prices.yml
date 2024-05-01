@@ -38,4 +38,4 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run -m "crosschain_models,tag:prices" models/silver/hourly_prices models/silver/asset_metadata
+          dbt run -m "crosschain_models,tag:prices" models/silver/prices/_legacy/hourly_prices models/silver/prices/_legacy/asset_metadata

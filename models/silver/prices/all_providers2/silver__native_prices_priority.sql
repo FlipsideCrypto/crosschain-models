@@ -15,7 +15,7 @@ WITH priority_prices AS (
     SELECT
         recorded_hour,
         symbol,
-        name,
+        NAME,
         id,
         decimals,
         blockchain,
@@ -45,17 +45,23 @@ WHERE
         FROM
             {{ this }}
     )
+    OR modified_timestamp >= (
+        SELECT
+            MAX(modified_timestamp)
+        FROM
+            {{ this }}
+    )
     OR symbol NOT IN (
         SELECT
             DISTINCT symbol
         FROM
             {{ this }}
-    )  --load all data for new assets
+    ) --load all data for new assets
 {% endif %}
 
 qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol
 ORDER BY
-    priority ASC, id ASC, blockchain ASC, _inserted_timestamp DESC)) = 1
+    priority ASC, id ASC, blockchain ASC, _inserted_timestamp DESC, modified_timestamp DESC)) = 1
 )
 
 {% if is_incremental() %},
@@ -95,7 +101,7 @@ native_asset_metadata AS (
     -- get all token metadata for tokens with missing prices
     SELECT
         symbol,
-        name,
+        NAME,
         decimals,
         _inserted_timestamp
     FROM
@@ -123,7 +129,7 @@ latest_supported_assets AS (
             SELECT
                 date_hour,
                 symbol,
-                name,
+                NAME,
                 decimals
             FROM
                 {{ ref('core__dim_date_hours') }}
@@ -242,7 +248,7 @@ latest_supported_assets AS (
         SELECT
             recorded_hour,
             symbol,
-            name,
+            NAME,
             decimals,
             blockchain,
             price,
@@ -260,7 +266,7 @@ UNION ALL
 SELECT
     date_hour AS recorded_hour,
     symbol,
-    name,
+    NAME,
     decimals,
     blockchain,
     final_price AS price,
@@ -280,7 +286,7 @@ WHERE
 SELECT
     recorded_hour,
     symbol,
-    name,
+    NAME,
     decimals,
     blockchain,
     price,
@@ -300,5 +306,5 @@ FROM
 {% if is_incremental() %}
 qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol
 ORDER BY
-    priority ASC, id ASC, _inserted_timestamp DESC)) = 1
+    priority ASC, id ASC, blockchain ASC, _inserted_timestamp DESC)) = 1
 {% endif %}
