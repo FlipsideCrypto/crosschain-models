@@ -311,7 +311,7 @@ solana AS (
             ELSE NULL
         END AS destination_address,
         direction,
-        mint AS token_address,
+        LOWER(mint) AS token_address,
         NULL AS token_symbol,
         amount AS amount_raw,
         amount,
@@ -495,7 +495,7 @@ SELECT
     complete_bridge_activity_id
 FROM
     all_chains_bridge b
-    LEFT JOIN {{ ref('price__ez_prices_hourly') }}
+    LEFT JOIN {{ ref('price__ez_hourly_token_prices') }}
     p
     ON b.blockchain = p.blockchain
     AND b.token_address = p.token_address
