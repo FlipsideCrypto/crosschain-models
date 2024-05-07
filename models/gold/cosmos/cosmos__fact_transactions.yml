@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: cosmos__fact_transactions
-    description: Records of transactions that have occurred on Axelar, Osmosis, and Cosmos
+    description: Records of transactions that have occurred on Axelar, Cosmos, and Osmosis.
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

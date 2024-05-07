@@ -1,6 +1,7 @@
 version: 2
 models:
   - name: cosmos__fact_governance_votes
+    description: Records of all votes on proposals on Axelar, Cosmos, and Osmosis.
     columns:
       - name: BLOCKCHAIN
         description: The name of the blockchain

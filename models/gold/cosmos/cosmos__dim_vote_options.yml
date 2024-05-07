@@ -1,0 +1,10 @@
+version: 2
+models:
+  - name: cosmos__dim_vote_options
+    description: "Table that contains the vote options for governance proposals"
+
+    columns:
+      - name: VOTE_ID
+        description: "The vote option id"
+      - name: DESCRIPTION
+        description: "The vote option description"
