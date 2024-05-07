@@ -1,6 +1,7 @@
 version: 2
 models:
   - name: cosmos__dim_base_address
+    description: This table contains the common base address across all cosmos chains. This table is sourced from available chains and IBC transfers to build the population of known addresses. The bases address is the first 32 characters of the address after the chain prefix has been removed.
     columns:
       - name: BASE_ADDRESS
         description: The common base address across all chains

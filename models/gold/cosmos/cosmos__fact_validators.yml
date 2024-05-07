@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: cosmos__fact_validators
-    description: Contains validator metadata for assets on the Osmosis blockchain. This table was sourced from an API and may not contain every token.
+    description: Contains validator metadata for Axelar, Cosmos, and Osmosis. 
     columns:
       - name: ADDRESS
         description: "{{ doc('address') }}"
