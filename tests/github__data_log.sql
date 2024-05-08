@@ -3,7 +3,7 @@ WITH base AS (
         SPLIT_PART(MESSAGE, ',',2) AS status_code,
         count(*) as counter
     FROM
-        crosschain.bronze_api.log_messages
+        {{ target.database }}.bronze_api.log_messages
     WHERE
         timestamp BETWEEN DATEADD(HOUR, -1, CURRENT_TIMESTAMP())
         AND CURRENT_TIMESTAMP()
