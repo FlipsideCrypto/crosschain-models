@@ -38,3 +38,4 @@ jobs:
         run: |
           dbt run-operation get_github_repo_data --args "{GITHUB_TOKEN: 'TOKEN', frequency: ['core']}"
           dbt run --model silver__github_activity
+          dbt test -s github_data_null

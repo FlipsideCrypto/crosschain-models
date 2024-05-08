@@ -1,27 +1,22 @@
-{{
-    config(
-        tags=["test_weekly"]
-    )
-}}
-
 WITH base AS (
     SELECT
-        status_code,
-        count(*) AS count
+        SPLIT_PART(MESSAGE, ',',2) AS status_code,
+        count(*) as counter
     FROM
         crosschain.bronze_api.log_messages
     WHERE
-        block_timestamp BETWEEN CURRENT_DATE - 92
-        AND CURRENT_DATE - 2
-    GROUP BY
-        1,
+        timestamp BETWEEN DATEADD(HOUR, -1, CURRENT_TIMESTAMP())
+        AND CURRENT_TIMESTAMP()
+        AND LOG_LEVEL = 'DEBUG'
+    GROUP BY 1
+
 )
 select
     status_code,
-    count
+    counter
 from
     base
 where
-    status_code is not in (200, 202, 404)
-    and count > 0
-    and count < 100
+    status_code not in (200, 202, 404, 451)
+    and counter > 0
+    and counter < 100
