@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.github_repo_data(
 
 {% set event_table %}
 
-CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.log_messages (
+CREATE  OR REPLACE TABLE {{ target.database }}.bronze_api.log_messages (
     timestamp TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
     log_level STRING,
     message STRING
