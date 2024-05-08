@@ -17,10 +17,11 @@ CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.github_repo_data(
 
 {% set event_table %}
 
-CREATE TABLE IF NOT EXISTS {{ target.database }}.bronze_api.log_messages (
+CREATE  OR REPLACE TABLE {{ target.database }}.bronze_api.log_messages (
     timestamp TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
     log_level STRING,
-    message STRING
+    endpoint STRING,
+    status_code STRING
 );
 {% endset %}
 
@@ -138,7 +139,7 @@ CREATE OR REPLACE PROCEDURE {{ target.database }}.bronze_api.get_github_api_repo
 
                 snowflake.execute({sqlText: create_temp_table_command});
                 
-                var log_debug_status_code_message = `INSERT INTO {{ target.database }}.bronze_api.log_messages (log_level, message) select 'DEBUG', CONCAT_WS(',',full_endpoint,status_code) from {{ target.database }}.bronze_api.response_data`;
+                var log_debug_status_code_message = `INSERT INTO {{ target.database }}.bronze_api.log_messages (log_level, message) select 'DEBUG', full_endpoint,status_code) from {{ target.database }}.bronze_api.response_data`;
                 snowflake.execute({sqlText: log_debug_status_code_message});
 
                 var insert_command = `
