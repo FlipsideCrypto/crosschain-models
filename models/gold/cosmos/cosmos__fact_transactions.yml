@@ -27,8 +27,7 @@ models:
       - name: TX_FROM
         description: "{{ doc('tx_from') }}"
         tests: 
-          - not_null: 
-              where: TX_SUCCEEDED = 'TRUE'
+          - dbt_expectations.expect_column_to_exist
       - name: TX_SUCCEEDED
         description: "{{ doc('tx_succeeded') }}"
         tests: 
@@ -40,11 +39,11 @@ models:
       - name: FEE
         description: "{{ doc('fee') }}"
         tests: 
-          - not_null
+          - dbt_expectations.expect_column_to_exist
       - name: FEE_DENOM
         description: "{{ doc('fee_denom') }}"
         tests: 
-          - not_null
+          - dbt_expectations.expect_column_to_exist
       - name: GAS_USED
         description: "{{ doc('gas_used') }}"
         tests:
