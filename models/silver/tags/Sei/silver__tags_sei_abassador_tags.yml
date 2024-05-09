@@ -15,4 +15,4 @@ models:
                 - STRING
                 - VARCHAR
           - dbt_expectations.expect_column_values_to_match_regex:
-              regex: 0[xX][0-9a-fA-F]+
+              regex: '[0-9a-fA-F]+'

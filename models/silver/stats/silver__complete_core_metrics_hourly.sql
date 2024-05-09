@@ -794,7 +794,7 @@ all_chains AS (
     UNION ALL
     SELECT
         *
-    FROM   
+    FROM
         flow
     UNION ALL
     SELECT
@@ -844,4 +844,6 @@ SELECT
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM
-    all_chains
+    all_chains qualify (ROW_NUMBER() over (PARTITION BY blockchain, block_timestamp_hour
+ORDER BY
+    _inserted_timestamp DESC)) = 1
