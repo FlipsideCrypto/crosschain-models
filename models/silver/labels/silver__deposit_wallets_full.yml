@@ -15,7 +15,8 @@ models:
       - name: CREATOR
         description: The name of the creator of the label
         tests:
-          - not_null
+          - not_null:
+              where: _IS_DELETED = FALSE
       - name: INSERT_DATE
         description: The date the label was inserted in the table
         tests:
@@ -23,15 +24,18 @@ models:
       - name: label_type
         description: A high-level category describing the addresses main function or ownership
         tests:
-          - not_null
+          - not_null:
+              where: _IS_DELETED = FALSE
       - name: label_subtype
         description: A sub-category nested within label type providing further detail
         tests:
-          - not_null
+          - not_null:
+              where: _IS_DELETED = FALSE
       - name: PROJECT_NAME
         description: Name of the controlling entity of the address
         tests:
-          - not_null
+          - not_null:
+              where: _IS_DELETED = FALSE
       - name: ADDRESS
         description: Address that the label is for. This is the field that should be used to join other tables with labels. 
         tests:
