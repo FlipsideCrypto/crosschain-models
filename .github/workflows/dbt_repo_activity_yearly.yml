@@ -1,5 +1,5 @@
-name: dbt_activity_yearly
-run-name: dbt_activity_yearly
+name: dbt_repo_activity_yearly
+run-name: dbt_repo_activity_yearly
 
 on:
   workflow_dispatch:

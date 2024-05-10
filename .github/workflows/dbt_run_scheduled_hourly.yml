@@ -1,11 +1,11 @@
-name: dbt_run_scheduled_weekly
-run-name: dbt_run_scheduled_weekly
+name: dbt_run_scheduled_hourly
+run-name: dbt_run_scheduled_hourly
 
 on:
   workflow_dispatch:
   schedule:
-    # Runs 05:00 weekly on Monday (see https://crontab.guru)
-    - cron: '0 5 * * 1'
+    # Runs "every hour" (see https://crontab.guru)
+    - cron: '0 */1 * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
@@ -39,5 +39,4 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run -m "crosschain_models,tag:weekly_full_refresh" --full-refresh
-          dbt run -m "crosschain_models,tag:weekly"
+          dbt run -m "crosschain_models,tag:hourly"
