@@ -2,7 +2,7 @@
     materialized = 'incremental',
     unique_key = "deposit_wallets_id",
     incremental_strategy = 'merge',
-    tags = ['snowflake', 'crosschain', 'labels', 'silver__contract_autolabels', 'daily']
+    tags = ['daily']
 ) }}
 
 {% if is_incremental() %}

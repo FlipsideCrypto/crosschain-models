@@ -2,7 +2,7 @@
     materialized = 'incremental',
     unique_key = "CONCAT_WS('-', blockchain, symbol, address, xfer_date)",
     incremental_strategy = 'delete+insert',
-    tags = ['snowflake', 'ntr', 'crosschain', 'daily']
+    tags = ['daily']
 ) }}
 
 WITH pre_final as (
