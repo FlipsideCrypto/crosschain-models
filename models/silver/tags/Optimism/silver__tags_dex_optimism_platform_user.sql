@@ -3,6 +3,7 @@
     unique_key = "address",
     incremental_strategy = 'merge',
     merge_update_columns = ['creator'],
+    tags = ['daily']
 ) }}
 
 WITH traders AS (

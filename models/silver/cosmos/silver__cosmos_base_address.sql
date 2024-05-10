@@ -5,6 +5,7 @@
   cluster_by = 'block_timestamp::DATE',
   post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION",
   merge_exclude_columns = ["inserted_timestamp"],
+  tags = ['daily']
 ) }}
 
 WITH axelar_base AS (

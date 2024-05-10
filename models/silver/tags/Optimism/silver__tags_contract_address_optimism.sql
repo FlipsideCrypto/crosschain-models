@@ -2,6 +2,7 @@
     materialized = 'incremental',
     unique_key = "address",
     incremental_strategy = 'delete+insert',
+    tags = ['daily']
 ) }}
 
 WITH pre_final AS (

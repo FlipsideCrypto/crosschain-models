@@ -1,5 +1,7 @@
 {{ config(
-  materialized = 'view'
+  materialized = 'view',
+  meta ={ 'database_tags':{ 'table':{ 'PROTOCOL' :'COSMOS, AXELAR, OSMOSIS'
+  } } }
 ) }}
 
 SELECT

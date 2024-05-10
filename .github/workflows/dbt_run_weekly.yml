@@ -39,4 +39,5 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run -m models/silver/labels/silver__deposit_wallets.sql models/silver/labels/deposit_wallets --full-refresh
+          dbt run -m "crosschain_models,tag:weekly_full_refresh" --full-refresh
+          dbt run -m "crosschain_models,tag:weekly"

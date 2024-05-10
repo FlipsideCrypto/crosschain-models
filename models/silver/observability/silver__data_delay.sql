@@ -2,7 +2,8 @@
     materialized = 'incremental',
     merge_exclude_columns = ["inserted_timestamp"],
     unique_key = ['blockchain','test_timestamp'],
-    full_refresh = false
+    full_refresh = false,
+    tags = ['observability']
 ) }}
 
 WITH base AS (

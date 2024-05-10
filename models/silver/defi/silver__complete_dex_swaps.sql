@@ -2,7 +2,8 @@
     materialized = 'incremental',
     incremental_strategy = 'delete+insert',
     unique_key = ['_unique_key'],
-    cluster_by = ['block_timestamp::DATE']
+    cluster_by = ['block_timestamp::DATE'],
+    tags = ['hourly']
 ) }}
 
 WITH ethereum AS (

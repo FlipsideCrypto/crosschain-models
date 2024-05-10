@@ -5,7 +5,7 @@
     cluster_by = ['blockchain','_is_deleted','modified_timestamp::DATE'],    
     merge_exclude_columns = ["inserted_timestamp"],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(address)",
-    tags = ['snowflake', 'crosschain', 'labels', 'gold_address_labels']
+    tags = ['snowflake', 'crosschain', 'labels', 'gold_address_labels','daily']
 ) }}
 
 WITH base as (

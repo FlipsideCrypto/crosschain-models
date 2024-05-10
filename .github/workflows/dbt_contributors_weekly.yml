@@ -37,5 +37,5 @@ jobs:
       - name: Run DBT Jobs
         run: |
           dbt run-operation get_github_repo_data --args "{GITHUB_TOKEN: 'TOKEN', frequency: ['contributors']}"
-          dbt run --model silver__github_activity
+          dbt run --m "crosschain_models,tag:github_activity"
           dbt test -s github_data_null

@@ -1,7 +1,9 @@
 {{ config(
     materialized = 'view',
     persist_docs ={ "relation": true,
-    "columns": true }
+    "columns": true },
+    meta ={ 'database_tags':{ 'table':{ 'PURPOSE': 'LENDING, BORROWS',
+    } } }
 ) }}
 
 SELECT
@@ -21,5 +23,5 @@ SELECT
     complete_lending_borrows_id AS ez_lending_borrows_id,
     inserted_timestamp,
     modified_timestamp
-FROM 
+FROM
     {{ ref('silver__complete_lending_borrows') }}
