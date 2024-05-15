@@ -1,11 +1,12 @@
-name: dbt_general_weekly
-run-name: dbt_general_weekly
+name: dbt_run_scheduled_hourly
+run-name: dbt_run_scheduled_hourly
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */1 * * 5,6,0" # Run every Friday, Saturday, and Sunday
-
+    # Runs "every hour" (see https://crontab.guru)
+    - cron: '0 */1 * * *'
+    
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
   DBT_VERSION: "${{ vars.DBT_VERSION }}"
@@ -19,23 +20,23 @@ env:
   SCHEMA: "${{ vars.SCHEMA }}"
 
 jobs:
-  dbt:
+  run_dbt_jobs:
     runs-on: ubuntu-latest
     environment:
       name: workflow_prod
+
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v1
+
+      - uses: actions/setup-python@v4
         with:
-          python-version: "3.7.x"
+          python-version: "3.10"
+          cache: "pip"
 
       - name: install dependencies
         run: |
-          pip3 install dbt-snowflake==${{ env.DBT_VERSION }} cli_passthrough requests click
+          pip install -r requirements.txt
           dbt deps
-
       - name: Run DBT Jobs
         run: |
-          dbt run-operation get_github_repo_data --args "{GITHUB_TOKEN: 'TOKEN', frequency: ['core']}"
-          dbt run --model silver__github_activity
-          dbt test -s github_data_null
+          dbt run -m "crosschain_models,tag:hourly"

@@ -3,6 +3,7 @@
     unique_key = ["address","blockchain"],
     incremental_strategy = 'merge',
     merge_update_columns = ['creator', 'modified_timestamp'],
+    tags = ['daily']
 ) }}
 
 WITH base AS (

@@ -3,6 +3,7 @@
     unique_key = "unique_id",
     incremental_strategy = 'merge',
     merge_update_columns = ['creator', 'modified_timestamp'],
+    tags = ['daily']
 ) }}
 
 WITH from_cex AS (

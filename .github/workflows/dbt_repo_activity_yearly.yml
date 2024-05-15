@@ -1,12 +1,11 @@
-name: dbt_run_scheduled
-run-name: dbt_run_scheduled
+name: dbt_repo_activity_yearly
+run-name: dbt_repo_activity_yearly
 
 on:
   workflow_dispatch:
   schedule:
-    # Runs "every hour" (see https://crontab.guru)
-    - cron: '0 */1 * * *'
-    
+    - cron: "0 0 1 1 *" # At 00:00 on day-of-month 1 in January
+
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
   DBT_VERSION: "${{ vars.DBT_VERSION }}"
@@ -20,23 +19,22 @@ env:
   SCHEMA: "${{ vars.SCHEMA }}"
 
 jobs:
-  run_dbt_jobs:
+  dbt:
     runs-on: ubuntu-latest
     environment:
       name: workflow_prod
-
     steps:
       - uses: actions/checkout@v3
-
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v1
         with:
-          python-version: "3.10"
-          cache: "pip"
+          python-version: "3.7.x"
 
       - name: install dependencies
         run: |
-          pip install -r requirements.txt
+          pip3 install dbt-snowflake==${{ env.DBT_VERSION }} cli_passthrough requests click
           dbt deps
+
       - name: Run DBT Jobs
         run: |
-          dbt run -m models/silver/near models/silver/defi models/silver/stats+
+          dbt run-operation get_github_repo_data --args "{GITHUB_TOKEN: 'TOKEN', frequency: ['last_year']}"
+          dbt run -m "crosschain_models,tag:github_activity"

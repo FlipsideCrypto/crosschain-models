@@ -2,6 +2,7 @@
     materialized = 'incremental',
     unique_key = "CONCAT_WS('-', address, tag_name, start_date)",
     incremental_strategy = 'delete+insert',
+    tags = ['daily']
 ) }}
 -- We do not want to full refresh this model until we have a historical tags code set up.
 -- to full-refresh either include the variable allow_full_refresh: True to command or comment out below code

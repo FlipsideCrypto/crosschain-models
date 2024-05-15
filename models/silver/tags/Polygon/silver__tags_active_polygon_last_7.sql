@@ -2,6 +2,7 @@
     materialized = 'incremental',
     unique_key = "CONCAT_WS('-', address, start_date)",
     incremental_strategy = 'delete+insert',
+    tags = ['daily']
 ) }}
 
 

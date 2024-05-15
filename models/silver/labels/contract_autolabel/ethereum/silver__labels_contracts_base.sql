@@ -2,7 +2,7 @@
     materialized = 'incremental',
     unique_key = "address",
     incremental_strategy = 'delete+insert',
-    tags = ['snowflake', 'crosschain', 'labels']
+    tags = ['daily']
 ) }}
 
 WITH base_legacy_labels AS (

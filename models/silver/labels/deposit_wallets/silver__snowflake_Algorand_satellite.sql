@@ -2,6 +2,8 @@
     materialized = 'incremental',
     unique_key = "address",
     incremental_strategy = 'delete+insert',
+    tags = ['stale'],
+    enabled = false
 ) }}
 
 WITH distributor_cex AS (

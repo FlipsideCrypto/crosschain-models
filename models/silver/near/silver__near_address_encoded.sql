@@ -1,6 +1,7 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "near_address"
+    unique_key = "near_address",
+    tags = ['hourly']
 ) }}
 
 WITH log_address AS (

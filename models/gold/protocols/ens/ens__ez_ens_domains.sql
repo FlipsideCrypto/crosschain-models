@@ -1,6 +1,10 @@
 {{ config(
     materialized = 'view',
-    tags = ['snowflake', 'crosschain', 'ens'],
+    persist_docs ={ "relation": true,
+    "columns": true },
+    meta ={ 'database_tags':{ 'table':{ 'PROTOCOL': 'ENS',
+    'PURPOSE': 'DOMAINS',
+    } } }
 ) }}
 
 SELECT

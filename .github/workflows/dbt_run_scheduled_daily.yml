@@ -1,11 +1,11 @@
-name: dbt_run_cmc_cryptocurrency_monthly
-run-name: dbt_run_cmc_cryptocurrency_monthly
+name: dbt_run_scheduled_daily
+run-name: dbt_run_scheduled_daily
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   # “At minute 10, 20, 30, and 40 past hour 1 on day-of-month 1.”
-  #   - cron: '10,20,30,40 1 1 * *'
+  schedule:
+    # Runs 02:00 daily (see https://crontab.guru)
+    - cron: '0 2 * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
@@ -23,8 +23,7 @@ jobs:
   called_workflow_template:
     uses: FlipsideCrypto/analytics-workflow-templates/.github/workflows/dbt_run_template.yml@main
     with:
-      dbt_command: dbt run -m models/bronze/bronze_api/bronze_api__coin_market_cap_cryptocurrency_info.sql+
+      dbt_command: dbt run -m "crosschain_models,tag:daily"
       environment: workflow_prod
       warehouse: ${{ vars.WAREHOUSE }}
     secrets: inherit 
-

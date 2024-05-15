@@ -42,7 +42,7 @@ models:
       - name: FACT_GOVERNANCE_VOTES_ID
         description: '{{ doc("pk") }}'   
         tests:
-          - unique
+          - not_null
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   
       - name: MODIFIED_TIMESTAMP

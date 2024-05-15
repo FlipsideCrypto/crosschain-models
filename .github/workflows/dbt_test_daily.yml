@@ -1,11 +1,10 @@
-name: dbt_run_scheduled_weekly
-run-name: dbt_run_scheduled_weekly
+name: dbt_test_daily
+run-name: dbt_test_daily
 
 on:
   workflow_dispatch:
   schedule:
-    # Runs 05:00 weekly on Monday (see https://crontab.guru)
-    - cron: '0 5 * * 1'
+    - cron: '0 4 * * *'
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
@@ -39,4 +38,5 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run -m models/silver/labels/silver__deposit_wallets.sql models/silver/labels/deposit_wallets --full-refresh
+          dbt test --exclude "crosschain_models,tag:gha_tasks" livequery_models
+          

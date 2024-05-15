@@ -3,6 +3,7 @@
     unique_key = "address",
     incremental_strategy = 'delete+insert',
     post_hook = "delete from {{this}} a using {{ ref('silver__snowflake_BSC_satellites') }} b where a.address = b.address ",
+    tags = ['weekly_full_refresh']
 ) }}
 
 WITH raw AS(

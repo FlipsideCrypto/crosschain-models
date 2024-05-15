@@ -2,6 +2,7 @@
     materialized = 'incremental',
     unique_key = "CONCAT_WS('-', blockchain, symbol, xfer_date)",
     incremental_strategy = 'delete+insert',
+    tags = ['daily']
 ) }}
 
 WITH core_values AS (

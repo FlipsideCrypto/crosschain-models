@@ -3,6 +3,7 @@
     unique_key = ['_res_id'],
     cluster_by = ['_inserted_timestamp::DATE'],
     merge_exclude_columns = ["inserted_timestamp"],
+    tags = ['daily','github_activity']
 ) }}
 
 SELECT
