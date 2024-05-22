@@ -35,10 +35,6 @@ models:
         description: "{{ doc('vote_option') }}"
         tests: 
           - dbt_expectations.expect_column_to_exist
-      - name: MEMO
-        description: "{{ doc('memo') }}"
-        tests: 
-          - dbt_expectations.expect_column_to_exist
       - name: FACT_GOVERNANCE_VOTES_ID
         description: '{{ doc("pk") }}'   
         tests:
