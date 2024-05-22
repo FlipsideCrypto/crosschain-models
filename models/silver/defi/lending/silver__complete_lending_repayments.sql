@@ -38,7 +38,7 @@ WITH ethereum AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -75,7 +75,7 @@ arbitrum AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -112,7 +112,7 @@ optimism AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -149,7 +149,7 @@ bsc AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -186,7 +186,7 @@ polygon AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -223,7 +223,7 @@ base AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -260,7 +260,7 @@ avalanche AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -297,7 +297,7 @@ gnosis AS (
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
