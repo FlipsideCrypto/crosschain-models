@@ -6,10 +6,10 @@
     tags = ['hourly']
 ) }}
 
-WITH ethereum as (
+WITH ethereum AS (
 
     SELECT
-        'ethereum' as blockchain,
+        'ethereum' AS blockchain,
         platform,
         block_number,
         block_timestamp,
@@ -20,34 +20,33 @@ WITH ethereum as (
         payer,
         token_address,
         token_symbol,
-        amount_unadj as amount_raw,
+        amount_unadj AS amount_raw,
         amount,
         amount_usd,
-        modified_timestamp as _inserted_timestamp,
+        modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
-                ['ez_lending_repayments_id', 'blockchain']
-        )}} AS complete_lending_repayments_id,
+            ['ez_lending_repayments_id', 'blockchain']
+        ) }} AS complete_lending_repayments_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
-    FROM 
+    FROM
         {{ source(
             'ethereum_defi',
             'ez_lending_repayments'
         ) }}
-{% if is_incremental() and 'ethereum' not in var('HEAL_CURATED_MODEL') %}
+
+{% if is_incremental() and 'ethereum' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
         FROM
             {{ this }}
     )
 {% endif %}
-
 ),
-arbitrum as (
-
+arbitrum AS (
     SELECT
-        'arbitrum' as blockchain,
+        'arbitrum' AS blockchain,
         platform,
         block_number,
         block_timestamp,
@@ -58,34 +57,33 @@ arbitrum as (
         payer,
         token_address,
         token_symbol,
-        amount_unadj as amount_raw,
+        amount_unadj AS amount_raw,
         amount,
         amount_usd,
-        modified_timestamp as _inserted_timestamp,
+        modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
-                ['ez_lending_repayments_id', 'blockchain']
-        )}} AS complete_lending_repayments_id,
+            ['ez_lending_repayments_id', 'blockchain']
+        ) }} AS complete_lending_repayments_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
-    FROM 
+    FROM
         {{ source(
             'arbitrum_defi',
             'ez_lending_repayments'
         ) }}
-{% if is_incremental() and 'arbitrum' not in var('HEAL_CURATED_MODEL') %}
+
+{% if is_incremental() and 'arbitrum' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
         FROM
             {{ this }}
     )
 {% endif %}
-
 ),
-optimism as (
-
+optimism AS (
     SELECT
-        'optimism' as blockchain,
+        'optimism' AS blockchain,
         platform,
         block_number,
         block_timestamp,
@@ -96,34 +94,33 @@ optimism as (
         payer,
         token_address,
         token_symbol,
-        amount_unadj as amount_raw,
+        amount_unadj AS amount_raw,
         amount,
         amount_usd,
-        modified_timestamp as _inserted_timestamp,
+        modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
-                ['ez_lending_repayments_id', 'blockchain']
-        )}} AS complete_lending_repayments_id,
+            ['ez_lending_repayments_id', 'blockchain']
+        ) }} AS complete_lending_repayments_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
-    FROM 
+    FROM
         {{ source(
             'optimism_defi',
             'ez_lending_repayments'
         ) }}
-{% if is_incremental() and 'optimism' not in var('HEAL_CURATED_MODEL') %}
+
+{% if is_incremental() and 'optimism' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
         FROM
             {{ this }}
     )
 {% endif %}
-
 ),
-bsc as (
-
+bsc AS (
     SELECT
-        'bsc' as blockchain,
+        'bsc' AS blockchain,
         platform,
         block_number,
         block_timestamp,
@@ -134,34 +131,33 @@ bsc as (
         payer,
         token_address,
         token_symbol,
-        amount_unadj as amount_raw,
+        amount_unadj AS amount_raw,
         amount,
         amount_usd,
-        modified_timestamp as _inserted_timestamp,
+        modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
-                ['ez_lending_repayments_id', 'blockchain']
-        )}} AS complete_lending_repayments_id,
+            ['ez_lending_repayments_id', 'blockchain']
+        ) }} AS complete_lending_repayments_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
-    FROM 
+    FROM
         {{ source(
             'bsc_defi',
             'ez_lending_repayments'
         ) }}
-{% if is_incremental() and 'bsc' not in var('HEAL_CURATED_MODEL') %}
+
+{% if is_incremental() and 'bsc' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
         FROM
             {{ this }}
     )
 {% endif %}
-
 ),
-polygon as (
-
+polygon AS (
     SELECT
-        'polygon' as blockchain,
+        'polygon' AS blockchain,
         platform,
         block_number,
         block_timestamp,
@@ -172,34 +168,33 @@ polygon as (
         payer,
         token_address,
         token_symbol,
-        amount_unadj as amount_raw,
+        amount_unadj AS amount_raw,
         amount,
         amount_usd,
-        modified_timestamp as _inserted_timestamp,
+        modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
-                ['ez_lending_repayments_id', 'blockchain']
-        )}} AS complete_lending_repayments_id,
+            ['ez_lending_repayments_id', 'blockchain']
+        ) }} AS complete_lending_repayments_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
-    FROM 
+    FROM
         {{ source(
             'polygon_defi',
             'ez_lending_repayments'
         ) }}
-{% if is_incremental() and 'polygon' not in var('HEAL_CURATED_MODEL') %}
+
+{% if is_incremental() and 'polygon' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
         FROM
             {{ this }}
     )
 {% endif %}
-
 ),
-base as (
-
+base AS (
     SELECT
-        'base' as blockchain,
+        'base' AS blockchain,
         platform,
         block_number,
         block_timestamp,
@@ -210,34 +205,33 @@ base as (
         payer,
         token_address,
         token_symbol,
-        amount_unadj as amount_raw,
+        amount_unadj AS amount_raw,
         amount,
         amount_usd,
-        modified_timestamp as _inserted_timestamp,
+        modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
-                ['ez_lending_repayments_id', 'blockchain']
-        )}} AS complete_lending_repayments_id,
+            ['ez_lending_repayments_id', 'blockchain']
+        ) }} AS complete_lending_repayments_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
-    FROM 
+    FROM
         {{ source(
             'base_defi',
             'ez_lending_repayments'
         ) }}
-{% if is_incremental() and 'base' not in var('HEAL_CURATED_MODEL') %}
+
+{% if is_incremental() and 'base' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
         FROM
             {{ this }}
     )
 {% endif %}
-
 ),
-avalanche as (
-
+avalanche AS (
     SELECT
-        'avalanche' as blockchain,
+        'avalanche' AS blockchain,
         platform,
         block_number,
         block_timestamp,
@@ -248,34 +242,33 @@ avalanche as (
         payer,
         token_address,
         token_symbol,
-        amount_unadj as amount_raw,
+        amount_unadj AS amount_raw,
         amount,
         amount_usd,
-        modified_timestamp as _inserted_timestamp,
+        modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
-                ['ez_lending_repayments_id', 'blockchain']
-        )}} AS complete_lending_repayments_id,
+            ['ez_lending_repayments_id', 'blockchain']
+        ) }} AS complete_lending_repayments_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
-    FROM 
+    FROM
         {{ source(
             'avalanche_defi',
             'ez_lending_repayments'
         ) }}
-{% if is_incremental() and 'avalanche' not in var('HEAL_CURATED_MODEL') %}
+
+{% if is_incremental() and 'avalanche' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
         FROM
             {{ this }}
     )
 {% endif %}
-
 ),
-gnosis as (
-
+gnosis AS (
     SELECT
-        'gnosis' as blockchain,
+        'gnosis' AS blockchain,
         platform,
         block_number,
         block_timestamp,
@@ -286,29 +279,29 @@ gnosis as (
         payer,
         token_address,
         token_symbol,
-        amount_unadj as amount_raw,
+        amount_unadj AS amount_raw,
         amount,
         amount_usd,
-        modified_timestamp as _inserted_timestamp,
+        modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(
-                ['ez_lending_repayments_id', 'blockchain']
-        )}} AS complete_lending_repayments_id,
+            ['ez_lending_repayments_id', 'blockchain']
+        ) }} AS complete_lending_repayments_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
-    FROM 
+    FROM
         {{ source(
             'gnosis_defi',
             'ez_lending_repayments'
         ) }}
-{% if is_incremental() and 'gnosis' not in var('HEAL_CURATED_MODEL') %}
+
+{% if is_incremental() and 'gnosis' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "8 hours") }}'
         FROM
             {{ this }}
     )
 {% endif %}
-
 ),
 all_chains_repayments AS (
     SELECT
@@ -351,7 +344,6 @@ all_chains_repayments AS (
     FROM
         gnosis
 )
-
 SELECT
     blockchain,
     platform,
