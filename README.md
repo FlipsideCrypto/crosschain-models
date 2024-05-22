@@ -1,3 +1,68 @@
+## Profile Set Up
+
+#### How to Set Up a DBT Profile for this Repo
+This info is for contributors who plan to use [DBT](https://docs.getdbt.com/docs/introduction) to contribute to Flipside's data models. A DBT profile is _not_ required to add tags via a seed file (to add tags, follow the instructions above).
+
+#### Use the following within profiles.yml 
+----
+
+```yml
+crosschain:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: <ACCOUNT>
+      role: <ROLE>
+      user: <USERNAME>
+      password: <PASSWORD>
+      region: <REGION>
+      database: CROSSCHAIN_DEV
+      warehouse: <WAREHOUSE>
+      schema: silver
+      threads: 4
+      client_session_keep_alive: False
+      query_tag: <TAG>
+```
+
+## Variables
+
+To control the creation of UDF or SP macros with dbt run:
+* UPDATE_UDFS_AND_SPS
+  * Default values are False
+  * When True, executes all macros included in the on-run-start hooks within dbt_project.yml on model run as normal
+  * When False, none of the on-run-start macros are executed on model run
+
+  * Usage: `dbt run --vars '{"UPDATE_UDFS_AND_SPS":True}' -m ...`
+
+Use a variable to heal a model incrementally:
+* HEAL_MODEL
+  * Default is FALSE (Boolean)
+  * When FALSE, logic will be negated
+  * When TRUE, heal logic will apply
+  * Include `heal` in model tags within the config block for inclusion in the `dbt_run_heal_models` workflow, e.g. `tags = 'heal'`
+
+  * Usage: `dbt run --vars '{"HEAL_MODEL":True}' -m ...`
+
+Use a variable to negate incremental logic:
+* Example use case: reload records in a curated complete table without a full-refresh, such as `silver_bridge.complete_bridge_activity`:
+* HEAL_MODELS
+  * Default is an empty array []
+  * When item is included in var array [], incremental logic will be skipped for that CTE / code block  
+  * When item is not included in var array [] or does not match specified item in model, incremental logic will apply
+  * Example set up: `{% if is_incremental() and 'axelar' not in var('HEAL_MODELS') %}`
+
+  * Usage:
+    * Single CTE: `dbt run --vars '{"HEAL_MODELS":"axelar"}' -m ...`
+    * Multiple CTEs: `dbt run --vars '{"HEAL_MODELS":["axelar","across","celer_cbridge"]}' -m ...`
+
+Use a variable to extend the incremental lookback period:
+* LOOKBACK
+  * Default is a string representing the specified time interval e.g. '12 hours', '7 days' etc.
+  * Example set up: `SELECT MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'`
+
+  * Usage: `dbt run --vars '{"LOOKBACK":"36 hours"}' -m ...`
+
 ## How to Add Tags to Flipside's Data
 
 There are 3 ways to add tags to our data!
@@ -75,42 +140,6 @@ When submitting, please include 3 itmes:
   tag_type | Tag type (high-level category).
   start_date | Date the tag first applies. For tags that are permanent, this might be the date the address had its first behavior that warrants its tag, or the addresses' first transaction (e.g. if the tag identifies a celebrity NFT address).
   end_date | Date the tag no longer applies (for tags that are permanent or currently active, end_date can be NULL).
-
-### To reload records in a curated complete table without a full-refresh, such as `silver.complete_dex_swaps`:
-* HEAL_CURATED_MODEL
-Default is an empty array []
-When item is included in var array [], incremental logic will be skipped for that CTE / code block  
-When item is not included in var array [] or does not match specified item in model, incremental logic will apply
-Example set up: `{% if is_incremental() and 'optimism' not in var('HEAL_CURATED_MODEL') %}`
-
-* Usage:
-Single CTE: dbt run --vars '{"HEAL_CURATED_MODEL":"optimism"}' -m ...
-Multiple CTEs: dbt run --vars '{"HEAL_CURATED_MODEL":["optimism","base","solana"]}' -m ...
-
-## How to Set Up a DBT Profile for this Repo
-This info is for contributors who plan to use [DBT](https://docs.getdbt.com/docs/introduction) to contribute to Flipside's data models. A DBT profile is _not_ required to add tags via a seed file (to add tags, follow the instructions above).
-
-#### Use the following within profiles.yml 
-----
-
-```yml
-crosschain:
-  target: dev
-  outputs:
-    dev:
-      type: snowflake
-      account: <ACCOUNT>
-      role: <ROLE>
-      user: <USERNAME>
-      password: <PASSWORD>
-      region: <REGION>
-      database: CROSSCHAIN_DEV
-      warehouse: <WAREHOUSE>
-      schema: silver
-      threads: 4
-      client_session_keep_alive: False
-      query_tag: <TAG>
-```
 
 ### DBT Learning Resources:
 - Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)

@@ -32,11 +32,11 @@ WITH ethereum AS (
             'ez_bridge_activity'
         ) }}
 
-{% if is_incremental() and 'ethereum' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'ethereum' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -67,11 +67,11 @@ optimism AS (
             'ez_bridge_activity'
         ) }}
 
-{% if is_incremental() and 'optimism' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'optimism' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -102,11 +102,11 @@ avalanche AS (
             'ez_bridge_activity'
         ) }}
 
-{% if is_incremental() and 'avalanche' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'avalanche' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -137,11 +137,11 @@ polygon AS (
             'ez_bridge_activity'
         ) }}
 
-{% if is_incremental() and 'polygon' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'polygon' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -172,11 +172,11 @@ bsc AS (
             'ez_bridge_activity'
         ) }}
 
-{% if is_incremental() and 'bsc' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'bsc' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -207,11 +207,11 @@ arbitrum AS (
             'ez_bridge_activity'
         ) }}
 
-{% if is_incremental() and 'arbitrum' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'arbitrum' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -242,11 +242,11 @@ base AS (
             'ez_bridge_activity'
         ) }}
 
-{% if is_incremental() and 'base' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'base' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -277,11 +277,11 @@ gnosis AS (
             'ez_bridge_activity'
         ) }}
 
-{% if is_incremental() and 'gnosis' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'gnosis' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -324,11 +324,11 @@ solana AS (
             'fact_bridge_activity'
         ) }}
 
-{% if is_incremental() and 'solana' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'solana' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -359,11 +359,11 @@ aptos AS (
             'fact_bridge_activity'
         ) }}
 
-{% if is_incremental() and 'aptos' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'aptos' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -394,11 +394,11 @@ near AS (
             'ez_bridge_activity'
         ) }}
 
-{% if is_incremental() and 'near' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'near' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) - INTERVAL '36 hours'
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )

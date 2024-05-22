@@ -28,7 +28,7 @@ WITH libreplex_txs AS (
         )
         AND f_inner.value :programId = 'inscokhJarcjaEs59QbQ7hYjrKz25LEPRfCbP8EmdUp'
         AND SUBSTR(
-            livequery.utils.udf_base58_to_hex(
+            utils.udf_base58_to_hex(
                 f_inner.value :data
             ),
             1,

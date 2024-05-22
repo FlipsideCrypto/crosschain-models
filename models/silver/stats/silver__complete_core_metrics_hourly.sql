@@ -30,14 +30,14 @@ WITH ethereum AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'ethereum' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'ethereum' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -66,14 +66,14 @@ optimism AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'optimism' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'optimism' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -102,14 +102,14 @@ arbitrum AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'arbitrum' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'arbitrum' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -138,14 +138,14 @@ blast AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'blast' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'blast' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -174,14 +174,14 @@ base AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'base' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'base' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -210,14 +210,14 @@ avalanche AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'avalanche' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'avalanche' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -246,14 +246,14 @@ polygon AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'polygon' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'polygon' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -282,14 +282,14 @@ bsc AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'bsc' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'bsc' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -318,14 +318,14 @@ gnosis AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'gnosis' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'gnosis' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -354,14 +354,14 @@ sei AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'sei' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'sei' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -390,14 +390,14 @@ cosmos AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'cosmos' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'cosmos' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -426,14 +426,14 @@ terra AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'terra' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'terra' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -462,14 +462,14 @@ osmosis AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'osmosis' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'osmosis' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -498,14 +498,14 @@ flow AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'flow' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'flow' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -534,14 +534,14 @@ solana AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'solana' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'solana' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -570,14 +570,14 @@ aptos AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'aptos' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'aptos' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -606,14 +606,14 @@ bitcoin AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'bitcoin' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'bitcoin' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -642,14 +642,14 @@ aurora AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'aurora' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'aurora' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -678,14 +678,14 @@ near AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'near' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'near' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
@@ -714,14 +714,14 @@ axelar AS (
             'ez_core_metrics_hourly'
         ) }}
 
-{% if is_incremental() and 'axelar' not in var('HEAL_CURATED_MODEL') %}
+{% if is_incremental() and 'axelar' not in var('HEAL_MODELS') %}
 WHERE
     DATE_TRUNC(
         'hour',
         _inserted_timestamp
     ) >= (
         SELECT
-            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '12 hours'
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
         FROM
             {{ this }}
     )
