@@ -1,7 +1,7 @@
 {{ config(
   materialized = 'view',
   meta ={ 'database_tags':{ 'table':{ 'PROTOCOL' :'COSMOS, AXELAR, OSMOSIS',
-  'PURPOSE' :'GOVERNANCE' }} }
+  'PURPOSE' :'GOVERNANCE' } } }
 ) }}
 
 SELECT

@@ -18,7 +18,7 @@ WITH tokens AS (
             'logs'
         ) }}
     WHERE
-        PUBLIC.udf_hex_to_int(SUBSTR(DATA, 3, 64)) :: FLOAT IS NOT NULL
+        utils.udf_hex_to_int(SUBSTR(DATA, 3, 64)) :: FLOAT IS NOT NULL
         AND topics [0] :: STRING = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
         AND tx_status = 'SUCCESS'
 ),
@@ -33,7 +33,7 @@ nfts AS (
             'logs'
         ) }}
     WHERE
-        PUBLIC.udf_hex_to_int(SUBSTR(DATA, 3, 64)) :: FLOAT IS NULL
+        utils.udf_hex_to_int(SUBSTR(DATA, 3, 64)) :: FLOAT IS NULL
         AND topics [0] :: STRING = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
         AND tx_status = 'SUCCESS'
 )
