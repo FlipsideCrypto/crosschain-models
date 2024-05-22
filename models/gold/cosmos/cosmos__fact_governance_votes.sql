@@ -1,7 +1,7 @@
 {{ config(
   materialized = 'view',
   meta ={ 'database_tags':{ 'table':{ 'PROTOCOL' :'COSMOS, AXELAR, OSMOSIS',
-  'PURPOSE' :'GOVERNANCE' } } }
+  'PURPOSE' :'GOVERNANCE' }} }
 ) }}
 
 SELECT
@@ -14,9 +14,14 @@ SELECT
   proposal_id,
   vote_option,
   vote_weight,
-  NULL AS memo,
-  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(
+    inserted_timestamp,
+    '2000-01-01'
+  ) AS inserted_timestamp,
+  COALESCE(
+    modified_timestamp,
+    '2000-01-01'
+  ) AS modified_timestamp,
   {{ dbt_utils.generate_surrogate_key(['blockchain','tx_id','proposal_id','voter','vote_option']) }} AS fact_governance_votes_id
 FROM
   {{ source(
@@ -34,9 +39,14 @@ SELECT
   proposal_id,
   vote_option,
   vote_weight,
-  NULL AS memo,
-  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(
+    inserted_timestamp,
+    '2000-01-01'
+  ) AS inserted_timestamp,
+  COALESCE(
+    modified_timestamp,
+    '2000-01-01'
+  ) AS modified_timestamp,
   {{ dbt_utils.generate_surrogate_key(['blockchain','tx_id','proposal_id','voter','vote_option']) }} AS fact_governance_votes_id
 FROM
   {{ source(
@@ -54,9 +64,14 @@ SELECT
   proposal_id,
   vote_option,
   vote_weight,
-  memo,
-  COALESCE(inserted_timestamp,'2000-01-01') as inserted_timestamp,
-  COALESCE(modified_timestamp,'2000-01-01') as modified_timestamp,
+  COALESCE(
+    inserted_timestamp,
+    '2000-01-01'
+  ) AS inserted_timestamp,
+  COALESCE(
+    modified_timestamp,
+    '2000-01-01'
+  ) AS modified_timestamp,
   {{ dbt_utils.generate_surrogate_key(['blockchain','tx_id','proposal_id','voter','vote_option']) }} AS fact_governance_votes_id
 FROM
   {{ source(
