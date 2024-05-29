@@ -1,5 +1,5 @@
 -- depends_on: {{ ref('core__dim_date_hours') }}
--- depends_on: {{ ref('silver__token_asset_metadata_priority2') }}
+-- depends_on: {{ ref('silver__token_asset_metadata_priority') }}
 {{ config(
     materialized = 'incremental',
     unique_key = ['token_prices_priority_id'],
@@ -37,7 +37,7 @@ WITH priority_prices AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__token_prices_all_providers2') }}
+        {{ ref('silver__token_prices_all_providers') }}
 
 {% if is_incremental() %}
 WHERE
@@ -99,7 +99,7 @@ token_asset_metadata AS (
         _inserted_timestamp
     FROM
         {{ ref(
-            'silver__token_asset_metadata_priority2'
+            'silver__token_asset_metadata_priority'
         ) }}
     WHERE
         CONCAT(LOWER(token_address), '-', blockchain) IN (

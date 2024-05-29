@@ -27,7 +27,7 @@ WITH all_providers AS (
         is_deprecated,
         _inserted_timestamp
     FROM
-        {{ ref('silver__token_asset_metadata_all_providers2') }}
+        {{ ref('silver__token_asset_metadata_all_providers') }}
 
 {% if is_incremental() %}
 WHERE
