@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver__token_prices_coingecko2
+  - name: silver__token_prices_coingecko
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

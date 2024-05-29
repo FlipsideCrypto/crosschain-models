@@ -21,11 +21,11 @@ WITH base_prices AS (
         p._inserted_timestamp
     FROM
         {{ ref(
-            'bronze__all_prices_coinmarketcap2'
+            'bronze__all_prices_coinmarketcap'
         ) }}
         p
         INNER JOIN {{ ref(
-            'silver__token_asset_metadata_coinmarketcap2'
+            'silver__token_asset_metadata_coinmarketcap'
         ) }}
         m
         ON m.id = LOWER(TRIM(p.id))
@@ -52,7 +52,7 @@ latest_supported_assets AS (
         DATE_TRUNC('hour', MAX(_inserted_timestamp)) AS last_supported_timestamp
     FROM
         {{ ref(
-            'silver__token_asset_metadata_coinmarketcap2'
+            'silver__token_asset_metadata_coinmarketcap'
         ) }}
     GROUP BY
         1,
@@ -101,7 +101,7 @@ token_asset_metadata AS (
         _inserted_timestamp
     FROM
         {{ ref(
-            'silver__token_asset_metadata_coinmarketcap2'
+            'silver__token_asset_metadata_coinmarketcap'
         ) }}
     WHERE
         CONCAT(LOWER(token_address), '-', platform_id) IN (

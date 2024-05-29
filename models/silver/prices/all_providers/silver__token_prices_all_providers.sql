@@ -20,7 +20,7 @@ WITH coin_gecko AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__token_prices_coingecko2') }}
+        {{ ref('silver__token_prices_coingecko') }}
 
 {% if is_incremental() %}
 WHERE
@@ -45,7 +45,7 @@ coin_market_cap AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__token_prices_coinmarketcap2') }}
+        {{ ref('silver__token_prices_coinmarketcap') }}
 
 {% if is_incremental() %}
 WHERE
@@ -70,7 +70,7 @@ ibc_prices AS (
         'ibc_prices' AS source,
         _inserted_timestamp
     FROM
-        {{ ref('silver__onchain_osmosis_prices2') }}
+        {{ ref('silver__onchain_osmosis_prices') }}
 
 {% if is_incremental() %}
 WHERE

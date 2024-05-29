@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver__token_prices_coinmarketcap2
+  - name: silver__token_prices_coinmarketcap
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: bronze__all_asset_metadata_coingecko2
+  - name: bronze__all_asset_metadata_coinmarketcap
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

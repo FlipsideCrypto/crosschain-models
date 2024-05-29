@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['token_asset_metadata_coinmarketcap_id'],
+    unique_key = ['token_asset_metadata_coingecko_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -19,11 +19,11 @@ WITH base_assets AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__all_asset_metadata_coinmarketcap2') }}
+        {{ ref('bronze__all_asset_metadata_coingecko') }}
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
             MAX(_inserted_timestamp)
         FROM
@@ -72,7 +72,7 @@ base_adj AS (
                     '-/_'
                 )
             )
-            WHEN A.platform = 'Aptos' THEN A.token_address
+            WHEN A.platform = 'aptos' THEN A.token_address
             ELSE IFF(
                 LENGTH(
                     TRIM(
@@ -124,7 +124,7 @@ base_adj AS (
         AND A.platform_id = C.platform_id
 ),
 solana_adj AS (
-    --add solana specific adjustments
+    --add solana specific adjustments and tokens
     SELECT
         A.id_adj,
         CASE
@@ -170,7 +170,7 @@ solana_adj AS (
         token_address_adj_sol NOT ILIKE '%-%'
 ),
 ibc_adj AS (
-    --add ibc specific adjustments
+    --add ibc specific adjustments and tokens
     SELECT
         A.id_adj,
         CASE
@@ -184,7 +184,24 @@ ibc_adj AS (
             )
         END AS token_address_adj_ibc,
         A.name_adj,
-        A.symbol_adj,
+        COALESCE(
+            CASE
+                A.id_adj
+                WHEN 'cerberus-2' THEN 'CRBRUS'
+                WHEN 'cheqd-network' THEN 'CHEQ'
+                WHEN 'e-money-eur' THEN 'EEUR'
+                WHEN 'juno-network' THEN 'JUNO'
+                WHEN 'kujira' THEN 'KUJI'
+                WHEN 'medibloc' THEN 'MED'
+                WHEN 'microtick' THEN 'TICK'
+                WHEN 'neta' THEN 'NETA'
+                WHEN 'regen' THEN 'REGEN'
+                WHEN 'sommelier' THEN 'SOMM'
+                WHEN 'terra-luna' THEN 'LUNC'
+                WHEN 'umee' THEN 'UMEE'
+            END,
+            i.project_name
+        ) AS symbol_adj,
         'cosmos' AS platform_adj,
         'cosmos' AS platform_id_adj,
         'ibc' AS source,
@@ -210,7 +227,7 @@ ibc_adj AS (
                 FROM
                     {{ ref('silver__ibc_asset_metadata') }}
                 WHERE
-                    provider = 'coinmarketcap'
+                    provider = 'coingecko'
             )
             OR A.token_address_adj ILIKE 'ibc%'
         )
@@ -277,7 +294,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','platform_id']) }} AS token_asset_metadata_coinmarketcap_id,
+    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','platform_id']) }} AS token_asset_metadata_coingecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     all_assets

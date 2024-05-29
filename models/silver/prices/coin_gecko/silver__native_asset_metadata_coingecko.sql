@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['native_asset_metadata_coinmarketcap_id'],
+    unique_key = ['native_asset_metadata_coingecko_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
@@ -21,7 +21,7 @@ WITH base_assets AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__all_asset_metadata_coinmarketcap2') }} A
+        {{ ref('bronze__all_asset_metadata_coingecko') }} A
         INNER JOIN {{ ref('silver__native_assets_seed') }}
         n
         ON LOWER(
@@ -109,7 +109,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['symbol']) }} AS native_asset_metadata_coinmarketcap_id,
+    {{ dbt_utils.generate_surrogate_key(['symbol']) }} AS native_asset_metadata_coingecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     base_adj

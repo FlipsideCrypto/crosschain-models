@@ -19,7 +19,7 @@ WITH coingecko AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__all_prices_coingecko2') }}
+        {{ ref('bronze__all_prices_coingecko') }}
 
 {% if is_incremental() %}
 WHERE _inserted_timestamp >= (
@@ -42,7 +42,7 @@ coinmarketcap AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__all_prices_coinmarketcap2') }}
+        {{ ref('bronze__all_prices_coinmarketcap') }}
 
 {% if is_incremental() %}
 WHERE _inserted_timestamp >= (

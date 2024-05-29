@@ -1,7 +1,7 @@
 -- depends_on: {{ ref('core__dim_date_hours') }}
 {{ config(
     materialized = 'incremental',
-    unique_key = ['native_prices_coingecko_id'],
+    unique_key = ['native_prices_coinmarketcap_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE'],
     tags = ['prices']
@@ -21,11 +21,11 @@ WITH base_prices AS (
         p._inserted_timestamp
     FROM
         {{ ref(
-            'bronze__all_prices_coingecko2'
+            'bronze__all_prices_coinmarketcap'
         ) }}
         p
         INNER JOIN {{ ref(
-            'silver__native_asset_metadata_coingecko'
+            'silver__native_asset_metadata_coinmarketcap'
         ) }}
         m
         ON m.id = LOWER(TRIM(p.id))
@@ -59,7 +59,7 @@ latest_supported_assets AS (
         DATE_TRUNC('hour', MAX(_inserted_timestamp)) AS last_supported_timestamp
     FROM
         {{ ref(
-            'silver__native_asset_metadata_coingecko'
+            'silver__native_asset_metadata_coinmarketcap'
         ) }}
     GROUP BY
         1
@@ -107,7 +107,7 @@ native_asset_metadata AS (
         _inserted_timestamp
     FROM
         {{ ref(
-            'silver__native_asset_metadata_coingecko'
+            'silver__native_asset_metadata_coinmarketcap'
         ) }}
     WHERE
         symbol IN (
@@ -175,7 +175,7 @@ imputed_prices AS (
             imputed_price
         ) AS final_price,
         CASE
-            WHEN imputed_price IS NOT NULL THEN 'imputed_cg'
+            WHEN imputed_price IS NOT NULL THEN 'imputed_cmc'
             ELSE p.source
         END AS source,
         CASE
@@ -245,7 +245,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['recorded_hour','symbol']) }} AS native_prices_coingecko_id,
+    {{ dbt_utils.generate_surrogate_key(['recorded_hour','symbol']) }} AS native_prices_coinmarketcap_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     FINAL qualify(ROW_NUMBER() over (PARTITION BY recorded_hour, symbol

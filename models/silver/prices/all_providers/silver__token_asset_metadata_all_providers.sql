@@ -21,7 +21,7 @@ WITH coin_gecko AS (
         _inserted_timestamp
     FROM
         {{ ref(
-            'silver__token_asset_metadata_coingecko2'
+            'silver__token_asset_metadata_coingecko'
         ) }}
 
 {% if is_incremental() %}
@@ -48,7 +48,7 @@ coin_market_cap AS (
         _inserted_timestamp
     FROM
         {{ ref(
-            'silver__token_asset_metadata_coinmarketcap2'
+            'silver__token_asset_metadata_coinmarketcap'
         ) }}
 
 {% if is_incremental() %}
@@ -109,7 +109,7 @@ SELECT
     FALSE AS is_deprecated,
     MAX(_inserted_timestamp) AS _inserted_timestamp
 FROM
-    {{ ref('silver__onchain_osmosis_prices2') }}
+    {{ ref('silver__onchain_osmosis_prices') }}
 WHERE
     token_address IS NOT NULL
     AND LENGTH(token_address) > 0
