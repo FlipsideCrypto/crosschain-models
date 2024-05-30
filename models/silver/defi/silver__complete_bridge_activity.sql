@@ -24,6 +24,7 @@ WITH ethereum AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
+        amount_usd,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -59,6 +60,7 @@ optimism AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
+        amount_usd,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -94,6 +96,7 @@ avalanche AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
+        amount_usd,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -129,6 +132,7 @@ polygon AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
+        amount_usd,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -164,6 +168,7 @@ bsc AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
+        amount_usd,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -199,6 +204,7 @@ arbitrum AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
+        amount_usd,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -234,6 +240,7 @@ base AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
+        amount_usd,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -269,6 +276,7 @@ gnosis AS (
         token_symbol,
         amount_unadj AS amount_raw,
         amount,
+        amount_usd,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -316,6 +324,7 @@ solana AS (
         NULL AS token_symbol,
         amount AS amount_raw,
         amount,
+        NULL AS amount_usd,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['fact_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -351,6 +360,7 @@ aptos AS (
         NULL AS token_symbol,
         amount_unadj AS amount_raw,
         NULL AS amount,
+        NULL AS amount_usd,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['fact_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -386,6 +396,7 @@ near AS (
         symbol AS token_symbol,
         amount_unadj AS amount_raw,
         amount,
+        NULL AS amount_usd,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
     FROM
@@ -486,10 +497,22 @@ SELECT
         )
         ELSE b.amount
     END AS amount,
-    ROUND(
-        p.price * amount,
-        2
-    ) AS amount_usd,
+    CASE
+        WHEN b.blockchain IN (
+            'ethereum',
+            'optimism',
+            'base',
+            'arbitrum',
+            'polygon',
+            'bsc',
+            'avalanche',
+            'gnosis'
+        ) THEN b.amount_usd
+        ELSE ROUND(
+            p.price * amount,
+            2
+        )
+    END AS amount_usd,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     b._inserted_timestamp,
