@@ -36,7 +36,7 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['HOUR','LOWER(p.token_address)','p.blockchain']) }} AS complete_token_prices_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    {{ ref('silver__token_prices_priority2') }}
+    {{ ref('silver__token_prices_priority') }}
     p
     LEFT JOIN {{ ref('silver__complete_token_asset_metadata') }}
     m

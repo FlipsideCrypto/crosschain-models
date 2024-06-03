@@ -18,7 +18,6 @@ SELECT
             A.token_address
         )
     END AS token_address,
-    asset_id AS id, -- id column pending deprecation
     asset_id,
     symbol,
     NAME,
@@ -34,7 +33,6 @@ FROM
 UNION ALL
 SELECT
     NULL AS token_address,
-    asset_id AS id, -- id column pending deprecation
     asset_id,
     symbol,
     NAME,

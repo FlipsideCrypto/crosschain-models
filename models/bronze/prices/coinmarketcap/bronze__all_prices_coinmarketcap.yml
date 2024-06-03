@@ -1,0 +1,29 @@
+version: 2
+models:
+  - name: bronze__all_prices_coinmarketcap
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ID
+            - RECORDED_HOUR
+    columns:
+      - name: ID
+        tests:
+          - not_null
+      - name: RECORDED_HOUR
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: CLOSE
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - FLOAT
+                - DOUBLE
+      - name: _INSERTED_TIMESTAMP
+        tests:
+          - not_null
+      

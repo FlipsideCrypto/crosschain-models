@@ -19,7 +19,7 @@ WITH coingecko AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__all_asset_metadata_coingecko2') }}
+        {{ ref('bronze__all_asset_metadata_coingecko') }}
 
 {% if is_incremental() %}
 WHERE
@@ -43,7 +43,7 @@ coinmarketcap AS (
         source,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__all_asset_metadata_coinmarketcap2') }}
+        {{ ref('bronze__all_asset_metadata_coinmarketcap') }}
 
 {% if is_incremental() %}
 WHERE

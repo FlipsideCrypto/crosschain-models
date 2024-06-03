@@ -25,7 +25,7 @@ WITH asset_metadata AS (
         A.source,
         A._inserted_timestamp
     FROM
-        {{ ref('silver__token_asset_metadata_priority2') }} A
+        {{ ref('silver__token_asset_metadata_priority') }} A
         LEFT JOIN {{ ref('core__dim_contracts') }} C
         ON LOWER(
             C.address
