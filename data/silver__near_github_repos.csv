@@ -11,6 +11,7 @@ repo_url
 0x-William/Orbit-token
 0x0918/near-sc-security-course
 0x0aa0/Mirror721
+0x2fa-org/0x2fa
 0x3bfc/aurora-engine
 0x3bfc/aurora-workspace
 0x3bfc/rainbow-token-connector
@@ -20,6 +21,7 @@ repo_url
 0xArda-Aslan/near-bootcamp
 0xBarro/Near-Voting
 0xBlockchainx0/nft-launcher
+0xCaso/jpeg-station
 0xLe0x/near-fungible-token
 0xLe0x/near-nft-bid-market-contract
 0xOmarA/scrypto-vs-the-world
@@ -33,6 +35,7 @@ repo_url
 0xcryptomav/surgefinance
 0xd3bs/NCD2
 0xd3bs/guessing_game
+0xdir/near_api_dart
 0xgiorgi/near-api-py
 0xherberx/help-your-decentralized-neighbor
 0xherberx/help-your-decentralized-neighbor_delete
@@ -219,6 +222,7 @@ repo_url
 1qbits-com/learn-web3-dapp
 2012029301/IndexWeb
 2012029301/neardefi2
+2024-Circular-Reference/near-wallet-test
 21Horza/hello_near
 21Horza/near_guest_book
 21Horza/nft
@@ -327,6 +331,7 @@ repo_url
 5afe/safe-notification-service
 5afe/safe-pm-action-triage
 5afe/safe-react
+5afe/safe-react-components
 5afe/safe-recovery-module
 5afe/safe-relay-bounded-refund-module
 5afe/safe-relay-service
@@ -434,6 +439,7 @@ AbstrLabs/zkphttps
 AcmeGamers/gaktoo
 Act0r1/SimpleStakingContract
 Adarsh1885/Blockchain-Based-Online-Voting
+Adedoyin-Emmanuel/kegha-bot
 Adityaweb3/NearNFt
 Ado4007/GreenProtocol
 AdrianNainNain/DOMU
@@ -484,12 +490,14 @@ Akagi201/near-contract-workshop
 Akagi201/near-guestbook
 Akagi201/near-nft
 Akagi201/near-scripts
+Akagi201/near-subql-indexer
 Akagi201/near-template
 Akather-io/akather-certificate-app
 Akather-io/cantoverse-app
 Akather-io/cantoverse-contract
 Akather-io/near-certificate
 AlanFletes/AssetStore
+AlejoReyna/THE_MVP
 Aleksandrov96/near-certification
 Aleksandrov96/near-fundraising-dapp
 Aless30/Dolly
@@ -992,6 +1000,7 @@ CreatorOS/NEAR-simple-nft-Rust
 CreatorOS/Testing-and-understanding-NEAR-function-calls
 CreatorOS/coin-toss-game-near
 CreatorOS/near-assemblyscript-intro
+CriptoMexico-Hub/sazonmx
 CristianDiazTorres/astro-ui-develop
 CronCats/.github
 CronCats/Cron-Spec
@@ -1104,6 +1113,7 @@ Cryptorubic/rubic-widget
 Cryptorubic/rubic_test_staking_script
 Cryptorubic/staking
 Cryptorubic/treasury-in-arbitrum
+Cubid-Me/cubid-passport
 CuneytGuley/starter--near-sdk-as
 Curves-github/hackaton
 CuvarWallet/NCD-NFT-Store
@@ -1292,6 +1302,7 @@ Dispa1r/NearLuckyRobot
 Dispa1r/Nearvember-Disp41r
 Dispa1r/awesome-near
 Dispa1r/near-cookbook
+DmitriyHellyeah/near-lake-framework-go
 Dmytro4224/vinodex
 Do0k13/CrowdfundingDePerritos
 Do0k13/NearGreetingFrontend
@@ -1453,6 +1464,7 @@ Entangle-Protocol/elrond-smart-contracts
 Entangle-Protocol/entangle-blockchain
 Entangle-Protocol/entangle-lsd-multivers-x
 Entangle-Protocol/entangle-oracle-spotters-multivers-x
+Entangle-Protocol/evmosjs
 Entangle-Protocol/foundry
 Entangle-Protocol/frontend-main
 Entangle-Protocol/keeper-simple-example
@@ -1587,6 +1599,7 @@ GiovaniOliver/Near-assembly-starter-kit
 GiselleNessi/crea
 GiselleNessi/creea
 Git-Leon/near-archive
+Githongo/near-sms-wallet
 Gkhnkpnr/patikaWeb3Fundamentals
 Glitch-Hackaton/Glitch-Moody
 Glitch-Hackaton/test-nearchain
@@ -1661,6 +1674,7 @@ HEO-Platform/web3modal
 Habeebtoyin/NearToken
 Habeebtoyin/Nearcoin-flip-js
 Habeebtoyin/near-sdk-js
+Habilidash/project
 HackArchive/Transpact
 HackerZorro96/near-academy-contracts
 HadesHappy/T_rust_smart_contract
@@ -1993,11 +2007,13 @@ KazanderDad/DonationSplitter
 KchTT/near_obra_publica
 Kdr3434/near-web3
 KeepMusplay/exploring_egyptian_tombs
+Keepix-labs/Keepix.Wallets.near
 KenMan79/NEAR-Pet-Shop
 KenMan79/NEAR-Pet-Shop-Template
 KenMan79/NEAR-Proof-of-Work-Faucet
 KenMan79/NFT
 KenMan79/app-near
+KenshiTech/.github
 KenshiTech/InpulseX
 KenshiTech/SolidQuery
 KenshiTech/aws-cli-mfa
@@ -2244,6 +2260,7 @@ Lagotrixa/NCD_project
 Lagotrixa/near-lotto
 Lagotrixa/near-non-fungible-token-example
 Lagrange-fi/solana-figment-web3-dapp
+LakshyaSatpal/nft-auction-contract
 LanNhi1997/Challenge-3-social-good-bounty
 LanNhi1997/Hello-world-with-NEAR
 LanNhi1997/contact-card
@@ -2553,7 +2570,10 @@ LyiZri/funBlock
 LyiZri/near_demo_shareFileOnWeb3
 LyiZri/sd-cloud
 LyleRowe/web4
+Lyons800/ethdenver2024
 LyubomyrBurday/near-api-swift
+M-Rb3/linktree-bos
+M-Rb3/store-deploy
 M-Thirumal/near
 MARS-DAO/MarsDaoAutoFarm
 MBenz12/near-contract-standards-nft
@@ -2593,18 +2613,34 @@ Mariesnlk/rust-near
 Marinamontelo/nft-test
 Marinamontelo/token
 Mark-Tevin/supermarket-system
+Markeljan/awb
 Markeljan/swapguard
 Marklin2289/polygon-learning
 Marlos-Rodriguez/NEAR-counter-contract
+MarmaJFoundation/.github
+MarmaJFoundation/Grants-Program
+MarmaJFoundation/MarmaJ.GitHub.Template
 MarmaJFoundation/allies-marketplace
+MarmaJFoundation/chainteamtactics
+MarmaJFoundation/chainteamtactics-wiki
+MarmaJFoundation/cryptoheroes
+MarmaJFoundation/cryptoheroes-wiki
+MarmaJFoundation/marmaj-BOS
+MarmaJFoundation/pixel-party-rust
 MarmaJFoundation/pixeldapps-backend
+MarmaJFoundation/pixeldapps-contract
+MarmaJFoundation/pixelparty-contract
 MarmaJFoundation/pixelparty-website
+MarmaJFoundation/pixelparty-wiki
+MarmaJFoundation/pixelpets
+MarmaJFoundation/pixelpets-wiki
 Martha-kwamboka/Fleet-management-system
 MartianDreamer/cloned-rust-counter
 MartinTale/deadly-affection
 MartinYeung5/FT
 MartinYeung5/rust-counter
 Marumbo/NearContractSpeedData
+MasteraSnackin/FlapACoin
 MateoEmilio1/near-marketplace-contract
 Matiaspp96/near-architecture-nft
 Matrix2045/project-beep-frontend
@@ -2647,6 +2683,7 @@ Mergifyio/gha-add-linear-author-as-reviewer
 MesonFi/allsto-tg-bot
 MesonFi/aptos-wallet-adapter
 MesonFi/bot-telegram-helper
+MesonFi/merlin-contracts
 MesonFi/meson-contracts-aptos
 MesonFi/meson-contracts-solana-rust
 MesonFi/meson-contracts-solidity
@@ -2671,6 +2708,7 @@ Meta-Pool/meta-shared-components
 Meta-Pool/meta-vote-contracts
 Meta-Pool/metapool-eth-heartbeat
 Meta-Pool/metapool-ethereum
+Meta-Pool/metapool-shortcut
 Meta-Pool/near-liquid-staking-sdk
 Meta-Pool/oracle
 Meta-Pool/staking-pool-aurora
@@ -2711,8 +2749,10 @@ MiguelAngel115/MigsNearStarter2
 MiguelIslasH/CompaniesPhoneDirectory
 MiguelIslasH/L2.-Company-phone-directory
 MiguelIslasH/nearbrary
+MikeSZ97/NFT-fetch
 Mikefluff/near-pet-shop
 Mikodin/communion-scratchpad
+MilanPoznan/demo-near-wallet-selector
 MilanPoznan/fans-club
 MilanPoznan/nft-world
 MilanPoznan/social-club
@@ -2727,6 +2767,7 @@ MintKudos/MintGateWPWidget
 MintKudos/PARSIQ_Monitoring
 MintKudos/actions-aws-eb
 MintKudos/evm-chains
+MintKudos/meet_thrive
 MintKudos/mintflow
 MintKudos/mintflowui
 MintKudos/mintgate-app
@@ -2771,6 +2812,7 @@ Mintbase/mintbase-js
 Mintbase/mintbase-near-indexer
 Mintbase/mintbase-ui
 Mintbase/minterop-data
+Mintbase/near-ca-next-poc
 Mintbase/near-events
 Mintbase/near-nft-standards
 Mintbase/near-nft-testing
@@ -2987,6 +3029,7 @@ NEAR-Analytics/NEAR-Social
 NEAR-Analytics/NEAR-star-explorer
 NEAR-Analytics/NEAR_SOCIAL_DB_WIDGETS
 NEAR-Analytics/Org-Project-Outline
+NEAR-Analytics/SOCIAL_DB_CODE_ARCHIVER
 NEAR-Analytics/SOCIAL_DB_CODE_TOOLKIT
 NEAR-Analytics/SocialDB_Archive_Metrics
 NEAR-Analytics/devSnoopy
@@ -2997,9 +3040,13 @@ NEAR-BRASIL/ref
 NEAR-Balkans/Transcendence-Protocol
 NEAR-Balkans/pool-together
 NEAR-DevHub/badges-contract
+NEAR-DevHub/near-prpsls-bos
 NEAR-DevHub/neardevhub-bos
 NEAR-DevHub/neardevhub-contract
+NEAR-DevHub/neardevhub-kyc-proxy
+NEAR-DevHub/neardevhub-proposals-indexer
 NEAR-DevHub/neardevhub-treasury-dashboard
+NEAR-DevHub/race-of-sloths
 NEAR-Edu/contract-registry
 NEAR-Edu/contract-registry-ci-test
 NEAR-Edu/dao-in-15
@@ -3054,15 +3101,23 @@ NEAR-Openprojects/near-proxy-server
 NEAR-P2P/NearP2P-NearPricesFiat
 NEAR-P2P/NearP2PBackend
 NEAR-P2P/NearP2PChat
+NEAR-P2P/NearP2PFrontEndV2
 NEAR-P2P/graph
 NEAR-P2P/nearp2p
 NEAR-P2P/nearp2p_node_service
+NEAR-P2P/notification_bot
 NEAR-P2P/p2p-subaccount
+NEAR-P2P/swap
 NEAR-P2P/walletp2p_backend
 NEAR-P2P/walletp2p_front
+NEAR-Portuguese-Community/Guia-da-Guilda
+NEAR-Portuguese-Community/NEARCrowdinTranslations
 NEAR-Portuguese-Community/contador
 NEAR-Portuguese-Community/contract-examples
+NEAR-Portuguese-Community/docs
+NEAR-Portuguese-Community/near-wallet
 NEAR-Portuguese-Community/tic-tac-toe-contract
+NEAR-Portuguese-Community/wiki
 NEAR-Team/contract
 NEAR-Team/ticket-show-fe
 NEAR-brain-hack/Challenge-7-NEAR-cross-contract-call-tutorial
@@ -3088,11 +3143,13 @@ NEARBuilders/audits
 NEARBuilders/bos-blocks
 NEARBuilders/bos-workspace
 NEARBuilders/create
+NEARBuilders/create.near
 NEARBuilders/devs.near
 NEARBuilders/discoverbos
 NEARBuilders/docs
 NEARBuilders/editor
 NEARBuilders/embeds
+NEARBuilders/embeds.near
 NEARBuilders/events
 NEARBuilders/every
 NEARBuilders/everything
@@ -3103,8 +3160,10 @@ NEARBuilders/i-am-nearby
 NEARBuilders/libertydao
 NEARBuilders/maps
 NEARBuilders/minterest
+NEARBuilders/near-bos-webcomponent
 NEARBuilders/near-discovery-components
 NEARBuilders/near-obsidian-plugin
+NEARBuilders/onboarding-service
 NEARBuilders/potlock
 NEARBuilders/starter
 NEARBuilders/weighted-voting
@@ -3151,6 +3210,7 @@ NEARWEEK/GITBOOK
 NEARWEEK/NEARWEEK-COMMUNITY-CONTENT
 NEARWEEK/admin.news
 NEARWEEK/api.news
+NEARWEEK/bos-gateway
 NEARWEEK/marketing-activation-form
 NEARWEEK/sputnik-dao-2-ui-mainnet
 NEARWEEK/sputnik-dao-2-ui-reference-mainnet
@@ -3275,6 +3335,21 @@ Near-Grants-Projects/distancia-near-artifact
 Near-Grants-Projects/ea-kazi-backend
 Near-Grants-Projects/reits-africa-frontend
 Near-Grants-Projects/reits-africa-web
+Near-One/aurora-eth-connector
+Near-One/bridge-cli
+Near-One/clusterfuzz
+Near-One/eth-connector
+Near-One/fast-bridge-common
+Near-One/fast-bridge-protocol
+Near-One/native-erc20-connector
+Near-One/nayduck
+Near-One/near-erc20-connector
+Near-One/near-plugins
+Near-One/rainbow-bridge
+Near-One/rainbow-bridge-sdk-rs
+Near-One/rainbow-token-connector
+Near-One/telemetry-service
+Near-One/transaction-bench
 Near-Team-8/Nearsino
 Near-University-Tec-de-Tlaxiaco/Balam
 Near-University-Tec-de-Tlaxiaco/METZTLI
@@ -3350,6 +3425,7 @@ NearSocial/web4-preview
 NearTiger/mint
 NearTiger/near-tiger-nft
 Nearblocks/nearblocks
+Nearblocks/spam-token-list
 Nearblocks/translations
 Nearcon-22-Hack-NearCashback/api
 Nearcon-22-Hack-NearCashback/claim-app
@@ -3416,6 +3492,7 @@ NonceLabs/wallet-selector
 NookieGrey/my-near
 NotBoringCompany/webapp-api-v2
 NotEternal/nearContracts
+NotNikita/Web3Wallet
 NovaBloq/Bubble-Plugin-NEAR-API
 Nravatar/nravatar
 NutiNaguti/erc20-near
@@ -3487,6 +3564,7 @@ OutDID-io/NFCPassportReader
 OutDID-io/ark-circom
 OutDID-io/circom-bug-poc
 OutDID-io/outdid-sdk-js
+OutDID-io/passport
 OutDID-io/passport-reader
 OutDID-io/rsa-circuit
 OutDID-io/smartscanner-core
@@ -3662,24 +3740,33 @@ Popcorn412/nft-staking
 Post-Quantum-Team/DNS-over-Near
 Post-Quantum-Team/Post-Quantum-near-jsonrpc-client-rs
 PotLock/.github
+PotLock/Kitchens
 PotLock/bos-app
+PotLock/bos-app-alem
 PotLock/bos-gateway
 PotLock/changelog
 PotLock/core
 PotLock/data
 PotLock/data-queries
 PotLock/design-ops
+PotLock/django-indexer
 PotLock/docs
 PotLock/ecosystem
+PotLock/followers-fund
+PotLock/grantpicks-near
+PotLock/grantpicks-stellar
 PotLock/helpful-js
 PotLock/indexer-data-potlock
 PotLock/indexer-queryapi
+PotLock/invoice-generator-potlock
 PotLock/memes
 PotLock/nadabot-app
 PotLock/nadabot-docs
 PotLock/nadabot-stamps
 PotLock/near-social-sybil-provider
 PotLock/next-app
+PotLock/pointing
+PotLock/simplegrants.xyz
 PotLock/sui-contracts
 PotLock/twitter-bot
 Prachi143/Polling-system-using-solidity
@@ -3728,6 +3815,7 @@ PrometheoX/fiable
 Protocol-Pawns/chess-on-chain
 Proyectos-NCD/RUVaxx
 Proyectos-NCD/RUvaxxed
+Puckapao/near-rpc-tester
 Pulse-Market/app
 Pulse-Market/beta
 PunkNFT/Rarity-Helper
@@ -3775,6 +3863,7 @@ RamiD22/thrivein-near
 RandomAmbersky/my-near-experiments
 Randp/PSA_Token
 RaresGeo/rust-nft-prototype
+Rasta669/Near_wallet_swahili
 Rasta669/near-mobile-wallet
 Raulcudris/Aplicacion_Near
 Razortype/NearBootcampPractice
@@ -4157,6 +4246,7 @@ Sladuca/rainbase
 Sladuca/students-near-RL1
 Slhyzgn/Patika-Near-Practice-1
 Slhyzgn/Patika-Near-Practice2
+Sliman4/rpc-selector
 Slyracoon23/Near-Hello-World
 Slyracoon23/Wallet-Selector-Guest-Book
 Smart-Notes-Files/21-team
@@ -4191,10 +4281,12 @@ SouL-H/Near-Allowance-DApp
 SouL-H/Near-Deploying
 SouL-H/Near-Developer-Course
 SourceScan/NEPs
+SourceScan/cargo-near
 SourceScan/cargo-near-image
 SourceScan/contract-builders
 SourceScan/crypto-ecosystems
 SourceScan/docker-verification-example
+SourceScan/near-sdk-rs
 SourceScan/rust-builder
 SourceScan/rust-secp256k1
 SourceScan/verifier-back
@@ -4244,6 +4336,7 @@ Stolkerve/nft-farming
 Stolkerve/nft-patterns
 Stolkerve/vue-near-template
 Str77781/Blockchain
+Subgang/near_community_bank
 SukumaSwap/sukumamarketsbackend
 SukumaSwap/sukumamarketsui
 Sumit-Kumar1/Aryaman_Contract
@@ -4264,8 +4357,10 @@ SuperBatata/coin_toss
 SuperBatata/lockups_vesting_lightency
 SuperBatata/near-marketplace-contract
 SuperBatata/nearcon-hackathon
+SuperDev01234/NearWallet-MultiSend
 SuperDev01234/github-action-testing
 SuperStar323/frontend
+SurgeCode/near-relay
 SusanoO-mix/Near-nft-stacking-contract
 SwapStation/public
 SwapStation/swapstation-contracts
@@ -4280,14 +4375,19 @@ Sygmei/near-account-id-resolver
 Sygmei/near-scoreboard-contract
 SynFutures/DefiLlama-Adapters
 SynFutures/adapters
+SynFutures/gateway
 SynFutures/icons
 SynFutures/logo
+SynFutures/oyster-api
+SynFutures/oyster-sdk
+SynFutures/oyster-subgraph
 SynFutures/synfutures-artifact
 SynFutures/synfutures-v1-network-config
 SynFutures/v2-operation-config
 Synlex98/Demo
 Synlex98/MouseContract
 TENAMINT/NearContractsV1
+TENAMINT/basketball-pickem-app
 TENAMINT/near-sdk-rs-plus-mt
 TENAMINT/old-NearContracts
 TENAMINT/supernova-hacks
@@ -4578,6 +4678,7 @@ TheLedgerOfJoudi/NEAR-Rust-trials
 TheLedgerOfJoudi/NEAR-tweaks
 TheLedgerOfJoudi/TicTacToe-NEAR
 TheLedgerOfJoudi/double-wasm-near-arch
+TheLedgerOfJoudi/ribqat-al-near-subgraph
 TheLeprechaun25/The-Prophet
 TheMekKasem/KasemPlingkrathok-
 TheNathanN/blockview-near
@@ -4649,6 +4750,7 @@ Tranchinh30032001/ft2
 Tranchinh30032001/multiactionhup
 Tranchinh30032001/near-lap1
 Tranchinh30032001/sendmr.vu
+Tranchinh30032001/vue-near-wallet-js
 Transpact/transpact
 TrevorJTClarke/NEAR-N-BEERS
 TrevorJTClarke/alias.cat
@@ -4746,6 +4848,7 @@ Veridise/circom
 Veridise/circom2llvm
 Veridise/damn-vulnerable-defi
 Veridise/fluffy-zkevm-fuzzer
+Veridise/gnark
 Veridise/halo2-playground
 Veridise/ink-vuls
 Veridise/inkwell
@@ -4886,6 +4989,8 @@ WesleyJeanette/super-memory
 What5Next/onstage-contract
 WhiteDragon001227/terra-marketplace-cw721-1155-
 WhiteElephantEco/eqiunoxproject
+Widiskel/lava-point-farmer
+Widiskel/near-hot-wallet-claimer
 WildDragonDot/near-contract
 WildDragonDot/nft-market-near
 WilliamPerezBeltran/back-end-near
@@ -4904,6 +5009,7 @@ XLabs/cctp-relayer
 XLabs/connect-esm-example
 XLabs/example-token-bridge-relayer
 XLabs/fiber-redis-storage
+XLabs/kamaji
 XLabs/ledger-ethers-signer
 XLabs/portal-bridge-ui
 XLabs/relayer-engine
@@ -4921,6 +5027,7 @@ XLabs/wallet-monitor
 XLabs/wallet-monitor-d
 XLabs/wormhole
 XLabs/wormhole-connect
+XLabs/wormhole-solidity-sdk
 XLabs/wormhole-token-list
 XLabs/wormholescan-bff
 XLabs/wormscan-sdk
@@ -5166,6 +5273,7 @@ aacsspkt/near_repo
 aacsspkt/zebec-near-sdk-proposed
 aallvi/near_blockchain_university
 aaronduchateau/space-ranch-nft-contract
+aay7ush/decentralized-file-storage
 abbaslanbay/near-as-blog-page-example
 abbaslanbay/near-as-contract-and-react-app
 abbaslanbay/near-as-todo-crud-example
@@ -5300,6 +5408,7 @@ ailisp/NCD.L1.sample--lottery
 ailisp/NEARStudio
 ailisp/aurora-engine
 ailisp/corgi3d-contract
+ailisp/devhub-queryapi
 ailisp/hello-near-js
 ailisp/nft-tutorial-js
 ailisp/rust-status-message
@@ -5336,6 +5445,7 @@ akshayr6/Near-Dex-UI
 alaasouabni/light
 alanesmizi/cgforge
 alanesmizi/cgforge-nearcon
+alanesmizi/cgwallet
 alanesmizi/tutorial-nearkeys-vitalpointai
 alannetwork/near-fair-vault
 alannetwork/workshop-mp-aurora
@@ -5416,6 +5526,8 @@ alpha-fi/cheddar-checkers
 alpha-fi/cheddar-checkers-ui
 alpha-fi/cheddar-draw
 alpha-fi/cheddar-marketcap
+alpha-fi/cheddar-maze
+alpha-fi/cheddar-maze-minter
 alpha-fi/cheddar-nft-farming-contract
 alpha-fi/cheddar-nft-minter
 alpha-fi/cheddar-tic-tac-toe
@@ -5447,6 +5559,7 @@ amaharana/near-smart-stock-contract
 amalia20220301/mz-near-guestbook
 amalia20220301/near-blockchain
 amaru0601/voting_blockchain
+ameeetgaikwad/XSubscription
 amel007/near-random-id
 ameliejyc/near-enough
 ameliejyc/near-guest-book
@@ -5601,6 +5714,7 @@ ariesgun/near-marketplace
 ariesgun/near-tip-me
 arkadiyt/bounty-targets-data
 arkanaHQ/arkana-account-contract
+arkanaHQ/arkana-api-flutter
 arkanaHQ/arkana-core-contract
 arkanaHQ/arkana-nft-membership
 arkanaHQ/arkana-nft-membership-contract
@@ -5642,6 +5756,7 @@ artlake-io/artlake-contracts-public
 arturenault/near-poll
 arturenault/starter--near-sdk-as
 arvin-lau/near-api-go
+arvindkhoisnam/blogchain
 aryaxtech/artcoin-landing
 asadkovich/web3-devcontainers
 asafwithc/NCD.L1.sample--roulette
@@ -5666,6 +5781,7 @@ aspiringsecurity/Medical-Counselor
 asyaasha/near-starknet-ide
 asyaasha/near-starknet-vm
 ataberkcetinkaya/NEAR-Protocol
+atahanyild/NEVO
 atakank1999/ncd
 atakank1999/patika-dev-near
 atakank1999/patika-near-practice-2
@@ -5889,6 +6005,7 @@ bafnetwork/baf-wallet-v2
 bafnetwork/baf-wallet-v3
 bafnetwork/core-contracts
 baileyspraggins/rust-counter-tutorial
+bakansm/near-wallet-example
 balthier-dev/near-education-test
 bandprotocol/near-poc
 baoanh1310/faucet-dapp
@@ -5971,6 +6088,7 @@ beingofexistence/hack
 bekiryenidogan/CalorieContract
 bekiryenidogan/marketplace-near
 belikovdev/shiba-near
+ben-harper27/near-hack
 ben-razor/near-karts
 bengbengle/near-contract-helper
 bengbengle/near-rust-msg-demo
@@ -6109,12 +6227,14 @@ blockimperiumdao/fundingdao
 blockimperiumdao/hellomessages
 blockimperiumdao/hellomint
 blockimperiumdao/helloworld
+blocksecteam/Ethernaut_2024_phalcon
 blocksecteam/Phalcon
 blocksecteam/audit-reports
 blocksecteam/bitcoinmixing
 blocksecteam/blocksec_academy
 blocksecteam/damn-vulnerable-defi-phalcon-fork
 blocksecteam/defi_poc
+blocksecteam/eth-phishing-detect
 blocksecteam/hookscan
 blocksecteam/metadock
 blocksecteam/metasleuth_reports
@@ -6265,6 +6385,7 @@ butternetwork/butter-server
 butternetwork/butter-smart-router
 butternetwork/butter-swap-ui
 butternetwork/butterjs-sdk
+butternetwork/omniservice-contracts
 butternetwork/smart-router
 buymekofi/Near-X-Encode
 bxdoan/near-sdk-rs
@@ -6320,6 +6441,34 @@ calimero-is-near/near-sdk-rs
 calimero-is-near/near-wallet
 calimero-is-near/nearcore
 calimero-is-near/read-rpc
+calimero-network/FT
+calimero-network/PortalComponents
+calimero-network/VM
+calimero-network/actix-diesel
+calimero-network/app-near
+calimero-network/boot-node
+calimero-network/bridge-contracts
+calimero-network/calimero-auth-sdk
+calimero-network/calimero-examples
+calimero-network/calimero-sdk
+calimero-network/calimero-sdk-rs
+calimero-network/calimero-wallet-utils
+calimero-network/docs
+calimero-network/my-near-wallet
+calimero-network/near-apac-workshop
+calimero-network/near-api-js
+calimero-network/near-api-js-1
+calimero-network/near-cli
+calimero-network/near-discovery
+calimero-network/near-indexer-for-explorer
+calimero-network/near-lake-framework-rs
+calimero-network/near-lake-indexer
+calimero-network/near-py-client
+calimero-network/near-sdk-rs
+calimero-network/near-wallet
+calimero-network/nearcore
+calimero-network/read-rpc
+calimero-network/repo-template
 camchis/near-degenflip
 campgroundco/nft-contract
 canamaemindevar/Don-t-Say-21-on-Near-Protocol
@@ -6717,6 +6866,7 @@ cleversos/MasterChef_Staking_Near
 cleversos/Near_Marketplace
 cleversos/TerraSpace
 cleversos/VexedApes_Staking
+cliff-dev/near
 clint911/near-marketplace-contract-dapp
 clintonruairi/near-nfts
 clippefuentes/learn-near
@@ -6902,6 +7052,7 @@ cosmosnock/nearcore
 cowry-capital/near-web3-provider
 cpucorecore/ethereum_proof_js
 crafting-finance/crafting-core-near
+craftoriumclub/near-wallet-generator
 crazycoder-io/first-near-project
 crazzywizard/near_smart_contract
 cre8tion/nHelloWorld-UI
@@ -7099,6 +7250,7 @@ cy6erninja/near-challenges
 cybercoder2009/near-xcc
 cybercoder2009/test
 cycler/near-rust-smart-contract-demo
+cypherplatxs/Achura
 cypherplatxs/NCD_BootCamp_Es_22-11-21
 d-wang98/fractr-ownership
 d3fkon/near-solace
@@ -7303,6 +7455,7 @@ debionetwork/debio-public
 debionetwork/debio-smart-contracts
 debionetwork/debio-subql
 debionetwork/debio-technical-docs
+debionetwork/debio-web-info
 debionetwork/degenics-frontend
 debionetwork/degenics-smart-contract
 debionetwork/go-ethereum
@@ -7568,6 +7721,7 @@ dheeraj-721/near-sdk-js
 dhernz/Dynamint
 dhernz/caravela-protocol
 dhruvaanshgupta/block-voting
+diadata-org/AssetSpecificCallingConvention
 diadata-org/DIA-integration-sample
 diadata-org/DIA-vyper-integration-sample
 diadata-org/DIAOracleLib
@@ -7579,6 +7733,7 @@ diadata-org/bc-frontend
 diadata-org/bridgestate-ocw
 diadata-org/dex-js-1
 diadata-org/dia-adapter
+diadata-org/dia-kadena-oracles
 diadata-org/dia-oracle-anchor
 diadata-org/dia-substrate
 diadata-org/dia-wasm-oracle
@@ -7958,6 +8113,7 @@ elision-labs/elision-ui
 elision-labs/near-squared
 elision-labs/nearcore
 elision-labs/webapp
+elliotBraem/event.app.create
 elliotBraem/libertydao
 ellrussbest/NEAR-Calculator
 ellrussbest/hackathon_marketplace
@@ -8218,6 +8374,7 @@ esaminu123/console-boilerplate-template-rs-local-copy-91
 esaminu123/console-boilerplate-template-unauth-1234
 esaminu123/console-donation-template-sdf3w2432q
 espensimensen/neardevhub-contract
+esteblock/near-multichain-playground
 eswarsaladi/near-guest-book
 etasdemir-practice/patika-near-practice2
 etasdemir-practice/patika-practice1
@@ -8285,6 +8442,7 @@ evgenykuzyakov/berry-wayback
 evgenykuzyakov/berryclub
 evgenykuzyakov/berryclub-testnet
 evgenykuzyakov/berryfarm
+evgenykuzyakov/compact-indexer
 evgenykuzyakov/dacha
 evgenykuzyakov/fundraiser
 evgenykuzyakov/game-of-life
@@ -8334,6 +8492,7 @@ eywa-protocol/eywa-cdp
 eywa-protocol/eywa-clp
 eywa-protocol/eywa-constants
 eywa-protocol/eywa-landing
+eywa-protocol/eywa-lock
 eywa-protocol/eywa-oracle
 eywa-protocol/harmony
 eywa-protocol/papers
@@ -8368,6 +8527,18 @@ farolap/ncd-indexpaper
 farolap/nft-researchpaper
 farukbaktas/Near_Web3
 farukulutas/NearDeployExample
+fastnear/block-reader
+fastnear/clickhouse-provider
+fastnear/explorer-api
+fastnear/explorer-ui
+fastnear/fast-near
+fastnear/fastnear-api-server-rs
+fastnear/nearcore
+fastnear/neardata-server
+fastnear/redis-node
+fastnear/rpc-latency
+fastnear/static
+fastnear/website
 fatema373/BlockChain
 fbaygul/assembly_script_2
 fdoperezi/usn
@@ -8392,11 +8563,16 @@ fileverse/fileverse-smartcontracts
 fileverse/fileverse-storage
 fileverse/fileverse-website
 fileverse/fileverse-website-v2
+fileverse/frame-hack
 fileverse/gun
+fileverse/heartbit-backend
+fileverse/heartbit-frames-frog
+fileverse/heartbit-frames-nextjs
 fileverse/ipfs-deploy
 fileverse/ipfs-template
 fileverse/member-subgraph
 fileverse/sybil-analysis
+fileverse/workshop
 findtruman-official/ugceditor-web
 fingertipsdance/near-guess-number
 fintechla/esccrow
@@ -8424,6 +8600,9 @@ flair-sdk/contracts-typescript
 flair-sdk/evm-contract-scaffold
 flair-sdk/examples
 flair-sdk/nft-collection-scaffold
+flair-sdk/solution-database-mongodb
+flair-sdk/solution-database-postgresql
+flair-sdk/solution-indexing-defi-lending
 flair-sdk/starter-boilerplate
 flair-sdk/typescript
 flanear/.github
@@ -8769,6 +8948,7 @@ gagdiez/meta-near-app
 gagdiez/near-drop
 gagdiez/near-gateway
 gagdiez/near-login
+gagdiez/near-multichain
 gagdiez/near-sdk-js
 gagdiez/nearError
 gagdiez/pool_party
@@ -8810,6 +8990,7 @@ gerar10/nest-test
 gerardosahagun/certificates-near-smart-contract
 germangleza/stakedemy-Metapool
 gescobar129/project_relik
+getactivelink/Activelink-Near-Wallet
 geyingli/binance-monitor
 gezmisozkan/near
 gfirik/crossword-contract
@@ -8947,6 +9128,7 @@ goldenstar111/kaizo-nft-staking-contract-on-near
 goldenstar111/kaizo-token-contract-on-near
 goldenstar111/kaizo-token-presale-contract-on-near
 goldenstar111/nearnauts
+good1101/NearWallet
 goodnewsshow/patblk_near_rust_repclone01
 goraasep/NEAR-SIA-SKYNET-Tutorial
 goraasep/near-marketplace
@@ -9110,6 +9292,7 @@ happydev0/kotal_kubernetes
 happyfisherod/nft-market-solana
 happyguy1212/nft-first-app
 happyrobot00/luggage-tracker-as
+hariaakash/cinematic-rights
 harshD42/near-evoting
 harshabakku/rainbow-bridge-ETH-XTZ
 harshit3199/web3
@@ -9166,13 +9349,13 @@ here-wallet/js-sdk
 here-wallet/linkdrop-contract
 here-wallet/locales
 here-wallet/my-herewallet
-here-wallet/near-relay
 here-wallet/near-snap
 here-wallet/near-swift-sdk
 here-wallet/near-zmq-indexer
 here-wallet/phone-access-contract
 here-wallet/phone.herewallet.app
 here-wallet/promotion-sdk
+here-wallet/public-configs
 here-wallet/pyonear
 here-wallet/santa-token
 here-wallet/subscriptions-service
@@ -9313,8 +9496,11 @@ huykgit98/social-media-app
 huynguyen1212/spk-frontend
 hwnprsd/near-scaffold
 hyeonjin25/TutoPick
+hyperfiles-org/eigenrank
 hyperfiles-org/hyperfiles
+hyperfiles-org/hyperfiles-webcomponent
 hyperfiles-org/registry
+hyperfiles-org/viewer
 hyperswap/near-contract
 i-am-stark/voteforyou
 i-fix-typos/nearcore
@@ -9597,6 +9783,9 @@ itsobvioustech/aa-passkeys-wallet
 itsobvioustech/lists
 ivanceras/integrations
 ivanceras/near-counter
+ivanciric/minsta-clone
+ivanciric/woo-api
+ivanciric/woonft
 ivankuzovkin/auroraplay
 ivankuzovkin/wordle-aurora
 ivenka/SISM
@@ -9628,9 +9817,12 @@ izumiFinance/izumi-tokenList
 izumiFinance/izumi-uniV3Mining
 izumiFinance/izumi-veiZi
 izumiFinance/izumi_infra
+izumiFinance/l2-lxp-liquidity-reward
 izumiFinance/mmi-defi-adapters
+izumiFinance/openblocklabs-mode-tvl-adapters
 izumiFinance/snapshot-strategies
 izumiFinance/token-list
+izumiFinance/tvl-snapshot
 izumiFinance/wrapped-mUSD
 izumiFinance/yield-server
 j-mq/hello-near
@@ -9658,6 +9850,7 @@ jakmeier/sweat-near
 jameel9314/learn-web3-dapp
 jamesalexakande/forkofNEARBlockchaindocs
 jamesbachini/Aurora-Trisolaris-Auto-Compound-Script
+jamesbayly/near_priceoracle_example
 jamesbya/learn-near
 jamesondh/near-clp
 jamesondh/oracle-monorepo-near
@@ -9700,7 +9893,9 @@ jayden-dang/ticket-sales
 jayden-dang/vbi-client
 jayendramadaram/Near-Protocol-Projects
 jboetticher/NEARFiefdom-smart-contracts
+jbrit/nearfusion-gateway
 jcantillo94/guest-book-clone
+jcarbonnell/rodit-token
 jciglesias/SharingShard
 jdnichollsc/my-first-near
 jdnichollsc/my-first-near-nft
@@ -9784,6 +9979,9 @@ jobyid/near_lottery
 jobyid/pred-pools
 joe-rlo/90s-Name-Generator-Web4Hackathon
 joe-rlo/ReadyLayerOnePodcastNFT_test
+joe-rlo/ShardDog-ZK-Link
+joe-rlo/ShardDogBot_NEAR_Social_Notifications
+joe-rlo/ShardNFTs
 joe-rlo/near-nft-degen
 joe-rlo/near-wallet
 joe-trellick/guest-book
@@ -9868,6 +10066,7 @@ jovanniochoa/RUST-COUNTER-TUTORIAL
 jovocom/NFT-Staking
 jovoel/NFT-Staking
 joycelozano/imsygner
+joygotchi/mintbase-delagate-dynamics-nft
 jozefhruska/NearPass
 jpmti2016/figment-solana-learn-web3-dapp-tutorial
 jpzhangvincent/nft-hot-pot
@@ -9908,6 +10107,13 @@ juno-labs/mars-minter-contract
 junsoo37/near
 just-do-halee/near-contract
 justiceotuya/near-starter-kit
+jutsuai/Grants-Program
+jutsuai/VM
+jutsuai/bento-api
+jutsuai/bento-templates
+jutsuai/bento-ui
+jutsuai/langchainjs
+jutsuai/socket.jutsu.ai
 juwonleedev/juwonleedev
 jwoh1014/web3mon-mint-private
 jzhang19/near-guestbook
@@ -10029,6 +10235,7 @@ keypom/account-factory
 keypom/aha-boilerplate
 keypom/claim-page-boilerplate
 keypom/dao-bot
+keypom/event-pass
 keypom/examples
 keypom/ft-contract
 keypom/fydp
@@ -10108,6 +10315,7 @@ kiennguyensys/cherry-pub
 kiethase/Contract-depo
 kiethase/Contract-deposit
 kikiritonk/admilogic
+kilnfi/near-validator-watcher
 kimchi9199/Blockchain-hw-day2
 kimchi9199/blockchain-homework
 kingbsby/firefly
@@ -10197,6 +10405,7 @@ kreskohq/hardhat-deploy
 kreskohq/kresko-deployed-addresses
 kreskohq/kresko-foundry-helpers
 kreskohq/kresko-gateway
+kreskohq/kresko-lib
 kreskohq/kresko-protocol
 kreskohq/kresko-protocol-old
 kreskohq/oracle-provider-node
@@ -10217,6 +10426,7 @@ kstepanovdev/legendary-succotash
 kuberlab/near-api-go
 kujtimprenkuSQA/guest-book-esbuild
 kujtimprenkuSQA/guest-book-nextjs
+kujtimprenkuSQA/guest-book-react
 kujtimprenkuSQA/guest-book-vue
 kujtimprenkuSQA/near-injected-wallet-poc
 kujtimprenkuSQA/near-wallet
@@ -10232,6 +10442,8 @@ kunal266/pumpkin_carv
 kunal266/solana_quest
 kunal528/netone
 kurodenjiro/NEAR--sample-lottery-frontend
+kurodenjiro/drop-auth
+kurodenjiro/mintbase-loader-langchain
 kursaderduhan/Project_Book
 kurtosis-tech/near-contract-helper
 kuutamolabs/bdk
@@ -10377,6 +10589,7 @@ lenara/plantary
 lenchik-ponchik/svelte-near-example
 lennczar/near-apps
 lennczar/near-permissions
+lennybreeds/neareye
 leo23-vega/guest-book
 leohhhn/fetch_USN_price
 leohhhn/fung_token_near
@@ -10535,6 +10748,7 @@ liquality/liquality-node-config
 liquality/liquality-sdk-demo
 liquality/liquality-swap
 liquality/liquality.github.io
+liquality/mobile-wallet
 liquality/my-collectives
 liquality/my-collectives-contract
 liquality/my-collectives-node-sdk
@@ -10782,8 +10996,10 @@ mason-u-borchard/rust-qbyte-clock
 masterbid/coin_toss_game_smartcontract
 mathwallet/math-nearjs
 matiasbenary/near-lake-framework-js
+matiasbenary/near-lake-framework-js2
 matiasbenary/near-sdk-js
 matiasbenary/near-workspaces-js
+matiasberaldo/frensly
 matiasberaldo/nearbox-gateway
 matklad/core-contracts
 matklad/near-indexer-for-explorer
@@ -10793,6 +11009,7 @@ matsblock/RustNearExample
 matt783/near-evm
 mattdm3/near-oracle-client
 mattg1981/near-hacks-challenge-2
+mattlockyer/cfw-hono-near
 mattlockyer/core-contracts
 mattlockyer/create-account-example
 mattlockyer/dolla
@@ -10801,6 +11018,8 @@ mattlockyer/near-cbp
 mattlockyer/near-collections
 mattlockyer/near-eth
 mattlockyer/near-linkdrop
+mattlockyer/near-mpc-kdf
+mattlockyer/near-mpc-kdf-js
 mattlockyer/near-sdk-rs
 mattlockyer/near-tsrs
 mattlockyer/nearbp
@@ -11008,6 +11227,7 @@ microchipgnu/minsta-contract-rs
 microchipgnu/mintbase-app-example
 microchipgnu/mu-contracts
 microchipgnu/near-api-js
+microchipgnu/near-autonomous-wallet
 microchipgnu/near-js-contract
 microchipgnu/near-sdk-js
 microchipgnu/open-secret
@@ -11250,6 +11470,7 @@ mustafater/Near-Bookstore
 musuysal/NearDeveloperCourse
 musuysal/near-web3-bootcamp-phase-1
 mutalex/near_vcard
+mxber2022/AbstractionHack
 mxjxn/tenk
 mxtsns/Hackathon-VBI-K10-2023_Backend
 mxtsns/Near-NFT-exam-rs
@@ -11275,8 +11496,10 @@ myriadsocial/Grants-Program
 myriadsocial/aurora-is-near-bridge-assets
 myriadsocial/charts
 myriadsocial/custom-ckeditor
+myriadsocial/firebase-to-minio-migration
 myriadsocial/firechat
 myriadsocial/firegun
+myriadsocial/google-secrets-to-env
 myriadsocial/mintbase-grants-program
 myriadsocial/myriad-api
 myriadsocial/myriad-charts
@@ -11295,6 +11518,7 @@ myriadsocial/myriad-scripts
 myriadsocial/myriad-subql
 myriadsocial/myriad-web
 myriadsocial/myriad-web-federated
+myriadsocial/myriad-web-info
 myriadsocial/polkadot-js-apps
 myronvinz1/near-linkdrop
 myronvinz1/nearup
@@ -11345,6 +11569,7 @@ nativoart/minter
 natyrix/hello-near-js
 natzuu/NearStarterSDK-Patika
 naveenreddyin/near-sdk-rs
+naviava/minter-app
 nawealvarez/near-marketplace
 nayeon21/secret-tutorial-setup
 nayneshrathod/AssemblyScriptContract
@@ -11467,7 +11692,6 @@ near-examples/hackathon-starter-kit
 near-examples/hello-near-examples
 near-examples/hello-near-js
 near-examples/hello-near-rust
-near-examples/hello-near-rust-deprecated
 near-examples/indexer-tutorials
 near-examples/indexer-tx-watcher-example
 near-examples/indexer-tx-watcher-example-lake
@@ -11484,6 +11708,7 @@ near-examples/near-lake-accounts-watcher
 near-examples/near-lake-nft-indexer
 near-examples/near-lake-raw-printer
 near-examples/near-lake-raw-printer-js
+near-examples/near-multichain
 near-examples/near-pet-shop
 near-examples/nearlib-account
 near-examples/nearnames
@@ -11561,8 +11786,6 @@ near-multicall/docs
 near-multicall/nearcon22
 near-multicall/ui
 near-ndc/AstraPlusPlus
-near-ndc/DAOs
-near-ndc/OpsTeam
 near-ndc/astra
 near-ndc/community-voice
 near-ndc/gooddollar-oracle
@@ -11684,6 +11907,7 @@ near/fast-kv-store
 near/fast-near
 near/fast-vault
 near/finite-wasm
+near/gas-station-event-indexer
 near/grafana-agent
 near/hashbrown
 near/indexers-docs
@@ -11698,6 +11922,7 @@ near/market-data-analytics
 near/metabuidl-profiles
 near/metabuidl-teams
 near/mpc-recovery
+near/multichain-relayer-server
 near/multisig-tool
 near/multistaker
 near/nayduck
@@ -12085,6 +12310,7 @@ netocaz/Crypto-Password-Manager
 nevermined-io/contracts
 nevisadhiambo/Near-Smart-Contracts
 nevisadhiambo/Near_Patient_Management_System
+nexeranet/gonear
 nexeranet/staking-pool-ofp
 nexeranet/staking-pool-test
 nezik94/NEARCrowd
@@ -12129,6 +12355,7 @@ nguyenlethaihoang/near_linkdrop
 nguyentien91/NEARStudio
 nguyentrungson97/donate-near-app
 nguyenxuansang9494/cloned-rust-counter
+nhaidaar/hot-auto-claim
 nhamkthd/near-guest-book
 nhamthanh/near-answer-rewad
 nhaplycafedang/sweat-near
@@ -12332,6 +12559,13 @@ octopus-appchains/deip-anchor
 octopus-appchains/discovol-anchor
 octopus-appchains/fusotao-anchor
 octopus-appchains/myriad-anchor
+octopus-layer/.github
+octopus-layer/application-contract
+octopus-layer/client
+octopus-layer/ethereum-contract
+octopus-layer/verifier-contract
+octopus-layer/verifier-node
+octopus-layer/zk-proof
 octopus-network/Astar
 octopus-network/ChainBridge
 octopus-network/DRN-sol
@@ -12531,6 +12765,8 @@ olga24912/bls-signature-example-contract
 olga24912/near-plugins
 olonho/guest-book
 olonho/voting-app
+olsenngt/Near-wallet-bot
+olsenngt/Near-wallet-mining-hot-Autobot
 omarr45/NEAR-quotes
 omarr45/NEAR-quotes-fe
 omarr45/near-101-contract
@@ -12577,6 +12813,14 @@ opact-protocol/tickets
 open-format/contracts
 open-tribe/guest-book
 open-web-academy/Aurora-Ejemplos
+open-web-academy/BOS-1Inch
+open-web-academy/BOS-Aave
+open-web-academy/BOS-Gaming
+open-web-academy/BOS-Maverick
+open-web-academy/BOS-NFTMinter
+open-web-academy/BOS-OpenSea
+open-web-academy/BOS-TheGraph
+open-web-academy/BOS-TokenFactory
 open-web-academy/CoinFlip-JS
 open-web-academy/Components-BOS
 open-web-academy/Donation-JS
@@ -12640,11 +12884,13 @@ opolis/opolis-subgraph
 oraichain/learn-web3-dapp
 orally-network/POC
 orally-network/apollo
+orally-network/cassandra
 orally-network/deployer
 orally-network/evm-oracle
 orally-network/exchange-rate-canister
 orally-network/ic-web3
 orally-network/ic-web3-rs
+orally-network/middleware
 orally-network/oracle
 orally-network/portal
 orally-network/pythia
@@ -12711,6 +12957,7 @@ oxydev/sushiswap-subgraph
 oxydev/three-pathfinding
 oysterpack/oysterpack-near-stake-token
 oysterpack/oysterpack-smart-near
+p-destri/nearcon-clickdapp
 p2pvid/PixelMaxNFT
 p2pvid/sdfkd
 p2pvid/sdfn
@@ -12972,6 +13219,7 @@ physicsphysics/sweat-near
 piakushin/vault-test-replenisher
 pich-k/onekey-wallet-x
 pichtranst123/telegram-bot-near
+pichtranst123/trendingpost-on-bos
 pickdani/learn-solana
 pickle-finance/DeFi-Pulse-Adapters
 pickle-finance/basis-vault-v1
@@ -13042,6 +13290,7 @@ polarisfinance/bridge-assets
 polarisfinance/contracts
 polarisfinance/defillama-server
 polarisfinance/dex-assets
+polarisfinance/ethereum-blocks
 polarisfinance/frontend
 polarisfinance/gauges-subgraph
 polarisfinance/multicaller
@@ -13172,6 +13421,7 @@ polywrap/result-py
 polywrap/reverse-namehash-service
 polywrap/roadmap
 polywrap/rust-client
+polywrap/rust-wrap-client
 polywrap/safe-api-plugin
 polywrap/safe-contracts-wrapper
 polywrap/safe-core-wrap
@@ -13207,7 +13457,9 @@ polywrap/wasm-test-harness
 polywrap/web-scraper
 polywrap/wrap
 polywrap/wrap-abi-bindgen
+polywrap/wrap-cli
 polywrap/wrap-docs
+polywrap/wrap-integrations
 polywrap/wrap-test-harness
 polywrap/wrapper-backup
 polywrap/wrapper-eyes
@@ -13312,6 +13564,7 @@ purefiprotocol/usdt-ufi-exachange-doc
 purefiprotocol/verifier-widget-demo
 puzzle-com/filesys-rust
 puzzleVerma/voteVerifiedV2.0
+pvolnov/ca-evm-wallet
 pvolnov/near-lake-indexer
 pvolnov/near-primitives
 pvolnov/true-p2p
@@ -13632,6 +13885,7 @@ ref-finance/ref-stats
 ref-finance/ref-token
 ref-finance/ref-ui
 ref-finance/ref-ve
+ref-finance/token_locker
 referencedev/fundraiser
 referencedev/staking-farm
 reggiewoods/piggybank-near
@@ -13708,7 +13962,9 @@ rohanphanse/medical-api-marketplace
 rojasjuniore/DAPP_TEMPLARE_ETH_NEAR
 roke-to/Grants-Program
 roke-to/near-nft-benefits-vault
+roke-to/roketo-api
 roke-to/roketo-api-client
+roke-to/roketo-business-ui
 roke-to/roketo-business-ui-test-public
 roke-to/roketo-contract
 roke-to/roketo-dapp-public
@@ -13717,6 +13973,7 @@ roke-to/roketo-mass-streaming
 roke-to/roketo-sdk
 roke-to/roketo-sdk-sample
 roke-to/roketo-test-dapp-public
+roke-to/roketo-ui
 rokefeler/NearLanguageExchange
 rollie1212/NewBeerPunks
 romajr/starter--near-sdk-as
@@ -13776,6 +14033,7 @@ router-protocol/router-crosstalk-openzeppelin-standards
 router-protocol/router-crosstalk-sample
 router-protocol/router-ctf
 router-protocol/router-ecosystem
+router-protocol/router-farms
 router-protocol/router-governance
 router-protocol/router-protocol-audit
 router-protocol/router-protocol-bridge-contracts
@@ -14017,6 +14275,7 @@ scuderia1000/near-wallet
 seanNKH/meta-tx-example
 seanNKH/near-discovery
 seanNKH/near-js-vector-example
+seanmanik/hackoween-gote
 seanmanik/hackoween-gote-smartcontract
 seanmanik/hackoween-map
 seanpm2001/FreeCodeCamp_Near-Curriculum
@@ -14089,6 +14348,7 @@ sergantche/near-backend
 sergiogaguero/loveme4ever
 sergiogaguero/near-discovery-components
 sergiogaguero/near-growth-wallet-extension
+sergmiller/secured-jamon
 serhatturk692/NEARDEMO
 serpius-project/token_premium
 servedbyskull/near-api-js-error
@@ -14197,6 +14457,7 @@ sigridjineth/near-indexer-for-explorer
 sijiawen/nearcon
 silca3553/near
 silky/near-linkdrop
+silvestrpredko/near-client
 silvestrpredko/near-demo
 simba147/bos-genadropv2
 simba147/boshacks
@@ -14489,6 +14750,7 @@ superdev0421/NearWallet-MultiSend
 superdev0421/RustCounterApp
 superdev0421/RustTrader
 superdevcoder/solananftmarketplace
+superfeddy/NearWallet-MultiSend
 superise-is-near/contracts
 superise-is-near/subgraphs
 superise-is-near/superise-ui
@@ -14497,6 +14759,7 @@ superposition/nearly-board-chess-club
 suptalentdev/NFT
 suraneti/listens-counter
 surbhit14/de-land
+surfiniaburger/blueBird
 sushmitsarmah/aurora_hack23
 sushmitsarmah/encode_open_data_hack
 sushmitsarmah/near_metabuild_3
@@ -14887,6 +15150,7 @@ theauroradev/onchainassetgeneration
 thebase666/test1
 theblockchainacademy/near-roster-project
 theblockchainacademy/near-roster-ux-project_base
+thebrumby/HotWalletClaimer
 thedoskit/AssemblyScriptContract
 thefreeman42/sbt-marketplace
 thejai/NearPlayGround
@@ -15417,6 +15681,7 @@ verida/wallet-utils
 verisoul/FlowiseAI-Railway
 verisoul/cra-sample-app
 verisoul/ffmpeg-aws-lambda-layer
+verisoul/google_tag_manager
 verisoul/guild.xyz
 verisoul/native-android-sample-app
 verisoul/native-ios-sample-app
@@ -15424,11 +15689,14 @@ verisoul/near-grant
 verisoul/near-hack
 verisoul/react-native-proof-of-human-example-app
 verisoul/react-native-sample-app
+verisoul/react-native-zerokyc-sample-app
 verisoul/react-sample-app
+verisoul/unity-webview-sample-app
 verisoul/verisoul-registration
 verisoul/web-sample-app
 verisoul/zardaxt
 verisoul/zerofake-sample
+verisoul/zerokyc-styling
 verkhohliad/crowdfundingDapp
 verkhohliad/raffly
 verumlotus/SemanticNear
@@ -15444,6 +15712,7 @@ vgrichina/giveprops
 vgrichina/humanguild-nft
 vgrichina/near-account-nft
 vgrichina/near-lake-framework-js
+vgrichina/near-lake-torrents
 vgrichina/near-lands
 vgrichina/near-ledger-keygen
 vgrichina/near-state-indexer
@@ -15818,6 +16087,7 @@ welldonestudio/welldone-hackwasm
 welldonestudio/welldone-sui
 welldonestudio/welldonestudio-video
 welldonestudio/welldonestudio.github.io
+welldonestudio/zkWallet
 wenqingyu/near-NFL
 wenxingliu/learn-web3-dapp
 wesgraham/flux-fungible-token
@@ -15833,6 +16103,7 @@ white-682/near-files_cloud
 wickedwick/near-cms
 wickedwick/near-cms-rust
 wickedwick/near-cms-subgraph
+wildework/ethdenver-near
 wildonion/ntm
 wildonion/smarties
 willemneal/Catalyst-DAO
@@ -15953,6 +16224,7 @@ wormhole-foundation/wormhole-widget
 wormhole-foundation/xdapp-book
 wp-lai/xrust
 wpdas/chatv2-near-widget-app
+wpdas/naxios
 wpdas/near-social-bridge
 wpdas/near-social-local-viewer
 wpdas/nextjs-near-widget-app
@@ -16022,6 +16294,7 @@ yapoey/web3
 yaraboec/near-rust-react-market
 yarikbratashchuk/nearcore
 yaroccult/test
+yash-polka/multisig-near-wallet
 yash-sharma1/tutorials
 yashikagandhi/learningBlockchain
 yashmurty/near-inbox
@@ -16201,6 +16474,7 @@ zeropoolnetwork/zeropool-near
 zeropoolnetwork/zeropool-support-js
 zerzhir/mountainsea
 zestzero/near-wallet-sample
+zexalryz/nearTesnetLavaCoinFlip
 zh/near-paper
 zh/near-paper-sweep
 zh/near-paper-web
