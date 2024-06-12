@@ -807,3 +807,8 @@ sources:
     schema: github_actions
     tables:
       - name: workflows
+  - name: kaia_gold
+    database: kaia
+    schema: core
+    tables:
+      - name: fact_blocks
