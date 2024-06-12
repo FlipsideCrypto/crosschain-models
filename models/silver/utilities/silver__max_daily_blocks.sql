@@ -11,7 +11,8 @@
     ('optimism', source('optimism_silver', 'blocks')),
     ('base', source('base_silver', 'blocks')),
     ('gnosis', source('gnosis_silver', 'blocks')),
-    ('blast', source('blast_silver', 'blocks'))
+    ('blast', source('blast_silver', 'blocks')),
+    ('kaia', source('kaia_gold', 'fact_blocks')),
 ]
 %}
 
