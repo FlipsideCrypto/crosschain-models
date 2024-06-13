@@ -18,5 +18,4 @@ from
     base
 where
     status_code not in (200, 202, 404, 451)
-    and counter > 0
-    and counter < 100
+    and counter > 500
