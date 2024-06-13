@@ -30,6 +30,13 @@ models:
       - name: IS_IMPUTED
         tests: 
           - not_null
+          - price_imputing:
+              column_name: IS_IMPUTED
+              config:
+                severity: warn
+                warn_if: ">0"
+                severity: error
+                error_if: ">100"
       - name: _INSERTED_TIMESTAMP
         tests:
           - not_null
