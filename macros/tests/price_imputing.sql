@@ -50,7 +50,7 @@ resp AS (
         DATE_PART(
             'EPOCH',
             DATEADD('day', -91, SYSDATE()) :: DATE) AS partition_key,
-            crosschain.live.udf_api(
+            live.udf_api(
                 'GET',
                 api_url,
                 NULL,
