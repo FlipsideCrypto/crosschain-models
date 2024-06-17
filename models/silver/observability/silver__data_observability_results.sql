@@ -81,7 +81,10 @@
     ('solana', source('solana_observ', 'transactions_completeness')),
 
     ('aptos', source('aptos_observ', 'blocks_completeness')),
-    ('aptos', source('aptos_observ', 'transactions_completeness'))
+    ('aptos', source('aptos_observ', 'transactions_completeness')),
+
+    ('m1', source('m1_observ', 'blocks_completeness')),
+    ('m1', source('m1_observ', 'transactions_completeness'))
 ]
 %}
 SELECT 
