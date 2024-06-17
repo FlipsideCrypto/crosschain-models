@@ -35,7 +35,7 @@ WITH t1 AS (
         x
         JOIN {{ source(
             'ethereum_price',
-            'fact_hourly_token_prices'
+            'ez_prices_hourly'
         ) }}
         y
         ON x.contract_address = y.token_address
