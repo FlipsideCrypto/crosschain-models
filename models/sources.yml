@@ -20,7 +20,7 @@ sources:
     database: ethereum
     schema: price
     tables:
-      - name: fact_hourly_token_prices
+      - name: ez_prices_hourly
   - name: ethereum_nft
     database: ethereum
     schema: nft 
