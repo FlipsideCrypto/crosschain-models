@@ -41,6 +41,7 @@ jobs:
 
   run_dbt_jobs_udfs:
     runs-on: ubuntu-latest
+    needs: run_dbt_jobs_refresh
     environment:
       name: workflow_dev
 
@@ -58,8 +59,8 @@ jobs:
           dbt deps
       - name: Run Recreate UDFs
         run: |
-          dbt run-operation fsc_utils.create_udf_bulk_rest_api_v2 --vars '{"UPDATE_UDFS_AND_SPS":True}'
-          dbt run -s livequery_models.deploy.core._live --vars '{"UPDATE_UDFS_AND_SPS":True}'
+          dbt run-operation fsc_utils.create_udf_bulk_rest_api_v2 --vars '{"UPDATE_UDFS_AND_SPS":True}' -t dev
+          dbt run -s livequery_models.deploy.core._live --vars '{"UPDATE_UDFS_AND_SPS":True}' -t dev
 
 
           
