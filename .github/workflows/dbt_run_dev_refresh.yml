@@ -41,6 +41,7 @@ jobs:
 
   run_dbt_jobs_udfs:
     runs-on: ubuntu-latest
+    needs: run_dbt_jobs_refresh
     environment:
       name: workflow_dev
 
