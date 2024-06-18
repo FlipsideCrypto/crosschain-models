@@ -3,7 +3,7 @@
     call crosschain._internal.create_prod_clone(
         'crosschain',
         'crosschain_dev',
-        'crosschain_dev_owner'
+        'internal_dev'
     );
 {% endset %}
     {% do run_query(clone_query) %}
