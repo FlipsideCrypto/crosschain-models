@@ -2,6 +2,7 @@ name: dbt_run_dev_refresh
 run-name: dbt_run_dev_refresh
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 3 * * *'
     
@@ -62,5 +63,3 @@ jobs:
           dbt run-operation fsc_utils.create_udf_bulk_rest_api_v2 --vars '{"UPDATE_UDFS_AND_SPS":True}' -t dev
           dbt run -s livequery_models.deploy.core._live --vars '{"UPDATE_UDFS_AND_SPS":True}' -t dev
 
-
-          
