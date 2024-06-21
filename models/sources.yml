@@ -818,3 +818,13 @@ sources:
     schema: core
     tables:
       - name: fact_blocks
+  - name: kaia_silver
+    database: kaia
+    schema: silver
+    tables:
+      - name: abis
+  - name: sei_evm_silver
+    database: sei
+    schema: silver_evm
+    tables:
+      - name: abis

@@ -14,7 +14,9 @@
     ('optimism', source('optimism_silver', 'abis')),
     ('base', source('base_silver', 'abis')),
     ('gnosis', source('gnosis_silver', 'abis')),
-    ('blast', source('blast_silver', 'abis'))
+    ('blast', source('blast_silver', 'abis')),
+    ('sei', source('sei_evm_silver', 'abis')),
+    ('kaia', source('kaia_silver', 'abis')),
 ]
 %}
 
