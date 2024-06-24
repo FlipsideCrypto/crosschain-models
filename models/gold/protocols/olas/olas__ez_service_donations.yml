@@ -22,7 +22,7 @@ models:
       - name: EVENT_INDEX
         description: '{{ doc("cross_chain_event_index") }}'
       - name: EVENT_NAME
-        description: '{{ doc("eth_event_name") }}'
+        description: '{{ doc("cross_chain_event_name") }}'
       - name: DONOR_ADDRESS
         description: '{{ doc("olas_donor_address") }}'
       - name: SERVICE_ID

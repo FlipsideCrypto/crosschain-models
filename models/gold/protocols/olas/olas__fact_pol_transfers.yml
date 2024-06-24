@@ -22,11 +22,11 @@ models:
       - name: EVENT_INDEX
         description: '{{ doc("cross_chain_event_index") }}'
       - name: EVENT_NAME
-        description: '{{ doc("eth_event_name") }}'
+        description: '{{ doc("cross_chain_event_name") }}'
       - name: FROM_ADDRESS
-        description: '{{ doc("eth_transfer_from_address") }}'
+        description: '{{ doc("cross_chain_transfer_from") }}'
       - name: TO_ADDRESS
-        description: '{{ doc("eth_transfer_to_address") }}'
+        description: '{{ doc("cross_chain_transfer_to") }}'
       - name: LP_TOKEN_AMOUNT_UNADJ
         description: '{{ doc("olas_lp_token_amount_unadj") }}'
       - name: LP_TOKEN_AMOUNT
