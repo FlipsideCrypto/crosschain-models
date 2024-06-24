@@ -1,0 +1,45 @@
+version: 2
+models:
+  - name: olas__fact_service_event_logs
+    description: '{{ doc("olas_fact_service_event_logs_table_doc") }}'   
+    columns:
+      - name: BLOCK_NUMBER
+        description: '{{ doc("cross_chain_block_number") }}'   
+      - name: BLOCK_TIMESTAMP
+        description: '{{ doc("cross_chain_block_timestamp") }}'
+      - name: TX_HASH
+        description: '{{ doc("cross_chain_tx_hash") }}'
+      - name: ORIGIN_FUNCTION_SIGNATURE
+        description: '{{ doc("cross_chain_origin_sig") }}'
+      - name: ORIGIN_FROM_ADDRESS
+        description: '{{ doc("origin_from_address") }}'
+      - name: ORIGIN_TO_ADDRESS
+        description: '{{ doc("origin_to_address") }}'
+      - name: CONTRACT_ADDRESS
+        description: '{{ doc("cross_chain_contract_address") }}'
+      - name: EVENT_INDEX
+        description: '{{ doc("cross_chain_event_index") }}'
+      - name: EVENT_NAME
+        description: '{{ doc("cross_chain_event_name") }}'
+      - name: MULTISIG_ADDRESS
+        description: '{{ doc("olas_multisig_address") }}'
+      - name: SERVICE_ID
+        description: '{{ doc("olas_service_id") }}'
+      - name: TOPIC_0
+        description: '{{ doc("gno_topics") }}'
+      - name: TOPIC_1
+        description: '{{ doc("gno_topics") }}'
+      - name: TOPIC_2
+        description: '{{ doc("gno_topics") }}'
+      - name: TOPIC_3
+        description: '{{ doc("gno_topics") }}'
+      - name: DATA
+        description: '{{ doc("gno_logs_data") }}'
+      - name: SEGMENTED_DATA
+        description: '{{ doc("olas_segmented_data") }}'
+      - name: FACT_SERVICE_EVENT_LOGS_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 

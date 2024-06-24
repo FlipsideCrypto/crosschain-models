@@ -1,0 +1,19 @@
+version: 2
+models:
+  - name: olas__ez_mech_activity
+    description: '{{ doc("olas_ez_mech_activity_table_doc") }}'   
+    columns:
+      - name: REQUEST_ID
+        description: '{{ doc("olas_request_id") }}'
+      - name: SENDER_ADDRESS
+        description: '{{ doc("olas_sender_address") }}'
+      - name: PROMPT_LINK
+        description: '{{ doc("olas_prompt_link") }}'
+      - name: DELIVERY_LINK 
+        description: '{{ doc("olas_delivery_link") }}'
+      - name: EZ_MECH_ACTIVITY_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 

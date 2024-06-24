@@ -828,3 +828,63 @@ sources:
     schema: silver_evm
     tables:
       - name: abis
+  - name: ethereum_olas
+    database: ethereum
+    schema: olas
+    tables:
+      - name: dim_registry_metadata
+      - name: fact_service_event_logs
+      - name: ez_service_registrations
+      - name: ez_unit_registrations
+      - name: ez_olas_bonding
+      - name: ez_olas_locking
+      - name: ez_service_donations
+      - name: fact_pol_transfers
+  - name: gnosis_olas
+    database: gnosis
+    schema: olas
+    tables:
+      - name: dim_registry_metadata
+      - name: fact_service_event_logs
+      - name: ez_service_registrations
+      - name: ez_mech_activity
+      - name: ez_olas_staking
+      - name: ez_service_checkpoints
+      - name: ez_service_evictions
+      - name: ez_service_staking
+      - name: fact_mech_activity
+  - name: optimism_olas
+    database: optimism
+    schema: olas
+    tables:
+      - name: dim_registry_metadata
+      - name: fact_service_event_logs
+      - name: ez_service_registrations
+  - name: base_olas
+    database: base
+    schema: olas
+    tables:
+      - name: dim_registry_metadata
+      - name: fact_service_event_logs
+      - name: ez_service_registrations
+  - name: arbitrum_olas
+    database: arbitrum
+    schema: olas
+    tables:
+      - name: dim_registry_metadata
+      - name: fact_service_event_logs
+      - name: ez_service_registrations
+  - name: polygon_olas
+    database: polygon
+    schema: olas
+    tables:
+      - name: dim_registry_metadata
+      - name: fact_service_event_logs
+      - name: ez_service_registrations
+  - name: solana_olas
+    database: solana
+    schema: olas
+    tables:
+      - name: dim_registry_metadata
+      - name: fact_service_event_logs
+      - name: ez_service_registrations

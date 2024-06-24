@@ -1,0 +1,15 @@
+version: 2
+models:
+  - name: olas__dim_registry_metadata
+    description: 
+    columns:
+      - name: 
+        description: 
+      - name: DIM_REGISTRY_METADATA_ID
+        description: '{{ doc("pk") }}'   
+        tests:
+          - unique
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 

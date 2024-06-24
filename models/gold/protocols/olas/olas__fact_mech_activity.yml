@@ -1,0 +1,37 @@
+version: 2
+models:
+  - name: olas__fact_mech_activity
+    description: '{{ doc("olas_fact_mech_activity_table_doc") }}'   
+    columns:
+      - name: BLOCK_NUMBER
+        description: '{{ doc("cross_chain_block_number") }}'   
+      - name: BLOCK_TIMESTAMP
+        description: '{{ doc("cross_chain_block_timestamp") }}'
+      - name: TX_HASH
+        description: '{{ doc("cross_chain_tx_hash") }}'
+      - name: ORIGIN_FUNCTION_SIGNATURE
+        description: '{{ doc("cross_chain_origin_sig") }}'
+      - name: ORIGIN_FROM_ADDRESS
+        description: '{{ doc("origin_from_address") }}'
+      - name: ORIGIN_TO_ADDRESS
+        description: '{{ doc("origin_to_address") }}'
+      - name: CONTRACT_ADDRESS
+        description: '{{ doc("cross_chain_contract_address") }}'
+      - name: EVENT_INDEX
+        description: '{{ doc("cross_chain_event_index") }}'
+      - name: EVENT_NAME
+        description: '{{ doc("cross_chain_event_name") }}'
+      - name: SENDER_ADDRESS
+        description: '{{ doc("olas_sender_address") }}'
+      - name: REQUEST_ID
+        description: '{{ doc("olas_request_id") }}'
+      - name: DATA_PAYLOAD
+        description: '{{ doc("olas_data_payload") }}'
+      - name: METADATA_LINK
+        description: '{{ doc("olas_metadata_link") }}'
+      - name: FACT_MECH_ACTIVITY_ID 
+        description: '{{ doc("pk") }}'
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 
