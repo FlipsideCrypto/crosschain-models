@@ -3,6 +3,8 @@ models:
   - name: olas__fact_service_event_logs
     description: '{{ doc("olas_fact_service_event_logs_table_doc") }}'   
     columns:
+      - name: BLOCKCHAIN
+        description: '{{ doc("blockchain_column") }}'  
       - name: BLOCK_NUMBER
         description: '{{ doc("cross_chain_block_number") }}'   
       - name: BLOCK_TIMESTAMP

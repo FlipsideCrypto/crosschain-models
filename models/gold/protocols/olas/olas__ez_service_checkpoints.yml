@@ -3,6 +3,8 @@ models:
   - name: olas__ez_service_checkpoints
     description: '{{ doc("olas_ez_service_checkpoints_table_doc") }}'   
     columns:
+      - name: BLOCKCHAIN
+        description: '{{ doc("blockchain_column") }}'  
       - name: BLOCK_NUMBER
         description: '{{ doc("cross_chain_block_number") }}'   
       - name: BLOCK_TIMESTAMP

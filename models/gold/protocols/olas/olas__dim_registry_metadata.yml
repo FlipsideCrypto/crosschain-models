@@ -1,10 +1,10 @@
 version: 2
 models:
   - name: olas__dim_registry_metadata
-    description: 
+    description: '{{ doc("olas_dim_registry_metadata_table_doc") }}' 
     columns:
-      - name: 
-        description: 
+      - name: BLOCKCHAIN
+        description: '{{ doc("blockchain_column") }}'  
       - name: DIM_REGISTRY_METADATA_ID
         description: '{{ doc("pk") }}'   
         tests:

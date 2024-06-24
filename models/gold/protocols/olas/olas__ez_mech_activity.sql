@@ -8,6 +8,7 @@
 ) }}
 
 SELECT
+    'gnosis' AS blockchain,
     request_id,
     sender_address,
     prompt_link,

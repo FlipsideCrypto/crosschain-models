@@ -3,6 +3,8 @@ models:
   - name: olas__ez_mech_activity
     description: '{{ doc("olas_ez_mech_activity_table_doc") }}'   
     columns:
+      - name: BLOCKCHAIN
+        description: '{{ doc("blockchain_column") }}'  
       - name: REQUEST_ID
         description: '{{ doc("olas_request_id") }}'
       - name: SENDER_ADDRESS
