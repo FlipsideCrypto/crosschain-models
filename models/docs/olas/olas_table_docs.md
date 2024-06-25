@@ -1,18 +1,18 @@
 {% docs olas_dim_registry_metadata_table_doc %}
 
-This table contains dimensional metadata for the registry contracts, including details about the various Agent, Component and Service entities registered in the OLAS ecosystem. The metadata is sourced via contract reads on the tokenURI function, and typically direct to IPFS. Metadata columns may be null, as they are sourced from contract reads (on EVMs) and the calls will be retried where applicable.
+This table contains dimensional metadata for the registry contracts, including details about the various Agent, Component and Service entities registered in the OLAS ecosystem. The metadata is sourced via contract reads on the tokenURI function, and typically direct to IPFS. Metadata columns may be null, as they are sourced from contract reads (on EVMs) and the calls will be retried where applicable. Various chain-specific columns may be null, as this table joins together the EVM and SVM. 
 
 {% enddocs %}
 
 {% docs olas_ez_service_registrations_table_doc %}
 
-This convenience table contains fact-based records of service registrations within the OLAS protocol, capturing essential information about each registered service event and includes a join on the `dim_registry_metadata` table for additional details pertaining to each service_id, such as name and description.
+This convenience table contains fact-based records of service registrations within the OLAS protocol, capturing essential information about each registered service event and includes a join on the `dim_registry_metadata` table for additional details pertaining to each service_id, such as name and description. Various chain-specific columns may be null, as this table joins together the EVM and SVM.
 
 {% enddocs %}
 
 {% docs olas_fact_service_event_logs_table_doc %}
 
-This fact-based table contains all emitted event logs related to registered services and service multisigs within the OLAS protocol. For EVMs, this is accomplished by joining all events where the transaction's `origin_to_address` = `multisig_address` to showcase the onchain interactions with each service. If a service does not have an associated multisig, it will not be included in this table.
+This fact-based table contains all emitted events related to registered services and service multisigs within the OLAS protocol. For EVMs, this is accomplished by joining all events where the transaction's `origin_to_address` = `multisig_address` to showcase the onchain interactions with each service. If a service does not have an associated multisig, it will not be included in this table. Various chain-specific columns may be null, as this table joins together the EVM and SVM.
 
 {% enddocs %}
 
