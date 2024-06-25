@@ -205,7 +205,7 @@ SELECT
     m.image_link,
     m.code_uri_link AS service_metadata_link,
     {{ dbt_utils.generate_surrogate_key(
-        ['r.registry_metadata_id','r.blockchain']
+        ['r.service_registration_id','r.blockchain']
     ) }} AS ez_service_registrations_id,
     r.inserted_timestamp,
     GREATEST(

@@ -226,7 +226,7 @@ SELECT
     DATA,
     segmented_data,
     {{ dbt_utils.generate_surrogate_key(
-        ['r.service_event_logs_id','r.blockchain']
+        ['service_event_logs_id','blockchain']
     ) }} AS fact_service_event_logs_id,
     inserted_timestamp,
     modified_timestamp
