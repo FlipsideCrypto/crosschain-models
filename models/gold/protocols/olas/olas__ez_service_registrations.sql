@@ -152,6 +152,30 @@ polygon AS (
             'service_registrations'
         ) }}
 ),
+solana AS (
+    SELECT
+        'solana' AS blockchain,
+        block_id AS block_number,
+        block_timestamp,
+        tx_id AS tx_hash,
+        NULL AS origin_function_signature,
+        signer AS origin_from_address,
+        NULL AS origin_to_address,
+        program_id AS contract_address,
+        index AS event_index,
+        event_type AS event_name,
+        owner_address,
+        multisig_address,
+        service_id,
+        service_registrations_id AS service_registration_id,
+        inserted_timestamp,
+        modified_timestamp
+    FROM
+        {{ source(
+            'solana_silver_olas',
+            'service_registrations'
+        ) }}
+),
 all_registrations AS (
     SELECT
         *
@@ -182,6 +206,11 @@ all_registrations AS (
         *
     FROM
         polygon
+    UNION ALL
+    SELECT
+        *
+    FROM
+        solana
 )
 SELECT
     r.blockchain,

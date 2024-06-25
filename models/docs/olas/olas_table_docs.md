@@ -1,6 +1,6 @@
 {% docs olas_dim_registry_metadata_table_doc %}
 
-This table contains dimensional metadata for the registry contracts, including details about the various Agent, Component and Service entities registered in the OLAS ecosystem. The metadata is sourced via contract reads on the tokenURI function, and typically direct to IPFS.
+This table contains dimensional metadata for the registry contracts, including details about the various Agent, Component and Service entities registered in the OLAS ecosystem. The metadata is sourced via contract reads on the tokenURI function, and typically direct to IPFS. Metadata columns may be null, as they are sourced from contract reads (on EVMs) and the calls will be retried where applicable.
 
 {% enddocs %}
 
@@ -12,7 +12,7 @@ This convenience table contains fact-based records of service registrations with
 
 {% docs olas_fact_service_event_logs_table_doc %}
 
-This fact-based table contains all emitted event logs related to registered services and service multisigs within the OLAS protocol. This is accomplished by joining all events where the transaction's `origin_to_address` = `multisig_address` to showcase the onchain interactions with each service. If a service does not have an associated multisig, it will not be included in this table.
+This fact-based table contains all emitted event logs related to registered services and service multisigs within the OLAS protocol. For EVMs, this is accomplished by joining all events where the transaction's `origin_to_address` = `multisig_address` to showcase the onchain interactions with each service. If a service does not have an associated multisig, it will not be included in this table.
 
 {% enddocs %}
 

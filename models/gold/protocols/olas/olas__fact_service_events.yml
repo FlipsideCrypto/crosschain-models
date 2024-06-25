@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: olas__fact_service_event_logs
+  - name: olas__fact_service_events
     description: '{{ doc("olas_fact_service_event_logs_table_doc") }}'   
     columns:
       - name: BLOCKCHAIN
@@ -39,7 +39,7 @@ models:
         description: '{{ doc("cross_chain_event_data") }}'
       - name: SEGMENTED_DATA
         description: '{{ doc("olas_segmented_data") }}'
-      - name: FACT_SERVICE_EVENT_LOGS_ID
+      - name: FACT_SERVICE_EVENTS_ID
         description: '{{ doc("pk") }}'   
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   

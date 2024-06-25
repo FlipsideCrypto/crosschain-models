@@ -176,7 +176,35 @@ polygon AS (
             'service_event_logs'
         ) }}
 ),
-all_logs AS (
+solana AS (
+    SELECT
+        'solana' AS blockchain,
+        block_id AS block_number,
+        block_timestamp,
+        tx_id AS tx_hash,
+        NULL AS origin_function_signature,
+        signer AS origin_from_address,
+        NULL AS origin_to_address,
+        program_id AS contract_address,
+        INDEX AS event_index,
+        multisig_address,
+        service_id,
+        NULL AS topic_0,
+        NULL AS topic_1,
+        NULL AS topic_2,
+        NULL AS topic_3,
+        DATA,
+        NULL AS segmented_data,
+        service_event_logs_id,
+        inserted_timestamp,
+        modified_timestamp
+    FROM
+        {{ source(
+            'solana_silver_olas',
+            'service_event_logs'
+        ) }}
+),
+all_evt AS (
     SELECT
         *
     FROM
@@ -206,6 +234,11 @@ all_logs AS (
         *
     FROM
         polygon
+    UNION ALL
+    SELECT
+        *
+    FROM
+        solana
 )
 SELECT
     blockchain,
@@ -227,8 +260,8 @@ SELECT
     segmented_data,
     {{ dbt_utils.generate_surrogate_key(
         ['service_event_logs_id','blockchain']
-    ) }} AS fact_service_event_logs_id,
+    ) }} AS fact_service_events_id,
     inserted_timestamp,
     modified_timestamp
 FROM
-    all_logs
+    all_evt

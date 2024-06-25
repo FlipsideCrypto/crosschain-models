@@ -882,3 +882,10 @@ sources:
       - name: registry_metadata_complete
       - name: service_event_logs
       - name: service_registrations
+  - name: solana_silver_olas
+    database: solana_dev
+    schema: silver_olas
+    tables:
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
