@@ -54,7 +54,7 @@ There is more information on how to use dbt docs in the last section of this doc
 
 ### Olas Tables (crosschain.olas)
 - [dim_registry_metadata](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__dim_registry_metadata)
-- [fact_service_event_logs](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__fact_service_event_logs)
+- [fact_service_events](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__fact_service_events)
 - [fact_pol_transfers](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__fact_pol_transfers)
 - [ez_service_registrations](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__ez_service_registrations)
 - [ez_olas_bonding](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__ez_olas_bonding)
