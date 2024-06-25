@@ -23,20 +23,13 @@ WITH ethereum AS (
         owner_address,
         multisig_address,
         service_id,
-        NAME,
-        description,
-        agent_ids,
-        trait_type,
-        trait_value,
-        image_link,
-        service_metadata_link,
-        ez_service_registrations_id,
+        service_registration_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'ethereum_olas',
-            'ez_service_registrations'
+            'ethereum_silver_olas',
+            'service_registrations'
         ) }}
 ),
 gnosis AS (
@@ -54,20 +47,13 @@ gnosis AS (
         owner_address,
         multisig_address,
         service_id,
-        NAME,
-        description,
-        agent_ids,
-        trait_type,
-        trait_value,
-        image_link,
-        service_metadata_link,
-        ez_service_registrations_id,
+        service_registration_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'gnosis_olas',
-            'ez_service_registrations'
+            'gnosis_silver_olas',
+            'service_registrations'
         ) }}
 ),
 arbitrum AS (
@@ -85,20 +71,13 @@ arbitrum AS (
         owner_address,
         multisig_address,
         service_id,
-        NAME,
-        description,
-        agent_ids,
-        trait_type,
-        trait_value,
-        image_link,
-        service_metadata_link,
-        ez_service_registrations_id,
+        service_registration_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'arbitrum_olas',
-            'ez_service_registrations'
+            'arbitrum_silver_olas',
+            'service_registrations'
         ) }}
 ),
 base AS (
@@ -116,20 +95,13 @@ base AS (
         owner_address,
         multisig_address,
         service_id,
-        NAME,
-        description,
-        agent_ids,
-        trait_type,
-        trait_value,
-        image_link,
-        service_metadata_link,
-        ez_service_registrations_id,
+        service_registration_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'base_olas',
-            'ez_service_registrations'
+            'base_silver_olas',
+            'service_registrations'
         ) }}
 ),
 optimism AS (
@@ -147,20 +119,13 @@ optimism AS (
         owner_address,
         multisig_address,
         service_id,
-        NAME,
-        description,
-        agent_ids,
-        trait_type,
-        trait_value,
-        image_link,
-        service_metadata_link,
-        ez_service_registrations_id,
+        service_registration_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'optimism_olas',
-            'ez_service_registrations'
+            'optimism_silver_olas',
+            'service_registrations'
         ) }}
 ),
 polygon AS (
@@ -178,20 +143,13 @@ polygon AS (
         owner_address,
         multisig_address,
         service_id,
-        NAME,
-        description,
-        agent_ids,
-        trait_type,
-        trait_value,
-        image_link,
-        service_metadata_link,
-        ez_service_registrations_id,
+        service_registration_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'polygon_olas',
-            'ez_service_registrations'
+            'polygon_silver_olas',
+            'service_registrations'
         ) }}
 ),
 all_registrations AS (
@@ -226,28 +184,44 @@ all_registrations AS (
         polygon
 )
 SELECT
-    blockchain,
-    block_number,
-    block_timestamp,
-    tx_hash,
-    origin_function_signature,
-    origin_from_address,
-    origin_to_address,
-    contract_address,
-    event_index,
-    event_name,
-    owner_address,
-    multisig_address,
-    service_id,
-    NAME,
-    description,
-    agent_ids,
-    trait_type,
-    trait_value,
-    image_link,
-    service_metadata_link,
-    ez_service_registrations_id,
-    inserted_timestamp,
-    modified_timestamp
+    r.blockchain,
+    r.block_number,
+    r.block_timestamp,
+    r.tx_hash,
+    r.origin_function_signature,
+    r.origin_from_address,
+    r.origin_to_address,
+    r.contract_address,
+    r.event_index,
+    r.event_name,
+    r.owner_address,
+    r.multisig_address,
+    r.service_id,
+    m.name,
+    m.description,
+    m.agent_ids,
+    m.trait_type,
+    m.trait_value,
+    m.image_link,
+    m.code_uri_link AS service_metadata_link,
+    {{ dbt_utils.generate_surrogate_key(
+        ['r.registry_metadata_id','r.blockchain']
+    ) }} AS ez_service_registrations_id,
+    r.inserted_timestamp,
+    GREATEST(
+        COALESCE(
+            r.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        ),
+        COALESCE(
+            m.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        )
+    ) AS modified_timestamp
 FROM
-    all_registrations
+    all_registrations r
+    LEFT JOIN {{ ref('olas__dim_registry_metadata') }}
+    m
+    ON r.contract_address = m.contract_address
+    AND r.service_id = m.registry_id
+    AND r.blockchain = m.blockchain

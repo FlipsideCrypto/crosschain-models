@@ -20,16 +20,16 @@ SELECT
     event_name,
     from_address,
     to_address,
-    lp_token_address,
+    contract_address AS lp_token_address,
     lp_token_name,
     lp_token_amount_unadj,
-    lp_token_amount,
+    lp_token_amount_adj AS lp_token_amount,
     source_chain,
-    fact_pol_transfers_id,
+    pol_transfers_id AS fact_pol_transfers_id,
     inserted_timestamp,
     modified_timestamp
 FROM
     {{ source(
-        'ethereum_olas',
-        'fact_pol_transfers'
+        'ethereum_silver_olas',
+        'pol_transfers'
     ) }}

@@ -9,32 +9,49 @@
 
 SELECT
     'ethereum' AS blockchain,
-    block_number,
-    block_timestamp,
-    tx_hash,
-    origin_function_signature,
-    origin_from_address,
-    origin_to_address,
-    contract_address,
-    event_index,
-    event_name,
-    owner_address,
-    unit_id,
-    u_type,
-    unit_type,
-    unit_hash,
-    NAME,
-    description,
-    subcomponent_ids,
-    trait_type,
-    trait_value,
-    image_link,
-    unit_metadata_link,
-    ez_unit_registrations_id,
-    inserted_timestamp,
-    modified_timestamp
+    r.block_number,
+    r.block_timestamp,
+    r.tx_hash,
+    r.origin_function_signature,
+    r.origin_from_address,
+    r.origin_to_address,
+    r.contract_address,
+    r.event_index,
+    r.event_name,
+    r.owner_address,
+    r.unit_id,
+    r.u_type,
+    r.unit_type,
+    r.unit_hash,
+    m.name,
+    m.description,
+    m.subcomponent_ids,
+    m.trait_type,
+    m.trait_value,
+    m.image_link,
+    m.code_uri_link AS unit_metadata_link,
+    r.unit_registration_id AS ez_unit_registrations_id,
+    r.inserted_timestamp,
+    GREATEST(
+        COALESCE(
+            r.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        ),
+        COALESCE(
+            m.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        )
+    ) AS modified_timestamp
 FROM
     {{ source(
-        'ethereum_olas',
-        'ez_unit_registrations'
+        'ethereum_silver_olas',
+        'unit_registrations'
     ) }}
+    r
+    LEFT JOIN {{ source(
+        'ethereum_silver_olas',
+        'registry_metadata_complete'
+    ) }}
+    m
+    ON r.contract_address = m.contract_address
+    AND r.unit_id = m.registry_id

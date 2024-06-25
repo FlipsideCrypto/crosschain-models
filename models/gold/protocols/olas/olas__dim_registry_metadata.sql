@@ -22,13 +22,13 @@ WITH ethereum AS (
         image_link,
         agent_ids,
         subcomponent_ids,
-        dim_registry_metadata_id,
+        registry_metadata_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'ethereum_olas',
-            'dim_registry_metadata'
+            'ethereum_silver_olas',
+            'registry_metadata_complete'
         ) }}
 ),
 gnosis AS (
@@ -45,13 +45,13 @@ gnosis AS (
         image_link,
         agent_ids,
         NULL AS subcomponent_ids,
-        dim_registry_metadata_id,
+        registry_metadata_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'gnosis_olas',
-            'dim_registry_metadata'
+            'gnosis_silver_olas',
+            'registry_metadata_complete'
         ) }}
 ),
 arbitrum AS (
@@ -68,13 +68,13 @@ arbitrum AS (
         image_link,
         agent_ids,
         NULL AS subcomponent_ids,
-        dim_registry_metadata_id,
+        registry_metadata_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'arbitrum_olas',
-            'dim_registry_metadata'
+            'arbitrum_silver_olas',
+            'registry_metadata_complete'
         ) }}
 ),
 base AS (
@@ -91,13 +91,13 @@ base AS (
         image_link,
         agent_ids,
         NULL AS subcomponent_ids,
-        dim_registry_metadata_id,
+        registry_metadata_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'base_olas',
-            'dim_registry_metadata'
+            'base_silver_olas',
+            'registry_metadata_complete'
         ) }}
 ),
 optimism AS (
@@ -114,13 +114,13 @@ optimism AS (
         image_link,
         agent_ids,
         NULL AS subcomponent_ids,
-        dim_registry_metadata_id,
+        registry_metadata_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'optimism_olas',
-            'dim_registry_metadata'
+            'optimism_silver_olas',
+            'registry_metadata_complete'
         ) }}
 ),
 polygon AS (
@@ -137,13 +137,13 @@ polygon AS (
         image_link,
         agent_ids,
         NULL AS subcomponent_ids,
-        dim_registry_metadata_id,
+        registry_metadata_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'polygon_olas',
-            'dim_registry_metadata'
+            'polygon_silver_olas',
+            'registry_metadata_complete'
         ) }}
 ),
 all_metadata AS (
@@ -190,7 +190,9 @@ SELECT
     image_link,
     agent_ids,
     subcomponent_ids,
-    dim_registry_metadata_id,
+    {{ dbt_utils.generate_surrogate_key(
+        ['registry_metadata_id','blockchain']
+    ) }} AS dim_registry_metadata_id,
     inserted_timestamp,
     modified_timestamp
 FROM

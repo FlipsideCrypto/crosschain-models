@@ -828,63 +828,57 @@ sources:
     schema: silver_evm
     tables:
       - name: abis
-  - name: ethereum_olas
+  - name: ethereum_silver_olas
     database: ethereum
-    schema: olas
+    schema: silver_olas
     tables:
-      - name: dim_registry_metadata
-      - name: fact_service_event_logs
-      - name: ez_service_registrations
-      - name: ez_unit_registrations
-      - name: ez_olas_bonding
-      - name: ez_olas_locking
-      - name: ez_service_donations
-      - name: fact_pol_transfers
-  - name: gnosis_olas
+      - name: create_bond
+      - name: olas_locking
+      - name: pol_transfers
+      - name: redeem_bond
+      - name: registry_metadata_complete
+      - name: service_donations
+      - name: service_event_logs
+      - name: service_registrations
+      - name: unit_registrations
+  - name: gnosis_silver_olas
     database: gnosis
-    schema: olas
+    schema: silver_olas
     tables:
-      - name: dim_registry_metadata
-      - name: fact_service_event_logs
-      - name: ez_service_registrations
-      - name: ez_mech_activity
-      - name: ez_olas_staking
-      - name: ez_service_checkpoints
-      - name: ez_service_evictions
-      - name: ez_service_staking
-      - name: fact_mech_activity
-  - name: optimism_olas
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+      - name: mech_requests
+      - name: mech_delivers
+      - name: olas_staking
+      - name: service_checkpoint
+      - name: services_evicted
+      - name: service_staking
+  - name: optimism_silver_olas
     database: optimism
-    schema: olas
+    schema: silver_olas
     tables:
-      - name: dim_registry_metadata
-      - name: fact_service_event_logs
-      - name: ez_service_registrations
-  - name: base_olas
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+  - name: base_silver_olas
     database: base
-    schema: olas
+    schema: silver_olas
     tables:
-      - name: dim_registry_metadata
-      - name: fact_service_event_logs
-      - name: ez_service_registrations
-  - name: arbitrum_olas
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+  - name: arbitrum_silver_olas
     database: arbitrum
-    schema: olas
+    schema: silver_olas
     tables:
-      - name: dim_registry_metadata
-      - name: fact_service_event_logs
-      - name: ez_service_registrations
-  - name: polygon_olas
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+  - name: polygon_silver_olas
     database: polygon
-    schema: olas
+    schema: silver_olas
     tables:
-      - name: dim_registry_metadata
-      - name: fact_service_event_logs
-      - name: ez_service_registrations
-  - name: solana_olas
-    database: solana
-    schema: olas
-    tables:
-      - name: dim_registry_metadata
-      - name: fact_service_event_logs
-      - name: ez_service_registrations
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations

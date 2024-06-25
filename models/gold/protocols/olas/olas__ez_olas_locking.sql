@@ -24,11 +24,11 @@ SELECT
     olas_amount,
     olas_amount_usd,
     unlock_timestamp,
-    ez_olas_locking_id,
+    olas_locking_id AS ez_olas_locking_id,
     inserted_timestamp,
     modified_timestamp
 FROM
     {{ source(
-        'ethereum_olas',
-        'ez_olas_locking'
+        'ethereum_silver_olas',
+        'olas_locking'
     ) }}

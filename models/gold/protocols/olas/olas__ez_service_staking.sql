@@ -9,28 +9,44 @@
 
 SELECT
     'gnosis' AS blockchain,
-    block_number,
-    block_timestamp,
-    tx_hash,
-    origin_function_signature,
-    origin_from_address,
-    origin_to_address,
-    contract_address,
-    event_index,
-    event_name,
-    owner_address,
-    multisig_address,
-    service_id,
-    NAME,
-    description,
-    epoch,
-    nonces,
-    program_name,
-    ez_service_staking_id,
-    inserted_timestamp,
-    modified_timestamp
+    s.block_number,
+    s.block_timestamp,
+    s.tx_hash,
+    s.origin_function_signature,
+    s.origin_from_address,
+    s.origin_to_address,
+    s.contract_address,
+    s.event_index,
+    s.event_name,
+    s.owner_address,
+    s.multisig_address,
+    s.service_id,
+    m.name,
+    m.description,
+    s.epoch,
+    s.nonces,
+    s.program_name,
+    s.service_staking_id AS ez_service_staking_id,
+    s.inserted_timestamp,
+    GREATEST(
+        COALESCE(
+            s.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        ),
+        COALESCE(
+            m.modified_timestamp,
+            '1970-01-01' :: TIMESTAMP
+        )
+    ) AS modified_timestamp
 FROM
     {{ source(
-        'gnosis_olas',
-        'ez_service_staking'
+        'gnosis_silver_olas',
+        'service_staking'
     ) }}
+    s
+    LEFT JOIN {{ source(
+        'gnosis_silver_olas',
+        'registry_metadata_complete'
+    ) }}
+    m
+    ON s.service_id = m.registry_id

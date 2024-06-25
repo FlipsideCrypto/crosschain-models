@@ -27,13 +27,13 @@ WITH ethereum AS (
         topic_3,
         DATA,
         segmented_data,
-        fact_service_event_logs_id,
+        service_event_logs_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'ethereum_olas',
-            'fact_service_event_logs'
+            'ethereum_silver_olas',
+            'service_event_logs'
         ) }}
 ),
 gnosis AS (
@@ -55,13 +55,13 @@ gnosis AS (
         topic_3,
         DATA,
         segmented_data,
-        fact_service_event_logs_id,
+        service_event_logs_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'gnosis_olas',
-            'fact_service_event_logs'
+            'gnosis_silver_olas',
+            'service_event_logs'
         ) }}
 ),
 arbitrum AS (
@@ -83,13 +83,13 @@ arbitrum AS (
         topic_3,
         DATA,
         segmented_data,
-        fact_service_event_logs_id,
+        service_event_logs_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'arbitrum_olas',
-            'fact_service_event_logs'
+            'arbitrum_silver_olas',
+            'service_event_logs'
         ) }}
 ),
 base AS (
@@ -111,13 +111,13 @@ base AS (
         topic_3,
         DATA,
         segmented_data,
-        fact_service_event_logs_id,
+        service_event_logs_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'base_olas',
-            'fact_service_event_logs'
+            'base_silver_olas',
+            'service_event_logs'
         ) }}
 ),
 optimism AS (
@@ -139,13 +139,13 @@ optimism AS (
         topic_3,
         DATA,
         segmented_data,
-        fact_service_event_logs_id,
+        service_event_logs_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'optimism_olas',
-            'fact_service_event_logs'
+            'optimism_silver_olas',
+            'service_event_logs'
         ) }}
 ),
 polygon AS (
@@ -167,13 +167,13 @@ polygon AS (
         topic_3,
         DATA,
         segmented_data,
-        fact_service_event_logs_id,
+        service_event_logs_id,
         inserted_timestamp,
         modified_timestamp
     FROM
         {{ source(
-            'polygon_olas',
-            'fact_service_event_logs'
+            'polygon_silver_olas',
+            'service_event_logs'
         ) }}
 ),
 all_logs AS (
@@ -225,7 +225,9 @@ SELECT
     topic_3,
     DATA,
     segmented_data,
-    fact_service_event_logs_id,
+    {{ dbt_utils.generate_surrogate_key(
+        ['r.service_event_logs_id','r.blockchain']
+    ) }} AS fact_service_event_logs_id,
     inserted_timestamp,
     modified_timestamp
 FROM

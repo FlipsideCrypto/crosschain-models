@@ -25,11 +25,11 @@ SELECT
     token_symbol,
     token_address,
     program_name,
-    ez_olas_staking_id,
+    olas_staking_id AS ez_olas_staking_id,
     inserted_timestamp,
     modified_timestamp
 FROM
     {{ source(
-        'gnosis_olas',
-        'ez_olas_staking'
+        'gnosis_silver_olas',
+        'olas_staking'
     ) }}
