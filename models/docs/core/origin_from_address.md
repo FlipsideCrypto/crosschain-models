@@ -1,5 +1,5 @@
 {% docs origin_from_address %}
 
-The address of the user who initiates the swap. If a swap action generates multiple swaps, all of them will have the same address as origin_from_address.
+The address that initiates the transaction. If a transaction generates multiple events, all of them will have the same origin_from_address.
 
 {% enddocs %}

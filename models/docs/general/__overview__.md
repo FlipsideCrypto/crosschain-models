@@ -52,6 +52,24 @@ There is more information on how to use dbt docs in the last section of this doc
 - [fact_transactions](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.cosmos__fact_transactions)
 - [fact_validators](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.cosmos__fact_validators)
 
+### Olas Tables (crosschain.olas)
+- [dim_registry_metadata](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__dim_registry_metadata)
+- [fact_service_events](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__fact_service_events)
+- [fact_pol_transfers](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__fact_pol_transfers)
+- [ez_service_registrations](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__ez_service_registrations)
+- [ez_olas_bonding](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__ez_olas_bonding)
+- [ez_olas_locking](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__ez_olas_locking)
+- [ez_service_donations](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__ez_service_donations)
+- [ez_unit_registrations](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__ez_unit_registrations)
+- [fact_mech_activity](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__fact_mech_activity)
+- [ez_mech_activity](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__ez_mech_activity)
+- [ez_olas_staking](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__ez_olas_staking)
+- [ez_service_checkpoints](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__ez_service_checkpoints)
+- [ez_service_evictions](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__ez_service_evictions)
+- [ez_service_staking](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.olas__ez_service_staking)
+
+### ENS Tables (crosschain.ens)
+- [ez_ens_domains](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.ens__ez_ens_domains)
 
 ## **Helpful User-Defined Functions (UDFs)**
 

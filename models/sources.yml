@@ -828,3 +828,63 @@ sources:
     schema: silver_evm
     tables:
       - name: abis
+  - name: ethereum_silver_olas
+    database: ethereum
+    schema: silver_olas
+    tables:
+      - name: create_bond
+      - name: olas_locking
+      - name: pol_transfers
+      - name: redeem_bond
+      - name: registry_metadata_complete
+      - name: service_donations
+      - name: service_event_logs
+      - name: service_registrations
+      - name: unit_registrations
+  - name: gnosis_silver_olas
+    database: gnosis
+    schema: silver_olas
+    tables:
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+      - name: mech_requests
+      - name: mech_delivers
+      - name: olas_staking
+      - name: service_checkpoint
+      - name: services_evicted
+      - name: service_staking
+  - name: optimism_silver_olas
+    database: optimism
+    schema: silver_olas
+    tables:
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+  - name: base_silver_olas
+    database: base
+    schema: silver_olas
+    tables:
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+  - name: arbitrum_silver_olas
+    database: arbitrum
+    schema: silver_olas
+    tables:
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+  - name: polygon_silver_olas
+    database: polygon
+    schema: silver_olas
+    tables:
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+  - name: solana_silver_olas
+    database: solana
+    schema: silver_olas
+    tables:
+      - name: service_event_logs
+      - name: service_registrations

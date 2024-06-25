@@ -1,5 +1,5 @@
 {% docs origin_to_address %}
 
-The person who initiates the swap has to interact with this address. This address belongs to the decentralized exchange and/or is a router.  
+The address that receives the transaction. If a transaction generates multiple events, all of them will have the same origin_to_address.
 
 {% enddocs %}
