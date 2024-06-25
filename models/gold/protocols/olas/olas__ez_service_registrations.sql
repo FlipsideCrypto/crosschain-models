@@ -159,7 +159,7 @@ solana AS (
         block_timestamp,
         tx_id AS tx_hash,
         NULL AS origin_function_signature,
-        signer AS origin_from_address,
+        signers AS origin_from_address,
         NULL AS origin_to_address,
         program_id AS contract_address,
         index AS event_index,
