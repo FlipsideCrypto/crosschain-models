@@ -886,6 +886,5 @@ sources:
     database: solana
     schema: silver_olas
     tables:
-      - name: registry_metadata_complete
       - name: service_event_logs
       - name: service_registrations
