@@ -164,7 +164,10 @@ solana AS (
         inserted_timestamp,
         modified_timestamp
     FROM
-        solana_dev.silver_olas.registry_metadata_complete
+        {{ source(
+            'solana_silver_olas',
+            'registry_metadata_complete'
+        ) }}
 ),
 all_metadata AS (
     SELECT

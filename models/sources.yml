@@ -888,3 +888,4 @@ sources:
     tables:
       - name: service_event_logs
       - name: service_registrations
+      - name: registry_metadata_complete
