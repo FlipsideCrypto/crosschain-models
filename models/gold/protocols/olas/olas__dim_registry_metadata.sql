@@ -146,6 +146,29 @@ polygon AS (
             'registry_metadata_complete'
         ) }}
 ),
+solana AS (
+    SELECT
+        'solana' AS blockchain,
+        NAME,
+        description,
+        registry_id,
+        program_id as contract_address,
+        registry_type,
+        trait_type,
+        trait_value,
+        code_uri_link,
+        image_link,
+        agent_ids,
+        NULL AS subcomponent_ids,
+        registry_metadata_id,
+        inserted_timestamp,
+        modified_timestamp
+    FROM
+        {{ source(
+            'solana_silver_olas',
+            'registry_metadata_complete'
+        ) }}
+),
 all_metadata AS (
     SELECT
         *
@@ -176,6 +199,11 @@ all_metadata AS (
         *
     FROM
         polygon
+    UNION ALL
+    SELECT
+        *
+    FROM
+        solana
 )
 SELECT
     blockchain,
