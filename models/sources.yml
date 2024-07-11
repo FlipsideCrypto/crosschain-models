@@ -823,6 +823,7 @@ sources:
     schema: silver
     tables:
       - name: abis
+      - name: complete_event_abis
   - name: sei_evm_silver
     database: sei
     schema: silver_evm
@@ -889,3 +890,8 @@ sources:
       - name: service_event_logs
       - name: service_registrations
       - name: registry_metadata_complete
+  - name: kaia_core
+    database: kaia
+    schema: core
+    tables:
+      - name: dim_contracts

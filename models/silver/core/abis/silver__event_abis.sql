@@ -13,7 +13,8 @@
 ('arbitrum', source('arbitrum_silver', 'complete_event_abis')),
 ('optimism', source('optimism_silver', 'complete_event_abis')),
 ('base', source('base_silver', 'complete_event_abis')),
-('blast', source('blast_silver', 'complete_event_abis')) ] 
+('blast', source('blast_silver', 'complete_event_abis')),  
+('kaia', source('kaia_silver', 'complete_event_abis')) ] 
 %}
 SELECT *
 FROM (
