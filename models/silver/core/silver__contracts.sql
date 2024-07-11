@@ -214,7 +214,7 @@ WITH base AS (
         created_block_timestamp,
         created_tx_hash,
         creator_address,
-        'blast' AS blockchain,
+        'kaia' AS blockchain,
         COALESCE(
             inserted_timestamp,
             '2000-01-01'
