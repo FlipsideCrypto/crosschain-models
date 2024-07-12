@@ -832,6 +832,7 @@ sources:
     schema: silver
     tables:
       - name: abis
+      - name: complete_event_abis
   - name: sei_evm_silver
     database: sei
     schema: silver_evm
