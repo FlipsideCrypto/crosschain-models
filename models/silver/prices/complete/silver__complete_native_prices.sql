@@ -2,8 +2,8 @@
     materialized = 'incremental',
     unique_key = ['complete_native_prices_id'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['hour::DATE'],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(symbol, hour, blockchain)",
+    cluster_by = ['hour::DATE','blockchain'],
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(asset_id, symbol, name),SUBSTRING(asset_id, symbol, name)",
     tags = ['prices']
 ) }}
 

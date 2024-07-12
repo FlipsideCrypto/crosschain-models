@@ -4,7 +4,7 @@
     unique_key = ['blockchain','address'],
     cluster_by = ['blockchain','_is_deleted','modified_timestamp::DATE'],    
     merge_exclude_columns = ["inserted_timestamp"],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(address)",
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(address, creator, label_type, label_subtype, address_name, project_name), SUBSTRING(address, creator, label_type, label_subtype, address_name, project_name)",
     tags = ['daily']
 ) }}
 
