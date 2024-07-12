@@ -492,6 +492,15 @@ sources:
       - name: receipts_completeness
       - name: traces_completeness
       - name: transactions_completeness
+  - name: kaia_observ
+    database: kaia
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: logs_completeness
+      - name: receipts_completeness
+      - name: traces_completeness
+      - name: transactions_completeness
   - name: arbitrum_observ
     database: arbitrum
     schema: silver_observability
@@ -823,7 +832,6 @@ sources:
     schema: silver
     tables:
       - name: abis
-      - name: complete_event_abis
   - name: sei_evm_silver
     database: sei
     schema: silver_evm
