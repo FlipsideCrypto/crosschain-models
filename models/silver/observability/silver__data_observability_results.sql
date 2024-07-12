@@ -27,7 +27,7 @@
     ('kaia', source('kaia_observ', 'blocks_completeness')),
     ('kaia', source('kaia_observ', 'logs_completeness')),
     ('kaia', source('kaia_observ', 'receipts_completeness')),
-    {# ('kaia', source('kaia_observ', 'traces_completeness')), #}
+    ('kaia', source('kaia_observ', 'traces_completeness')),
     ('kaia', source('kaia_observ', 'transactions_completeness')),
     ('polygon', source('polygon_observ', 'blocks_completeness')),
     ('polygon', source('polygon_observ', 'logs_completeness')),
