@@ -3,7 +3,7 @@
     incremental_strategy = 'delete+insert',
     unique_key = ['_unique_key'],
     cluster_by = ['block_timestamp::DATE','platform'],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_hash, contract_address, flashloan_token, flashloan_token_symbol, protocol_market), SUBSTRING(tx_hash, contract_address, flashloan_token, flashloan_token_symbol, protocol_market)",
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_hash, contract_address, flashloan_token, flashloan_token_symbol, protocol_market), SUBSTRING(flashloan_token, flashloan_token_symbol, protocol_market)",
     tags = ['hourly']
 ) }}
 
