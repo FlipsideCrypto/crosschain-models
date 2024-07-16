@@ -38,7 +38,6 @@
     ('optimism', source('optimism_observ', 'logs_completeness')),
     ('optimism', source('optimism_observ', 'receipts_completeness')),
     ('optimism', source('optimism_observ', 'traces_completeness')),
-    ('optimism', source('optimism_observ', 'transactions_completeness')),
     ('base', source('base_observ', 'blocks_completeness')),
     ('base', source('base_observ', 'logs_completeness')),
     ('base', source('base_observ', 'receipts_completeness')),

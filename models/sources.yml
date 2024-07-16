@@ -500,7 +500,6 @@ sources:
       - name: logs_completeness
       - name: receipts_completeness
       - name: traces_completeness
-      - name: transactions_completeness
   - name: arbitrum_observ
     database: arbitrum
     schema: silver_observability
