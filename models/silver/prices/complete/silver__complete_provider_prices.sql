@@ -2,7 +2,8 @@
     materialized = 'incremental',
     unique_key = 'complete_provider_prices_id',
     incremental_strategy = 'delete+insert',
-    cluster_by = ['_inserted_timestamp::DATE'],
+    cluster_by = ['recorded_hour::DATE','provider'],
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(asset_id),SUBSTRING(asset_id)",
     tags = ['prices']
 ) }}
 

@@ -2,7 +2,8 @@
     materialized = 'incremental',
     incremental_strategy = 'delete+insert',
     unique_key = ['_unique_key'],
-    cluster_by = ['block_timestamp::DATE'],
+    cluster_by = ['block_timestamp::DATE','blockchain','platform'],
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_hash, contract_address, trader, token_in, token_out, symbol_in, symbol_out), SUBSTRING(trader, token_in, token_out, symbol_in, symbol_out)",
     tags = ['hourly']
 ) }}
 

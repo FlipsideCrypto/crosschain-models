@@ -2,7 +2,8 @@
     materialized = 'incremental',
     unique_key = ['complete_native_asset_metadata_id'],
     incremental_strategy = 'delete+insert',
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(symbol, blockchain)",
+    clustrer_by = ['blockchain'],
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(asset_id, symbol, name),SUBSTRING(asset_id, symbol, name)",
     tags = ['prices']
 ) }}
 

@@ -62,4 +62,3 @@ jobs:
         run: |
           dbt run-operation fsc_utils.create_udf_bulk_rest_api_v2 --vars '{"UPDATE_UDFS_AND_SPS":True}' -t dev
           dbt run -s livequery_models.deploy.core._live --vars '{"UPDATE_UDFS_AND_SPS":True}' -t dev
-
