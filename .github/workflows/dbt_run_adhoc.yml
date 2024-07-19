@@ -37,6 +37,10 @@ env:
     DATABASE: "${{ vars.DATABASE }}"
     WAREHOUSE: "${{ inputs.warehouse }}"
     SCHEMA: "${{ vars.SCHEMA }}"
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
     
 
   
