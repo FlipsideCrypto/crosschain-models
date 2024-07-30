@@ -811,10 +811,14 @@ sources:
       - name: abis
       - name: traces
       - name: blocks
+      - name: decoded_logs
   - name: blast_core
     database: blast
     schema: core
     tables:
+      - name: fact_token_transfers
+      - name: ez_native_transfers
+      - name: fact_traces
       - name: dim_contracts
   - name: github_actions
     database: crosschain
@@ -830,8 +834,11 @@ sources:
     database: kaia
     schema: silver
     tables:
-      - name: abis
       - name: complete_event_abis
+      - name: abis
+      - name: traces
+      - name: blocks
+      - name: decoded_logs
   - name: sei_evm_silver
     database: sei
     schema: silver_evm
@@ -902,4 +909,7 @@ sources:
     database: kaia
     schema: core
     tables:
+      - name: fact_token_transfers
+      - name: ez_native_transfers
+      - name: fact_traces
       - name: dim_contracts
