@@ -85,7 +85,39 @@ WITH pre_final as (
     NULL AS delete_flag,
     _inserted_timestamp
   FROM
+    {{ ref('silver__labels_contracts_blast') }}
+
+  UNION ALL
+  SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name,
+    NULL AS delete_flag,
+    _inserted_timestamp
+  FROM
     {{ ref('silver__labels_contracts_bsc') }}
+
+  UNION ALL
+  SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name,
+    NULL AS delete_flag,
+    _inserted_timestamp
+  FROM
+    {{ ref('silver__labels_contracts_kaia') }}
 
   UNION ALL
   SELECT
