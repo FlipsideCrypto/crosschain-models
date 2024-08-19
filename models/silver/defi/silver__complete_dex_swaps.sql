@@ -410,11 +410,12 @@ solana AS (
         ) }}
     WHERE
         succeeded
+        AND _log_id IS NOT NULL
 
 {% if is_incremental() and 'solana' not in var('HEAL_MODELS') %}
 AND _inserted_timestamp >= (
     SELECT
-        MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
+        MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
     FROM
         {{ this }}
 )
