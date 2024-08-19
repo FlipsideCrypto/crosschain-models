@@ -414,7 +414,7 @@ solana AS (
 {% if is_incremental() and 'solana' not in var('HEAL_MODELS') %}
 AND _inserted_timestamp >= (
     SELECT
-        MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
+        MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "4 hours") }}'
     FROM
         {{ this }}
 )
