@@ -401,8 +401,8 @@ solana AS (
         NULL AS amount_out_usd,
         _log_id,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['_log_id','blockchain']) }} AS complete_dex_swaps_id,
-        {{ dbt_utils.generate_surrogate_key(['_log_id','blockchain']) }} AS _unique_key
+        {{ dbt_utils.generate_surrogate_key(['fact_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['fact_swaps_id','blockchain']) }} AS _unique_key
     FROM
         {{ source(
             'solana_defi',
