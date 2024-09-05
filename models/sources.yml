@@ -697,8 +697,8 @@ sources:
     tables: 
       - name: blocks_completeness
       - name: transactions_completeness
-  - name: m1_observ
-    database: m1
+  - name: lava_observ
+    database: lava
     schema: silver_observability
     tables: 
       - name: blocks_completeness
@@ -800,6 +800,11 @@ sources:
       - name: ez_core_metrics_hourly
   - name: bitcoin_stats
     database: bitcoin
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: lava_stats
+    database: lava
     schema: stats
     tables:
       - name: ez_core_metrics_hourly
