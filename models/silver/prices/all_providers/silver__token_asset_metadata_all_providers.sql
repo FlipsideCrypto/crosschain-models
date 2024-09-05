@@ -167,6 +167,30 @@ AND _inserted_timestamp >= (
 )
 {% endif %}
 ),
+solana_onchain AS (
+    SELECT
+        id,
+        token_address,
+        NAME,
+        symbol,
+        'solana' AS platform,
+        'solana' AS platform_id,
+        'solana-onchain' AS provider,
+        'solana-onchain' AS source,
+        FALSE AS is_deprecated,
+        _inserted_timestamp
+    FROM
+        {{ ref('silver__onchain_solana_metadata') }}
+
+{% if is_incremental() %}
+WHERE _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
+{% endif %}
+),
 all_providers AS (
     SELECT
         *
@@ -187,6 +211,11 @@ all_providers AS (
         *
     FROM
         solana_solscan
+    UNION ALL
+    SELECT
+        *
+    FROM
+        solana_onchain
 )
 SELECT
     token_address,
