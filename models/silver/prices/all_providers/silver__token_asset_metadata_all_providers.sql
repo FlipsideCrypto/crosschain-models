@@ -178,12 +178,12 @@ solana_onchain AS (
         'solana-onchain' AS provider,
         'solana-onchain' AS source,
         FALSE AS is_deprecated,
-        _inserted_timestamp
+        modified_timestamp as _inserted_timestamp
     FROM
         {{ ref('silver__onchain_solana_metadata') }}
 
 {% if is_incremental() %}
-WHERE _inserted_timestamp >= (
+WHERE modified_timestamp >= (
     SELECT
         MAX(_inserted_timestamp)
     FROM

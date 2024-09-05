@@ -17,16 +17,12 @@ WITH base_metadata AS (
         ) }}
 
 {% if is_incremental() %}
-WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp)
-        FROM
-            {{ this }}
-    )
-    -- temp filter - remove
-{% else %}
-        WHERE _inserted_timestamp >= '2024-09-01'
+WHERE _inserted_timestamp >= (
+    SELECT
+        MAX(_inserted_timestamp)
+    FROM
+        {{ this }}
+)
 {% endif %}
 ),
 base_types AS (
@@ -47,9 +43,6 @@ AND _inserted_timestamp >= (
     FROM
         {{ this }}
 )
-    -- temp filter - remove
-{% else %}
-        AND _inserted_timestamp >= '2024-09-01'
 {% endif %}
 ),
 token_metadata AS (
