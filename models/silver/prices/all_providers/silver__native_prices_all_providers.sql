@@ -89,7 +89,7 @@ SELECT
     CASE
         WHEN NAME ilike 'bnb' THEN 'bsc'
         WHEN NAME ilike 'xdai' THEN 'gnosis'
-        WHEN name ilike 'polygon ecosystem token' THEN 'polygon'
+        WHEN name ilike 'polygon ecosystem token' OR name ilike 'pol (ex-matic)' THEN 'polygon'
         ELSE NAME
     END AS blockchain,
     price,
