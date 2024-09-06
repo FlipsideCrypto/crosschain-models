@@ -165,12 +165,13 @@ sources:
       - name: logs
       - name: decoded_logs
       - name: traces
+      - name: blocks
       - name: transactions
       - name: abis
       - name: contracts
       - name: complete_event_abis
       - name: complete_nft_sales
-      - name: blocks
+      - name: polymarket_filled_orders
   - name: polygon_core
     database: polygon
     schema: core
