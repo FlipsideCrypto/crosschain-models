@@ -444,6 +444,8 @@ sources:
       - name: token_metadata
       - name: solscan_tokens
       - name: events
+      - name: decoded_metadata
+      - name: mint_types
   - name: avalanche_observ
     database: avalanche
     schema: silver_observability
