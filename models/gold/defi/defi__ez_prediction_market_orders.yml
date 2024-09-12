@@ -1,7 +1,7 @@
 version: 2
 models:
-  - name: polymarket__ez_filled_orders
-    description: This table contains all Polymarket filles orders joined with the market and token metadata available via the Polymarket CLOB API
+  - name: defi__ez_prediction_market_orders
+    description: This table contains filled orders from prediction markets, incorporating market and token metadata available via various APIs, allowing for a comprehensive view of prediction market transactions.
 
     columns:
       - name: BLOCKCHAIN
@@ -27,13 +27,13 @@ models:
       - name: QUESTION
         description: "The human-readable question that defines the market. This question outlines the specific event or scenario that the market is based on, and participants bet on the outcome."
       - name: MARKET_SLUG
-        description: "A unique, URL-friendly identifier for the market, often derived from the question. This slug is used in links and to identify the market within the Polymarket platform."
+        description: "A unique, URL-friendly identifier for the market, often derived from the question. This slug is used in links and to identify the market within the platform."
       - name: END_DATE_ISO
         description: "The date and time when the market will resolve, formatted in ISO 8601 (YYYY-MM-DDTHH:MM:SSZ). This marks the point at which the outcome is determined based on the question."
       - name: OUTCOME
         description: "The specific result direction for a token within the market, typically indicating either 'yes' or 'no.' This represents the outcome of the market question."
       - name: ORDER_HASH
-        description: "A unique cryptographic hash that identifies the order within the Polymarket system. It serves as a unique reference for transactions related to buying or selling shares in the market."
+        description: "A unique cryptographic hash that identifies the order within the prediction market system. It serves as a unique reference for transactions related to buying or selling shares in the market."
       - name: MAKER
         description: "The address or identifier of the maker in the transaction, who provides liquidity or initiates an order within the market, setting the initial terms for others to take."
       - name: TAKER
@@ -41,16 +41,16 @@ models:
       - name: CONDITION_ID
         description: "The unique identifier for the market's specific condition, linking it to a particular event or question. This ID is used to manage and resolve market outcomes."
       - name: QUESTION_ID
-        description: "The on-chain ID "
+        description: "The on-chain ID representing the question, used to link on-chain data with off-chain metadata."
       - name: ASSET_ID
-        description: "The unique identifier of the yes or no asset addressing the question, this is what is being used to join in the off-chain API data."
+        description: "The unique identifier of the asset addressing the question outcome, used to join with off-chain API data."
       - name: MAKER_ASSET_ID
-        description: "Maker side of the Asset ID"
+        description: "Identifier of the asset on the maker's side of the transaction."
       - name: TAKER_ASSET_ID
-        description: "Taker side of the asset ID"
+        description: "Identifier of the asset on the taker's side of the transaction."
       - name: AMOUNT_USD
-        description: "The total value of the bet placed expressed in USD."
+        description: "The total value of the bet placed, expressed in USD."
       - name: SHARES
         description: "The number of shares purchased in the order."
       - name: PRICE_PER_SHARE
-        description: "The cost per individual share in the transaction, this is also a proxy for the current market percentage chance of the outcome associated with this question."
+        description: "The cost per individual share in the transaction, which also serves as a proxy for the current market percentage chance of the outcome associated with this question."
