@@ -32,7 +32,7 @@ There is more information on how to use dbt docs in the last section of this doc
 
 ### DeFi Tables (crosschain.defi)
 - [dim_dex_liquidity_pools](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.defi__dim_dex_liquidity_pools)
-- [dim_prediction_markets](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.dim_prediction_markets)
+- [dim_prediction_markets](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.defi__dim_prediction_markets)
 - [ez_dex_swaps](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.core__ez_dex_swaps)
 - [ez_lending_borrows](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.defi__ez_lending_borrows) 
 - [ez_lending_deposits](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.defi__ez_lending_deposits)
