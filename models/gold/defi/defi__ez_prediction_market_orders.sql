@@ -18,7 +18,7 @@ SELECT
     end_date_iso,
     outcome,
     order_hash,
-    marker,
+    maker,
     taker,
     condition_id,
     question_id,
