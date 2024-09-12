@@ -35,7 +35,7 @@ WHERE
             DISTINCT id
         FROM
             {{ this }}
-    )  --load all data for new assets
+    ) --load all data for new assets
 {% endif %}
 ),
 coin_market_cap AS (
@@ -66,7 +66,7 @@ WHERE
             DISTINCT id
         FROM
             {{ this }}
-    )  --load all data for new assets
+    ) --load all data for new assets
 {% endif %}
 ),
 all_providers AS (
@@ -83,13 +83,14 @@ all_providers AS (
 SELECT
     recorded_hour,
     symbol,
-    name,
+    NAME,
     id,
     decimals,
     CASE
-        WHEN NAME ilike 'bnb' THEN 'bsc'
-        WHEN NAME ilike 'xdai' THEN 'gnosis'
-        WHEN name ilike 'polygon ecosystem token' OR name ilike 'pol (ex-matic)' THEN 'polygon'
+        WHEN NAME ILIKE 'bnb' THEN 'bsc'
+        WHEN NAME ILIKE 'xdai' THEN 'gnosis'
+        WHEN NAME ILIKE 'polygon ecosystem token'
+        OR NAME ILIKE 'pol (ex-matic)' THEN 'polygon'
         ELSE NAME
     END AS blockchain,
     price,
