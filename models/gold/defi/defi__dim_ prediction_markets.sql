@@ -2,7 +2,6 @@
     materialized = 'view',
     persist_docs ={ "relation": true,
     "columns": true },
-    tags = ['polymarket'],
     meta={
         'database_tags':{
             'table': {
@@ -13,6 +12,8 @@
 ) }}
 
 SELECT
+    'polygon' AS blockchain,
+    'polymarket' AS platform,
     condition_id,
     question,
     description,

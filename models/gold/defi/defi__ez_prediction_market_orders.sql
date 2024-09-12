@@ -8,15 +8,11 @@
 ) }}
 
 SELECT
+    'polygon' AS blockchain,
+    'polymarket' AS platform,
     block_number,
     block_timestamp,
-    origin_from_address,
-    origin_to_address,
-    origin_function_signature,
     tx_hash,
-    event_index,
-    event_name,
-    contract_address,
     question,
     market_slug,
     end_date_iso,
