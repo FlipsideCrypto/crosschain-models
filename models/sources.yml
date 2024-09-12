@@ -923,6 +923,6 @@ sources:
       - name: dim_contracts
   - name: external
     database: external
-    schema: polymarket
+    schema: silver
     tables:
-      - name: dim_markets
+      - name: polymarket_markets

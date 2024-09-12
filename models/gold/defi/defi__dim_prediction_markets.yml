@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: defi__dim_prediction_markets
+  - name: defi__dim_ prediction_markets
     description: This table contains all markets and tokens available via various prediction market APIs, providing a comprehensive view of market and token data.
 
     columns:

@@ -43,9 +43,12 @@ SELECT
     neg_risk_market_id,
     neg_risk_request_id,
     rewards,
-    tags
+    tags,
+    inserted_timestamp,
+    modified_timestamp,
+    dim_markets_id
 FROM
     {{ source(
         'external',
-        'dim_markets'
+        'polymarket_markets'
     ) }}
