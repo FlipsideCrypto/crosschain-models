@@ -1,0 +1,64 @@
+version: 2
+models:
+  - name: polymarket__dim_markets
+    description: This table contains all markets and tokens available via the Polymarket CLOB API.
+
+    columns:
+      - name: CONDITION_ID
+        description: ID of the specific market.
+      - name: QUESTION
+        description: The actual question the market is based on.
+      - name: DESCRIPTION
+        description: A detailed description of the market.
+      - name: TOKEN_1_TOKEN_ID
+        description: Token ID for the first token, available on-chain to make the on-chain data human-readable.
+      - name: TOKEN_1_OUTCOME
+        description: Outcome for the first token, typically "yes" or "no."
+      - name: TOKEN_1_WINNER
+        description: Winner status for the first token.
+      - name: TOKEN_2_TOKEN_ID
+        description: Token ID for the second token, available on-chain to make the on-chain data human-readable.
+      - name: TOKEN_2_OUTCOME
+        description: Outcome for the second token, typically "yes" or "no."
+      - name: TOKEN_2_WINNER
+        description: Winner status for the second token.
+      - name: ENABLE_ORDER_BOOK
+        description: Indicates if the order book is enabled.
+      - name: ACTIVE
+        description: Indicates if the market is currently live.
+      - name: CLOSED
+        description: Indicates if the market is not currently live.
+      - name: ARCHIVED
+        description: Indicates if the market is archived.
+      - name: ACCEPTING_ORDERS
+        description: Indicates if the market is accepting orders.
+      - name: ACCEPTING_ORDER_TIMESTAMP
+        description: Timestamp when the market started accepting orders.
+      - name: MINIMUM_ORDER_SIZE
+        description: Minimum size of an order in the market.
+      - name: MINIMUM_TICK_SIZE
+        description: Minimum tick size for the market.
+      - name: QUESTION_ID
+        description: ID of the question associated with the market.
+      - name: END_DATE_ISO
+        description: End date of the market in ISO format.
+      - name: GAME_START_TIME
+        description: Start time of the game/event associated with the market, used to trigger delay.
+      - name: SECONDS_DELAY
+        description: Seconds of match delay for in-game trading.
+      - name: FPMM
+        description: Fixed Product Market Maker (FPMM) Polygon address.
+      - name: MAKER_BASE_FEE
+        description: Base fee for makers in the market.
+      - name: TAKER_BASE_FEE
+        description: Base fee for takers in the market.
+      - name: NEG_RISK
+        description: Indicates if negative risk is present in the market.
+      - name: NEG_RISK_MARKET_ID
+        description: Market ID for negative risk.
+      - name: NEG_RISK_REQUEST_ID
+        description: Request ID for negative risk.
+      - name: REWARDS
+        description: Rewards associated with the market.
+      - name: TAGS
+        description: All the associated tags in the market, contained in an object.

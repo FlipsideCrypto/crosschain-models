@@ -921,3 +921,8 @@ sources:
       - name: ez_native_transfers
       - name: fact_traces
       - name: dim_contracts
+  - name: external
+    database: external
+    schema: polymarket
+    tables:
+      - name: dim_markets
