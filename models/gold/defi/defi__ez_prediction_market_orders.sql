@@ -27,7 +27,10 @@ SELECT
     taker_asset_id,
     amount_usd,
     shares,
-    price_per_share
+    price_per_share,
+    _inserted_timestamp,
+    modified_timestamp,
+    polymarket_filled_orders_id as ez_prediction_market_orders_id
 FROM
     {{ source(
         'polygon_silver',
