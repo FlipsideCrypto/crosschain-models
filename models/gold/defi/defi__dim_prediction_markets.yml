@@ -12,17 +12,17 @@ models:
         description: "ID of the specific market, linking it to the event or question it is based on."
       - name: QUESTION_ID
         description: "ID of the question associated with the market, used to link market data with the underlying event or scenario."
-      - name: TOKEN_1_TOKEN_ID
+      - name: TOKEN_0_TOKEN_ID
         description: "Token ID for the first outcome in the market, making on-chain data human-readable."
-      - name: TOKEN_1_OUTCOME
+      - name: TOKEN_0_OUTCOME
         description: "Outcome associated with the first token, typically indicating 'yes' or 'no.'"
-      - name: TOKEN_1_WINNER
+      - name: TOKEN_0_WINNER
         description: "Indicates the winner status of the first token, showing if it was the successful outcome."
-      - name: TOKEN_2_TOKEN_ID
+      - name: TOKEN_1_TOKEN_ID
         description: "Token ID for the second outcome in the market, making on-chain data human-readable."
-      - name: TOKEN_2_OUTCOME
+      - name: TOKEN_1_OUTCOME
         description: "Outcome associated with the second token, typically indicating 'yes' or 'no.'"
-      - name: TOKEN_2_WINNER
+      - name: TOKEN_1_WINNER
         description: "Indicates the winner status of the second token, showing if it was the successful outcome."
       - name: ACTIVE
         description: "Indicates if the market is currently live and accepting participation."
@@ -32,9 +32,9 @@ models:
         description: "Minimum size of an order in the market, determining the smallest amount participants can trade."
       - name: MINIMUM_TICK_SIZE
         description: "Minimum tick size for the market, indicating the smallest price increment for orders."
-      - name: END_DATE_ISO
+      - name: END_DATE
         description: "End date of the market in ISO 8601 format, indicating when the market will resolve."
-      - name: GAME_START_TIME
+      - name: START_TIME
         description: "Start time of the event associated with the market, used for timing-related aspects of trading."
       - name: MAKER_BASE_FEE
         description: "Base fee charged to makers in the market for providing liquidity."
