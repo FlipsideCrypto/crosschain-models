@@ -33,11 +33,11 @@ SELECT
     maker_base_fee,
     taker_base_fee,
     neg_risk,
-    inserted_timestamp,
+    _inserted_timestamp as inserted_timestamp,
     modified_timestamp,
     dim_markets_id as dim_prediction_markets_id
 FROM
     {{ source(
-        'external',
+        'external_silver',
         'polymarket_markets'
     ) }}
