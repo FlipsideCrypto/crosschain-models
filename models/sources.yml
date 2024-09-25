@@ -811,6 +811,11 @@ sources:
     schema: stats
     tables:
       - name: ez_core_metrics_hourly
+  - name: eclipse_stats
+    database: eclipse
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
   - name: blast_silver
     database: blast
     schema: silver
@@ -926,3 +931,8 @@ sources:
     schema: silver
     tables:
       - name: polymarket_markets
+  - name: berachain_bartio_silver
+    database: berachain
+    schema: silver_testnet
+    tables:
+      - name: abis

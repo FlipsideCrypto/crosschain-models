@@ -83,13 +83,14 @@ all_providers AS (
 SELECT
     id,
     CASE
-        WHEN NAME ilike 'bnb' THEN 'bsc'
-        WHEN NAME ilike 'xdai' THEN 'gnosis'
-        WHEN name ilike 'polygon ecosystem token' THEN 'polygon'
+        WHEN NAME ILIKE 'bnb' THEN 'bsc'
+        WHEN NAME ILIKE 'xdai' THEN 'gnosis'
+        WHEN NAME ILIKE 'polygon ecosystem token'
+        OR NAME ILIKE 'pol (ex-matic)' THEN 'polygon'
         ELSE NAME
     END AS blockchain,
     symbol,
-    name,
+    NAME,
     decimals,
     provider,
     source,
