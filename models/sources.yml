@@ -925,3 +925,8 @@ sources:
       - name: ez_native_transfers
       - name: fact_traces
       - name: dim_contracts
+  - name: berachain_bartio_silver
+    database: berachain
+    schema: silver_testnet
+    tables:
+      - name: abis
