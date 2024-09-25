@@ -33,7 +33,7 @@ SELECT
     maker_base_fee,
     taker_base_fee,
     neg_risk,
-    _inserted_timestamp AS  inserted_timestamp,
+    inserted_timestamp,
     modified_timestamp,
     dim_markets_id as dim_prediction_markets_id
 FROM

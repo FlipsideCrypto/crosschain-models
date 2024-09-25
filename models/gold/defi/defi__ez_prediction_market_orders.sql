@@ -25,7 +25,7 @@ SELECT
     asset_id,
     condition_id,
     question_id,
-    _inserted_timestamp AS inserted_timestamp,
+    inserted_timestamp,
     modified_timestamp,
     polymarket_filled_orders_id as ez_prediction_market_orders_id
 FROM
