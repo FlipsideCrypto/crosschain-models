@@ -926,7 +926,7 @@ sources:
       - name: ez_native_transfers
       - name: fact_traces
       - name: dim_contracts
-  - name: external
+  - name: external_silver
     database: external
     schema: silver
     tables:
