@@ -1,0 +1,46 @@
+version: 2
+models:
+  - name: defi__ez_prediction_market_orders
+    description: This table contains filled orders from prediction markets, incorporating market and token metadata available via various APIs, allowing for a comprehensive view of prediction market transactions.
+
+    columns:
+      - name: BLOCKCHAIN
+        description: '{{ doc("blockchain_column") }}'  
+      - name: PLATFORM
+        description: "The platform on which the prediction market operates."
+      - name: BLOCK_NUMBER
+        description: '{{ doc("cross_chain_block_number") }}'   
+      - name: BLOCK_TIMESTAMP
+        description: '{{ doc("cross_chain_block_timestamp") }}'
+      - name: TX_HASH
+        description: '{{ doc("cross_chain_tx_hash") }}'
+      - name: QUESTION
+        description: "The human-readable question that defines the market. This question outlines the specific event or scenario that the market is based on, and participants bet on the outcome."
+      - name: OUTCOME
+        description: "The specific result direction for a token within the market, typically indicating either 'yes' or 'no.' This represents the outcome of the market question."
+      - name: MAKER
+        description: "The address or identifier of the maker in the transaction, who provides liquidity or initiates an order within the market, setting the initial terms for others to take."
+      - name: TAKER
+        description: "The address or identifier of the taker in the transaction, who accepts the order created by the maker and completes the trade under the terms specified."
+      - name: AMOUNT_USD
+        description: "The total value of the bet placed, expressed in USD."
+      - name: SHARES
+        description: "The number of shares purchased in the order."
+      - name: PRICE_PER_SHARE
+        description: "The cost per individual share in the transaction, which also serves as a proxy for the current market percentage chance of the outcome associated with this question."
+      - name: END_DATE
+        description: "The date and time when the market will resolve, formatted in ISO 8601 (YYYY-MM-DDTHH:MM:SSZ). This marks the point at which the outcome is determined based on the question."
+      - name: ORDER_HASH
+        description: "A unique cryptographic hash that identifies the order within the prediction market system. It serves as a unique reference for transactions related to buying or selling shares in the market."
+      - name: ASSET_ID
+        description: "The unique identifier of the asset addressing the question outcome, used to join with off-chain API data."
+      - name: CONDITION_ID
+        description: "The unique identifier for the market's specific condition, linking it to a particular event or question. This ID is used to manage and resolve market outcomes."
+      - name: QUESTION_ID
+        description: "The unique identifier for the question in the prediction market."
+      - name: INSERTED_TIMESTAMP
+        description: "The timestamp when the record was inserted."
+      - name: MODIFIED_TIMESTAMP
+        description: "The timestamp when the record was last modified."
+      - name: EZ_PREDICTION_MARKET_ORDERS_ID
+        description: "The unique identifier for the prediction market order."

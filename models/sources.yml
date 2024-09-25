@@ -165,12 +165,13 @@ sources:
       - name: logs
       - name: decoded_logs
       - name: traces
+      - name: blocks
       - name: transactions
       - name: abis
       - name: contracts
       - name: complete_event_abis
       - name: complete_nft_sales
-      - name: blocks
+      - name: polymarket_filled_orders
   - name: polygon_core
     database: polygon
     schema: core
@@ -925,6 +926,11 @@ sources:
       - name: ez_native_transfers
       - name: fact_traces
       - name: dim_contracts
+  - name: external_silver
+    database: external
+    schema: silver
+    tables:
+      - name: polymarket_markets
   - name: berachain_bartio_silver
     database: berachain
     schema: silver_testnet

@@ -1,0 +1,50 @@
+version: 2
+models:
+  - name: defi__dim_prediction_markets
+    description: This table contains all markets and tokens available via various prediction market APIs, providing a comprehensive view of market and token data.
+
+    columns:
+      - name: QUESTION
+        description: "The actual question the market is based on, which defines the event participants are betting on."
+      - name: DESCRIPTION
+        description: "A detailed description of the market, providing context and additional information about the question."
+      - name: CONDITION_ID
+        description: "ID of the specific market, linking it to the event or question it is based on."
+      - name: QUESTION_ID
+        description: "ID of the question associated with the market, used to link market data with the underlying event or scenario."
+      - name: TOKEN_0_TOKEN_ID
+        description: "Token ID for the first outcome in the market, making on-chain data human-readable."
+      - name: TOKEN_0_OUTCOME
+        description: "Outcome associated with the first token, typically indicating 'yes' or 'no.'"
+      - name: TOKEN_0_WINNER
+        description: "Indicates the winner status of the first token, showing if it was the successful outcome."
+      - name: TOKEN_1_TOKEN_ID
+        description: "Token ID for the second outcome in the market, making on-chain data human-readable."
+      - name: TOKEN_1_OUTCOME
+        description: "Outcome associated with the second token, typically indicating 'yes' or 'no.'"
+      - name: TOKEN_1_WINNER
+        description: "Indicates the winner status of the second token, showing if it was the successful outcome."
+      - name: ACTIVE
+        description: "Indicates if the market is currently live and accepting participation."
+      - name: CLOSED
+        description: "Indicates if the market is not currently live or has concluded."
+      - name: MINIMUM_ORDER_SIZE
+        description: "Minimum size of an order in the market, determining the smallest amount participants can trade."
+      - name: MINIMUM_TICK_SIZE
+        description: "Minimum tick size for the market, indicating the smallest price increment for orders."
+      - name: END_DATE
+        description: "End date of the market in ISO 8601 format, indicating when the market will resolve."
+      - name: START_TIME
+        description: "Start time of the event associated with the market, used for timing-related aspects of trading."
+      - name: MAKER_BASE_FEE
+        description: "Base fee charged to makers in the market for providing liquidity."
+      - name: TAKER_BASE_FEE
+        description: "Base fee charged to takers in the market for executing trades against maker orders."
+      - name: NEG_RISK
+        description: "Indicates if negative risk is present in the market, highlighting specific risk conditions."
+      - name: INSERTED_TIMESTAMP
+        description: "The timestamp when the record was inserted."
+      - name: MODIFIED_TIMESTAMP
+        description: "The timestamp when the record was last modified."
+      - name: DIM_MARKETS_ID
+        description: "The unique identifier for the prediction market."
