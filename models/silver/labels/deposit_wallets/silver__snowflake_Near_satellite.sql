@@ -36,7 +36,7 @@ possible_sats AS (
                 DISTINCT dc.system_created_at,
                 dc.insert_date,
                 dc.blockchain,
-                xfer.tx_signer AS address,
+                xfer.from_address AS address,
                 dc.creator,
                 dc.address_name,
                 dc.project_name,
@@ -46,18 +46,18 @@ possible_sats AS (
                     DISTINCT project_name
                 ) over(
                     PARTITION BY dc.blockchain,
-                    xfer.tx_signer
+                    xfer.from_address
                 ) AS project_count -- how many projects has each from address sent to
             FROM
                 {{ source(
                     'near_core',
-                    'fact_transfers'
+                    'ez_token_transfers'
                 ) }}
                 xfer
                 JOIN distributor_cex dc
-                ON dc.address = xfer.tx_receiver
+                ON dc.address = xfer.to_address
             WHERE
-                deposit > 0
+                amount > 0
 
 {% if is_incremental() %}
 AND block_timestamp > CURRENT_DATE - 10
@@ -76,19 +76,19 @@ GROUP BY
 ),
 real_sats AS (
     SELECT
-        tx_signer,
+        from_address,
         COUNT(DISTINCT COALESCE(project_name, 'blunts')) AS project_count
     FROM
         {{ source(
             'near_core',
-            'fact_transfers'
+            'ez_token_transfers'
         ) }}
         xfer
         LEFT OUTER JOIN distributor_cex dc
-        ON dc.address = xfer.tx_receiver
+        ON dc.address = xfer.to_address
     WHERE
-        deposit > 0
-        AND tx_signer IN (
+        amount > 0
+        AND from_address IN (
             SELECT
                 address
             FROM
@@ -99,11 +99,11 @@ real_sats AS (
 AND block_timestamp > CURRENT_DATE - 10
 {% endif %}
 GROUP BY
-    tx_signer
+    from_address
 ),
 exclusive_sats AS (
     SELECT
-        DISTINCT tx_signer AS address
+        DISTINCT from_address AS address
     FROM
         real_sats
     WHERE
