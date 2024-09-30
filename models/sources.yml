@@ -297,7 +297,7 @@ sources:
     database: near
     schema: core
     tables:
-      - name: fact_transfers
+      - name: ez_token_transfers
       - name: ez_dex_swaps
       - name: dim_ft_contract_metadata
   - name: near_defi
