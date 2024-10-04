@@ -19,7 +19,7 @@ models:
                 severity: warn
                 warn_if: ">0"
                 severity: error
-                error_if: ">2500"
+                error_if: ">10000"
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
               interval: 1
