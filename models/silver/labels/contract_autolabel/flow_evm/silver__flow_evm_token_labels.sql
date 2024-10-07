@@ -24,7 +24,7 @@ format_output AS (
 ),
 put_together AS (
     SELECT
-        DISTINCT LOWER(token_address) AS address,
+        LOWER(token_address) AS address,
         CONCAT(
             NAME,
             ': ',
@@ -39,23 +39,23 @@ put_together AS (
         project_name NOT LIKE 'EVMVMBridgedToken%'
 )
 SELECT
-    DISTINCT SYSDATE() AS system_created_at,
-    SYSDATE() AS insert_date,
+    SYSDATE() AS system_created_at,
+    SYSDATE() :: DATE AS insert_date,
     'flow_evm' AS blockchain,
     address,
     'flipside' AS creator,
     'token' AS l1_label,
     l2_label,
-    lower(address_name) as address_name,
-    lower(project_name) as project_name,
+    LOWER(address_name) AS address_name,
+    LOWER(project_name) AS project_name,
     SYSDATE() AS _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['address']) }} AS flow_evm_token_labels_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    put_together 
-where address is not null
-qualify(ROW_NUMBER() over(PARTITION BY address
+    put_together
+WHERE
+    address IS NOT NULL qualify(ROW_NUMBER() over(PARTITION BY address
 ORDER BY
     l2_label DESC)) = 1

@@ -25,7 +25,7 @@ format_output AS (
 ),
 put_together AS (
     SELECT
-        DISTINCT LOWER(token_address) AS address,
+        LOWER(token_address) AS address,
         CONCAT(
             NAME,
             ': ',
@@ -41,7 +41,7 @@ put_together AS (
         TYPE = 'ERC-20'
     UNION
     SELECT
-        DISTINCT LOWER(token_address) AS address,
+        LOWER(token_address) AS address,
         CONCAT(
             NAME,
             ': NFT address'
@@ -58,8 +58,8 @@ put_together AS (
         )
 )
 SELECT
-    DISTINCT SYSDATE() AS system_created_at,
-    SYSDATE() AS insert_date,
+    SYSDATE() AS system_created_at,
+    SYSDATE() :: DATE AS insert_date,
     'flow_evm' AS blockchain,
     address,
     'flipside' AS creator,
