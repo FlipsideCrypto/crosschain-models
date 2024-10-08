@@ -232,21 +232,6 @@ WITH pre_final AS (
     _inserted_timestamp
   FROM
     {{ ref('silver__flow_evm_token_labels') }}
-  UNION ALL
-  SELECT
-    system_created_at,
-    insert_date,
-    blockchain,
-    address,
-    creator,
-    l1_label AS label_type,
-    l2_label AS label_subtype,
-    address_name,
-    project_name,
-    NULL AS delete_flag,
-    _inserted_timestamp
-  FROM
-    {{ ref('silver__flow_evm_fs_token_labels') }}
 )
 SELECT
   *,
