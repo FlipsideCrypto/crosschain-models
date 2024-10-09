@@ -447,7 +447,6 @@ sources:
     database: blast
     schema: silver_dex
     tables:
-      - name: complete_dex_swaps
       - name: complete_dex_liquidity_pools
   - name: solana_silver
     database: solana
