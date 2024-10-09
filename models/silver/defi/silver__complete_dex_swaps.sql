@@ -281,6 +281,45 @@ WHERE
     )
 {% endif %}
 ),
+blast AS (
+    SELECT
+        'blast' AS blockchain,
+        platform,
+        block_number,
+        block_timestamp,
+        tx_hash,
+        contract_address,
+        origin_from_address AS trader,
+        token_in,
+        symbol_in,
+        amount_in_unadj AS amount_in_raw,
+        amount_in,
+        amount_in_usd,
+        token_out,
+        symbol_out,
+        amount_out_unadj AS amount_out_raw,
+        amount_out,
+        amount_out_usd,
+        _log_id,
+        modified_timestamp AS _inserted_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
+    FROM
+        {{ source(
+            'blast_defi',
+            'ez_dex_swaps'
+        ) }}
+
+{% if is_incremental() and 'blast' not in var('HEAL_MODELS') %}
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "6 hours") }}'
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
 gnosis AS (
     SELECT
         'gnosis' AS blockchain,
@@ -499,6 +538,11 @@ all_chains_dex AS (
     SELECT
         *
     FROM
+        blast
+    UNION ALL
+    SELECT
+        *
+    FROM
         gnosis
     UNION ALL
     SELECT
@@ -549,6 +593,7 @@ SELECT
             'ethereum',
             'optimism',
             'base',
+            'blast',
             'arbitrum',
             'polygon',
             'bsc',
@@ -572,6 +617,7 @@ SELECT
             'ethereum',
             'optimism',
             'base',
+            'blast',
             'arbitrum',
             'polygon',
             'bsc',
