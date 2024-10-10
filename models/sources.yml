@@ -158,6 +158,11 @@ sources:
       - name: ez_lending_liquidations
       - name: ez_lending_repayments
       - name: ez_lending_withdraws      
+  - name: blast_defi
+    database: blast
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
   - name: polygon_silver
     database: polygon
     schema: silver
@@ -437,6 +442,11 @@ sources:
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
+  - name: blast_silver_dex
+    database: blast
+    schema: silver_dex
+    tables:
       - name: complete_dex_liquidity_pools
   - name: solana_silver
     database: solana

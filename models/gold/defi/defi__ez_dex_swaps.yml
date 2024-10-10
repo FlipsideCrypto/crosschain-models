@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: defi__ez_dex_swaps
-    description: A comprehensive convenience table holding blockchain and platform specific decentralized exchange swaps. This table contains dex swaps from Arbitrum, Avalanche, Base, BSC, Gnosis, Ethereum, Optimism, Polygon, Osmosis, Solana, and Near.
+    description: A comprehensive convenience table holding blockchain and platform specific decentralized exchange swaps.
     
     columns:
       - name: BLOCKCHAIN
