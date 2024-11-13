@@ -862,6 +862,7 @@ sources:
       - name: traces
       - name: blocks
       - name: decoded_logs
+      - name: transactions
   - name: sei_evm_silver
     database: sei
     schema: silver_evm
@@ -934,8 +935,20 @@ sources:
     tables:
       - name: fact_token_transfers
       - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: fact_traces
       - name: dim_contracts
+  - name: kaia_defi
+    database: kaia
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
+      - name: dim_dex_liquidity_pools
+  - name: kaia_price
+    database: kaia
+    schema: price
+    tables:
+      - name: ez_prices_hourly
   - name: external_silver
     database: external
     schema: silver
