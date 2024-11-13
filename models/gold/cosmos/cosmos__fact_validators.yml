@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: cosmos__fact_validators
-    description: Contains validator metadata for Axelar, Cosmos, and Osmosis. 
+    description: Contains validator metadata for Axelar and Cosmos. 
     columns:
       - name: ADDRESS
         description: "{{ doc('address') }}"

@@ -107,6 +107,7 @@ coingecko,Polygon Ecosystem Token,POL,polygon-ecosystem-token,18
 coingecko,XDAI,XDAI,xdai,18
 coingecko,Aurora,AURORA,aurora-near,18
 coingecko,Mantle,MNT,mantle,18
+coingecko,Aleo,ALEO,aleo
 coinmarketcap,Bitcoin,BTC,1,8
 coinmarketcap,Ethereum,ETH,1027,18
 coinmarketcap,BNB,BNB,1839,18
@@ -217,3 +218,4 @@ coinmarketcap,xDAI,XDAI,8635,18
 coinmarketcap,Aurora,AURORA,14803,18
 coinmarketcap,Core,CORE,23254
 coinmarketcap,Mantle,MNT,27075,18
+coinmarketcap,Aleo,ALEO,32193
