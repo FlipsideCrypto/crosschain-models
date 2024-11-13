@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "CONCAT_WS('-', address, start_date)",
+    unique_key = "CONCAT_WS('-', address, start_date::DATE)",
     incremental_strategy = 'delete+insert',
     tags = ['monthly']
 ) }}
@@ -69,6 +69,7 @@
         'kaia_silver',
         'transactions'
     ) }}
+    where bt is not null
     ),
     next_date as (
         select *, 

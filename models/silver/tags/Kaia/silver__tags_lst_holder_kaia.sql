@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = "CONCAT_WS('-', address, start_date)",
+    unique_key = "CONCAT_WS('-', address, start_date::DATE)",
     incremental_strategy = 'delete+insert',
     tags = ['monthly']
 ) }}
@@ -122,6 +122,7 @@
         from {{ source('kaia_core', 'ez_token_transfers') }} t
         inner join lst_tokens lst 
           on t.contract_address = lst.token_address
+          where bt is not null
         group by 1, 2, 3, 4, 5
     ),
     daily_balances_agg as (
