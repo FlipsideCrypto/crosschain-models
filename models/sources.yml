@@ -924,3 +924,4 @@ sources:
     tables:
       - name: blocks_completeness
       - name: transactions_completeness
+      - name: transitions_completeness

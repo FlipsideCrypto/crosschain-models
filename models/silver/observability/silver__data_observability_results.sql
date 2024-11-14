@@ -91,7 +91,8 @@
     ('m1', source('m1_observ', 'transactions_completeness')),
 
     ('aleo', source('aleo_observ', 'blocks_completeness')),
-    ('aleo', source('aleo_observ', 'transactions_completeness'))
+    ('aleo', source('aleo_observ', 'transactions_completeness')),
+    ('aleo', source('aleo_observ', 'transitions_completeness'))
 ]
 %}
 SELECT 
