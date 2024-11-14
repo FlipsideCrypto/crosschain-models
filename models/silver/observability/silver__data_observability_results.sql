@@ -88,7 +88,10 @@
     ('aptos', source('aptos_observ', 'transactions_completeness')),
 
     ('m1', source('m1_observ', 'blocks_completeness')),
-    ('m1', source('m1_observ', 'transactions_completeness'))
+    ('m1', source('m1_observ', 'transactions_completeness')),
+
+    ('aleo', source('aleo_observ', 'blocks_completeness')),
+    ('aleo', source('aleo_observ', 'transactions_completeness'))
 ]
 %}
 SELECT 

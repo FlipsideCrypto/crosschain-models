@@ -913,3 +913,14 @@ sources:
       - name: ez_native_transfers
       - name: fact_traces
       - name: dim_contracts
+  - name: aleo_stats
+    database: aleo
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: aleo_observ
+    database: aleo
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
