@@ -5,9 +5,6 @@
 ) }}
 
 SELECT
-    ROW_NUMBER() over (
-        ORDER BY
-            SEQ4()
-    ) :: INT AS _id
+    SEQ4() AS _id
 FROM
     TABLE(GENERATOR(rowcount => 1000000000))
