@@ -959,7 +959,7 @@ sources:
     schema: silver_testnet
     tables:
       - name: abis
-   - name: aleo_stats
+  - name: aleo_stats
     database: aleo
     schema: stats
     tables:
