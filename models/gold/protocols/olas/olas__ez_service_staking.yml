@@ -35,6 +35,14 @@ models:
         description: '{{ doc("olas_description") }}'
       - name: EPOCH
         description: '{{ doc("olas_epoch") }}'
+      - name: REWARD_UNADJ
+        description: '{{ doc("olas_reward_unadj") }}'
+      - name: REWARD
+        description: '{{ doc("olas_reward") }}'
+      - name: TOTAL_AVAILABLE_REWARDS_UNADJ
+        description: '{{ doc("olas_total_available_rewards_unadj") }}'
+      - name: TOTAL_AVAILABLE_REWARDS
+        description: '{{ doc("olas_total_available_rewards") }}'
       - name: NONCES
         description: '{{ doc("olas_nonces") }}'
       - name: PROGRAM_NAME

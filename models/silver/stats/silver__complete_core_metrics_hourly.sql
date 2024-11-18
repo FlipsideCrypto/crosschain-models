@@ -727,6 +727,78 @@ WHERE
     )
 {% endif %}
 ),
+lava AS (
+    SELECT
+        'lava' AS blockchain,
+        block_timestamp_hour,
+        block_number_min,
+        block_number_max,
+        block_count,
+        transaction_count,
+        transaction_count_success,
+        transaction_count_failed,
+        unique_from_count AS unique_initiator_count,
+        total_fees_native,
+        total_fees_usd,
+        modified_timestamp AS _inserted_timestamp,
+        {{ dbt_utils.generate_surrogate_key(
+            ['ez_core_metrics_hourly_id','blockchain']
+        ) }} AS core_metrics_hourly_id
+    FROM
+        {{ source(
+            'lava_stats',
+            'ez_core_metrics_hourly'
+        ) }}
+
+{% if is_incremental() and 'lava' not in var('HEAL_MODELS') %}
+WHERE
+    DATE_TRUNC(
+        'hour',
+        _inserted_timestamp
+    ) >= (
+        SELECT
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
+eclipse AS (
+    SELECT
+        'eclipse' AS blockchain,
+        block_timestamp_hour,
+        block_number_min,
+        block_number_max,
+        block_count,
+        transaction_count,
+        transaction_count_success,
+        transaction_count_failed,
+        unique_signers_count AS unique_initiator_count,
+        total_fees_native,
+        total_fees_usd,
+        modified_timestamp AS _inserted_timestamp,
+        {{ dbt_utils.generate_surrogate_key(
+            ['ez_core_metrics_hourly_id','blockchain']
+        ) }} AS core_metrics_hourly_id
+    FROM
+        {{ source(
+            'eclipse_stats',
+            'ez_core_metrics_hourly'
+        ) }}
+
+{% if is_incremental() and 'eclipse' not in var('HEAL_MODELS') %}
+WHERE
+    DATE_TRUNC(
+        'hour',
+        _inserted_timestamp
+    ) >= (
+        SELECT
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
 aleo AS (
     SELECT
         'aleo' AS blockchain,
@@ -864,6 +936,16 @@ all_chains AS (
     FROM
         axelar
     UNION ALL
+    SELECT
+        *
+    FROM
+        lava
+    UNION ALL
+    SELECT
+        *
+    FROM
+        eclipse
+    UNION ALL 
     SELECT
         *
     FROM

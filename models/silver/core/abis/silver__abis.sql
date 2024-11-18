@@ -17,6 +17,7 @@
     ('blast', source('blast_silver', 'abis')),
     ('sei', source('sei_evm_silver', 'abis')),
     ('kaia', source('kaia_silver', 'abis')),
+    ('berachain-bartio', source('berachain_bartio_silver', 'abis')),
 ]
 %}
 

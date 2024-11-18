@@ -1480,6 +1480,106 @@ WITH pre_final AS (
         ) AS modified_timestamp
     FROM
         {{ ref('silver__libreplex_inscription') }}
+    UNION ALL
+    SELECT
+        blockchain,
+        creator,
+        address,
+        tag_name,
+        tag_type,
+        start_date,
+        end_date,
+        tag_created_at,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp
+    FROM
+        {{ ref('silver__tags_active_kaia') }}
+    UNION ALL
+    SELECT
+        blockchain,
+        creator,
+        address,
+        tag_name,
+        tag_type,
+        start_date,
+        end_date,
+        tag_created_at,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp
+    FROM
+        {{ ref('silver__tags_active_lp_kaia') }}
+    UNION ALL
+    SELECT
+        blockchain,
+        creator,
+        address,
+        tag_name,
+        tag_type,
+        start_date,
+        end_date,
+        tag_created_at,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp
+    FROM
+        {{ ref('silver__tags_lst_holder_kaia') }}
+    UNION ALL
+    SELECT
+        blockchain,
+        creator,
+        address,
+        tag_name,
+        tag_type,
+        start_date,
+        end_date,
+        tag_created_at,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp
+    FROM
+        {{ ref('silver__tags_token_swaps_kaia') }}
+    UNION ALL
+    SELECT
+        blockchain,
+        creator,
+        address,
+        tag_name,
+        tag_type,
+        start_date,
+        end_date,
+        tag_created_at,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp
+    FROM
+        {{ ref('silver__tags_transfers_kaia') }}
 )
 SELECT
     *,

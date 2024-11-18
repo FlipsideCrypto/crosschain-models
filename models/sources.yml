@@ -158,6 +158,11 @@ sources:
       - name: ez_lending_liquidations
       - name: ez_lending_repayments
       - name: ez_lending_withdraws      
+  - name: blast_defi
+    database: blast
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
   - name: polygon_silver
     database: polygon
     schema: silver
@@ -165,12 +170,13 @@ sources:
       - name: logs
       - name: decoded_logs
       - name: traces
+      - name: blocks
       - name: transactions
       - name: abis
       - name: contracts
       - name: complete_event_abis
       - name: complete_nft_sales
-      - name: blocks
+      - name: polymarket_filled_orders
   - name: polygon_core
     database: polygon
     schema: core
@@ -296,7 +302,7 @@ sources:
     database: near
     schema: core
     tables:
-      - name: fact_transfers
+      - name: ez_token_transfers
       - name: ez_dex_swaps
       - name: dim_ft_contract_metadata
   - name: near_defi
@@ -437,6 +443,11 @@ sources:
     tables:
       - name: complete_dex_swaps
       - name: complete_dex_liquidity_pools
+  - name: blast_silver_dex
+    database: blast
+    schema: silver_dex
+    tables:
+      - name: complete_dex_liquidity_pools
   - name: solana_silver
     database: solana
     schema: silver
@@ -444,6 +455,8 @@ sources:
       - name: token_metadata
       - name: solscan_tokens
       - name: events
+      - name: decoded_metadata
+      - name: mint_types
   - name: avalanche_observ
     database: avalanche
     schema: silver_observability
@@ -697,8 +710,8 @@ sources:
     tables: 
       - name: blocks_completeness
       - name: transactions_completeness
-  - name: m1_observ
-    database: m1
+  - name: lava_observ
+    database: lava
     schema: silver_observability
     tables: 
       - name: blocks_completeness
@@ -803,6 +816,16 @@ sources:
     schema: stats
     tables:
       - name: ez_core_metrics_hourly
+  - name: lava_stats
+    database: lava
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: eclipse_stats
+    database: eclipse
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
   - name: blast_silver
     database: blast
     schema: silver
@@ -839,6 +862,7 @@ sources:
       - name: traces
       - name: blocks
       - name: decoded_logs
+      - name: transactions
   - name: sei_evm_silver
     database: sei
     schema: silver_evm
@@ -911,9 +935,31 @@ sources:
     tables:
       - name: fact_token_transfers
       - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: fact_traces
       - name: dim_contracts
-  - name: aleo_stats
+  - name: kaia_defi
+    database: kaia
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
+      - name: dim_dex_liquidity_pools
+  - name: kaia_price
+    database: kaia
+    schema: price
+    tables:
+      - name: ez_prices_hourly
+  - name: external_silver
+    database: external
+    schema: silver
+    tables:
+      - name: polymarket_markets
+  - name: berachain_bartio_silver
+    database: berachain
+    schema: silver_testnet
+    tables:
+      - name: abis
+   - name: aleo_stats
     database: aleo
     schema: stats
     tables:

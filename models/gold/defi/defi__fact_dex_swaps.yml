@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: defi__fact_dex_swaps
-    description: A comprehensive fact table holding blockchain and platform specific decentralized exchange swaps. This table contains dex swaps from Arbitrum, Avalanche, Base, BSC, Gnosis, Ethereum, Optimism, Polygon, Osmosis, Solana, and Near.
+    description: A comprehensive fact table holding blockchain and platform specific decentralized exchange swaps.
 
     columns:
       - name: BLOCKCHAIN

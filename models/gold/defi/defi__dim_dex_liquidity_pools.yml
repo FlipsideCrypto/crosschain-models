@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: defi__dim_dex_liquidity_pools
-    description: A comprehensive dim table holding blockchain and platform specific decentralized exchange pools. This table contains liquidity pools from Ethereum, Optimism, Polygon, BSC, BASE, Gnosis, and Arbitrum.
+    description: A comprehensive dim table holding blockchain and platform specific decentralized exchange pools.
 
     columns:
       - name: BLOCKCHAIN

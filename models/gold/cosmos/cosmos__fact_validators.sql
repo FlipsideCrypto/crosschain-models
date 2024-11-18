@@ -55,7 +55,7 @@ FROM
     'cosmos_gov',
     'fact_validators'
   ) }}
-UNION ALL
+{# UNION ALL
 SELECT
   'osmosis' AS blockchain,
   address,
@@ -80,4 +80,4 @@ FROM
   {{ source(
     'osmosis_gov',
     'fact_validators'
-  ) }}
+  ) }} #}
