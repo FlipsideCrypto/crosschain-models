@@ -1580,6 +1580,32 @@ WITH pre_final AS (
         ) AS modified_timestamp
     FROM
         {{ ref('silver__tags_transfers_kaia') }}
+    UNION ALL
+    SELECT
+        blockchain,
+        creator,
+        REGEXP_REPLACE(
+            address,
+            '[^[:ascii:]]',
+            ''
+        ) AS address,
+        REGEXP_REPLACE(
+            tag_name,
+            '[^[:ascii:]]',
+            ''
+        ) AS tag_name,
+        REGEXP_REPLACE(
+            tag_type,
+            '[^[:ascii:]]',
+            ''
+        ) AS tag_type,
+        start_date :: DATE AS start_date,
+        NULL AS end_date,
+        '2024-11-19' :: TIMESTAMP AS tag_created_at,
+        '2000-01-01' :: timestamp_ntz AS inserted_timestamp,
+        '2000-01-01' :: timestamp_ntz AS modified_timestamp
+    FROM
+        {{ ref('silver__flow_evm_contract_names') }}
 )
 SELECT
     *,
