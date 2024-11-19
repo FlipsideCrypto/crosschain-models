@@ -97,7 +97,6 @@ WHERE fs.tx_hash IS NULL
     filtered_swaps AS (
         SELECT DISTINCT tx_hash 
         FROM {{ source('kaia_defi', 'ez_dex_swaps') }}
-        where bt is not null
     ),
     lp_history as (
     SELECT 
