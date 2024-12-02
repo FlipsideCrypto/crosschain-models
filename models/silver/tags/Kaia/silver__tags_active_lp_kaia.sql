@@ -33,6 +33,7 @@ INNER JOIN filtered_pools fp
 LEFT JOIN filtered_swaps fs 
     ON tt.tx_hash = fs.tx_hash
 WHERE fs.tx_hash IS NULL
+and activity_date is not NULL
 ),
   net_positions as (
     -- Calculate net position per address
@@ -118,6 +119,7 @@ WHERE fs.tx_hash IS NULL
     LEFT JOIN filtered_swaps fs 
         ON tt.tx_hash = fs.tx_hash
     WHERE fs.tx_hash IS NULL
+    and activity_date is not NULL
     ),
   running_balance AS (
     -- Calculate running balance over time
