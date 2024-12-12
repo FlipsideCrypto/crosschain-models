@@ -167,7 +167,8 @@ solana_adj AS (
         s
         ON A.id_adj = LOWER(TRIM(s.coin_market_cap_id))
     WHERE
-        token_address_adj_sol NOT ILIKE '%-%'
+        token_address_adj_sol NOT ILIKE '%-%' 
+        AND token_address_adj_sol NOT ILIKE '% %'
 ),
 ibc_adj AS (
     --add ibc specific adjustments
