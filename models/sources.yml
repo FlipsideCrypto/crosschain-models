@@ -159,7 +159,7 @@ sources:
       - name: ez_lending_repayments
       - name: ez_lending_withdraws      
   - name: blast_defi
-    database: blast
+    database: blast_dev
     schema: defi
     tables:
       - name: ez_dex_swaps
