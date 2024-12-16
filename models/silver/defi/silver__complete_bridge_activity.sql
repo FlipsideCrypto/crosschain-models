@@ -80,6 +80,42 @@ WHERE
     )
 {% endif %}
 ),
+blast AS (
+    SELECT
+        'blast' AS blockchain,
+        platform,
+        block_number,
+        block_timestamp,
+        tx_hash,
+        blockchain AS source_chain,
+        destination_chain,
+        bridge_address,
+        sender AS source_address,
+        destination_chain_receiver AS destination_address,
+        'outbound' AS direction,
+        token_address,
+        token_symbol,
+        amount_unadj AS amount_raw,
+        amount,
+        amount_usd,
+        modified_timestamp AS _inserted_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+    FROM
+        {{ source(
+            'blast_defi',
+            'ez_bridge_activity'
+        ) }}
+
+{% if is_incremental() and 'blast' not in var('HEAL_MODELS') %}
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
 avalanche AS (
     SELECT
         'avalanche' AS blockchain,
@@ -430,6 +466,11 @@ all_chains_bridge AS (
     SELECT
         *
     FROM
+        blast
+    UNION ALL
+    SELECT
+        *
+    FROM
         avalanche
     UNION ALL
     SELECT
@@ -507,7 +548,8 @@ SELECT
             'polygon',
             'bsc',
             'avalanche',
-            'gnosis'
+            'gnosis',
+            'blast'
         ) THEN b.amount_usd
         ELSE ROUND(
             p.price * amount,

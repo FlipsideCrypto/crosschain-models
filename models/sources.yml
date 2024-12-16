@@ -163,6 +163,7 @@ sources:
     schema: defi
     tables:
       - name: ez_dex_swaps
+      - name: ez_bridge_activity
   - name: polygon_silver
     database: polygon
     schema: silver
