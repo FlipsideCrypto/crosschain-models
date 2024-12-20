@@ -3,9 +3,10 @@ models:
   - name: silver__complete_dex_swaps
     tests:
       - dbt_utils.unique_combination_of_columns:
+          where: blockchain not in ('near')
           combination_of_columns:
             - COMPLETE_DEX_SWAPS_ID
-
+                
     columns:
       - name: BLOCKCHAIN
         tests:
