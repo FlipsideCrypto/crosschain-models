@@ -3,7 +3,6 @@ models:
   - name: silver__complete_bridge_activity
     tests:
       - dbt_utils.unique_combination_of_columns:
-          where: blockchain not in ('near')
           combination_of_columns:
             - COMPLETE_BRIDGE_ACTIVITY_ID
 
