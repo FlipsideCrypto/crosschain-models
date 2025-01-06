@@ -34,6 +34,7 @@ jobs:
 
       - name: install dependencies
         run: |
+          pip3 install git+https://github.com/wbond/oscrypto.git@1547f535001ba568b239b8797465536759c742a3
           pip3 install dbt-snowflake==${{ env.DBT_VERSION }} cli_passthrough requests click
           dbt deps
 
