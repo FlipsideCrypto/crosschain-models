@@ -257,6 +257,106 @@ WITH base AS (
     UNION ALL
     SELECT
         address,
+        symbol,
+        NAME,
+        decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
+        'mantle' AS blockchain,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
+    FROM
+        {{ source(
+            'mantle_core',
+            'dim_contracts'
+        ) }}
+    UNION ALL
+    SELECT
+        address,
+        symbol,
+        NAME,
+        decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
+        'core' AS blockchain,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
+    FROM
+        {{ source(
+            'core_core',
+            'dim_contracts'
+        ) }}
+    UNION ALL
+    SELECT
+        address,
+        symbol,
+        NAME,
+        decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
+        'sei' AS blockchain,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
+    FROM
+        {{ source(
+            'sei_evm_core',
+            'dim_contracts'
+        ) }}
+    UNION ALL
+    SELECT
+        address,
+        symbol,
+        NAME,
+        decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
+        'berachain-bartio' AS blockchain,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
+    FROM
+        {{ source(
+            'berachain_bartio_testnet',
+            'dim_contracts'
+        ) }}
+    UNION ALL
+    SELECT
+        address,
         LOWER(project_name) AS symbol,
         label AS NAME,
         DECIMAL AS decimals,

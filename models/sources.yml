@@ -836,6 +836,28 @@ sources:
       - name: traces
       - name: blocks
       - name: decoded_logs
+  - name: mantle_silver
+    database: mantle
+    schema: silver
+    tables:
+      - name: complete_event_abis
+      - name: abis
+  - name: mantle_core
+    database: mantle
+    schema: core
+    tables:
+      - name: dim_contracts
+  - name: core_silver
+    database: core
+    schema: silver
+    tables:
+      - name: complete_event_abis
+      - name: abis
+  - name: core_core
+    database: core
+    schema: core
+    tables:
+      - name: dim_contracts
   - name: blast_core
     database: blast
     schema: core
@@ -869,6 +891,12 @@ sources:
     schema: silver_evm
     tables:
       - name: abis
+      - name: complete_event_abis
+  - name: sei_evm_core
+    database: sei
+    schema: core_evm
+    tables:
+      - name: dim_contracts
   - name: ethereum_silver_olas
     database: ethereum
     schema: silver_olas
@@ -960,6 +988,12 @@ sources:
     schema: silver_testnet
     tables:
       - name: abis
+      - name: complete_event_abis
+  - name: berachain_bartio_testnet
+    database: berachain
+    schema: testnet
+    tables:
+      - name: dim_contracts
   - name: aleo_stats
     database: aleo
     schema: stats
