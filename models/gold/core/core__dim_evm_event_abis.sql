@@ -4,7 +4,8 @@
     "columns": true }
 ) }}
 
-{% set models = [ ('ethereum', source('ethereum_silver', 'complete_event_abis')), 
+{% set models = [ 
+('ethereum', source('ethereum_silver', 'complete_event_abis')), 
 ('polygon', source('polygon_silver', 'complete_event_abis')) , 
 ('bsc', source('bsc_silver', 'complete_event_abis')) , 
 ('avalanche', source('avalanche_silver', 'complete_event_abis')) , 
@@ -13,7 +14,12 @@
 ('base', source('base_silver', 'complete_event_abis')),
 ('blast', source('blast_silver', 'complete_event_abis')),
 ('kaia', source('kaia_silver', 'complete_event_abis')),
-('optimism', source('optimism_silver', 'complete_event_abis')) ] 
+('optimism', source('optimism_silver', 'complete_event_abis')),
+('mantle', source('mantle_silver', 'complete_event_abis')),
+('core', source('core_silver', 'complete_event_abis')),
+('sei', source('sei_evm_silver', 'complete_event_abis')),
+('berachain-bartio', source('berachain_bartio_silver', 'complete_event_abis'))
+ ] 
 %}
 SELECT *
 FROM (
