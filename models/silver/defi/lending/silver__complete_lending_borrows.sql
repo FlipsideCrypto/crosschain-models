@@ -80,6 +80,42 @@ WHERE
     )
 {% endif %}
 ),
+blast AS (
+    SELECT
+        'blast' AS blockchain,
+        platform,
+        block_number,
+        block_timestamp,
+        tx_hash,
+        contract_address,
+        protocol_market,
+        borrower,
+        token_address,
+        token_symbol,
+        amount_unadj AS amount_raw,
+        amount,
+        amount_usd,
+        modified_timestamp AS _inserted_timestamp,
+        {{ dbt_utils.generate_surrogate_key(
+            ['ez_lending_borrows_id', 'blockchain']
+        ) }} AS complete_lending_borrows_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
+    FROM
+        {{ source(
+            'blast_defi',
+            'ez_lending_borrows'
+        ) }}
+
+{% if is_incremental() and 'blast' not in var('HEAL_MODELS') %}
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
 optimism AS (
     SELECT
         'optimism' AS blockchain,
