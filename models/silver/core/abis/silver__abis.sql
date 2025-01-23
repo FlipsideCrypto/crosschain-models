@@ -19,6 +19,7 @@
     ('kaia', source('kaia_silver', 'abis')),
     ('berachain-bartio', source('berachain_bartio_silver', 'abis')),
     ('mantle', source('mantle_silver', 'abis')),
+    ('ronin', source('ronin_silver', 'abis')),
     ('core', source('core_silver', 'abis'))
 ]
 %}
