@@ -376,7 +376,7 @@ WITH base AS (
         {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
     FROM
         {{ source(
-            'ronin',
+            'ronin_core',
             'dim_contracts'
         ) }}
     UNION ALL
