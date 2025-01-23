@@ -20,6 +20,7 @@
     ('berachain-bartio', source('berachain_bartio_silver', 'abis')),
     ('mantle', source('mantle_silver', 'abis')),
     ('ronin', source('ronin_silver', 'abis')),
+    ('swell', source('swell_silver', 'abis')),
     ('core', source('core_silver', 'abis'))
 ]
 %}

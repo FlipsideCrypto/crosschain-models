@@ -382,6 +382,31 @@ WITH base AS (
     UNION ALL
     SELECT
         address,
+        symbol,
+        NAME,
+        decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
+        'swell' AS blockchain,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
+    FROM
+        {{ source(
+            'swell_core',
+            'dim_contracts'
+        ) }}
+    UNION ALL
+    SELECT
+        address,
         LOWER(project_name) AS symbol,
         label AS NAME,
         DECIMAL AS decimals,
