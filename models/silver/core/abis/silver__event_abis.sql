@@ -19,6 +19,8 @@
 ('mantle', source('mantle_silver', 'complete_event_abis')),
 ('core', source('core_silver', 'complete_event_abis')),
 ('sei', source('sei_evm_silver', 'complete_event_abis')),
+('ronin', source('ronin_silver', 'complete_event_abis')),
+('swell', source('swell_silver', 'complete_event_abis')),
 ('berachain-bartio', source('berachain_bartio_silver', 'complete_event_abis'))
  ] 
 %}

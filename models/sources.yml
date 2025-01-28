@@ -999,6 +999,28 @@ sources:
     schema: testnet
     tables:
       - name: dim_contracts
+  - name: ronin_silver
+    database: ronin
+    schema: silver
+    tables:
+      - name: abis
+      - name: complete_event_abis
+  - name: ronin_core
+    database: ronin
+    schema: core
+    tables:
+      - name: dim_contracts
+  - name: swell_silver
+    database: swell
+    schema: silver
+    tables:
+      - name: abis
+      - name: complete_event_abis
+  - name: swell_core
+    database: swell
+    schema: core
+    tables:
+      - name: dim_contracts
   - name: aleo_stats
     database: aleo
     schema: stats
