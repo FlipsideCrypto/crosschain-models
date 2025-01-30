@@ -17,11 +17,11 @@ WITH pre_final AS (
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(_inserted_timestamp) AS _inserted_timestamp
+        MIN(modified_timestamp) AS _inserted_timestamp
     FROM
         {{ source(
-            'avalanche_silver',
-            'decoded_logs'
+            'avalanche_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         contract_address = LOWER('0x02101dfB77FDE026414827Fdc604ddAF224F0921')

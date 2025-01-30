@@ -104,14 +104,14 @@ WITH base_table AS (
             and decoded_flat :delegate is not null THEN decoded_flat :delegate
             ELSE decoded_flat :"_to"
         END AS wallets,
-        MIN(_INSERTED_TIMESTAMP) AS _INSERTED_TIMESTAMP,
+        MIN(modified_timestamp) AS _inserted_timestamp,
         MIN(
             block_timestamp :: DATE
         ) AS start_date
     FROM
         {{ source(
-            'ethereum_silver',
-            'decoded_logs'
+            'ethereum_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         event_name IN (

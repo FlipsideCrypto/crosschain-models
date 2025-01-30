@@ -21,8 +21,8 @@ WITH pre_final AS (
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         {{ source(
-            'ethereum_silver',
-            'decoded_logs'
+            'ethereum_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         event_name = 'ContractInstantiation'

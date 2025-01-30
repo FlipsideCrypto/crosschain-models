@@ -50,7 +50,7 @@ possible_sats AS (
             FROM
                 {{ source(
                     'ethereum_core',
-                    'fact_token_transfers'
+                    'ez_token_transfers'
                 ) }}
                 xfer
                 JOIN distributor_cex dc
@@ -124,7 +124,7 @@ real_sats AS (
     FROM
         {{ source(
             'ethereum_core',
-            'fact_token_transfers'
+            'ez_token_transfers'
         ) }}
         xfer
         LEFT OUTER JOIN distributor_cex dc

@@ -15,12 +15,12 @@ WITH from_cex AS (
             A.block_timestamp :: DATE
         ) AS start_date,
         MIN(
-            A._inserted_timestamp
+            A.modified_timestamp
         ) AS _inserted_timestamp
     FROM
         {{ source(
-            'ethereum_silver',
-            'transactions'
+            'ethereum_core',
+            'fact_transactions'
         ) }} A
         INNER JOIN (
             SELECT
@@ -59,12 +59,12 @@ to_cex AS (
             A.block_timestamp :: DATE
         ) AS start_date,
         MIN(
-            A._inserted_timestamp
+            A.modified_timestamp
         ) AS _inserted_timestamp
     FROM
         {{ source(
-            'ethereum_silver',
-            'transactions'
+            'ethereum_core',
+            'fact_transactions'
         ) }} A
         INNER JOIN (
             SELECT

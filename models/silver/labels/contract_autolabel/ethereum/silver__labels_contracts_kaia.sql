@@ -84,11 +84,11 @@ base_logs AS (
     SELECT
         DISTINCT tx_hash,
         event_name,
-        _inserted_timestamp
+        modified_timestamp AS _inserted_timestamp
     FROM
         {{ source(
-            'kaia_silver',
-            'decoded_logs'
+            'kaia_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         tx_hash IN (

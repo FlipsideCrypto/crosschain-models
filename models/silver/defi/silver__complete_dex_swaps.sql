@@ -27,7 +27,7 @@ WITH ethereum AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        _log_id,
+        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -66,7 +66,7 @@ optimism AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        _log_id,
+        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -105,7 +105,7 @@ avalanche AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        _log_id,
+        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -144,7 +144,7 @@ polygon AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        _log_id,
+        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -183,7 +183,7 @@ bsc AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        _log_id,
+        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -222,7 +222,7 @@ arbitrum AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        _log_id,
+        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -261,7 +261,7 @@ base AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        _log_id,
+        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -300,7 +300,7 @@ blast AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        _log_id,
+        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -339,7 +339,7 @@ gnosis AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        _log_id,
+        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key

@@ -17,11 +17,11 @@ WITH pre_final AS (
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(_inserted_timestamp) AS _inserted_timestamp
+        MIN(modified_timestamp) AS _inserted_timestamp
     FROM
         {{ source(
-            'polygon_silver',
-            'logs'
+            'polygon_core',
+            'fact_event_logs'
         ) }}
     WHERE
         topics [0] IN (

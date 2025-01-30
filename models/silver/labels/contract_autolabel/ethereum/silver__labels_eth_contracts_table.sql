@@ -14,8 +14,8 @@ WITH tokens AS (
         'token_contract' AS l2_label
     FROM
         {{ source(
-            'ethereum_silver',
-            'logs'
+            'ethereum_core',
+            'fact_event_logs'
         ) }}
     WHERE
         utils.udf_hex_to_int(SUBSTR(DATA, 3, 64)) :: FLOAT IS NOT NULL
@@ -29,8 +29,8 @@ nfts AS (
         'nf_token_contract' AS l2_label
     FROM
         {{ source(
-            'ethereum_silver',
-            'logs'
+            'ethereum_core',
+            'fact_event_logs'
         ) }}
     WHERE
         utils.udf_hex_to_int(SUBSTR(DATA, 3, 64)) :: FLOAT IS NULL

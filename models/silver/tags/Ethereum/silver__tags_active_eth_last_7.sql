@@ -13,8 +13,8 @@
         min(date_trunc('day', block_timestamp)) as start_date
         from     
         {{ source(
-        'ethereum_silver',
-        'transactions'
+        'ethereum_core',
+        'fact_transactions'
         ) }}
         WHERE block_timestamp >= current_date -7
         group by from_address

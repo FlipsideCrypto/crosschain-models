@@ -29,8 +29,8 @@ WITH t1 AS (
         price AS token_price_usd
     FROM
         {{ source(
-            'ethereum_silver',
-            'decoded_logs'
+            'ethereum_core',
+            'ez_decoded_event_logs'
         ) }}
         x
         JOIN {{ source(

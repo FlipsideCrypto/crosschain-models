@@ -13,8 +13,8 @@
         min(date_trunc('day', block_timestamp)) as start_date
         from     
         {{ source(
-        'optimism_silver',
-        'transactions'
+        'optimism_core',
+        'fact_transactions'
         ) }}
         WHERE block_timestamp >= current_date -7
         group by from_address
@@ -66,8 +66,8 @@
     select distinct from_address, block_timestamp::date as bt
     from    
     {{ source(
-        'optimism_silver',
-        'transactions'
+        'optimism_core',
+        'fact_transactions'
     ) }}
     ),
     next_date as (

@@ -11,11 +11,11 @@ WITH display AS (
         DISTINCT tx_hash,
         block_timestamp,
         decoded_flat :displayName :: STRING AS tag_name,
-        _inserted_timestamp
+        modified_timestamp AS _inserted_timestamp
     FROM
         {{ source(
-            'polygon_silver',
-            'decoded_logs'
+            'polygon_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         contract_address ILIKE '0xDb8e8e2ccb5C033938736aa89Fe4fa1eDfD15a1d'
@@ -37,8 +37,8 @@ register AS (
         decoded_flat :adminAddress :: STRING AS address
     FROM
         {{ source(
-            'polygon_silver',
-            'decoded_logs'
+            'polygon_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         contract_address ILIKE '0xDb8e8e2ccb5C033938736aa89Fe4fa1eDfD15a1d'

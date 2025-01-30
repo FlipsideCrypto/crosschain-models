@@ -24,20 +24,27 @@ WITH base_legacy_labels AS (
         blockchain = 'polygon'
 ),
 base_labels AS (
-    SELECT
         tx_hash,
         block_number,
         block_timestamp,
-        tx_status,
+        IFF(
+            tx_succeeded, 
+            'SUCCESS', 
+            'FAILED'
+        ) AS tx_status,
         from_address,
         to_address,
         TYPE,
-        identifier,
-        _inserted_timestamp
+        CONCAT(
+            TYPE,
+            '_',
+            trace_address
+        ) AS identifier,
+        modified_timestamp AS _inserted_timestamp
     FROM
         {{ source(
-            'polygon_silver',
-            'traces'
+            'polygon_core',
+            'fact_traces'
         ) }}
     WHERE
         TYPE IN (
@@ -84,11 +91,11 @@ base_logs AS (
     SELECT
         DISTINCT tx_hash,
         event_name,
-        _inserted_timestamp
+        modified_timestamp AS _inserted_timestamp
     FROM
         {{ source(
-            'polygon_silver',
-            'decoded_logs'
+            'polygon_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         tx_hash IN (
