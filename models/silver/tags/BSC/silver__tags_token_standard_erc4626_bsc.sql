@@ -31,7 +31,7 @@ WITH pre_final AS (
         )
 
     {% if is_incremental() %}
-    AND _INSERTED_TIMESTAMP > (
+    AND modified_timestamp > (
         SELECT
             MAX(_INSERTED_TIMESTAMP)
         FROM

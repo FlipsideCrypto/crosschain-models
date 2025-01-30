@@ -128,7 +128,7 @@ WITH base_table AS (
         )
 
 {% if is_incremental() %}
-AND _inserted_timestamp > (
+AND modified_timestamp > (
     SELECT
         MAX(_inserted_timestamp)
     FROM

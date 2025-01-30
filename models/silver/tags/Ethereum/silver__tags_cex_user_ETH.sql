@@ -40,7 +40,7 @@ WITH from_cex AS (
         A.to_address IS NOT NULL
 
 {% if is_incremental() %}
-AND _inserted_timestamp > (
+AND A.modified_timestamp > (
     SELECT
         MAX(_inserted_timestamp)
     FROM
@@ -84,7 +84,7 @@ to_cex AS (
         A.from_address IS NOT NULL
 
 {% if is_incremental() %}
-AND _inserted_timestamp > (
+AND A.modified_timestamp > (
     SELECT
         MAX(_inserted_timestamp)
     FROM

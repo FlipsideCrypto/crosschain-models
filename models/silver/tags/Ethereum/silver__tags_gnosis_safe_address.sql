@@ -17,7 +17,7 @@ WITH pre_final AS (
             block_timestamp
         ) AS start_date,
         NULL AS end_date,
-        _inserted_timestamp,
+        modified_timestamp AS _inserted_timestamp,
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         {{ source(

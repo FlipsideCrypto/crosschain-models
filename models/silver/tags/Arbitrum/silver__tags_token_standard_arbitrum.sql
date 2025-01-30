@@ -38,7 +38,7 @@ WITH pre_final as (
         AND decoded_log :from = '0x0000000000000000000000000000000000000000'
 
     {% if is_incremental() %}
-    AND _INSERTED_TIMESTAMP > (
+    AND modified_timestamp > (
         SELECT
             MAX(_INSERTED_TIMESTAMP)
         FROM
