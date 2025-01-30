@@ -24,6 +24,7 @@ WITH base_legacy_labels AS (
         blockchain = 'avalanche'
 ),
 base_labels AS (
+    SELECT
         tx_hash,
         block_number,
         block_timestamp,
