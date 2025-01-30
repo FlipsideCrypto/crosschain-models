@@ -10,7 +10,7 @@ WITH display AS (
     SELECT
         DISTINCT tx_hash,
         block_timestamp,
-        decoded_flat :displayName :: STRING AS tag_name,
+        decoded_log :displayName :: STRING AS tag_name,
         modified_timestamp AS _inserted_timestamp
     FROM
         {{ source(
@@ -34,7 +34,7 @@ register AS (
     SELECT
         DISTINCT tx_hash,
         block_timestamp,
-        decoded_flat :adminAddress :: STRING AS address
+        decoded_log :adminAddress :: STRING AS address
     FROM
         {{ source(
             'arbitrum_core',

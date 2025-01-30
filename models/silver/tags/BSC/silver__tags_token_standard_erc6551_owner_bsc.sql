@@ -9,7 +9,7 @@ WITH pre_final AS (
     SELECT
         DISTINCT 'bsc' AS blockchain,
         'flipside' AS creator,
-        decoded_flat: tokenContract :: STRING AS address,
+        decoded_log: tokenContract :: STRING AS address,
         'erc-6551 owner' AS tag_name,
         'token standard' AS tag_type,
         MIN(

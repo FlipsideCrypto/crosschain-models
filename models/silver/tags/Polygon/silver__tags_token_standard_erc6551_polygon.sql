@@ -9,7 +9,7 @@ WITH pre_final AS (
     SELECT
         DISTINCT 'polygon' AS blockchain,
         'flipside' AS creator,
-        decoded_flat: account :: STRING AS address,
+        decoded_log: account :: STRING AS address,
         'erc-6551' AS tag_name,
         'token standard' AS tag_type,
         MIN(
