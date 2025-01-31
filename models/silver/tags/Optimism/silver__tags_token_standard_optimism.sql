@@ -24,21 +24,21 @@ WITH pre_final AS (
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(_inserted_timestamp) AS _inserted_timestamp
+        MIN(modified_timestamp) AS _inserted_timestamp
     FROM
         {{ source(
-            'optimism_silver',
-            'decoded_logs'
+            'optimism_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         topics [0] IN (
             '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
             '0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62'
         )
-        AND decoded_flat :from = '0x0000000000000000000000000000000000000000'
+        AND decoded_log :from = '0x0000000000000000000000000000000000000000'
 
     {% if is_incremental() %}
-    AND _INSERTED_TIMESTAMP > (
+    AND modified_timestamp > (
         SELECT
             MAX(_INSERTED_TIMESTAMP)
         FROM

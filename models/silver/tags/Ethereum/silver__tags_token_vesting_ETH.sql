@@ -10,108 +10,108 @@ WITH base_table AS (
 
     SELECT
         CASE
-            WHEN event_name = 'VestClaimed' THEN decoded_flat :beneficiary
-            WHEN event_name = 'VestingClaimed' THEN decoded_flat :investor
-            WHEN event_name = 'VestedTokenRedeemed' THEN decoded_flat :"_to"
+            WHEN event_name = 'VestClaimed' THEN decoded_log :beneficiary
+            WHEN event_name = 'VestingClaimed' THEN decoded_log :investor
+            WHEN event_name = 'VestedTokenRedeemed' THEN decoded_log :"_to"
             WHEN event_name = 'VestingMemberAdded' THEN origin_from_address
             WHEN event_name IN (
                 'VestingTransfer',
                 'VestTransfer'
-            ) THEN decoded_flat :to
+            ) THEN decoded_log :to
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND decoded_flat :recipient IS NOT NULL THEN decoded_flat :recipient
+            AND decoded_log :recipient IS NOT NULL THEN decoded_log :recipient
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND decoded_flat :recipient IS NULL
-            AND decoded_flat :"_address" IS NOT NULL THEN decoded_flat :"_address"
+            AND decoded_log :recipient IS NULL
+            AND decoded_log :"_address" IS NOT NULL THEN decoded_log :"_address"
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND decoded_flat :recipient IS NULL
-            AND decoded_flat :"_address" IS NULL
-            AND decoded_flat :address IS NOT NULL THEN decoded_flat :address
+            AND decoded_log :recipient IS NULL
+            AND decoded_log :"_address" IS NULL
+            AND decoded_log :address IS NOT NULL THEN decoded_log :address
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND decoded_flat :recipient IS NULL
-            AND decoded_flat :"_address" IS NULL
-            AND decoded_flat :address IS NULL
-            AND decoded_flat :"_recipient" IS NOT NULL THEN decoded_flat :"_recipient"
+            AND decoded_log :recipient IS NULL
+            AND decoded_log :"_address" IS NULL
+            AND decoded_log :address IS NULL
+            AND decoded_log :"_recipient" IS NOT NULL THEN decoded_log :"_recipient"
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND decoded_flat :recipient IS NULL
-            AND decoded_flat :"_address" IS NULL
-            AND decoded_flat :address IS NULL
-            AND decoded_flat :"_recipient" IS NULL
-            AND decoded_flat :to IS NOT NULL THEN decoded_flat :to
+            AND decoded_log :recipient IS NULL
+            AND decoded_log :"_address" IS NULL
+            AND decoded_log :address IS NULL
+            AND decoded_log :"_recipient" IS NULL
+            AND decoded_log :to IS NOT NULL THEN decoded_log :to
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND decoded_flat :recipient IS NULL
-            AND decoded_flat :"_address" IS NULL
-            AND decoded_flat :address IS NULL
-            AND decoded_flat :"_recipient" IS NULL
-            AND decoded_flat :to IS NULL
-            AND decoded_flat :ethereumAddress IS NOT NULL THEN decoded_flat :ethereumAddress
+            AND decoded_log :recipient IS NULL
+            AND decoded_log :"_address" IS NULL
+            AND decoded_log :address IS NULL
+            AND decoded_log :"_recipient" IS NULL
+            AND decoded_log :to IS NULL
+            AND decoded_log :ethereumAddress IS NOT NULL THEN decoded_log :ethereumAddress
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND decoded_flat :recipient IS NULL
-            AND decoded_flat :"_address" IS NULL
-            AND decoded_flat :address IS NULL
-            AND decoded_flat :"_recipient" IS NULL
-            AND decoded_flat :to IS NULL
-            AND decoded_flat :ethereumAddress IS NULL
-            AND decoded_flat :account IS NOT NULL THEN decoded_flat :account
+            AND decoded_log :recipient IS NULL
+            AND decoded_log :"_address" IS NULL
+            AND decoded_log :address IS NULL
+            AND decoded_log :"_recipient" IS NULL
+            AND decoded_log :to IS NULL
+            AND decoded_log :ethereumAddress IS NULL
+            AND decoded_log :account IS NOT NULL THEN decoded_log :account
             WHEN event_name IN (
                 'Unlocked',
                 'Vesting',
                 'VestedRewardClaimed',
                 'VestedAmountClaimed'
             )
-            AND decoded_flat :recipient IS NULL
-            AND decoded_flat :"_address" IS NULL
-            AND decoded_flat :address IS NULL
-            AND decoded_flat :"_recipient" IS NULL
-            AND decoded_flat :to IS NULL
-            AND decoded_flat :ethereumAddress IS NULL
-            AND decoded_flat :account IS NULL 
-            and decoded_flat :delegate is not null THEN decoded_flat :delegate
-            ELSE decoded_flat :"_to"
+            AND decoded_log :recipient IS NULL
+            AND decoded_log :"_address" IS NULL
+            AND decoded_log :address IS NULL
+            AND decoded_log :"_recipient" IS NULL
+            AND decoded_log :to IS NULL
+            AND decoded_log :ethereumAddress IS NULL
+            AND decoded_log :account IS NULL 
+            and decoded_log :delegate is not null THEN decoded_log :delegate
+            ELSE decoded_log :"_to"
         END AS wallets,
-        MIN(_INSERTED_TIMESTAMP) AS _INSERTED_TIMESTAMP,
+        MIN(modified_timestamp) AS _inserted_timestamp,
         MIN(
             block_timestamp :: DATE
         ) AS start_date
     FROM
         {{ source(
-            'ethereum_silver',
-            'decoded_logs'
+            'ethereum_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         event_name IN (
@@ -128,7 +128,7 @@ WITH base_table AS (
         )
 
 {% if is_incremental() %}
-AND _inserted_timestamp > (
+AND modified_timestamp > (
     SELECT
         MAX(_inserted_timestamp)
     FROM

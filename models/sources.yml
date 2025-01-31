@@ -11,9 +11,11 @@ sources:
     schema: core
     tables:
       - name: fact_transactions
-      - name: ez_native_transfers
-      - name: fact_token_transfers
+      - name: fact_event_logs
       - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: ez_current_balances
       - name: dim_contracts
   - name: ethereum_price
@@ -23,7 +25,7 @@ sources:
       - name: ez_prices_hourly
   - name: ethereum_nft
     database: ethereum
-    schema: nft 
+    schema: nft
     tables:
       - name: ez_nft_sales
       - name: ez_nft_transfers
@@ -43,8 +45,6 @@ sources:
     database: ethereum
     schema: silver
     tables:
-      - name: logs
-      - name: decoded_logs
       - name: traces
       - name: transactions
       - name: labels
@@ -96,12 +96,10 @@ sources:
     database: arbitrum
     schema: silver
     tables:
-      - name: logs
       - name: traces
       - name: transactions
       - name: contracts
       - name: complete_event_abis
-      - name: decoded_logs
       - name: abis
       - name: complete_nft_sales
       - name: blocks
@@ -109,9 +107,12 @@ sources:
     database: arbitrum
     schema: core
     tables:
-      - name: fact_token_transfers
-      - name: ez_native_transfers
+      - name: fact_transactions
+      - name: fact_event_logs
       - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: dim_contracts
   - name: arbitrum_defi
     database: arbitrum
@@ -129,8 +130,6 @@ sources:
     database: avalanche
     schema: silver
     tables:
-      - name: logs
-      - name: decoded_logs
       - name: traces
       - name: transactions
       - name: abis
@@ -142,9 +141,12 @@ sources:
     database: avalanche
     schema: core
     tables:
-      - name: fact_token_transfers
-      - name: ez_native_transfers
+      - name: fact_transactions
+      - name: fact_event_logs
       - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: dim_contracts
   - name: avalanche_defi
     database: avalanche
@@ -157,7 +159,7 @@ sources:
       - name: ez_lending_flashloans
       - name: ez_lending_liquidations
       - name: ez_lending_repayments
-      - name: ez_lending_withdraws      
+      - name: ez_lending_withdraws
   - name: blast_defi
     database: blast
     schema: defi
@@ -173,8 +175,6 @@ sources:
     database: polygon
     schema: silver
     tables:
-      - name: logs
-      - name: decoded_logs
       - name: traces
       - name: blocks
       - name: transactions
@@ -187,9 +187,12 @@ sources:
     database: polygon
     schema: core
     tables:
-      - name: fact_token_transfers
-      - name: ez_native_transfers
+      - name: fact_transactions
+      - name: fact_event_logs
       - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: dim_contracts
   - name: polygon_defi
     database: polygon
@@ -207,12 +210,10 @@ sources:
     database: optimism
     schema: silver
     tables:
-      - name: logs
       - name: traces
       - name: transactions
       - name: contracts
       - name: complete_event_abis
-      - name: decoded_logs
       - name: abis
       - name: complete_nft_sales
       - name: blocks
@@ -220,9 +221,12 @@ sources:
     database: optimism
     schema: core
     tables:
-      - name: fact_token_transfers
-      - name: ez_native_transfers
+      - name: fact_transactions
+      - name: fact_event_logs
       - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: dim_contracts
   - name: optimism_defi
     database: optimism
@@ -240,22 +244,23 @@ sources:
     database: bsc
     schema: silver
     tables:
-      - name: logs
       - name: traces
       - name: transactions
       - name: contracts
       - name: abis
       - name: complete_event_abis
-      - name: decoded_logs
       - name: complete_nft_sales
       - name: blocks
   - name: bsc_core
     database: bsc
     schema: core
     tables:
-      - name: fact_token_transfers
-      - name: ez_native_transfers
+      - name: fact_transactions
+      - name: fact_event_logs
       - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: dim_contracts
   - name: bsc_defi
     database: bsc
@@ -559,8 +564,6 @@ sources:
     database: base
     schema: silver
     tables:
-      - name: logs
-      - name: decoded_logs
       - name: traces
       - name: transactions
       - name: abis
@@ -578,14 +581,17 @@ sources:
     database: base
     schema: core
     tables:
-      - name: fact_token_transfers
-      - name: ez_native_transfers
+      - name: fact_transactions
+      - name: fact_event_logs
       - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: dim_contracts
   - name: base_defi
     database: base
     schema: defi
-    tables: 
+    tables:
       - name: ez_dex_swaps
       - name: ez_bridge_activity
       - name: ez_lending_borrows
@@ -613,6 +619,12 @@ sources:
     database: gnosis
     schema: core
     tables:
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: dim_contracts
   - name: gnosis_defi
     database: gnosis
@@ -682,14 +694,14 @@ sources:
   - name: near_observ
     database: near
     schema: silver_observability
-    tables: 
+    tables:
       - name: blocks_completeness
       - name: chunks_completeness
       - name: logs_completeness
   - name: solana_observ
     database: solana
     schema: silver_observability
-    tables: 
+    tables:
       - name: blocks_completeness
       - name: transactions_completeness
   - name: sei_core
@@ -713,13 +725,13 @@ sources:
   - name: aptos_observ
     database: aptos
     schema: silver_observability
-    tables: 
+    tables:
       - name: blocks_completeness
       - name: transactions_completeness
   - name: lava_observ
     database: lava
     schema: silver_observability
-    tables: 
+    tables:
       - name: blocks_completeness
       - name: transactions_completeness
   - name: ethereum_stats
@@ -840,7 +852,6 @@ sources:
       - name: abis
       - name: traces
       - name: blocks
-      - name: decoded_logs
   - name: mantle_silver
     database: mantle
     schema: silver
@@ -851,6 +862,12 @@ sources:
     database: mantle
     schema: core
     tables:
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: dim_contracts
   - name: core_silver
     database: core
@@ -867,9 +884,12 @@ sources:
     database: blast
     schema: core
     tables:
-      - name: fact_token_transfers
-      - name: ez_native_transfers
+      - name: fact_transactions
+      - name: fact_event_logs
       - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: dim_contracts
   - name: github_actions
     database: crosschain
@@ -889,7 +909,6 @@ sources:
       - name: abis
       - name: traces
       - name: blocks
-      - name: decoded_logs
       - name: transactions
   - name: sei_evm_silver
     database: sei
@@ -967,10 +986,12 @@ sources:
     database: kaia
     schema: core
     tables:
-      - name: fact_token_transfers
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
       - name: ez_native_transfers
       - name: ez_token_transfers
-      - name: fact_traces
       - name: dim_contracts
   - name: kaia_defi
     database: kaia

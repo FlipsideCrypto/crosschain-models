@@ -9,7 +9,7 @@ WITH pre_final AS (
     SELECT
         DISTINCT 'ethereum' AS blockchain,
         'flipside' AS creator,
-        decoded_flat :instantiation :: STRING AS address,
+        decoded_log :instantiation :: STRING AS address,
         'gnosis safe address' AS tag_name,
         'contract' AS tag_type,
         DATE_TRUNC(
@@ -17,12 +17,12 @@ WITH pre_final AS (
             block_timestamp
         ) AS start_date,
         NULL AS end_date,
-        _inserted_timestamp,
+        modified_timestamp AS _inserted_timestamp,
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         {{ source(
-            'ethereum_silver',
-            'decoded_logs'
+            'ethereum_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         event_name = 'ContractInstantiation'

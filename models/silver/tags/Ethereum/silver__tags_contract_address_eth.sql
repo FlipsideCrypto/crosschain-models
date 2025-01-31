@@ -18,16 +18,16 @@ WITH pre_final AS (
             block_timestamp
         ) AS start_date,
         NULL AS end_date,
-        _inserted_timestamp,
+        modified_timestamp AS _inserted_timestamp,
         CURRENT_TIMESTAMP AS tag_created_at
     FROM
         {{ source(
-            'ethereum_silver',
-            'traces'
+            'ethereum_core',
+            'fact_traces'
         ) }}
     WHERE
         TYPE in ('CREATE', 'CREATE2')
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
         AND to_address IS NOT NULL
 
     {% if is_incremental() %}

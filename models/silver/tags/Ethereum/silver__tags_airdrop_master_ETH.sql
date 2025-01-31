@@ -23,14 +23,14 @@
 
 WITH t1 AS (
     SELECT
-        DISTINCT decoded_flat :to :: STRING AS wallets,
+        DISTINCT decoded_log :to :: STRING AS wallets,
         x.block_timestamp,
-        decoded_flat :value /(pow(10, 18)) AS tokens_claimed,
+        decoded_log :value /(pow(10, 18)) AS tokens_claimed,
         price AS token_price_usd
     FROM
         {{ source(
-            'ethereum_silver',
-            'decoded_logs'
+            'ethereum_core',
+            'ez_decoded_event_logs'
         ) }}
         x
         JOIN {{ source(

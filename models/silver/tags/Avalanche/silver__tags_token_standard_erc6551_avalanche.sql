@@ -9,7 +9,7 @@ WITH pre_final AS (
     SELECT
         DISTINCT 'avalanche' AS blockchain,
         'flipside' AS creator,
-        decoded_flat: account :: STRING AS address,
+        decoded_log: account :: STRING AS address,
         'erc-6551' AS tag_name,
         'token standard' AS tag_type,
         MIN(
@@ -17,11 +17,11 @@ WITH pre_final AS (
         ) AS start_date,
         NULL AS end_date,
         CURRENT_TIMESTAMP AS tag_created_at,
-        MIN(_inserted_timestamp) AS _inserted_timestamp
+        MIN(modified_timestamp) AS _inserted_timestamp
     FROM
         {{ source(
-            'avalanche_silver',
-            'decoded_logs'
+            'avalanche_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         contract_address = LOWER('0x02101dfB77FDE026414827Fdc604ddAF224F0921')
@@ -29,7 +29,7 @@ WITH pre_final AS (
         AND tx_status = 'SUCCESS'
 
     {% if is_incremental() %}
-    AND _INSERTED_TIMESTAMP > (
+    AND modified_timestamp > (
         SELECT
             MAX(_INSERTED_TIMESTAMP)
         FROM

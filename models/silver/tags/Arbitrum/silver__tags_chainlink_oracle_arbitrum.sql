@@ -10,12 +10,12 @@ WITH display AS (
     SELECT
         DISTINCT tx_hash,
         block_timestamp,
-        decoded_flat :displayName :: STRING AS tag_name,
-        _inserted_timestamp
+        decoded_log :displayName :: STRING AS tag_name,
+        modified_timestamp AS _inserted_timestamp
     FROM
         {{ source(
-            'arbitrum_silver',
-            'decoded_logs'
+            'arbitrum_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         contract_address ILIKE '0x4F3AF332A30973106Fe146Af0B4220bBBeA748eC'
@@ -34,18 +34,18 @@ register AS (
     SELECT
         DISTINCT tx_hash,
         block_timestamp,
-        decoded_flat :adminAddress :: STRING AS address
+        decoded_log :adminAddress :: STRING AS address
     FROM
         {{ source(
-            'arbitrum_silver',
-            'decoded_logs'
+            'arbitrum_core',
+            'ez_decoded_event_logs'
         ) }}
     WHERE
         contract_address ILIKE '0x4F3AF332A30973106Fe146Af0B4220bBBeA748eC'
         AND event_name ILIKE 'RegistrationRequested'
 
 {% if is_incremental() %}
-AND _inserted_timestamp > (
+AND modified_timestamp > (
     SELECT
         MAX(_inserted_timestamp)
     FROM
