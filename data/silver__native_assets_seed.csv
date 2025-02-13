@@ -108,6 +108,9 @@ coingecko,XDAI,XDAI,xdai,18
 coingecko,Aurora,AURORA,aurora-near,18
 coingecko,Mantle,MNT,mantle,18
 coingecko,Aleo,ALEO,aleo
+coingecko,Stellar,XLM,stellar
+coingecko,Maya Protocol,CACAO,cacao
+coingecko,Q Protocol,QGOV,q-protocol
 coinmarketcap,Bitcoin,BTC,1,8
 coinmarketcap,Ethereum,ETH,1027,18
 coinmarketcap,BNB,BNB,1839,18
@@ -219,3 +222,5 @@ coinmarketcap,Aurora,AURORA,14803,18
 coinmarketcap,Core,CORE,23254
 coinmarketcap,Mantle,MNT,27075,18
 coinmarketcap,Aleo,ALEO,32193
+coinmarketcap,Stellar,XLM,512
+coinmarketcap,Q Protocol,QGOV,29443
