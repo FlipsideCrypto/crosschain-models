@@ -1053,6 +1053,17 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
+  - name: bob_silver
+    database: bob
+    schema: silver
+    tables:
+      - name: abis
+      - name: complete_event_abis
+  - name: bob_core
+    database: bob
+    schema: core
+    tables:
+      - name: dim_contracts
   - name: aleo_stats
     database: aleo
     schema: stats

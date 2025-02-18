@@ -22,6 +22,7 @@
     ('ronin', source('ronin_silver', 'abis')),
     ('swell', source('swell_silver', 'abis')),
     ('ink', source('ink_silver', 'abis')),
+    ('bob', source('bob_silver', 'abis')),
     ('core', source('core_silver', 'abis'))
 ]
 %}
