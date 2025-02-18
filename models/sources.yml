@@ -1054,3 +1054,8 @@ sources:
       - name: blocks_completeness
       - name: transactions_completeness
       - name: transitions_completeness
+  - name: stellar_stats
+    database: stellar
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
