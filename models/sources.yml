@@ -1042,6 +1042,17 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
+  - name: ink_silver
+    database: ink
+    schema: silver
+    tables:
+      - name: abis
+      - name: complete_event_abis
+  - name: ink_core
+    database: ink
+    schema: core
+    tables:
+      - name: dim_contracts
   - name: aleo_stats
     database: aleo
     schema: stats
