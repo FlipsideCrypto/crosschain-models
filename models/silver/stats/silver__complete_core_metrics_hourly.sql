@@ -835,6 +835,42 @@ WHERE
     )
 {% endif %}
 ),
+stellar AS (
+    SELECT
+        'stellar' AS blockchain,
+        block_timestamp_hour,
+        block_number_min,
+        block_number_max,
+        block_count,
+        transaction_count,
+        transaction_count_success,
+        transaction_count_failed,
+        unique_accounts_count AS unique_initiator_count,
+        total_fees_native,
+        total_fees_usd,
+        modified_timestamp AS _inserted_timestamp,
+        {{ dbt_utils.generate_surrogate_key(
+            ['ez_core_metrics_hourly_id','blockchain']
+        ) }} AS core_metrics_hourly_id
+    FROM
+        {{ source(
+            'stellar_stats',
+            'ez_core_metrics_hourly'
+        ) }}
+
+{% if is_incremental() and 'stellar' not in var('HEAL_MODELS') %}
+WHERE
+    DATE_TRUNC(
+        'hour',
+        _inserted_timestamp
+    ) >= (
+        SELECT
+            MAX(DATE_TRUNC('hour', _inserted_timestamp)) - INTERVAL '{{ var("LOOKBACK", "12 hours") }}'
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
 all_chains AS (
     SELECT
         *
@@ -945,11 +981,16 @@ all_chains AS (
         *
     FROM
         eclipse
-    UNION ALL 
+    UNION ALL
     SELECT
         *
     FROM
         aleo
+    UNION ALL
+    SELECT
+        *
+    FROM
+        stellar
 )
 SELECT
     blockchain,
