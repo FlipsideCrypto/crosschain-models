@@ -96,7 +96,7 @@ heal_model AS (
                     FROM
                         {{ ref('core__dim_contracts') }} C
                     WHERE
-                        C.modified_timestamp > DATEADD('DAY', -14, SYSDATE())
+                        C.modified_timestamp > DATEADD('DAY', -90, SYSDATE())
                         AND C.decimals IS NOT NULL
                         AND LOWER(
                             C.address
@@ -130,7 +130,7 @@ heal_model AS (
                     FROM
                         {{ ref('core__dim_contracts') }} C
                     WHERE
-                        C.modified_timestamp > DATEADD('DAY', -14, SYSDATE())
+                        C.modified_timestamp > DATEADD('DAY', -90, SYSDATE())
                         AND C.symbol IS NOT NULL
                         AND LOWER(
                             C.address
