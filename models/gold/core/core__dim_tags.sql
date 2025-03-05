@@ -1606,6 +1606,22 @@ WITH pre_final AS (
         '2024-11-20' :: timestamp_ntz AS modified_timestamp
     FROM
         {{ ref('silver__flow_evm_contract_names') }}
+    
+    UNION ALL
+
+    SELECT
+        blockchain,
+        creator,
+        address,
+        tag_name,
+        tag_type,
+        start_date :: DATE,
+        NULL AS end_date,
+        '2025-03-04' :: TIMESTAMP AS tag_created_at,
+        '2000-01-01' :: timestamp_ntz AS inserted_timestamp,
+        '2000-01-01' :: timestamp_ntz AS modified_timestamp
+    FROM
+        {{ ref('silver__bybit_hack_addresses') }}
 )
 SELECT
     *,
