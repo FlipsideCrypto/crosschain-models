@@ -115,6 +115,7 @@ coingecko,Berachain,BERA,berachain-bera,18
 coingecko,Dogecoin,DOGE,dogecoin,8
 coingecko,Ripple,XRP,ripple,6
 coingecko,ZCash,ZEC,zcash,8
+coingecko,Movement,MOVE,movement
 coinmarketcap,Bitcoin,BTC,1,8
 coinmarketcap,Ethereum,ETH,1027,18
 coinmarketcap,BNB,BNB,1839,18
@@ -232,3 +233,4 @@ coinmarketcap,Berachain,BERA,24647,18
 coinmarketcap,Dogecoin,DOGE,74,8
 coinmarketcap,Ripple,XRP,52,6
 coinmarketcap,ZCash,ZEC,1437,8
+coinmarketcap,Movement,MOVE,32452
