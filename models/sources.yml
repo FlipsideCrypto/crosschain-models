@@ -286,6 +286,11 @@ sources:
     tables:
       - name: fact_transfers
       - name: dim_block
+  - name: flow_evm_core
+    database: flow
+    schema: core_evm
+    tables:
+      - name: dim_contracts
   - name: flow_core
     database: flow
     schema: core
