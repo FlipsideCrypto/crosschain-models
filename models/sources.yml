@@ -29,7 +29,6 @@ sources:
       - name: ez_native_transfers
       - name: ez_token_transfers
       - name: dim_contracts
-
   - name: sei_evm_core
     database: sei
     schema: core_evm
@@ -41,7 +40,6 @@ sources:
       - name: ez_native_transfers
       - name: ez_token_transfers
       - name: dim_contracts
-
   - name: ethereum_price
     database: ethereum
     schema: price
