@@ -369,6 +369,56 @@ SELECT
     address_name,
     project_name
 FROM
+    {{ ref('silver__snowflake_Ronin_satellites') }}
+
+{% if is_incremental() %}
+WHERE
+    insert_date >= (
+        SELECT
+            MAX(insert_date)
+        FROM
+            {{ this }}
+        WHERE
+            blockchain = 'ronin'
+    )
+{% endif %}
+UNION ALL
+SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name
+FROM
+    {{ ref('silver__snowflake_Sei_Evm_satellites') }}
+
+{% if is_incremental() %}
+WHERE
+    insert_date >= (
+        SELECT
+            MAX(insert_date)
+        FROM
+            {{ this }}
+        WHERE
+            blockchain = 'sei_evm'
+    )
+{% endif %}
+UNION ALL
+SELECT
+    system_created_at,
+    insert_date,
+    blockchain,
+    address,
+    creator,
+    l1_label AS label_type,
+    l2_label AS label_subtype,
+    address_name,
+    project_name
+FROM
     {{ ref('silver__snowflake_SOL_satellites') }}
 
 {% if is_incremental() %}
