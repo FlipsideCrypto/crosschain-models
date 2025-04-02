@@ -18,6 +18,28 @@ sources:
       - name: ez_token_transfers
       - name: ez_current_balances
       - name: dim_contracts
+  - name: ronin_core
+    database: ronin
+    schema: core
+    tables:
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
+      - name: dim_contracts
+  - name: sei_evm_core
+    database: sei
+    schema: core_evm
+    tables:
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
+      - name: dim_contracts
   - name: ethereum_price
     database: ethereum
     schema: price
@@ -921,11 +943,6 @@ sources:
     tables:
       - name: abis
       - name: complete_event_abis
-  - name: sei_evm_core
-    database: sei
-    schema: core_evm
-    tables:
-      - name: dim_contracts
   - name: ethereum_silver_olas
     database: ethereum
     schema: silver_olas
@@ -1031,11 +1048,7 @@ sources:
     tables:
       - name: abis
       - name: complete_event_abis
-  - name: ronin_core
-    database: ronin
-    schema: core
-    tables:
-      - name: dim_contracts
+
   - name: swell_silver
     database: swell
     schema: silver
