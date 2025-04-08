@@ -1099,3 +1099,14 @@ sources:
     schema: stats
     tables:
       - name: ez_core_metrics_hourly
+  - name: movement_stats
+    database: movement
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+  - name: movement_observ
+    database: movement
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
