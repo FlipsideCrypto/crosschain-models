@@ -881,7 +881,7 @@ movement AS (
         transaction_count,
         transaction_count_success,
         transaction_count_failed,
-        unique_accounts_count AS unique_initiator_count,
+        unique_sender_count AS unique_initiator_count,
         total_fees_native,
         total_fees_usd,
         modified_timestamp AS _inserted_timestamp,
