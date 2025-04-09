@@ -1048,7 +1048,6 @@ sources:
     tables:
       - name: abis
       - name: complete_event_abis
-
   - name: swell_silver
     database: swell
     schema: silver
@@ -1057,6 +1056,17 @@ sources:
       - name: complete_event_abis
   - name: swell_core
     database: swell
+    schema: core
+    tables:
+      - name: dim_contracts
+  - name: boba_silver
+    database: boba
+    schema: silver
+    tables:
+      - name: abis
+      - name: complete_event_abis
+  - name: boba_core
+    database: boba
     schema: core
     tables:
       - name: dim_contracts
