@@ -23,7 +23,8 @@
     ('swell', source('swell_silver', 'abis')),
     ('ink', source('ink_silver', 'abis')),
     ('bob', source('bob_silver', 'abis')),
-    ('core', source('core_silver', 'abis'))
+    ('core', source('core_silver', 'abis')),
+    ('boba', source('boba_silver', 'abis'))
 ]
 %}
 

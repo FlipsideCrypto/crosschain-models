@@ -314,6 +314,31 @@ WITH base AS (
         created_block_timestamp,
         created_tx_hash,
         creator_address,
+        'boba' AS blockchain,
+        COALESCE(
+            inserted_timestamp,
+            '2000-01-01'
+        ) AS inserted_timestamp,
+        COALESCE(
+            modified_timestamp,
+            '2000-01-01'
+        ) AS modified_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
+    FROM
+        {{ source(
+            'boba_core',
+            'dim_contracts'
+        ) }}
+    UNION ALL
+    SELECT
+        address,
+        symbol,
+        NAME,
+        decimals,
+        created_block_number,
+        created_block_timestamp,
+        created_tx_hash,
+        creator_address,
         'sei' AS blockchain,
         COALESCE(
             inserted_timestamp,
