@@ -136,7 +136,11 @@ flat_table AS (
         'solana',
         'bitcoin', 
         'cosmos',
-        'eclipse'
+        'eclipse',
+        'ton',
+        'osmosis',
+        'terra',
+        'sei'
       ) THEN t.value :address :: STRING
       ELSE LOWER(
         t.value :address :: STRING
