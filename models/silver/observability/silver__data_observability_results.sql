@@ -92,7 +92,10 @@
   
     ('aleo', source('aleo_observ', 'blocks_completeness')),
     ('aleo', source('aleo_observ', 'transactions_completeness')),
-    ('aleo', source('aleo_observ', 'transitions_completeness'))
+    ('aleo', source('aleo_observ', 'transitions_completeness')),
+
+    ('movement', source('movement_observ', 'blocks_completeness')),
+    ('movement', source('movement_observ', 'transactions_completeness'))
 ]
 %}
 SELECT 
