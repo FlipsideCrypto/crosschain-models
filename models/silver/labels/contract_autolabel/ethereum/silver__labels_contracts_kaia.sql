@@ -28,23 +28,31 @@ base_labels AS (
         tx_hash,
         block_number,
         block_timestamp,
-        tx_status,
+        IFF(
+            tx_succeeded, 
+            'SUCCESS', 
+            'FAILED'
+        ) AS tx_status,
         from_address,
         to_address,
         TYPE,
-        identifier,
-        _inserted_timestamp
+        CONCAT(
+            TYPE,
+            '_',
+            trace_address
+        ) AS identifier,
+        modified_timestamp AS _inserted_timestamp
     FROM
         {{ source(
-            'kaia_silver',
-            'traces'
+            'kaia_core',
+            'fact_traces'
         ) }}
     WHERE
         TYPE IN (
             'CREATE',
             'CREATE2'
         )
-        AND tx_status = 'TRUE'
+        AND tx_succeeded
         AND to_address IS NOT NULL
         AND to_address NOT IN (
             SELECT
