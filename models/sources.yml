@@ -499,11 +499,11 @@ sources:
     database: avalanche
     schema: silver_observability
     tables:
-      - name: blocks_completeness
-      - name: logs_completeness
-      - name: receipts_completeness
-      - name: traces_completeness
-      - name: transactions_completeness
+      - name: blocks
+      - name: logs
+      - name: receipts
+      - name: traces
+      - name: transactions
   - name: cosmos_observ
     database: cosmos
     schema: silver_observability
@@ -520,73 +520,73 @@ sources:
     database: ethereum
     schema: silver_observability
     tables:
-      - name: blocks_completeness
-      - name: logs_completeness
-      - name: receipts_completeness
-      - name: traces_completeness
-      - name: transactions_completeness
+      - name: blocks
+      - name: logs
+      - name: receipts
+      - name: traces
+      - name: transactions
   - name: polygon_observ
     database: polygon
     schema: silver_observability
     tables:
-      - name: blocks_completeness
-      - name: logs_completeness
-      - name: receipts_completeness
-      - name: traces_completeness
-      - name: transactions_completeness
+      - name: blocks
+      - name: logs
+      - name: receipts
+      - name: traces
+      - name: transactions
   - name: bsc_observ
     database: bsc
     schema: silver_observability
     tables:
-      - name: blocks_completeness
-      - name: logs_completeness
-      - name: receipts_completeness
-      - name: traces_completeness
-      - name: transactions_completeness
+      - name: blocks
+      - name: logs
+      - name: receipts
+      - name: traces
+      - name: transactions
   - name: kaia_observ
     database: kaia
     schema: silver_observability
     tables:
-      - name: blocks_completeness
-      - name: logs_completeness
-      - name: receipts_completeness
-      - name: traces_completeness
+      - name: blocks
+      - name: logs
+      - name: receipts
+      - name: traces
   - name: arbitrum_observ
     database: arbitrum
     schema: silver_observability
     tables:
-      - name: blocks_completeness
-      - name: logs_completeness
-      - name: receipts_completeness
-      - name: traces_completeness
-      - name: transactions_completeness
+      - name: blocks
+      - name: logs
+      - name: receipts
+      - name: traces
+      - name: transactions
   - name: optimism_observ
     database: optimism
     schema: silver_observability
     tables:
-      - name: blocks_completeness
-      - name: logs_completeness
-      - name: receipts_completeness
-      - name: traces_completeness
-      - name: transactions_completeness
+      - name: blocks
+      - name: logs
+      - name: receipts
+      - name: traces
+      - name: transactions
   - name: blast_observ
     database: blast
     schema: silver_observability
     tables:
-      - name: blocks_completeness
-      - name: logs_completeness
-      - name: receipts_completeness
-      - name: traces_completeness
-      - name: transactions_completeness
+      - name: blocks
+      - name: logs
+      - name: receipts
+      - name: traces
+      - name: transactions
   - name: base_observ
     database: base
     schema: silver_observability
     tables:
-      - name: blocks_completeness
-      - name: logs_completeness
-      - name: receipts_completeness
-      - name: traces_completeness
-      - name: transactions_completeness
+      - name: blocks
+      - name: logs
+      - name: receipts
+      - name: traces
+      - name: transactions
   - name: base_silver
     database: base
     schema: silver
@@ -669,11 +669,11 @@ sources:
     database: gnosis
     schema: silver_observability
     tables:
-      - name: blocks_completeness
-      - name: logs_completeness
-      - name: receipts_completeness
-      - name: traces_completeness
-      - name: transactions_completeness
+      - name: blocks
+      - name: logs
+      - name: receipts
+      - name: traces
+      - name: transactions
   - name: github
     schema: bronze_api
     tables:
