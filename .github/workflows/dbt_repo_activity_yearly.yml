@@ -42,3 +42,10 @@ jobs:
         run: |
           dbt run-operation get_github_repo_data --args "{GITHUB_TOKEN: 'TOKEN', frequency: ['last_year']}"
           dbt run -m "crosschain_models,tag:github_activity"
+
+  notify-failure:
+    needs: [dbt]
+    if: failure()
+    uses: ./.github/workflows/slack_notify.yml
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

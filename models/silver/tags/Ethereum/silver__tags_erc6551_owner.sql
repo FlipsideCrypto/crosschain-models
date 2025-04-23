@@ -26,7 +26,7 @@ WITH pre_final AS (
     WHERE
         contract_address = LOWER('0x02101dfB77FDE026414827Fdc604ddAF224F0921')
         AND event_name = 'AccountCreated'
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
 
     {% if is_incremental() %}
     AND modified_timestamp > (

@@ -52,7 +52,7 @@ base_labels AS (
             'CREATE',
             'CREATE2'
         )
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
         AND to_address IS NOT NULL
         AND to_address NOT IN (
             SELECT

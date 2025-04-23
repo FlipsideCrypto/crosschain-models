@@ -6,8 +6,8 @@ on:
       - "main"
 
 env:
-  DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
-  DBT_VERSION: "${{ vars.DBT_VERSION }}"
+  DBT_PROFILES_DIR: ${{ vars.DBT_PROFILES_DIR }}
+
   ACCOUNT: "${{ vars.ACCOUNT }}"
   ROLE: "${{ vars.ROLE }}"
   USER: "${{ vars.USER }}"
@@ -19,7 +19,9 @@ env:
 
 concurrency:
   group: ${{ github.workflow }}
-  
+
+
+
 jobs:
   scheduled_run:
     name: docs_update
@@ -30,18 +32,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v4
         with:
-          python-version: "3.10.x"
-
+          python-version: "3.10"
+          cache: "pip"
       - name: install dependencies
         run: |
-          pip install dbt-snowflake==1.3.0
+          pip install dbt-snowflake==1.7.0
           dbt deps
-
       - name: checkout docs branch
         run: |
-          git checkout -B docs origin/main
+          git checkout -b docs origin/main
           
       - name: generate dbt docs
         run: dbt docs generate -t prod
@@ -67,3 +68,10 @@ jobs:
       - name: push changes to docs
         run: |
           git push -f --set-upstream origin docs
+
+  notify-failure:
+    needs: [scheduled_run]
+    if: failure()
+    uses: ./.github/workflows/slack_notify.yml
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
