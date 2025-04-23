@@ -20,7 +20,7 @@ WITH tokens AS (
     WHERE
         utils.udf_hex_to_int(SUBSTR(DATA, 3, 64)) :: FLOAT IS NOT NULL
         AND topics [0] :: STRING = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
 ),
 nfts AS (
     SELECT
@@ -35,7 +35,7 @@ nfts AS (
     WHERE
         utils.udf_hex_to_int(SUBSTR(DATA, 3, 64)) :: FLOAT IS NULL
         AND topics [0] :: STRING = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
 )
 SELECT
     DISTINCT CURRENT_DATE :: TIMESTAMP AS system_created_at,

@@ -46,7 +46,7 @@ WITH t1 AS (
     WHERE
         origin_function_signature = '0x2e7ba6ef' -- Claim function
         AND event_name = 'Transfer'
-        AND tx_status = 'SUCCESS'
+        AND tx_succeeded
 ),
 t2 AS (
     SELECT
