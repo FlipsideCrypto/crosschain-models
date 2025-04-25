@@ -118,6 +118,10 @@ mapping AS (
                 'bnb'
             ) THEN 'bsc'
             WHEN platform IN (
+                'bob network',
+                'bob-network'
+            ) THEN 'bob'
+            WHEN platform IN (
                 'gnosis',
                 'xdai',
                 'gnosis chain'
