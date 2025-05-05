@@ -1,8 +1,15 @@
 {{ config (
     materialized = "view",
-    post_hook = if_data_call_function(
-        func = "{{this.schema}}.udf_bulk_rest_api_v2(object_construct('sql_source', '{{this.identifier}}', 'external_table', 'UNIFAI_SWAP_TXS', 'sql_limit', {{var('sql_limit','100')}}, 'producer_batch_size', {{var('producer_batch_size','100')}}, 'worker_batch_size', {{var('worker_batch_size','25')}}))",
-        target = "{{this.schema}}.{{this.identifier}}"
+    post_hook = fsc_utils.if_data_call_function_v2(
+        func = 'streamline.udf_bulk_rest_api_v2',
+        target = "{{this.schema}}.{{this.identifier}}",
+        params ={ "external_table" :"UNIFAI_SWAP_TXS",
+        "sql_limit" :"100",
+        "producer_batch_size" :"100",
+        "worker_batch_size" :"25",
+        "sql_source": "{{this.identifier}}",
+        "exploded_key": tojson(["result"]),
+        }
     ),
     tags = ['streamline_unifai_swap_txs_realtime']
 ) }}
@@ -12,7 +19,7 @@ WITH run_times AS (
         run_time
     FROM {{ ref('streamline__runtimes_daily') }}
     where run_time >= '2025-03-28'
-    
+
     EXCEPT
 
     SELECT
