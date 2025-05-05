@@ -23,18 +23,18 @@
 {% endif %}
 
 SELECT
-    t.value:createdAt::timestamp_ntz AS created_at_timestamp,
-    t.value:txHash::string AS tx_hash,
-    t.value:chain::string AS chain,
-    t.value:metadata:amount::int AS amount,
-    t.value:metadata:inputToken::string AS input_token,
-    t.value:metadata:outputToken::string AS output_token,
-    t.value:metadata:slippage::int AS slippage,
-    t.value:status::string AS status,
-    t.value:txType::string AS tx_type,
-    t.value:user::string AS user,
-    t.value:wallet:address::string AS wallet_address,
-    t.value:wallet:chain::string AS wallet_chain,
+    value:data:createdAt::timestamp_ntz AS created_at_timestamp,
+    value:data:txHash::string AS tx_hash,
+    value:data:chain::string AS chain,
+    value:data:metadata:amount::int AS amount,
+    value:data:metadata:inputToken::string AS input_token,
+    value:data:metadata:outputToken::string AS output_token,
+    value:data:metadata:slippage::int AS slippage,
+    value:data:status::string AS status,
+    value:data:txType::string AS tx_type,
+    value:data:user::string AS user,
+    value:data:wallet:address::string AS wallet_address,
+    value:data:wallet:chain::string AS wallet_chain,
     partition_key,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
@@ -44,14 +44,11 @@ SELECT
 FROM 
 
 {% if is_incremental() %}
-    {{ ref('bronze__streamline_unifai_swap_txs') }} a,
-{% else %}
-    {{ ref('bronze__streamline_FR_unifai_swap_txs') }} a,
-{% endif %}
-    TABLE(FLATTEN(data:data)) t
-{% if is_incremental() %}
+    {{ ref('bronze__streamline_unifai_swap_txs') }}
 WHERE 
     _inserted_timestamp >= '{{ max_inserted_timestamp }}'
+{% else %}
+    {{ ref('bronze__streamline_FR_unifai_swap_txs') }} a
 {% endif %}
 QUALIFY
     row_number() OVER (PARTITION BY created_at_timestamp, tx_hash ORDER BY _inserted_timestamp DESC) = 1

@@ -7,7 +7,7 @@
 SELECT
     partition_key,
     TO_TIMESTAMP_NTZ(partition_key, 'YYYY_MM_DD') as run_date,
-    _inserted_timestamp
+    max(_inserted_timestamp) as _inserted_timestamp
 FROM
     {{ ref('bronze__streamline_unifai_swap_txs') }}
 
@@ -19,5 +19,6 @@ where _inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
+GROUP BY 1,2
 
 

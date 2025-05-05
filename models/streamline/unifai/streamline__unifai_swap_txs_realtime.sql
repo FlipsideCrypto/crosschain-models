@@ -8,7 +8,7 @@
         "producer_batch_size" :"100",
         "worker_batch_size" :"25",
         "sql_source": "{{this.identifier}}",
-        "exploded_key": tojson(["result"]),
+        "exploded_key": tojson(["data"]),
         }
     ),
     tags = ['streamline_unifai_swap_txs_realtime']
