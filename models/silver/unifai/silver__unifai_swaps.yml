@@ -1,0 +1,60 @@
+version: 2
+models:
+  - name: silver__unifai_swaps
+    recent_date_filter: &recent_date_filter
+      config:
+        where: _inserted_timestamp >= current_date - 7
+    columns:
+      - name: CREATED_AT_TIMESTAMP
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 2
+      - name: TX_HASH
+        tests:
+          - not_null: *recent_date_filter
+          - unique:
+              config:
+                where: >
+                  _inserted_timestamp::date >= current_date - 7
+      - name: CHAIN
+        tests:
+          - not_null: *recent_date_filter
+      - name: AMOUNT
+        tests:
+          - not_null: *recent_date_filter
+      - name: INPUT_TOKEN
+        tests:
+          - not_null: *recent_date_filter
+      - name: OUTPUT_TOKEN
+        tests:
+          - not_null: *recent_date_filter
+      - name: SLIPPAGE
+      - name: STATUS
+        tests:
+          - not_null: *recent_date_filter
+      - name: TX_TYPE
+        tests:
+          - not_null: *recent_date_filter
+      - name: USER
+        tests:
+          - not_null: *recent_date_filter
+      - name: WALLET_ADDRESS
+        tests:
+          - not_null: *recent_date_filter
+      - name: WALLET_CHAIN
+        tests:
+          - not_null: *recent_date_filter
+      - name: _INSERTED_TIMESTAMP
+        data_tests: 
+          - not_null
+      - name: UNIFAI_SWAPS_ID
+        data_tests: 
+          - not_null: *recent_date_filter
+      - name: INSERTED_TIMESTAMP
+        data_tests: 
+          - not_null: *recent_date_filter
+      - name: MODIFIED_TIMESTAMP
+        data_tests: 
+          - not_null: *recent_date_filter

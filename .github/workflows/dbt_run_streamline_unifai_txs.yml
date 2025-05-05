@@ -1,15 +1,14 @@
-name: dbt_run_scheduled_daily
-run-name: dbt_run_scheduled_daily
+name: dbt_run_streamline_unifai_txs
+run-name: dbt_run_streamline_unifai_txs
 
 on:
   workflow_dispatch:
-  schedule:
-    # Runs 02:00 daily (see https://crontab.guru)
-    - cron: '0 2 * * *'
-    
+    branches:
+      - "main"
+
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
-  DBT_VERSION: "${{ vars.DBT_VERSION }}"
+
   ACCOUNT: "${{ vars.ACCOUNT }}"
   ROLE: "${{ vars.ROLE }}"
   USER: "${{ vars.USER }}"
@@ -25,7 +24,7 @@ concurrency:
 jobs:
   run_dbt_jobs:
     runs-on: ubuntu-latest
-    environment:
+    environment: 
       name: workflow_prod
 
     steps:
@@ -33,7 +32,7 @@ jobs:
 
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "${{ vars.PYTHON_VERSION }}"
           cache: "pip"
 
       - name: install dependencies
@@ -42,7 +41,7 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run -m "crosschain_models,tag:daily" "crosschain_models,tag:unifai_daily"
+          dbt run -s streamline__unifai_swap_txs_complete streamline__unifai_swap_txs_realtime --vars '{STREAMLINE_INVOKE_STREAMS: True}'
 
   notify-failure:
     needs: [run_dbt_jobs]
