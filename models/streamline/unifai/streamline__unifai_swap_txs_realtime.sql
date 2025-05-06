@@ -29,17 +29,18 @@ WITH run_times AS (
 
 SELECT
     TO_CHAR(TO_TIMESTAMP_NTZ(run_time), 'YYYY_MM_DD') AS partition_key,
-    live.udf_api(
+    crosschain.live.udf_api(
         'GET',
         CONCAT(
-            'https://uniq-data-api.unifai.network/swap-txns?startDate=',
+            '{service}swap-txns?startDate=',
             TO_VARCHAR(run_time, 'YYYY-MM-DD'), 'T00%3A00%3A00Z&endDate=',
             TO_VARCHAR(run_time, 'YYYY-MM-DD'), 'T23%3A59%3A59Z'
         ),
         OBJECT_CONSTRUCT(
             'Content-Type', 'application/json',
-            'Authorization', 'w5mu060ZvFgPsutC1Zj91GnaR3zWlujl'
+            'Authorization', '{authentication}'
         ),
-        {}
+        {},
+        'Vault/prod/crosschain/unifai'
     ) AS request
 from run_times
