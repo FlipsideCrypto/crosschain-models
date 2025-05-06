@@ -41,7 +41,8 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run -s streamline__unifai_swap_txs_complete streamline__unifai_swap_txs_realtime --vars '{STREAMLINE_INVOKE_STREAMS: True}'
+          dbt run -m 2+streamline__unifai_swap_txs_complete streamline__unifai_swap_txs_realtime --vars '{STREAMLINE_INVOKE_STREAMS: True}'
+          dbt run -m 2+streamline__unifai_purchase_txs_complete streamline__unifai_purchase_txs_realtime --vars '{STREAMLINE_INVOKE_STREAMS: True}'
 
   notify-failure:
     needs: [run_dbt_jobs]
