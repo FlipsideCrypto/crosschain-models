@@ -1,0 +1,56 @@
+version: 2
+models:
+  - name: silver__unifai_purchases
+    recent_date_filter: &recent_date_filter
+      config:
+        where: _inserted_timestamp >= current_date - 7
+    columns:
+      - name: CREATED_AT_TIMESTAMP
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 2
+      - name: TX_HASH
+        tests:
+          - not_null: *recent_date_filter
+          - unique:
+              config:
+                where: >
+                  _inserted_timestamp::date >= current_date - 7
+      - name: CHAIN
+        tests:
+          - not_null: *recent_date_filter
+      - name: STATUS
+        tests:
+          - not_null: *recent_date_filter
+      - name: FROM_ADDRESS
+        tests:
+          - not_null: *recent_date_filter
+      - name: TO_ADDRESS
+        tests:
+          - not_null: *recent_date_filter
+      - name: TOKEN_AMOUNT
+        tests:
+          - not_null: *recent_date_filter
+      - name: TOKEN_SYMBOL
+        tests:
+          - not_null: *recent_date_filter
+      - name: TOKEN_VALUE
+        tests:
+          - not_null: *recent_date_filter
+      - name: USER
+        tests:
+          - not_null: *recent_date_filter
+      - name: _INSERTED_TIMESTAMP
+        data_tests: 
+          - not_null
+      - name: UNIFAI_PURCHASES_ID
+        data_tests: 
+          - not_null: *recent_date_filter
+      - name: INSERTED_TIMESTAMP
+        data_tests: 
+          - not_null: *recent_date_filter
+      - name: MODIFIED_TIMESTAMP
+        data_tests: 
+          - not_null: *recent_date_filter

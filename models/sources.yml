@@ -428,6 +428,7 @@ sources:
       - name: asset_metadata_coin_market_cap_api_v2
       - name: asset_ohlc_coin_market_cap_api_v2
       - name: unifai_swap_txs
+      - name: unifai_purchase_txs
   - name: bronze
     database: crosschain
     schema: bronze
