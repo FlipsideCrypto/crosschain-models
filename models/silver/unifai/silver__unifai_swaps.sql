@@ -1,9 +1,9 @@
 {{ config(
-    materialized = 'incremental',
-    unique_key = ['unifai_swaps_id'],
+  materialized = 'incremental',
+  unique_key = ['unifai_swaps_id'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['created_at_timestamp::DATE','_inserted_timestamp::DATE'],
-    tags = ['unifai_daily']
+  cluster_by = ['created_at_timestamp::DATE','_inserted_timestamp::DATE'],
+  tags = ['unifai_daily']
 ) }}
 -- depends_on: {{ ref('bronze__streamline_unifai_swap_txs') }}
 -- depends_on: {{ ref('bronze__streamline_FR_unifai_swap_txs') }}
@@ -39,7 +39,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['tx_hash']) }} AS unifai_swaps_id,
+    {{ dbt_utils.generate_surrogate_key(['tx_hash', 'chain']) }} AS unifai_swaps_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM 
 
@@ -51,4 +51,4 @@ WHERE
     {{ ref('bronze__streamline_FR_unifai_swap_txs') }} a
 {% endif %}
 QUALIFY
-    row_number() OVER (PARTITION BY created_at_timestamp, tx_hash ORDER BY _inserted_timestamp DESC) = 1
+    row_number() OVER (PARTITION BY created_at_timestamp, tx_hash, chain ORDER BY _inserted_timestamp DESC) = 1
