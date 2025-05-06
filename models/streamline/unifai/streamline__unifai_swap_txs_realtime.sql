@@ -6,7 +6,7 @@
         params ={ "external_table" :"UNIFAI_SWAP_TXS",
         "sql_limit" :"100",
         "producer_batch_size" :"100",
-        "worker_batch_size" :"25",
+        "worker_batch_size" :"100",
         "sql_source": "{{this.identifier}}",
         "exploded_key": tojson(["data"]),
         }
