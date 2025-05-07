@@ -73,6 +73,10 @@ There is more information on how to use dbt docs in the last section of this doc
 ### ENS Tables (crosschain.ens)
 - [ez_ens_domains](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.ens__ez_ens_domains)
 
+### UnifAi Tables (crosschain.unifai)
+- [fact_swaps](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.unifai__fact_swaps)
+- [fact_purchases](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.unifai__fact_purchases)
+
 ## **Helpful User-Defined Functions (UDFs)**
 
 UDFs are custom functions built by the Flipside team that can be used in your queries to make your life easier. 
