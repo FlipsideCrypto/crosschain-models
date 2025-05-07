@@ -2,7 +2,7 @@
     materialized = 'incremental',
     unique_key = ['fact_purchases_id'],
     incremental_strategy = 'delete+insert',
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_hash, from_address, to_address, user)",
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_hash, from_address, to_address)",
     cluster_by = ['created_at_timestamp::DATE','chain'],
     meta ={ 'database_tags':{ 'table':{ 'PROTOCOL': 'UNIFAI',
     'PURPOSE': 'PURCHASES',
@@ -32,7 +32,6 @@ SELECT
     token_amount,
     token_symbol,
     token_value,
-    user,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     unifai_purchases_id as fact_purchases_id
