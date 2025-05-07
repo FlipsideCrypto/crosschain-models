@@ -1,0 +1,39 @@
+version: 2
+models:
+  - name: unifai__fact_purchases
+    description: '{{ doc("unifai_fact_purchases_table_doc") }}'
+    columns:
+      - name: CREATED_AT_TIMESTAMP
+        description: '{{ doc("unifai_created_at_timestamp") }}'
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 2
+      - name: TX_HASH
+        description: '{{ doc("unifai_tx_hash") }}'
+      - name: CHAIN
+        description: '{{ doc("unifai_chain") }}'
+      - name: STATUS
+        description: '{{ doc("unifai_status") }}'
+      - name: FROM_ADDRESS
+        description: '{{ doc("unifai_from_address") }}'
+      - name: TO_ADDRESS
+        description: '{{ doc("unifai_to_address") }}'
+      - name: TOKEN_AMOUNT
+        description: '{{ doc("unifai_token_amount") }}'
+      - name: TOKEN_SYMBOL
+        description: '{{ doc("unifai_token_symbol") }}'
+      - name: TOKEN_VALUE
+        description: '{{ doc("unifai_token_value") }}'
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}'
+      - name: FACT_PURCHASES_ID
+        description: '{{ doc("pk") }}'   
+        tests:
+          - unique
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 
