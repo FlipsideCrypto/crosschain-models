@@ -1,0 +1,41 @@
+version: 2
+models:
+  - name: unifai__fact_swaps
+    description: '{{ doc("unifai_fact_swaps_table_doc") }}'
+    columns:
+      - name: CREATED_AT_TIMESTAMP
+        description: '{{ doc("unifai_created_at_timestamp") }}'
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 2
+      - name: TX_HASH
+        description: '{{ doc("unifai_tx_hash") }}'
+      - name: CHAIN
+        description: '{{ doc("unifai_chain") }}'
+      - name: AMOUNT
+        description: '{{ doc("unifai_token_amount") }}'
+      - name: INPUT_TOKEN
+        description: '{{ doc("unifai_input_token") }}'
+      - name: OUTPUT_TOKEN
+        description: '{{ doc("unifai_output_token") }}'
+      - name: SLIPPAGE
+        description: '{{ doc("unifai_slippage") }}'
+      - name: STATUS
+        description: '{{ doc("unifai_status") }}'
+      - name: TX_TYPE
+        description: '{{ doc("unifai_tx_type") }}'
+      - name: USER
+        description: '{{ doc("unifai_user") }}'
+      - name: WALLET_ADDRESS
+        description: '{{ doc("unifai_wallet_address") }}'
+      - name: WALLET_CHAIN
+        description: '{{ doc("unifai_wallet_chain") }}'
+      - name: FACT_SWAPS_ID
+        description: '{{ doc("pk") }}'   
+        tests:
+          - unique
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 
