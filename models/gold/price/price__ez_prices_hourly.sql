@@ -14,7 +14,8 @@ SELECT
         OR blockchain IN (
             'solana',
             'bitcoin',
-            'flow'
+            'flow',
+            'aptos'
         ) THEN p.token_address
         ELSE LOWER(
             p.token_address
