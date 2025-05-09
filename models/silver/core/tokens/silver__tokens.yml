@@ -1,0 +1,18 @@
+version: 2
+models:
+  - name: silver__tokens
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ADDRESS
+            - BLOCKCHAIN
+    columns:
+      - name: ADDRESS
+        description: The full address
+        tests:
+          - not_null
+      - name: BLOCKCHAIN
+        description: The name of the blockchain
+        tests:
+          - not_null             
+  
