@@ -43,8 +43,11 @@ FROM
     {{ ref('bronze__streamline_unifai_purchase_txs') }}
 WHERE 
     _inserted_timestamp >= '{{ max_inserted_timestamp }}'
+    AND created_at_timestamp IS NOT NULL
 {% else %}
-    {{ ref('bronze__streamline_FR_unifai_purchase_txs') }} a
+    {{ ref('bronze__streamline_FR_unifai_purchase_txs') }}
+WHERE 
+    created_at_timestamp IS NOT NULL
 {% endif %}
 QUALIFY
     row_number() OVER (PARTITION BY created_at_timestamp, tx_hash, chain ORDER BY _inserted_timestamp DESC) = 1
