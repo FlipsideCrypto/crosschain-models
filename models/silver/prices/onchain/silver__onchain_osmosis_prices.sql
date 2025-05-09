@@ -47,6 +47,7 @@ WITH base AS (
             'osmosis_silver',
             'pool_token_prices_usd'
         ) }} A
+        where A.price_usd  is not null
 )
 SELECT
     id,
