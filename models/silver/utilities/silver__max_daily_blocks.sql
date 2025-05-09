@@ -12,7 +12,7 @@
     ('base', source('base_silver', 'blocks')),
     ('gnosis', source('gnosis_silver', 'blocks')),
     ('blast', source('blast_silver', 'blocks')),
-    ('kaia', source('kaia_gold', 'fact_blocks')),
+    ('kaia', source('kaia_core', 'fact_blocks')),
 ]
 %}
 

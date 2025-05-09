@@ -1,130 +1,72 @@
 version: 2
 
 sources:
-  - name: crosschain_dev_silver
-    database: crosschain_dev
-    schema: silver
-    tables:
-      - name: dates_table
-  - name: ethereum_core
-    database: ethereum
+  #=============================================================================
+  # ALEO
+  #=============================================================================
+  - name: aleo_core
+    database: aleo
     schema: core
     tables:
-      - name: fact_transactions
-      - name: fact_event_logs
-      - name: fact_traces
-      - name: ez_decoded_event_logs
-      - name: ez_native_transfers
-      - name: ez_token_transfers
-      - name: ez_current_balances
-      - name: dim_contracts
-  - name: ronin_core
-    database: ronin
-    schema: core
+      - name: dim_token_registrations
+
+  - name: aleo_observ
+    database: aleo
+    schema: silver_observability
     tables:
-      - name: fact_transactions
-      - name: fact_event_logs
-      - name: fact_traces
-      - name: ez_decoded_event_logs
-      - name: ez_native_transfers
-      - name: ez_token_transfers
-      - name: dim_contracts
-  - name: sei_evm_core
-    database: sei
-    schema: core_evm
+      - name: blocks_completeness
+      - name: transactions_completeness
+      - name: transitions_completeness
+
+  - name: aleo_stats
+    database: aleo
+    schema: stats
     tables:
-      - name: fact_transactions
-      - name: fact_event_logs
-      - name: fact_traces
-      - name: ez_decoded_event_logs
-      - name: ez_native_transfers
-      - name: ez_token_transfers
-      - name: dim_contracts
-  - name: ethereum_price
-    database: ethereum
-    schema: price
-    tables:
-      - name: ez_prices_hourly
-  - name: ethereum_nft
-    database: ethereum
-    schema: nft
-    tables:
-      - name: ez_nft_sales
-      - name: ez_nft_transfers
-  - name: ethereum_defi
-    database: ethereum
-    schema: defi
-    tables:
-      - name: ez_dex_swaps
-      - name: ez_bridge_activity
-      - name: ez_lending_borrows
-      - name: ez_lending_deposits
-      - name: ez_lending_flashloans
-      - name: ez_lending_liquidations
-      - name: ez_lending_repayments
-      - name: ez_lending_withdraws
-  - name: ethereum_silver
-    database: ethereum
-    schema: silver
-    tables:
-      - name: traces
-      - name: transactions
-      - name: labels
-      - name: abis
-      - name: contracts
-      - name: complete_event_abis
-      - name: blocks
-  - name: ethereum_ens
-    database: ethereum
-    schema: ens
-    tables:
-      - name: ez_ens_domains
-  - name: crosschain_silver
-    database: crosschain
-    schema: silver
-    tables:
-      - name: godmode_nft_minters
-      - name: optimism_delegates
-      - name: osmosis_developer_vesting_receivers
-      - name: aave_balancer_addresses
-      - name: uniswap_verified_token_tags
-  - name: crosschain_core
-    database: crosschain
-    schema: core
-    tables:
-      - name: address_labels
-      - name: dim_labels
-  - name: ethereum_silver_nft
-    database: ethereum
-    schema: silver_nft
-    tables:
-      - name: cryptopunk_sales
-      - name: looksrare_sales
-      - name: nftx_sales
-      - name: opensea_sales
-      - name: rarible_sales
-      - name: seaport_sales
-      - name: x2y2_sales
-      - name: blur_sales
-      - name: sudoswap_sales
-      - name: complete_nft_sales
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # ALGORAND
+  #=============================================================================
   - name: algorand_core
     database: algorand
     schema: core
     tables:
       - name: ez_transfer
       - name: dim_asset
-  - name: arbitrum_silver
-    database: arbitrum
-    schema: silver
+
+  #=============================================================================
+  # APTOS
+  #=============================================================================
+  - name: aptos_core
+    database: aptos
+    schema: core
     tables:
-      - name: traces
-      - name: transactions
-      - name: contracts
-      - name: complete_event_abis
-      - name: abis
-      - name: complete_nft_sales
-      - name: blocks
+      - name: dim_tokens
+      - name: fact_transfers
+      - name: ez_native_transfers
+
+  - name: aptos_defi
+    database: aptos
+    schema: defi
+    tables:
+      - name: fact_bridge_activity
+
+  - name: aptos_observ
+    database: aptos
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+
+  - name: aptos_stats
+    database: aptos
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # ARBITRUM
+  #=============================================================================
   - name: arbitrum_core
     database: arbitrum
     schema: core
@@ -136,6 +78,7 @@ sources:
       - name: ez_native_transfers
       - name: ez_token_transfers
       - name: dim_contracts
+
   - name: arbitrum_defi
     database: arbitrum
     schema: defi
@@ -148,17 +91,61 @@ sources:
       - name: ez_lending_liquidations
       - name: ez_lending_repayments
       - name: ez_lending_withdraws
-  - name: avalanche_silver
-    database: avalanche
+
+  - name: arbitrum_silver
+    database: arbitrum
     schema: silver
     tables:
       - name: traces
       - name: transactions
-      - name: abis
       - name: contracts
       - name: complete_event_abis
+      - name: abis
       - name: complete_nft_sales
       - name: blocks
+
+  - name: arbitrum_silver_dex
+    database: arbitrum
+    schema: silver_dex
+    tables:
+      - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
+
+  - name: arbitrum_silver_olas
+    database: arbitrum
+    schema: silver_olas
+    tables:
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+
+  - name: arbitrum_stats
+    database: arbitrum
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # AURORA
+  #=============================================================================
+  - name: aurora_observ
+    database: aurora
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: logs_completeness
+      - name: receipts_completeness
+      - name: transactions_completeness
+
+  - name: aurora_stats
+    database: aurora
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # AVALANCHE
+  #=============================================================================
   - name: avalanche_core
     database: avalanche
     schema: core
@@ -170,6 +157,7 @@ sources:
       - name: ez_native_transfers
       - name: ez_token_transfers
       - name: dim_contracts
+
   - name: avalanche_defi
     database: avalanche
     schema: defi
@@ -182,6 +170,174 @@ sources:
       - name: ez_lending_liquidations
       - name: ez_lending_repayments
       - name: ez_lending_withdraws
+
+  - name: avalanche_silver
+    database: avalanche
+    schema: silver
+    tables:
+      - name: traces
+      - name: transactions
+      - name: abis
+      - name: contracts
+      - name: complete_event_abis
+      - name: complete_nft_sales
+      - name: blocks
+
+  - name: avalanche_silver_dex
+    database: avalanche
+    schema: silver_dex
+    tables:
+      - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
+
+  - name: avalanche_stats
+    database: avalanche
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # AXELAR
+  #=============================================================================
+  - name: axelar_core
+    database: axelar
+    schema: core
+    tables:
+      - name: dim_tokens
+      - name: fact_blocks
+      - name: fact_transactions
+      - name: fact_transfers
+
+  - name: axelar_gov
+    database: axelar
+    schema: gov
+    tables:
+      - name: fact_governance_votes
+      - name: fact_validators
+
+  - name: axelar_observ
+    database: axelar
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+
+  - name: axelar_stats
+    database: axelar
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # BASE
+  #=============================================================================
+  - name: base_core
+    database: base
+    schema: core
+    tables:
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
+      - name: dim_contracts
+
+  - name: base_defi
+    database: base
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
+      - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
+
+  - name: base_silver
+    database: base
+    schema: silver
+    tables:
+      - name: traces
+      - name: transactions
+      - name: abis
+      - name: contracts
+      - name: complete_event_abis
+      - name: complete_nft_sales
+      - name: blocks
+
+  - name: base_silver_dex
+    database: base
+    schema: silver_dex
+    tables:
+      - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
+
+  - name: base_silver_olas
+    database: base
+    schema: silver_olas
+    tables:
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+
+  - name: base_stats
+    database: base
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # BERACHAIN
+  #=============================================================================
+  - name: berachain_bartio_silver
+    database: berachain
+    schema: silver_testnet
+    tables:
+      - name: abis
+      - name: complete_event_abis
+
+  - name: berachain_bartio_testnet
+    database: berachain
+    schema: testnet
+    tables:
+      - name: dim_contracts
+
+  #=============================================================================
+  # BITCOIN
+  #=============================================================================
+  - name: bitcoin_observ
+    database: bitcoin
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: inputs_completeness
+      - name: outputs_completeness
+      - name: txs_completeness
+
+  - name: bitcoin_stats
+    database: bitcoin
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # BLAST
+  #=============================================================================
+  - name: blast_core
+    database: blast
+    schema: core
+    tables:
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
+      - name: dim_contracts
+
   - name: blast_defi
     database: blast
     schema: defi
@@ -193,224 +349,83 @@ sources:
       - name: ez_lending_liquidations
       - name: ez_lending_repayments
       - name: ez_lending_withdraws
-  - name: polygon_silver
-    database: polygon
+
+  - name: blast_silver
+    database: blast
     schema: silver
     tables:
-      - name: traces
-      - name: blocks
-      - name: transactions
-      - name: abis
-      - name: contracts
-      - name: complete_event_abis
-      - name: complete_nft_sales
-      - name: polymarket_filled_orders
-  - name: polygon_core
-    database: polygon
-    schema: core
-    tables:
-      - name: fact_transactions
-      - name: fact_event_logs
-      - name: fact_traces
-      - name: ez_decoded_event_logs
-      - name: ez_native_transfers
-      - name: ez_token_transfers
-      - name: dim_contracts
-  - name: polygon_defi
-    database: polygon
-    schema: defi
-    tables:
-      - name: ez_dex_swaps
-      - name: ez_bridge_activity
-      - name: ez_lending_borrows
-      - name: ez_lending_deposits
-      - name: ez_lending_flashloans
-      - name: ez_lending_liquidations
-      - name: ez_lending_repayments
-      - name: ez_lending_withdraws
-  - name: optimism_silver
-    database: optimism
-    schema: silver
-    tables:
-      - name: traces
-      - name: transactions
-      - name: contracts
       - name: complete_event_abis
       - name: abis
-      - name: complete_nft_sales
+      - name: traces
       - name: blocks
-  - name: optimism_core
-    database: optimism
+
+  - name: blast_silver_dex
+    database: blast
+    schema: silver_dex
+    tables:
+      - name: complete_dex_liquidity_pools
+
+  - name: blast_stats
+    database: blast
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # BOB
+  #=============================================================================
+  - name: bob_core
+    database: bob
     schema: core
     tables:
-      - name: fact_transactions
-      - name: fact_event_logs
-      - name: fact_traces
-      - name: ez_decoded_event_logs
-      - name: ez_native_transfers
-      - name: ez_token_transfers
       - name: dim_contracts
-  - name: optimism_defi
-    database: optimism
-    schema: defi
-    tables:
-      - name: ez_dex_swaps
-      - name: ez_bridge_activity
-      - name: ez_lending_borrows
-      - name: ez_lending_deposits
-      - name: ez_lending_flashloans
-      - name: ez_lending_liquidations
-      - name: ez_lending_repayments
-      - name: ez_lending_withdraws
-  - name: bsc_silver
-    database: bsc
+
+  - name: bob_silver
+    database: bob
     schema: silver
     tables:
-      - name: traces
-      - name: transactions
-      - name: contracts
       - name: abis
       - name: complete_event_abis
-      - name: complete_nft_sales
-      - name: blocks
-  - name: bsc_core
-    database: bsc
+
+  #=============================================================================
+  # BOBA
+  #=============================================================================
+  - name: boba_core
+    database: boba
     schema: core
-    tables:
-      - name: fact_transactions
-      - name: fact_event_logs
-      - name: fact_traces
-      - name: ez_decoded_event_logs
-      - name: ez_native_transfers
-      - name: ez_token_transfers
-      - name: dim_contracts
-  - name: bsc_defi
-    database: bsc
-    schema: defi
-    tables:
-      - name: ez_dex_swaps
-      - name: ez_bridge_activity
-      - name: ez_lending_borrows
-      - name: ez_lending_deposits
-      - name: ez_lending_flashloans
-      - name: ez_lending_liquidations
-      - name: ez_lending_repayments
-      - name: ez_lending_withdraws
-  - name: thorchain_defi
-    database: thorchain
-    schema: defi
-    tables:
-      - name: fact_swaps
-      - name: fact_liquidity_actions
-  - name: thorchain_core
-    database: thorchain
-    schema: core
-    tables:
-      - name: fact_transfers
-      - name: dim_block
-  - name: flow_evm_core
-    database: flow
-    schema: core_evm
     tables:
       - name: dim_contracts
-  - name: flow_core
-    database: flow
-    schema: core
-    tables:
-      - name: ez_token_transfers
-  - name: flow_defi
-    database: flow
-    schema: defi
-    tables:
-      - name: ez_bridge_transactions
-      - name: ez_swaps
-  - name: solana_core
-    database: solana
-    schema: core
-    tables:
-      - name: fact_transfers
-      - name: dim_tokens
-  - name: solana_defi
-    database: solana
-    schema: defi
-    tables:
-      - name: fact_swaps
-      - name: fact_bridge_activity
-  - name: near_core
-    database: near
-    schema: core
-    tables:
-      - name: ez_token_transfers
-      - name: ez_dex_swaps
-      - name: dim_ft_contract_metadata
-  - name: near_defi
-    database: near
-    schema: defi
-    tables:
-      - name: fact_dex_swaps
-      - name: ez_dex_swaps
-      - name: fact_bridge_activity
-      - name: ez_bridge_activity
-  - name: near_silver
-    database: near
+
+  - name: boba_silver
+    database: boba
     schema: silver
     tables:
-      - name: logs_s3
-  - name: osmosis_silver
-    database: osmosis
-    schema: silver
+      - name: abis
+      - name: complete_event_abis
+
+  #=============================================================================
+  # BRONZE
+  #=============================================================================
+  - name: bronze
+    database: crosschain
+    schema: bronze
     tables:
-      - name: transactions
-      - name: asset_metadata
-      - name: prices_swaps
-      - name: pool_token_prices_usd
-      - name: swaps
-  - name: osmosis_core
-    database: osmosis
-    schema: core
+      - name: address_labels
+      - name: data_science_uploads
+      - name: legacy_prices
+      - name: legacy_market_asset_metadata
+      - name: legacy_hours
+
+  - name: bronze_dev
+    database: crosschain_dev
+    schema: bronze
     tables:
-      - name: fact_blocks
-      - name: fact_transactions
-      - name: fact_transfers
-      - name: dim_tokens
-  - name: osmosis_gov
-    database: osmosis
-    schema: gov
-    tables:
-      - name: fact_governance_votes
-      - name: fact_validators
-  - name: osmosis_defi
-    database: osmosis
-    schema: defi
-    tables:
-      - name: fact_swaps
-      - name: dim_liquidity_pools
-  - name: axelar_core
-    database: axelar
-    schema: core
-    tables:
-      - name: fact_blocks
-      - name: fact_transactions
-      - name: fact_transfers
-  - name: axelar_gov
-    database: axelar
-    schema: gov
-    tables:
-      - name: fact_governance_votes
-      - name: fact_validators
-  - name: cosmos_core
-    database: cosmos
-    schema: core
-    tables:
-      - name: fact_blocks
-      - name: fact_transactions
-      - name: fact_transfers
-  - name: cosmos_gov
-    database: cosmos
-    schema: gov
-    tables:
-      - name: fact_governance_votes
-      - name: fact_validators
+      - name: address_labels
+      - name: data_science_uploads
+      - name: legacy_prices
+      - name: legacy_market_asset_metadata
+      - name: legacy_hours
+
   - name: bronze_streamline
     database: streamline
     schema: |
@@ -429,408 +444,154 @@ sources:
       - name: asset_ohlc_coin_market_cap_api_v2
       - name: unifai_swap_txs
       - name: unifai_purchase_txs
-  - name: bronze
-    database: crosschain
-    schema: bronze
+
+  #=============================================================================
+  # BSC
+  #=============================================================================
+  - name: bsc_core
+    database: bsc
+    schema: core
     tables:
-      - name: address_labels
-      - name: data_science_uploads
-      - name: legacy_prices
-      - name: legacy_market_asset_metadata
-      - name: legacy_hours
-  - name: bronze_dev
-    database: crosschain_dev
-    schema: bronze
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
+      - name: dim_contracts
+
+  - name: bsc_defi
+    database: bsc
+    schema: defi
     tables:
-      - name: address_labels
-      - name: data_science_uploads
-      - name: legacy_prices
-      - name: legacy_market_asset_metadata
-      - name: legacy_hours
-  - name: ethereum_silver_dex
-    database: ethereum
-    schema: silver_dex
+      - name: ez_dex_swaps
+      - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
+
+  - name: bsc_silver
+    database: bsc
+    schema: silver
     tables:
-      - name: complete_dex_swaps
-      - name: complete_dex_liquidity_pools
-  - name: optimism_silver_dex
-    database: optimism
-    schema: silver_dex
-    tables:
-      - name: complete_dex_swaps
-      - name: complete_dex_liquidity_pools
-  - name: avalanche_silver_dex
-    database: avalanche
-    schema: silver_dex
-    tables:
-      - name: complete_dex_swaps
-      - name: complete_dex_liquidity_pools
-  - name: polygon_silver_dex
-    database: polygon
-    schema: silver_dex
-    tables:
-      - name: complete_dex_swaps
-      - name: complete_dex_liquidity_pools
+      - name: traces
+      - name: transactions
+      - name: contracts
+      - name: abis
+      - name: complete_event_abis
+      - name: complete_nft_sales
+      - name: blocks
+
   - name: bsc_silver_dex
     database: bsc
     schema: silver_dex
     tables:
       - name: complete_dex_swaps
       - name: complete_dex_liquidity_pools
-  - name: arbitrum_silver_dex
-    database: arbitrum
-    schema: silver_dex
-    tables:
-      - name: complete_dex_swaps
-      - name: complete_dex_liquidity_pools
-  - name: blast_silver_dex
-    database: blast
-    schema: silver_dex
-    tables:
-      - name: complete_dex_liquidity_pools
-  - name: solana_silver
-    database: solana
-    schema: silver
-    tables:
-      - name: token_metadata
-      - name: solscan_tokens
-      - name: events
-      - name: decoded_metadata
-      - name: mint_types
-  - name: cosmos_observ
-    database: cosmos
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: transactions_completeness
-  - name: osmosis_observ
-    database: osmosis
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: transactions_completeness
-  - name: base_silver
-    database: base
-    schema: silver
-    tables:
-      - name: traces
-      - name: transactions
-      - name: abis
-      - name: contracts
-      - name: complete_event_abis
-      - name: complete_nft_sales
-      - name: blocks
-  - name: base_silver_dex
-    database: base
-    schema: silver_dex
-    tables:
-      - name: complete_dex_swaps
-      - name: complete_dex_liquidity_pools
-  - name: base_core
-    database: base
-    schema: core
-    tables:
-      - name: fact_transactions
-      - name: fact_event_logs
-      - name: fact_traces
-      - name: ez_decoded_event_logs
-      - name: ez_native_transfers
-      - name: ez_token_transfers
-      - name: dim_contracts
-  - name: base_defi
-    database: base
-    schema: defi
-    tables:
-      - name: ez_dex_swaps
-      - name: ez_bridge_activity
-      - name: ez_lending_borrows
-      - name: ez_lending_deposits
-      - name: ez_lending_flashloans
-      - name: ez_lending_liquidations
-      - name: ez_lending_repayments
-      - name: ez_lending_withdraws
-  - name: gnosis_silver
-    database: gnosis
-    schema: silver
-    tables:
-      - name: complete_event_abis
-      - name: abis
-      - name: contracts
-      - name: traces
-      - name: blocks
-  - name: gnosis_silver_dex
-    database: gnosis
-    schema: silver_dex
-    tables:
-      - name: complete_dex_swaps
-      - name: complete_dex_liquidity_pools
-  - name: gnosis_core
-    database: gnosis
-    schema: core
-    tables:
-      - name: fact_transactions
-      - name: fact_event_logs
-      - name: fact_traces
-      - name: ez_decoded_event_logs
-      - name: ez_native_transfers
-      - name: ez_token_transfers
-      - name: dim_contracts
-  - name: gnosis_defi
-    database: gnosis
-    schema: defi
-    tables:
-      - name: ez_dex_swaps
-      - name: ez_bridge_activity
-      - name: ez_lending_borrows
-      - name: ez_lending_deposits
-      - name: ez_lending_flashloans
-      - name: ez_lending_liquidations
-      - name: ez_lending_repayments
-      - name: ez_lending_withdraws
-  - name: gnosis_observ
-    database: gnosis
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: logs_completeness
-      - name: receipts_completeness
-      - name: traces_completeness
-      - name: transactions_completeness
-  - name: github
-    schema: bronze_api
-    tables:
-      - name: github_repo_data
-  - name: axelar_observ
-    database: axelar
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: transactions_completeness
-  - name: terra_observ
-    database: terra
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: transactions_completeness
-  - name: sei_observ
-    database: sei
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: transactions_completeness
-  - name: aurora_observ
-    database: aurora
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: logs_completeness
-      - name: receipts_completeness
-      - name: transactions_completeness
-  - name: bitcoin_observ
-    database: bitcoin
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: inputs_completeness
-      - name: outputs_completeness
-      - name: txs_completeness
-  - name: flow_observ
-    database: flow
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: txs_completeness
-  - name: near_observ
-    database: near
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: chunks_completeness
-      - name: logs_completeness
-  - name: solana_observ
-    database: solana
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: transactions_completeness
-  - name: sei_core
-    database: sei
-    schema: core
-    tables:
-      - name: fact_msg_attributes
-      - name: transactions_completeness
-  - name: aptos_core
-    database: aptos
-    schema: core
-    tables:
-      - name: dim_tokens
-      - name: fact_transfers
-      - name: ez_native_transfers
-  - name: aptos_defi
-    database: aptos
-    schema: defi
-    tables:
-      - name: fact_bridge_activity
-  - name: aptos_observ
-    database: aptos
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: transactions_completeness
-  - name: lava_observ
-    database: lava
-    schema: silver_observability
-    tables:
-      - name: blocks_completeness
-      - name: transactions_completeness
-  - name: ethereum_stats
-    database: ethereum
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: optimism_stats
-    database: optimism
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: arbitrum_stats
-    database: arbitrum
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
+
   - name: bsc_stats
     database: bsc
     schema: stats
     tables:
       - name: ez_core_metrics_hourly
-  - name: polygon_stats
-    database: polygon
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: blast_stats
-    database: blast
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: base_stats
-    database: base
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: gnosis_stats
-    database: gnosis
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: avalanche_stats
-    database: avalanche
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: sei_stats
-    database: sei
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: cosmos_stats
-    database: cosmos
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: terra_stats
-    database: terra
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: osmosis_stats
-    database: osmosis
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: axelar_stats
-    database: axelar
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: flow_stats
-    database: flow
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: solana_stats
-    database: solana
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: aptos_stats
-    database: aptos
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: near_stats
-    database: near
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: aurora_stats
-    database: aurora
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: bitcoin_stats
-    database: bitcoin
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: lava_stats
-    database: lava
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: eclipse_stats
-    database: eclipse
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: blast_silver
-    database: blast
-    schema: silver
-    tables:
-      - name: complete_event_abis
-      - name: abis
-      - name: traces
-      - name: blocks
-  - name: mantle_silver
-    database: mantle
-    schema: silver
-    tables:
-      - name: complete_event_abis
-      - name: abis
-  - name: mantle_core
-    database: mantle
+
+  #=============================================================================
+  # CORE
+  #=============================================================================
+  - name: core_core
+    database: core
     schema: core
     tables:
-      - name: fact_transactions
-      - name: fact_event_logs
-      - name: fact_traces
-      - name: ez_decoded_event_logs
-      - name: ez_native_transfers
-      - name: ez_token_transfers
       - name: dim_contracts
+
   - name: core_silver
     database: core
     schema: silver
     tables:
       - name: complete_event_abis
       - name: abis
-  - name: core_core
-    database: core
+
+  #=============================================================================
+  # COSMOS
+  #=============================================================================
+  - name: cosmos_core
+    database: cosmos
     schema: core
     tables:
-      - name: dim_contracts
-  - name: blast_core
-    database: blast
+      - name: dim_tokens
+      - name: fact_blocks
+      - name: fact_transactions
+      - name: fact_transfers
+
+  - name: cosmos_gov
+    database: cosmos
+    schema: gov
+    tables:
+      - name: fact_governance_votes
+      - name: fact_validators
+
+  - name: cosmos_observ
+    database: cosmos
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+
+  - name: cosmos_stats
+    database: cosmos
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # CROSSCHAIN
+  #=============================================================================
+  - name: crosschain_core
+    database: crosschain
+    schema: core
+    tables:
+      - name: address_labels
+      - name: dim_labels
+
+  - name: crosschain_dev_silver
+    database: crosschain_dev
+    schema: silver
+    tables:
+      - name: dates_table
+
+  - name: crosschain_silver
+    database: crosschain
+    schema: silver
+    tables:
+      - name: godmode_nft_minters
+      - name: optimism_delegates
+      - name: osmosis_developer_vesting_receivers
+      - name: aave_balancer_addresses
+      - name: uniswap_verified_token_tags
+
+  #=============================================================================
+  # ECLIPSE
+  #=============================================================================
+  - name: eclipse_core
+    database: eclipse
+    schema: core
+    tables:
+      - name: fact_transfers
+
+  - name: eclipse_stats
+    database: eclipse
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # ETHEREUM
+  #=============================================================================
+  - name: ethereum_core
+    database: ethereum
     schema: core
     tables:
       - name: fact_transactions
@@ -839,32 +600,75 @@ sources:
       - name: ez_decoded_event_logs
       - name: ez_native_transfers
       - name: ez_token_transfers
+      - name: ez_current_balances
       - name: dim_contracts
-  - name: github_actions
-    database: crosschain
-    schema: github_actions
+
+  - name: ethereum_defi
+    database: ethereum
+    schema: defi
     tables:
-      - name: workflows
-  - name: kaia_gold
-    database: kaia
-    schema: core
+      - name: ez_dex_swaps
+      - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
+
+  - name: ethereum_ens
+    database: ethereum
+    schema: ens
     tables:
-      - name: fact_blocks
-  - name: kaia_silver
-    database: kaia
+      - name: ez_ens_domains
+
+  - name: ethereum_nft
+    database: ethereum
+    schema: nft
+    tables:
+      - name: ez_nft_sales
+      - name: ez_nft_transfers
+
+  - name: ethereum_price
+    database: ethereum
+    schema: price
+    tables:
+      - name: ez_prices_hourly
+
+  - name: ethereum_silver
+    database: ethereum
     schema: silver
     tables:
-      - name: complete_event_abis
-      - name: abis
       - name: traces
-      - name: blocks
       - name: transactions
-  - name: sei_evm_silver
-    database: sei
-    schema: silver_evm
-    tables:
+      - name: labels
       - name: abis
+      - name: contracts
       - name: complete_event_abis
+      - name: blocks
+
+  - name: ethereum_silver_dex
+    database: ethereum
+    schema: silver_dex
+    tables:
+      - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
+
+  - name: ethereum_silver_nft
+    database: ethereum
+    schema: silver_nft
+    tables:
+      - name: cryptopunk_sales
+      - name: looksrare_sales
+      - name: nftx_sales
+      - name: opensea_sales
+      - name: rarible_sales
+      - name: seaport_sales
+      - name: x2y2_sales
+      - name: blur_sales
+      - name: sudoswap_sales
+      - name: complete_nft_sales
+
   - name: ethereum_silver_olas
     database: ethereum
     schema: silver_olas
@@ -878,6 +682,126 @@ sources:
       - name: service_event_logs
       - name: service_registrations
       - name: unit_registrations
+
+  - name: ethereum_stats
+    database: ethereum
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # EXTERNAL
+  #=============================================================================
+  - name: external_silver
+    database: external
+    schema: silver
+    tables:
+      - name: polymarket_markets
+
+  #=============================================================================
+  # FLOW
+  #=============================================================================
+  - name: flow_core
+    database: flow
+    schema: core
+    tables:
+      - name: ez_token_transfers
+
+  - name: flow_defi
+    database: flow
+    schema: defi
+    tables:
+      - name: ez_bridge_transactions
+      - name: ez_swaps
+
+  - name: flow_evm_core
+    database: flow
+    schema: core_evm
+    tables:
+      - name: dim_contracts
+
+  - name: flow_observ
+    database: flow
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: txs_completeness
+
+  - name: flow_stats
+    database: flow
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # GITHUB
+  #=============================================================================
+  - name: github
+    schema: bronze_api
+    tables:
+      - name: github_repo_data
+
+  - name: github_actions
+    database: crosschain
+    schema: github_actions
+    tables:
+      - name: workflows
+
+  #=============================================================================
+  # GNOSIS
+  #=============================================================================
+  - name: gnosis_core
+    database: gnosis
+    schema: core
+    tables:
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
+      - name: dim_contracts
+
+  - name: gnosis_defi
+    database: gnosis
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
+      - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
+
+  - name: gnosis_observ
+    database: gnosis
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: logs_completeness
+      - name: receipts_completeness
+      - name: traces_completeness
+      - name: transactions_completeness
+
+  - name: gnosis_silver
+    database: gnosis
+    schema: silver
+    tables:
+      - name: complete_event_abis
+      - name: abis
+      - name: contracts
+      - name: traces
+      - name: blocks
+
+  - name: gnosis_silver_dex
+    database: gnosis
+    schema: silver_dex
+    tables:
+      - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
+
   - name: gnosis_silver_olas
     database: gnosis
     schema: silver_olas
@@ -891,41 +815,32 @@ sources:
       - name: service_checkpoint
       - name: services_evicted
       - name: service_staking
-  - name: optimism_silver_olas
-    database: optimism
-    schema: silver_olas
+
+  - name: gnosis_stats
+    database: gnosis
+    schema: stats
     tables:
-      - name: registry_metadata_complete
-      - name: service_event_logs
-      - name: service_registrations
-  - name: base_silver_olas
-    database: base
-    schema: silver_olas
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # INK
+  #=============================================================================
+  - name: ink_core
+    database: ink
+    schema: core
     tables:
-      - name: registry_metadata_complete
-      - name: service_event_logs
-      - name: service_registrations
-  - name: arbitrum_silver_olas
-    database: arbitrum
-    schema: silver_olas
+      - name: dim_contracts
+
+  - name: ink_silver
+    database: ink
+    schema: silver
     tables:
-      - name: registry_metadata_complete
-      - name: service_event_logs
-      - name: service_registrations
-  - name: polygon_silver_olas
-    database: polygon
-    schema: silver_olas
-    tables:
-      - name: registry_metadata_complete
-      - name: service_event_logs
-      - name: service_registrations
-  - name: solana_silver_olas
-    database: solana
-    schema: silver_olas
-    tables:
-      - name: service_event_logs
-      - name: service_registrations
-      - name: registry_metadata_complete
+      - name: abis
+      - name: complete_event_abis
+
+  #=============================================================================
+  # KAIA
+  #=============================================================================
   - name: kaia_core
     database: kaia
     schema: core
@@ -937,97 +852,471 @@ sources:
       - name: ez_native_transfers
       - name: ez_token_transfers
       - name: dim_contracts
+      - name: fact_blocks
+
   - name: kaia_defi
     database: kaia
     schema: defi
     tables:
       - name: ez_dex_swaps
       - name: dim_dex_liquidity_pools
+
   - name: kaia_price
     database: kaia
     schema: price
     tables:
       - name: ez_prices_hourly
-  - name: external_silver
-    database: external
+
+  - name: kaia_silver
+    database: kaia
     schema: silver
     tables:
-      - name: polymarket_markets
-  - name: berachain_bartio_silver
-    database: berachain
-    schema: silver_testnet
-    tables:
-      - name: abis
       - name: complete_event_abis
-  - name: berachain_bartio_testnet
-    database: berachain
-    schema: testnet
+      - name: abis
+      - name: traces
+      - name: blocks
+      - name: transactions
+
+  #=============================================================================
+  # LAVA
+  #=============================================================================
+  - name: lava_observ
+    database: lava
+    schema: silver_observability
     tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+
+  - name: lava_stats
+    database: lava
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # MANTLE
+  #=============================================================================
+  - name: mantle_core
+    database: mantle
+    schema: core
+    tables:
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
       - name: dim_contracts
+
+  - name: mantle_silver
+    database: mantle
+    schema: silver
+    tables:
+      - name: complete_event_abis
+      - name: abis
+
+  #=============================================================================
+  # MAYA
+  #=============================================================================
+  - name: maya_core
+    database: maya
+    schema: core
+    tables:
+      - name: fact_transfers
+
+  #=============================================================================
+  # NEAR
+  #=============================================================================
+  - name: near_core
+    database: near
+    schema: core
+    tables:
+      - name: ez_token_transfers
+      - name: ez_dex_swaps
+      - name: dim_ft_contract_metadata
+
+  - name: near_defi
+    database: near
+    schema: defi
+    tables:
+      - name: fact_dex_swaps
+      - name: ez_dex_swaps
+      - name: fact_bridge_activity
+      - name: ez_bridge_activity
+
+  - name: near_observ
+    database: near
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: chunks_completeness
+      - name: logs_completeness
+
+  - name: near_silver
+    database: near
+    schema: silver
+    tables:
+      - name: logs_s3
+
+  - name: near_stats
+    database: near
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # OPTIMISM
+  #=============================================================================
+  - name: optimism_core
+    database: optimism
+    schema: core
+    tables:
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
+      - name: dim_contracts
+
+  - name: optimism_defi
+    database: optimism
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
+      - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
+
+  - name: optimism_silver
+    database: optimism
+    schema: silver
+    tables:
+      - name: traces
+      - name: transactions
+      - name: contracts
+      - name: complete_event_abis
+      - name: abis
+      - name: complete_nft_sales
+      - name: blocks
+
+  - name: optimism_silver_dex
+    database: optimism
+    schema: silver_dex
+    tables:
+      - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
+
+  - name: optimism_silver_olas
+    database: optimism
+    schema: silver_olas
+    tables:
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+
+  - name: optimism_stats
+    database: optimism
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # OSMOSIS
+  #=============================================================================
+  - name: osmosis_core
+    database: osmosis
+    schema: core
+    tables:
+      - name: fact_blocks
+      - name: fact_transactions
+      - name: fact_transfers
+      - name: dim_tokens
+
+  - name: osmosis_defi
+    database: osmosis
+    schema: defi
+    tables:
+      - name: fact_swaps
+      - name: dim_liquidity_pools
+
+  - name: osmosis_gov
+    database: osmosis
+    schema: gov
+    tables:
+      - name: fact_governance_votes
+      - name: fact_validators
+
+  - name: osmosis_observ
+    database: osmosis
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+
+  - name: osmosis_silver
+    database: osmosis
+    schema: silver
+    tables:
+      - name: transactions
+      - name: asset_metadata
+      - name: prices_swaps
+      - name: pool_token_prices_usd
+      - name: swaps
+
+  - name: osmosis_stats
+    database: osmosis
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # POLYGON
+  #=============================================================================
+  - name: polygon_core
+    database: polygon
+    schema: core
+    tables:
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
+      - name: dim_contracts
+
+  - name: polygon_defi
+    database: polygon
+    schema: defi
+    tables:
+      - name: ez_dex_swaps
+      - name: ez_bridge_activity
+      - name: ez_lending_borrows
+      - name: ez_lending_deposits
+      - name: ez_lending_flashloans
+      - name: ez_lending_liquidations
+      - name: ez_lending_repayments
+      - name: ez_lending_withdraws
+
+  - name: polygon_silver
+    database: polygon
+    schema: silver
+    tables:
+      - name: traces
+      - name: blocks
+      - name: transactions
+      - name: abis
+      - name: contracts
+      - name: complete_event_abis
+      - name: complete_nft_sales
+      - name: polymarket_filled_orders
+
+  - name: polygon_silver_dex
+    database: polygon
+    schema: silver_dex
+    tables:
+      - name: complete_dex_swaps
+      - name: complete_dex_liquidity_pools
+
+  - name: polygon_silver_olas
+    database: polygon
+    schema: silver_olas
+    tables:
+      - name: registry_metadata_complete
+      - name: service_event_logs
+      - name: service_registrations
+
+  - name: polygon_stats
+    database: polygon
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # RONIN
+  #=============================================================================
+  - name: ronin_core
+    database: ronin
+    schema: core
+    tables:
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
+      - name: dim_contracts
+
   - name: ronin_silver
     database: ronin
     schema: silver
     tables:
       - name: abis
       - name: complete_event_abis
+
+  #=============================================================================
+  # SEI
+  #=============================================================================
+  - name: sei_core
+    database: sei
+    schema: core
+    tables:
+      - name: fact_msg_attributes
+      - name: dim_tokens
+
+  - name: sei_evm_core
+    database: sei
+    schema: core_evm
+    tables:
+      - name: fact_transactions
+      - name: fact_event_logs
+      - name: fact_traces
+      - name: ez_decoded_event_logs
+      - name: ez_native_transfers
+      - name: ez_token_transfers
+      - name: dim_contracts
+
+  - name: sei_evm_silver
+    database: sei
+    schema: silver_evm
+    tables:
+      - name: abis
+      - name: complete_event_abis
+
+  - name: sei_observ
+    database: sei
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+
+  - name: sei_stats
+    database: sei
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # SOLANA
+  #=============================================================================
+  - name: solana_core
+    database: solana
+    schema: core
+    tables:
+      - name: fact_transfers
+      - name: dim_tokens
+
+  - name: solana_defi
+    database: solana
+    schema: defi
+    tables:
+      - name: fact_swaps
+      - name: fact_bridge_activity
+
+  - name: solana_observ
+    database: solana
+    schema: silver_observability
+    tables:
+      - name: blocks_completeness
+      - name: transactions_completeness
+
+  - name: solana_silver
+    database: solana
+    schema: silver
+    tables:
+      - name: token_metadata
+      - name: solscan_tokens
+      - name: events
+      - name: decoded_metadata
+      - name: mint_types
+
+  - name: solana_silver_olas
+    database: solana
+    schema: silver_olas
+    tables:
+      - name: service_event_logs
+      - name: service_registrations
+      - name: registry_metadata_complete
+
+  - name: solana_stats
+    database: solana
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # STELLAR
+  #=============================================================================
+  - name: stellar_core
+    database: stellar
+    schema: core
+    tables:
+      - name: dim_assets
+
+  - name: stellar_stats
+    database: stellar
+    schema: stats
+    tables:
+      - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # SWELL
+  #=============================================================================
+  - name: swell_core
+    database: swell
+    schema: core
+    tables:
+      - name: dim_contracts
+
   - name: swell_silver
     database: swell
     schema: silver
     tables:
       - name: abis
       - name: complete_event_abis
-  - name: swell_core
-    database: swell
-    schema: core
-    tables:
-      - name: dim_contracts
-  - name: boba_silver
-    database: boba
-    schema: silver
-    tables:
-      - name: abis
-      - name: complete_event_abis
-  - name: boba_core
-    database: boba
-    schema: core
-    tables:
-      - name: dim_contracts
-  - name: ink_silver
-    database: ink
-    schema: silver
-    tables:
-      - name: abis
-      - name: complete_event_abis
-  - name: ink_core
-    database: ink
-    schema: core
-    tables:
-      - name: dim_contracts
-  - name: bob_silver
-    database: bob
-    schema: silver
-    tables:
-      - name: abis
-      - name: complete_event_abis
-  - name: bob_core
-    database: bob
-    schema: core
-    tables:
-      - name: dim_contracts
-  - name: aleo_stats
-    database: aleo
-    schema: stats
-    tables:
-      - name: ez_core_metrics_hourly
-  - name: aleo_observ
-    database: aleo
+
+  #=============================================================================
+  # TERRA
+  #=============================================================================
+  - name: terra_observ
+    database: terra
     schema: silver_observability
     tables:
       - name: blocks_completeness
       - name: transactions_completeness
-      - name: transitions_completeness
-  - name: stellar_stats
-    database: stellar
+
+  - name: terra_stats
+    database: terra
     schema: stats
     tables:
       - name: ez_core_metrics_hourly
+
+  #=============================================================================
+  # THORCHAIN
+  #=============================================================================
+  - name: thorchain_core
+    database: thorchain
+    schema: core
+    tables:
+      - name: fact_transfers
+      - name: dim_block
+
+  - name: thorchain_defi
+    database: thorchain
+    schema: defi
+    tables:
+      - name: fact_swaps
+      - name: fact_liquidity_actions
+
+  #=============================================================================
+  # TON
+  #=============================================================================
+  - name: ton_core
+    database: ton
+    schema: core
+    tables:
+      - name: fact_jetton_metadata
