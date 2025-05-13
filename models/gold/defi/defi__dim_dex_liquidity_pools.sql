@@ -28,7 +28,7 @@ WITH base AS (
             modified_timestamp,
             '2000-01-01'
         ) AS modified_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['blockchain','pool_address']) }} AS dim_dex_liquidity_pools_id
+        {{ dbt_utils.generate_surrogate_key(['blockchain','pool_address','pool_id']) }} AS dim_dex_liquidity_pools_id
     FROM
         {{ source(
             'ethereum_silver_dex',
