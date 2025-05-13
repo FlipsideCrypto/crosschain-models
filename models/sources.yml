@@ -9,6 +9,7 @@ sources:
     schema: core
     tables:
       - name: dim_token_registrations
+      - name: fact_transfers
 
   - name: aleo_observ
     database: aleo
@@ -379,6 +380,7 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
+      - name: ez_token_transfers
 
   - name: bob_silver
     database: bob
@@ -395,6 +397,7 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
+      - name: ez_token_transfers
 
   - name: boba_silver
     database: boba
@@ -506,6 +509,7 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
+      - name: ez_token_transfers
 
   - name: core_silver
     database: core
@@ -646,6 +650,7 @@ sources:
       - name: contracts
       - name: complete_event_abis
       - name: blocks
+      - name: transfers
 
   - name: ethereum_silver_dex
     database: ethereum
@@ -719,6 +724,7 @@ sources:
     schema: core_evm
     tables:
       - name: dim_contracts
+      - name: ez_token_transfers
 
   - name: flow_observ
     database: flow
@@ -794,6 +800,7 @@ sources:
       - name: contracts
       - name: traces
       - name: blocks
+    
 
   - name: gnosis_silver_dex
     database: gnosis
@@ -830,7 +837,7 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
-
+      - name: ez_token_transfers
   - name: ink_silver
     database: ink
     schema: silver
@@ -876,6 +883,7 @@ sources:
       - name: traces
       - name: blocks
       - name: transactions
+      - name: transfers
 
   #=============================================================================
   # LAVA
@@ -914,6 +922,7 @@ sources:
     tables:
       - name: complete_event_abis
       - name: abis
+      - name: transfers
 
   #=============================================================================
   # MAYA
@@ -1003,6 +1012,7 @@ sources:
       - name: abis
       - name: complete_nft_sales
       - name: blocks
+      - name: transfers
 
   - name: optimism_silver_dex
     database: optimism
@@ -1271,7 +1281,7 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
-
+      - name: ez_token_transfers
   - name: swell_silver
     database: swell
     schema: silver
@@ -1304,14 +1314,13 @@ sources:
     tables:
       - name: fact_transfers
       - name: dim_block
-
+      
   - name: thorchain_defi
     database: thorchain
     schema: defi
     tables:
       - name: fact_swaps
       - name: fact_liquidity_actions
-
   #=============================================================================
   # TON
   #=============================================================================
