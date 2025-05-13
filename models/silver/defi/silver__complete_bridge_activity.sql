@@ -1,7 +1,7 @@
 {{ config(
     materialized = 'incremental',
     incremental_strategy = 'delete+insert',
-    unique_key = ['blockchain','block_number','platform'],
+    unique_key = '_unique_key',
     cluster_by = ['block_timestamp::DATE','blockchain','platform'],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_hash, bridge_address, source_address, destination_address, source_chain, destination_chain, token_address, token_symbol), SUBSTRING(bridge_address, source_address, destination_address, source_chain, destination_chain, token_address, token_symbol)",
     tags = ['hourly']
@@ -27,7 +27,8 @@ WITH ethereum AS (
         amount,
         amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'ethereum_defi',
@@ -63,7 +64,8 @@ optimism AS (
         amount,
         amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'optimism_defi',
@@ -99,7 +101,8 @@ blast AS (
         amount,
         amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'blast_defi',
@@ -135,7 +138,8 @@ avalanche AS (
         amount,
         amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'avalanche_defi',
@@ -171,7 +175,8 @@ polygon AS (
         amount,
         amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'polygon_defi',
@@ -207,7 +212,8 @@ bsc AS (
         amount,
         amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'bsc_defi',
@@ -243,7 +249,8 @@ arbitrum AS (
         amount,
         amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'arbitrum_defi',
@@ -279,7 +286,8 @@ base AS (
         amount,
         amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'base_defi',
@@ -315,7 +323,8 @@ gnosis AS (
         amount,
         amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'gnosis_defi',
@@ -363,7 +372,8 @@ solana AS (
         amount,
         NULL AS amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['fact_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'solana_defi',
@@ -399,7 +409,8 @@ aptos AS (
         NULL AS amount,
         NULL AS amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['fact_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
             'aptos_defi',
@@ -435,7 +446,8 @@ near AS (
         amount,
         NULL AS amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS _unique_key
     FROM
         {{ source(
             'near_defi',
@@ -559,6 +571,7 @@ SELECT
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     b._inserted_timestamp,
+    b._unique_key,
     complete_bridge_activity_id
 FROM
     all_chains_bridge b
