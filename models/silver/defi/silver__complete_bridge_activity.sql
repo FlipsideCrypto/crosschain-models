@@ -372,7 +372,7 @@ solana AS (
         amount,
         NULL AS amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['fact_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
@@ -409,7 +409,7 @@ aptos AS (
         NULL AS amount,
         NULL AS amount_usd,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['fact_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
