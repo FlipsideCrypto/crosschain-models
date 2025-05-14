@@ -1,7 +1,7 @@
 {{ config(
     materialized = 'incremental',
     unique_key = ['transfers_id'],
-    cluster_by = ['day_'],
+    cluster_by = ['blockchain','day_'],
     merge_exclude_columns = ['inserted_timestamp'],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(address,symbol);",
     tags = ['daily']
@@ -73,9 +73,11 @@ all_transfers AS (
         amount
     FROM {{ source('aleo_core', 'fact_transfers') }}
     WHERE block_timestamp >= '2025-04-01'
+    and address is not null
     {% if is_incremental() %}
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
     {% endif %}
+    
 
     UNION ALL 
 
@@ -269,8 +271,9 @@ aggregated_transfers AS (
     FROM all_transfers a
     LEFT JOIN {{ ref('silver__tokens') }} t
         ON a.address = t.address
-        AND a.blockchain = t.blockchain
     GROUP BY 1,2,3,4,5,6
+    HAVING count(distinct tx_hash) >= 1000 
+        AND count(distinct from_address) >= 100
     QUALIFY ROW_NUMBER() OVER (PARTITION BY day_, a.address, a.blockchain ORDER BY tx_count DESC) = 1
 )
 

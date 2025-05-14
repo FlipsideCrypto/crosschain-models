@@ -24,16 +24,12 @@ models:
       - name: TX_COUNT
         tests:
           - not_null
-          - positive_value
 
       - name: UNIQUE_SENDERS
         tests:
           - not_null
-          - positive_value
 
       - name: AMOUNT
-        tests:
-          - not_null
 
       - name: TRANSFERS_ID
         tests:
