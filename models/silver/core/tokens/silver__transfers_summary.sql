@@ -271,7 +271,7 @@ aggregated_transfers AS (
         ON a.address = t.address
         AND a.blockchain = t.blockchain
     GROUP BY 1,2,3,4,5,6
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY day_, address, blockchain ORDER BY tx_count DESC) = 1
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY day_, a.address, a.blockchain ORDER BY tx_count DESC) = 1
 )
 
 SELECT 
