@@ -447,7 +447,7 @@ near AS (
         NULL AS amount_usd,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
-        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS _unique_key
+        complete_bridge_activity_id AS _unique_key
     FROM
         {{ source(
             'near_defi',
