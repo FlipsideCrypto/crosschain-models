@@ -16,3 +16,5 @@ logs/
 **/.DS_Store
 .vscode/
 dbt-env/
+
+.cursor/*
