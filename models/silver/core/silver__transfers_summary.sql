@@ -37,7 +37,7 @@ WITH evm_transfers AS (
             source('sei_evm_core', 'ez_token_transfers'),
             source('flow_evm_core', 'ez_token_transfers'),
         ],
-        where="block_timestamp >= '2025-04-01'and modified_timestamp :: DATE >= '" ~ max_mod ~ "'"
+        where="block_timestamp >= '2025-01-01'and modified_timestamp :: DATE >= '" ~ max_mod ~ "'"
     ) }}
 ),
 
@@ -72,7 +72,7 @@ all_transfers AS (
         receiver as to_address,
         amount
     FROM {{ source('aleo_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-04-01'
+    WHERE block_timestamp >= '2025-01-01'
     and address is not null
     {% if is_incremental() %}
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
@@ -99,7 +99,7 @@ all_transfers AS (
         END as to_address,
         amount
     FROM {{ source('aptos_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-04-01'
+    WHERE block_timestamp >= '2025-01-01'
     {% if is_incremental() %}
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
     {% endif %}
@@ -118,7 +118,7 @@ all_transfers AS (
         receiver as to_address,
         amount
     FROM {{ source('axelar_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-04-01'
+    WHERE block_timestamp >= '2025-01-01'
     {% if is_incremental() %}
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
     {% endif %}
@@ -137,7 +137,7 @@ all_transfers AS (
         receiver as to_address,
         amount
     FROM {{ source('cosmos_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-04-01'
+    WHERE block_timestamp >= '2025-01-01'
     {% if is_incremental() %}
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
     {% endif %}
@@ -156,7 +156,7 @@ all_transfers AS (
         tx_to as to_address,
         amount
     FROM {{ source('eclipse_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-04-01'
+    WHERE block_timestamp >= '2025-01-01'
     {% if is_incremental() %}
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
     {% endif %}
@@ -175,7 +175,7 @@ all_transfers AS (
         recipient as to_address,
         amount
     FROM {{ source('flow_core', 'ez_token_transfers') }}
-    WHERE block_timestamp >= '2025-04-01'
+    WHERE block_timestamp >= '2025-01-01'
     {% if is_incremental() %}
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
     {% endif %}
@@ -194,7 +194,7 @@ all_transfers AS (
         to_address,
         amount
     FROM {{ source('near_core', 'ez_token_transfers') }}
-    WHERE block_timestamp >= '2025-04-01'
+    WHERE block_timestamp >= '2025-01-01'
     {% if is_incremental() %}
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
     {% endif %}
@@ -213,7 +213,7 @@ all_transfers AS (
         receiver as to_address,
         amount
     FROM {{ source('osmosis_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-04-01'
+    WHERE block_timestamp >= '2025-01-01'
     {% if is_incremental() %}
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
     {% endif %}
@@ -232,7 +232,7 @@ all_transfers AS (
         tx_to as to_address,
         amount
     FROM {{ source('solana_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-04-01'
+    WHERE block_timestamp >= '2025-01-01'
     {% if is_incremental() %}
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
     {% endif %}
@@ -250,7 +250,7 @@ all_transfers AS (
         to_address,
         amount
     FROM {{ source('thorchain_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-04-01'
+    WHERE block_timestamp >= '2025-01-01'
     {% if is_incremental() %}
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
     {% endif %} #}
