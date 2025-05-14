@@ -883,7 +883,6 @@ sources:
       - name: traces
       - name: blocks
       - name: transactions
-      - name: transfers
 
   #=============================================================================
   # LAVA
@@ -922,7 +921,6 @@ sources:
     tables:
       - name: complete_event_abis
       - name: abis
-      - name: transfers
 
   #=============================================================================
   # MAYA
@@ -1012,7 +1010,6 @@ sources:
       - name: abis
       - name: complete_nft_sales
       - name: blocks
-      - name: transfers
 
   - name: optimism_silver_dex
     database: optimism
@@ -1314,7 +1311,7 @@ sources:
     tables:
       - name: fact_transfers
       - name: dim_block
-      
+
   - name: thorchain_defi
     database: thorchain
     schema: defi
