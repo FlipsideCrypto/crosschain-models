@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: silver__transfers_summary
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ADDRESS
+            - BLOCKCHAIN
+            - DAY_
+    columns:
+      - name: DAY_
+        tests:
+          - not_null
+
+      - name: ADDRESS
+        tests:
+          - not_null
+
+      - name: BLOCKCHAIN
+        tests:
+          - not_null
+
+      - name: TX_COUNT
+        tests:
+          - not_null
+          - positive_value
+
+      - name: UNIQUE_SENDERS
+        tests:
+          - not_null
+          - positive_value
+
+      - name: AMOUNT
+        tests:
+          - not_null
+
+      - name: TRANSFERS_ID
+        tests:
+          - unique
+          - not_null 

@@ -8,15 +8,13 @@
 ) }}
 
 {% if execute %}
-{% if is_incremental() %}
 {% set max_mod_query %}
 SELECT
-    MAX(modified_timestamp) :: DATE AS modified_timestamp
+    COALESCE(MAX(modified_timestamp) :: DATE, '2025-01-01') AS modified_timestamp
 FROM
     {{ this }}
 {% endset %}
 {% set max_mod = run_query(max_mod_query) [0] [0] %}
-{% endif %}
 {% endif %}
 
 WITH evm_transfers AS (
@@ -39,7 +37,7 @@ WITH evm_transfers AS (
             source('sei_evm_core', 'ez_token_transfers'),
             source('flow_evm_core', 'ez_token_transfers'),
         ],
-        where="block_timestamp >= '2025-04-01' and modified_timestamp :: DATE >= '" ~ max_mod ~ "'"
+        where="block_timestamp >= '2025-04-01'and modified_timestamp :: DATE >= '" ~ max_mod ~ "'"
     ) }}
 ),
 
@@ -237,8 +235,7 @@ all_transfers AS (
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
     {% endif %}
 
-    {# Commented out thorchain
-    UNION ALL
+    {# UNION ALL --not really a contract address here
     SELECT 
         DATE(block_timestamp) as day_,
         asset as address,
@@ -246,16 +243,16 @@ all_transfers AS (
         NULL as symbol,
         NULL as decimals,
         NULL as name,
-        tx_id as tx_hash,
-        tx_from as from_address,
-        tx_to as to_address,
+        fact_transfers_id as tx_hash,
+        from_address,
+        to_address,
         amount
     FROM {{ source('thorchain_core', 'fact_transfers') }}
     WHERE block_timestamp >= '2025-04-01'
     {% if is_incremental() %}
     AND modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
-    #}
+    {% endif %} #}
+   
 ),
 
 aggregated_transfers AS (
@@ -274,8 +271,7 @@ aggregated_transfers AS (
         ON a.address = t.address
         AND a.blockchain = t.blockchain
     GROUP BY 1,2,3,4,5,6
-    HAVING count(distinct tx_hash) >= 100
-        AND count(distinct from_address) >= 1000
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY day_, address, blockchain ORDER BY tx_count DESC) = 1
 )
 
 SELECT 
