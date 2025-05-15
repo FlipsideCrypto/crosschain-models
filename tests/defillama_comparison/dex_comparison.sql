@@ -110,3 +110,28 @@ WITH defillama AS (
                     ORDER BY
                         defillama_volume DESC nulls last
                 ) <= 3
+{%- endset %}
+
+{% set test_results = run_query(query) %}
+
+-- Store results
+CREATE OR REPLACE TABLE crosschain.silver.dex_comparison_results AS
+SELECT * FROM ({{ test_results }});
+-- Store results
+-- Output results in logs
+{% if execute %}
+    {% do log('TEST RESULTS:', info=True) %}
+    {% do log(test_results.print_table(), info=True) %}
+-- Output results in logs
+{% if execute %}
+-- Return original query for test evaluation
+{{ query }}
+
+
+    {% do log(test_results.print_table(), info=True) %}
+{% endif %}
+
+-- Return original query for test evaluation
+{{ query }}
+
+
