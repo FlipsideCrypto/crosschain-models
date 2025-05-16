@@ -1,20 +1,23 @@
 {{ config(
     materialized = 'incremental',
     unique_key = ['transfers_id'],
-    cluster_by = ['blockchain','day_'],
+    incremental_strategy = 'delete+insert',
+    cluster_by = ['blockchain','block_day'],
     merge_exclude_columns = ['inserted_timestamp'],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(address,symbol);",
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(address,blockchain);",
     tags = ['daily']
 ) }}
 
-{% if execute %}
-{% set max_mod_query %}
-SELECT
-    COALESCE(MAX(modified_timestamp) :: DATE, '2025-01-01') AS modified_timestamp
-FROM
-    {{ this }}
-{% endset %}
-{% set max_mod = run_query(max_mod_query) [0] [0] %}
+-- Set default date boundary
+{% set default_date = "'2025-01-01'" %}
+
+-- Simple incremental logic using fixed lookback period
+{% if is_incremental() %}
+    {% set block_ts_filter = "block_timestamp >= SYSDATE() - INTERVAL '1 day'" %}
+    {% set max_mod = "SYSDATE() - INTERVAL '1 day'" %}
+{% else %}
+    {% set block_ts_filter = "block_timestamp >= " ~ default_date %}
+    {% set max_mod = default_date %}
 {% endif %}
 
 WITH evm_transfers AS (
@@ -37,19 +40,16 @@ WITH evm_transfers AS (
             source('sei_evm_core', 'ez_token_transfers'),
             source('flow_evm_core', 'ez_token_transfers'),
         ],
-        where="block_timestamp >= '2025-01-01'and modified_timestamp :: DATE >= '" ~ max_mod ~ "'"
+        where=block_ts_filter
     ) }}
 ),
 
 all_transfers AS (
     -- EVM Chains
     SELECT
-        DATE(block_timestamp) as day_,
+        DATE(block_timestamp) as block_day,
         contract_address as address,
         LOWER(SPLIT_PART(_dbt_source_relation, '.', 1)) as blockchain,
-        symbol,
-        decimals,
-        name,
         tx_hash,
         from_address,
         to_address,
@@ -61,33 +61,23 @@ all_transfers AS (
 
     -- Non-EVM Chains
     SELECT 
-        DATE(block_timestamp) as day_,
+        DATE(block_timestamp) as block_day,
         token_address as address,
         'aleo' as blockchain,
-        NULL as symbol,
-        NULL as decimals,
-        NULL as name,
         tx_id as tx_hash,
         sender as from_address,
         receiver as to_address,
         amount
     FROM {{ source('aleo_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-01-01'
-    and address is not null
-    {% if is_incremental() %}
-    AND modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
+    WHERE {{ block_ts_filter }}
+    AND token_address is not null
     
-
     UNION ALL 
 
     SELECT 
-        DATE(block_timestamp) as day_,
+        DATE(block_timestamp) as block_day,
         token_address as address,
         'aptos' as blockchain,
-        NULL as symbol,
-        NULL as decimals,
-        NULL as name,
         tx_hash,
         CASE 
             WHEN transfer_event = 'WithdrawEvent' THEN account_address 
@@ -99,195 +89,136 @@ all_transfers AS (
         END as to_address,
         amount
     FROM {{ source('aptos_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-01-01'
-    {% if is_incremental() %}
-    AND modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
+    WHERE {{ block_ts_filter }}
 
     UNION ALL
 
     SELECT 
-        DATE(block_timestamp) as day_,
+        DATE(block_timestamp) as block_day,
         currency as address,
         'axelar' as blockchain,
-        NULL as symbol,
-        decimal as decimals,
-        NULL as name,
         tx_id as tx_hash,
         sender as from_address,
         receiver as to_address,
         amount
     FROM {{ source('axelar_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-01-01'
-    {% if is_incremental() %}
-    AND modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
+    WHERE {{ block_ts_filter }}
 
     UNION ALL
 
     SELECT 
-        DATE(block_timestamp) as day_,
+        DATE(block_timestamp) as block_day,
         currency as address,
         'cosmos' as blockchain,
-        NULL as symbol,
-        NULL as decimals,
-        NULL as name,
         tx_id as tx_hash,
         sender as from_address,
         receiver as to_address,
         amount
     FROM {{ source('cosmos_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-01-01'
-    {% if is_incremental() %}
-    AND modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
+    WHERE {{ block_ts_filter }}
 
     UNION ALL
 
     SELECT 
-        DATE(block_timestamp) as day_,
-        tx_from as address,
+        DATE(block_timestamp) as block_day,
+        mint as address,
         'eclipse' as blockchain,
-        NULL as symbol,
-        NULL as decimals,
-        NULL as name,
         tx_id as tx_hash,
         tx_from as from_address,
         tx_to as to_address,
         amount
     FROM {{ source('eclipse_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-01-01'
-    {% if is_incremental() %}
-    AND modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
+    WHERE {{ block_ts_filter }}
 
     UNION ALL
 
     SELECT 
-        DATE(block_timestamp) as day_,
+        DATE(block_timestamp) as block_day,
         token_contract as address,
         'flow' as blockchain,
-        NULL as symbol,
-        NULL as decimals,
-        NULL as name,
         tx_id as tx_hash,
         sender as from_address,
         recipient as to_address,
         amount
     FROM {{ source('flow_core', 'ez_token_transfers') }}
-    WHERE block_timestamp >= '2025-01-01'
-    {% if is_incremental() %}
-    AND modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
+    WHERE {{ block_ts_filter }}
 
     UNION ALL
 
     SELECT 
-        DATE(block_timestamp) as day_,
+        DATE(block_timestamp) as block_day,
         contract_address as address,
         'near' as blockchain,
-        NULL as symbol,
-        NULL as decimals,
-        NULL as name,
         tx_hash,
         from_address,
         to_address,
         amount
     FROM {{ source('near_core', 'ez_token_transfers') }}
-    WHERE block_timestamp >= '2025-01-01'
-    {% if is_incremental() %}
-    AND modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
+    WHERE {{ block_ts_filter }}
 
     UNION ALL
 
     SELECT 
-        DATE(block_timestamp) as day_,
+        DATE(block_timestamp) as block_day,
         currency as address,
         'osmosis' as blockchain,
-        NULL as symbol,
-        decimal as decimals,
-        NULL as name,
         tx_id as tx_hash,
         sender as from_address,
         receiver as to_address,
         amount
     FROM {{ source('osmosis_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-01-01'
-    {% if is_incremental() %}
-    AND modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
+    WHERE {{ block_ts_filter }}
 
     UNION ALL
 
     SELECT 
-        DATE(block_timestamp) as day_,
+        DATE(block_timestamp) as block_day,
         mint as address,
         'solana' as blockchain,
-        NULL as symbol,
-        NULL as decimals,
-        NULL as name,
         tx_id as tx_hash,
         tx_from as from_address,
         tx_to as to_address,
         amount
     FROM {{ source('solana_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-01-01'
-    {% if is_incremental() %}
-    AND modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
+    WHERE {{ block_ts_filter }}
 
     {# UNION ALL --not really a contract address here
     SELECT 
-        DATE(block_timestamp) as day_,
+        DATE(block_timestamp) as block_day,
         asset as address,
         'thorchain' as blockchain,
-        NULL as symbol,
-        NULL as decimals,
-        NULL as name,
         fact_transfers_id as tx_hash,
         from_address,
         to_address,
         amount
     FROM {{ source('thorchain_core', 'fact_transfers') }}
-    WHERE block_timestamp >= '2025-01-01'
-    {% if is_incremental() %}
-    AND modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %} #}
+    WHERE {{ block_ts_filter }} #}
    
 ),
 
 aggregated_transfers AS (
     SELECT
-        day_,
-        a.address,
-        a.blockchain,
-        COALESCE(a.symbol, t.symbol) as symbol,
-        COALESCE(a.decimals, t.decimals) as decimals,
-        COALESCE(a.name, t.name) as name,
+        block_day,
+        address,
+        blockchain,
         count(distinct tx_hash) as tx_count,
         count(distinct from_address) as unique_senders,
         sum(amount) as amount
-    FROM all_transfers a
-    LEFT JOIN {{ ref('silver__tokens') }} t
-        ON a.address = t.address
-    GROUP BY 1,2,3,4,5,6
-    HAVING count(distinct tx_hash) >= 1000 
-        AND count(distinct from_address) >= 100
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY day_, a.address, a.blockchain ORDER BY tx_count DESC) = 1
+    FROM all_transfers
+    WHERE address IS NOT NULL
+    GROUP BY 1,2,3
+    HAVING count(distinct tx_hash) >= 100 
+        AND count(distinct from_address) >= 25
 )
 
 SELECT 
-    day_,
+    block_day,
     address,
     blockchain,
-    symbol,
-    decimals,
-    name,
     tx_count,
     unique_senders,
     amount,
-    {{ dbt_utils.generate_surrogate_key(['address','blockchain','day_']) }} AS transfers_id,
+    {{ dbt_utils.generate_surrogate_key(['address','blockchain','block_day']) }} AS transfers_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     '{{ invocation_id }}' AS _invocation_id    
