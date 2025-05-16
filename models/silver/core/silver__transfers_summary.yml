@@ -7,9 +7,9 @@ models:
           combination_of_columns:
             - ADDRESS
             - BLOCKCHAIN
-            - DAY_
+            - BLOCK_DAY
     columns:
-      - name: DAY_
+      - name: BLOCK_DAY
         tests:
           - not_null
 

@@ -1,7 +1,6 @@
 {{ config(
     materialized = 'incremental',
     unique_key = ['transfers_id'],
-    incremental_strategy = 'delete+insert',
     cluster_by = ['blockchain','block_day'],
     merge_exclude_columns = ['inserted_timestamp'],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(address,blockchain);",
@@ -13,10 +12,11 @@
 
 -- Simple incremental logic using fixed lookback period
 {% if is_incremental() %}
-    {% set block_ts_filter = "block_timestamp >= SYSDATE() - INTERVAL '1 day'" %}
-    {% set max_mod = "SYSDATE() - INTERVAL '1 day'" %}
+    {% set yesterday = "DATEADD('day', -1, SYSDATE()::DATE)" %}
+    {% set block_ts_filter = "block_timestamp::date = " ~ yesterday %}
+    {% set max_mod = yesterday %}
 {% else %}
-    {% set block_ts_filter = "block_timestamp >= " ~ default_date %}
+    {% set block_ts_filter = "block_timestamp::date >= " ~ default_date ~ " AND block_timestamp::date < SYSDATE()::DATE" %}
     {% set max_mod = default_date %}
 {% endif %}
 
@@ -181,18 +181,6 @@ all_transfers AS (
         amount
     FROM {{ source('solana_core', 'fact_transfers') }}
     WHERE {{ block_ts_filter }}
-
-    {# UNION ALL --not really a contract address here
-    SELECT 
-        DATE(block_timestamp) as block_day,
-        asset as address,
-        'thorchain' as blockchain,
-        fact_transfers_id as tx_hash,
-        from_address,
-        to_address,
-        amount
-    FROM {{ source('thorchain_core', 'fact_transfers') }}
-    WHERE {{ block_ts_filter }} #}
    
 ),
 
@@ -205,10 +193,9 @@ aggregated_transfers AS (
         count(distinct from_address) as unique_senders,
         sum(amount) as amount
     FROM all_transfers
-    WHERE address IS NOT NULL
     GROUP BY 1,2,3
-    HAVING count(distinct tx_hash) >= 100 
-        AND count(distinct from_address) >= 25
+    HAVING count(distinct tx_hash) >= 25 
+        AND count(distinct from_address) >= 5
 )
 
 SELECT 
