@@ -1,9 +1,10 @@
-name: dbt_test_metrics_weekly
-run-name: dbt_test_metrics_weekly
+name: dbt_run_ai_metrics
+run-name: dbt_run_ai_metrics
 
 on:
   workflow_dispatch:
   schedule:
+    # Runs Monday at 9:00 AM EST (14:00 UTC) (see https://crontab.guru)
     - cron: '0 14 * * 1'
     
 env:
@@ -41,17 +42,11 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          # Run test and capture output
-          dbt test --select tests/defillama_comparison/dex_comparison.sql --store-failures > test_output.txt 2>&1
-          
-      - name: Process Test Results
-        if: failure()
+          dbt run -m "crosschain_models,tag:ai_metrics"
+      - name: Run DBT Tests
         run: |
-          echo "### Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          cat test_output.txt >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          
+          dbt test -m "crosschain_models,tag:ai_metrics"
+
   notify-failure:
     needs: [run_dbt_jobs]
     if: failure()

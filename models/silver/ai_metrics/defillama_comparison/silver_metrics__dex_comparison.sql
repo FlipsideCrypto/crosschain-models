@@ -1,5 +1,13 @@
-{% set query %}
+{{ config(
+    materialized = 'incremental',
+    unique_key = ['dex_comparison_id'],
+    incremental_strategy = 'delete+insert',
+    cluster_by = ['inserted_timestamp::DATE'],
+    tags = ['ai_metrics']
+) }}
+
 WITH defillama AS (
+
     SELECT
         LOWER(
             REGEXP_SUBSTR(REGEXP_REPLACE(TRIM(protocol), '-v\\d+', ''), '^[^ ]+')) AS platform_name,
@@ -61,13 +69,9 @@ WITH defillama AS (
                         defillama_volume,
                         ROUND(
                             defillama_volume / total_defillama_volume * 100,
-                            4
-                        ) AS defillama_vol_share,
-                        crosschain_volume,
-                        ROUND(
-                            crosschain_volume / total_crosschain_volume * 100,
-                            4
-                        ) AS crosschain_vol_share
+                            2
+                        ) AS defillama_volume_percent,
+                        crosschain_volume
                     FROM
                         defillama d full
                         OUTER JOIN crosschain C USING (
@@ -96,7 +100,11 @@ WITH defillama AS (
                 blockchain,
                 platform_name,
                 defillama_volume,
-                defillama_vol_share
+                defillama_volume_percent,
+                SYSDATE() AS inserted_timestamp,
+                SYSDATE() AS modified_timestamp,
+                {{ dbt_utils.generate_surrogate_key(['inserted_timestamp', 'blockchain', 'platform_name']) }} AS dex_comparison_id,
+                '{{ invocation_id }}' AS _invocation_id
             FROM
                 comparison C
                 LEFT JOIN fuzzy_match f USING (
@@ -105,27 +113,9 @@ WITH defillama AS (
                 )
             WHERE
                 crosschain_volume IS NULL
-                AND defillama_vol_share IS NOT NULL
+                AND defillama_volume_percent IS NOT NULL
                 AND f.platform_name IS NULL qualify ROW_NUMBER() over (
                     PARTITION BY blockchain
                     ORDER BY
                         defillama_volume DESC nulls last
-                ) <= 3
-{% endset %}
-
-{% set test_results = run_query(query) %}
-
--- Store results
-CREATE OR REPLACE TABLE crosschain.silver.dex_comparison_results AS
-SELECT * FROM ({{ test_results }});
-
--- Output results in logs
-{% if execute %}
-    {% do log('TEST RESULTS:', info=True) %}
-    {% do log(test_results.print_table(), info=True) %}
-{% endif %}
-
--- Return original query for test evaluation
-{{ query }}
-
-
+                ) <= 5
