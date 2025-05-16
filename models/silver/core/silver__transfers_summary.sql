@@ -194,8 +194,6 @@ aggregated_transfers AS (
         sum(amount) as amount
     FROM all_transfers
     GROUP BY 1,2,3
-    HAVING count(distinct tx_hash) >= 25 
-        AND count(distinct from_address) >= 5
 )
 
 SELECT 
