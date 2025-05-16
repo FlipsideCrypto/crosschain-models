@@ -7,10 +7,8 @@
     tags = ['daily']
 ) }}
 
--- Set default date boundary
 {% set default_date = "'2025-01-01'" %}
 
--- Simple incremental logic using fixed lookback period
 {% if is_incremental() %}
     {% set yesterday = "DATEADD('day', -1, SYSDATE()::DATE)" %}
     {% set block_ts_filter = "block_timestamp::date = " ~ yesterday %}
