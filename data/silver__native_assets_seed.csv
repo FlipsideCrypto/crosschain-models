@@ -2,7 +2,7 @@ provider,name,symbol,id,decimals
 coingecko,Bitcoin,BTC,bitcoin,8
 coingecko,Ethereum,ETH,ethereum,18
 coingecko,BNB,BNB,binancecoin,18
-coingecko,Solana,SOL,solana,18
+coingecko,Solana,SOL,solana,9
 coingecko,Cardano,ADA,cardano
 coingecko,Avalanche,AVAX,avalanche-2,18
 coingecko,Toncoin,TON,the-open-network
@@ -119,7 +119,7 @@ coingecko,Movement,MOVE,movement
 coinmarketcap,Bitcoin,BTC,1,8
 coinmarketcap,Ethereum,ETH,1027,18
 coinmarketcap,BNB,BNB,1839,18
-coinmarketcap,Solana,SOL,5426,18
+coinmarketcap,Solana,SOL,5426,9
 coinmarketcap,Cardano,ADA,2010
 coinmarketcap,Avalanche,AVAX,5805,18
 coinmarketcap,Toncoin,TON,11419
