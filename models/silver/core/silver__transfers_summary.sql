@@ -191,8 +191,8 @@ aggregated_transfers AS (
         count(distinct from_address) as unique_senders,
         sum(amount) as amount
     FROM all_transfers
-    GROUP BY 1,2,3
     where address is not null
+    GROUP BY 1,2,3
 )
 
 SELECT 
