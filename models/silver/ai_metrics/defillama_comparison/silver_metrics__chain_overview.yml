@@ -1,21 +1,24 @@
 version: 2
 models:
-  - name: silver_metrics__dex_comparison
+  - name: silver_metrics__chain_overview
     columns:
       - name: BLOCKCHAIN
         tests:
           - not_null
-      - name: PLATFORM_NAME
+      - name: CATEGORY
         tests:
           - not_null
       - name: DEFILLAMA_VOLUME
         tests:
           - not_null
-      - name: DEFILLAMA_VOLUME_PERCENT
+      - name: CROSSCHAIN_VOLUME
+        tests:
+          - not_null
+      - name: diff_defillama_percent
         tests:
           - dbt_expectations.expect_column_values_to_be_between:
               min_value: 0
-              max_value: 9.99
+              max_value: 30.00
               severity: error
               where: "inserted_timestamp >= systimestamp() - interval '24 hours'"
       - name: INSERTED_TIMESTAMP
@@ -30,7 +33,7 @@ models:
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
               interval: 8
-      - name: DEX_COMPARISON_ID 
+      - name: CHAIN_OVERVIEW_ID 
         tests:
           - not_null
       - name: INVOCATION_ID 
