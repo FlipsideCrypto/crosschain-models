@@ -513,7 +513,8 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
-      - name: fact_transactions      - name: ez_token_transfers
+      - name: fact_transactions      
+      - name: ez_token_transfers
 
   - name: core_silver
     database: core

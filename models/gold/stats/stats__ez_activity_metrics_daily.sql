@@ -35,7 +35,7 @@ SELECT
 FROM
     {{ ref('silver__fact_transactions_lite') }}
 WHERE
-    block_timestamp :: DATE > SYSDATE() :: DATE
+    block_timestamp :: DATE < SYSDATE() :: DATE
 
 {% if is_incremental() %}
 AND modified_timestamp :: DATE >= '{{ max_mod }}'
@@ -167,7 +167,7 @@ SELECT
     COUNT(1) AS unique_initiator_count,
     SUM(total_fees_native) AS total_fees_native,
     SUM(total_fees_usd) AS total_fees_usd,
-    {{ dbt_utils.generate_surrogate_key(['a.blockchain',' a.block_date','is_quality']) }} AS ez_activity_metrics_daily_id,
+    {{ dbt_utils.generate_surrogate_key(['a.blockchain','a.block_date','is_quality']) }} AS ez_activity_metrics_daily_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     '{{ invocation_id }}' AS _invocation_id
