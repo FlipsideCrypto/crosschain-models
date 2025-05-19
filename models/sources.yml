@@ -9,6 +9,7 @@ sources:
     schema: core
     tables:
       - name: dim_token_registrations
+      - name: fact_transactions
 
   - name: aleo_observ
     database: aleo
@@ -42,6 +43,7 @@ sources:
     schema: core
     tables:
       - name: dim_tokens
+      - name: fact_transactions
       - name: fact_transfers
       - name: ez_native_transfers
 
@@ -379,6 +381,7 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
+      - name: fact_transactions
 
   - name: bob_silver
     database: bob
@@ -395,6 +398,7 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
+      - name: fact_transactions
 
   - name: boba_silver
     database: boba
@@ -506,7 +510,7 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
-
+      - name: fact_transactions
   - name: core_silver
     database: core
     schema: silver
@@ -573,13 +577,29 @@ sources:
       - name: uniswap_verified_token_tags
 
   #=============================================================================
+  # DATASCIENCE
+  #=============================================================================
+  - name: datascience_onchain_scores
+    database: datascience
+    schema: onchain_scores
+    tables:
+      - name: all_scores
+
+  #=============================================================================
   # ECLIPSE
   #=============================================================================
   - name: eclipse_core
     database: eclipse
     schema: core
     tables:
+      - name: fact_transactions
       - name: fact_transfers
+
+  - name: eclipse_gov
+    database: eclipse
+    schema: gov
+    tables:
+      - name: fact_votes
 
   - name: eclipse_stats
     database: eclipse
@@ -705,6 +725,8 @@ sources:
     database: flow
     schema: core
     tables:
+      - name: fact_transactions
+      - name: fact_events
       - name: ez_token_transfers
 
   - name: flow_defi
@@ -719,6 +741,7 @@ sources:
     schema: core_evm
     tables:
       - name: dim_contracts
+      - name: fact_transactions
 
   - name: flow_observ
     database: flow
@@ -830,6 +853,7 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
+      - name: fact_transactions
 
   - name: ink_silver
     database: ink
@@ -922,6 +946,7 @@ sources:
     database: maya
     schema: core
     tables:
+      - name: fact_transactions
       - name: fact_transfers
 
   #=============================================================================
@@ -934,6 +959,8 @@ sources:
       - name: ez_token_transfers
       - name: ez_dex_swaps
       - name: dim_ft_contract_metadata
+      - name: fact_transactions
+      
 
   - name: near_defi
     database: near
@@ -1167,6 +1194,7 @@ sources:
     tables:
       - name: fact_msg_attributes
       - name: dim_tokens
+      - name: fact_transactions
 
   - name: sei_evm_core
     database: sei
@@ -1207,6 +1235,7 @@ sources:
     database: solana
     schema: core
     tables:
+      - name: fact_transactions
       - name: fact_transfers
       - name: dim_tokens
 
@@ -1248,6 +1277,7 @@ sources:
     tables:
       - name: ez_core_metrics_hourly
 
+
   #=============================================================================
   # STELLAR
   #=============================================================================
@@ -1256,6 +1286,7 @@ sources:
     schema: core
     tables:
       - name: dim_assets
+      - name: fact_transactions
 
   - name: stellar_stats
     database: stellar
@@ -1271,6 +1302,7 @@ sources:
     schema: core
     tables:
       - name: dim_contracts
+      - name: fact_transactions
 
   - name: swell_silver
     database: swell
@@ -1302,6 +1334,7 @@ sources:
     database: thorchain
     schema: core
     tables:
+      - name: fact_transactions
       - name: fact_transfers
       - name: dim_block
 
@@ -1320,3 +1353,4 @@ sources:
     schema: core
     tables:
       - name: fact_jetton_metadata
+      - name: fact_transactions
