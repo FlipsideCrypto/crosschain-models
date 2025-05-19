@@ -7,7 +7,7 @@
     tags = ['daily']
 ) }}
 
-{% set default_date = "'2025-01-01'" %}
+{% set default_date = "'2025-05-07'" %}
 
 {% if is_incremental() %}
     {% set yesterday = "DATEADD('day', -1, SYSDATE()::DATE)" %}
@@ -192,6 +192,7 @@ aggregated_transfers AS (
         sum(amount) as amount
     FROM all_transfers
     GROUP BY 1,2,3
+    where address is not null
 )
 
 SELECT 
