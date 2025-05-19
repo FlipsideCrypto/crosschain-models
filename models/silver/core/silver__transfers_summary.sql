@@ -7,7 +7,7 @@
     tags = ['daily']
 ) }}
 
-{% set default_date = "'2025-05-07'" %}
+{% set default_date = "'2025-01-01'" %}
 
 {% if is_incremental() %}
     {% set yesterday = "DATEADD('day', -1, SYSDATE()::DATE)" %}
