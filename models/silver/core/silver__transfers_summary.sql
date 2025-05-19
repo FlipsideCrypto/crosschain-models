@@ -3,7 +3,7 @@
     unique_key = ['transfers_id'],
     cluster_by = ['blockchain','block_day'],
     merge_exclude_columns = ['inserted_timestamp'],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(address,blockchain);",
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(address);",
     tags = ['daily']
 ) }}
 
