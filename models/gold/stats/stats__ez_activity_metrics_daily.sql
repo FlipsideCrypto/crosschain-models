@@ -5,7 +5,7 @@
     materialized = 'incremental',
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
-    unique_key = ['blockchain','block_date','is_quality']
+    unique_key = ['blockchain','block_date']
 ) }}
 
 {% if execute %}
@@ -14,7 +14,7 @@
 {% set max_mod_query %}
 
 SELECT
-    MAX(modified_timestamp) :: DATE modified_timestamp
+    MAX(modified_timestamp) modified_timestamp
 FROM
     {{ this }}
 
@@ -38,9 +38,9 @@ WHERE
     block_timestamp :: DATE < SYSDATE() :: DATE
 
 {% if is_incremental() %}
-AND modified_timestamp :: DATE >= '{{ max_mod }}'
+AND modified_timestamp >= '{{ max_mod }}'
 {% else %}
-    AND block_timestamp :: DATE >= '2025-05-14'
+    AND block_timestamp :: DATE >= '2025-01-01'
 {% endif %}
 
 {% endset %}
@@ -55,6 +55,13 @@ FROM
         {% set min_bd = '2099-01-01' %}
     {% endif %}
 
+    {% set date_filter %}
+    A.block_timestamp :: DATE IN (
+        {% for date in run_query("SELECT DISTINCT block_date FROM silver.ez_activity_metrics__intermediate_tmp") %}
+            '{{ date[0] }}' {% if not loop.last %},
+            {% endif %}
+        {% endfor %}
+    ) {% endset %}
     --apply prices to the transactions and roll up to the user/day level
     {% set inc_query %}
     CREATE
@@ -80,12 +87,27 @@ FROM
     ON A.blockchain = b.blockchain
     AND A.block_timestamp :: DATE = b.block_date
 WHERE
-    A.block_timestamp :: DATE >= '{{ min_bd }}'
+    {{ date_filter }}
 GROUP BY
     1,
     2,
     3 {% endset %}
     {% do run_query(inc_query) %}
+    --find block dates where we do not have a score
+    {% set score_asof_query %}
+    CREATE
+    OR REPLACE temporary TABLE silver.ez_activity_metrics__scores_asof_intermediate_tmp AS
+SELECT
+    DISTINCT A.blockchain,
+    A.block_date
+FROM
+    silver.ez_activity_metrics__intermediate_tmp A
+    LEFT JOIN datascience.onchain_scores.all_scores b_ex
+    ON A.blockchain = b_ex.blockchain
+    AND A.block_date = b_ex.score_date
+WHERE
+    b_ex.blockchain IS NULL {% endset %}
+    {% do run_query(score_asof_query) %}
     --Get the score closest to the block date for the senders
     {% set scores_query %}
     CREATE
@@ -96,10 +118,26 @@ SELECT
     A.score_date,
     b.block_date,
     A.total_score,
+    1 AS rn
+FROM
+    {{ source(
+        'datascience_onchain_scores',
+        'all_scores'
+    ) }} A
+    JOIN silver.ez_activity_metrics__intermediate_tmp b
+    ON A.blockchain = b.blockchain
+    AND A.score_date = b.block_date
+UNION ALL
+SELECT
+    A.blockchain,
+    A.user_address,
+    A.score_date,
+    b.block_date,
+    A.total_score,
     ROW_NUMBER() over (
         PARTITION BY A.blockchain,
         A.user_address,
-        b.block_date
+        b.block_Date
         ORDER BY
             score_date DESC
     ) AS rn
@@ -107,20 +145,35 @@ FROM
     {{ source(
         'datascience_onchain_scores',
         'all_scores'
-    ) }} A asof
-    JOIN silver.ez_activity_metrics__intermediate_tmp b match_condition (
+    ) }} A
+    JOIN (
+        SELECT
+            blockchain,
+            MIN(block_Date) AS block_Date_min,
+            MAX(block_Date) AS block_Date_max
+        FROM
+            silver.ez_activity_metrics__scores_asof_intermediate_tmp
+        GROUP BY
+            blockchain
+    ) inn
+    ON A.blockchain = inn.blockchain
+    AND A.score_Date >= inn.block_Date_min - 7
+    AND A.score_Date <= inn.block_Date_max + 7 asof
+    JOIN silver.ez_activity_metrics__scores_asof_intermediate_tmp b match_condition (
         score_date <= b.block_date
     )
     ON A.blockchain = b.blockchain
 WHERE
-    score_date >= (
-        SELECT
-            MIN(block_date) -7
-        FROM
-            silver.ez_activity_metrics__intermediate_tmp
-    )
-    AND total_score >= 4 {% endset %}
+    b.block_date IS NOT NULL {% endset %}
     {% do run_query(scores_query) %}
+    --delete the scores that are less than 4 or the additional rows from the asof join
+    {% set scores_del_query %}
+DELETE FROM
+    silver.ez_activity_metrics__scores_intermediate_tmp
+WHERE
+    rn > 1
+    OR total_score < 4 {% endset %}
+    {% do run_query(scores_del_query) %}
 {% endif %}
 
 --Aggregate the data to the daily level
