@@ -33,6 +33,6 @@ models:
       - name: DEX_COMPARISON_ID 
         tests:
           - not_null
-      - name: INVOCATION_ID 
+      - name: _INVOCATION_ID 
         tests:
           - not_null

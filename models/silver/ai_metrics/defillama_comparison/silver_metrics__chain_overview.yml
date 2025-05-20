@@ -36,6 +36,6 @@ models:
       - name: CHAIN_OVERVIEW_ID 
         tests:
           - not_null
-      - name: INVOCATION_ID 
+      - name: _INVOCATION_ID 
         tests:
           - not_null

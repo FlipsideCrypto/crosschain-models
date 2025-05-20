@@ -50,7 +50,7 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['inserted_timestamp', 'blockchain', 'category']) }} AS chain_overview_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    defillama_dex d full
+    defillama_dex d
     INNER JOIN crosschain_dex C USING (
         blockchain
     )
