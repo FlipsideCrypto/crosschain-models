@@ -25,7 +25,7 @@ FROM
     {% endif %}
 {% endif %}
 
---get the distinct block dates that we are processing
+--get the distinct blockchains & block dates that we are processing
 {% set dates_query %}
 CREATE
 OR REPLACE temporary TABLE silver.ez_activity_metrics__intermediate_tmp AS
@@ -45,27 +45,18 @@ AND modified_timestamp >= '{{ max_mod }}'
 
 {% endset %}
 {% do run_query(dates_query) %}
-{% set min_bd_query %}
-SELECT
-    MIN(block_date) :: DATE block_date
-FROM
-    silver.ez_activity_metrics__intermediate_tmp {% endset %}
-    {% set min_bd = run_query(min_bd_query) [0] [0] %}
-    {% if not min_bd or min_bd == 'None' %}
-        {% set min_bd = '2099-01-01' %}
-    {% endif %}
-
-    {% set date_filter %}
-    A.block_timestamp :: DATE IN (
-        {% for date in run_query("SELECT DISTINCT block_date FROM silver.ez_activity_metrics__intermediate_tmp") %}
-            '{{ date[0] }}' {% if not loop.last %},
-            {% endif %}
-        {% endfor %}
-    ) {% endset %}
-    --apply prices to the transactions and roll up to the user/day level
-    {% set inc_query %}
-    CREATE
-    OR REPLACE temporary TABLE silver.ez_activity_metrics__tx_intermediate_tmp AS
+--create a dynamic where clause with literal block dates
+{% set date_filter %}
+A.block_timestamp :: DATE IN (
+    {% for date in run_query("SELECT DISTINCT block_date FROM silver.ez_activity_metrics__intermediate_tmp") %}
+        '{{ date[0] }}' {% if not loop.last %},
+        {% endif %}
+    {% endfor %}
+) {% endset %}
+--roll transactions up to the hour/sender level
+{% set inc_query %}
+CREATE
+OR REPLACE temporary TABLE silver.ez_activity_metrics__tx_intermediate_tmp AS
 SELECT
     A.blockchain,
     DATE_TRUNC(
@@ -89,11 +80,11 @@ FROM
 WHERE
     {{ date_filter }}
 GROUP BY
-    1,
-    2,
-    3 {% endset %}
+    A.blockchain,
+    block_timestamp_hour,
+    sender {% endset %}
     {% do run_query(inc_query) %}
-    --find block dates where we do not have a score
+    --find block dates where we do not have a score for that exact date
     {% set score_asof_query %}
     CREATE
     OR REPLACE temporary TABLE silver.ez_activity_metrics__scores_asof_intermediate_tmp AS
@@ -108,7 +99,7 @@ FROM
 WHERE
     b_ex.blockchain IS NULL {% endset %}
     {% do run_query(score_asof_query) %}
-    --Get the score closest to the block date for the senders
+    --Get the score for that block date or the closest date we have prior to that date
     {% set scores_query %}
     CREATE
     OR REPLACE temporary TABLE silver.ez_activity_metrics__scores_intermediate_tmp AS
@@ -166,7 +157,7 @@ FROM
 WHERE
     b.block_date IS NOT NULL {% endset %}
     {% do run_query(scores_query) %}
-    --delete the scores that are less than 4 or the additional rows from the asof join
+    --delete the scores temp with a score less than 4 or the additional rows from the asof join
     {% set scores_del_query %}
 DELETE FROM
     silver.ez_activity_metrics__scores_intermediate_tmp
@@ -176,7 +167,7 @@ WHERE
     {% do run_query(scores_del_query) %}
 {% endif %}
 
---Aggregate the data to the daily level
+--Final aggregate of the data to the daily level
 WITH prices AS (
     SELECT
         A.hour,
@@ -198,6 +189,7 @@ WITH prices AS (
         )
         AND A.symbol = b.symbol
     WHERE
+        --three day look back to make sure we fill any gaps
         HOUR :: DATE >= (
             SELECT
                 MIN(block_date) -3
