@@ -107,14 +107,13 @@ joined AS (
         h.senders_pctl,
         h.consistency_pctl,
         h.longevity_pctl,
-
         ROUND(
             (
-                (h.tx_pctl * 0.25) +
-                (h.senders_pctl * 0.25) +
-                (h.consistency_pctl * 0.25) +
-                (h.longevity_pctl * 0.15) +
-                ((1 - LEAST(h.tx_spike_ratio / 10, 1)) * 0.10)
+                (h.tx_pctl * 0.25) + --How active the token is in terms of raw transaction count, relative to others on the same chain
+                (h.senders_pctl * 0.25) + --How widely used it is (number of unique senders)
+                (h.consistency_pctl * 0.25) + --How consistently active it is day-to-day (vs. bursty or dormant)
+                (h.longevity_pctl * 0.15) + --How long the token has been consistently active (sustained presence)
+                ((1 - LEAST(h.tx_spike_ratio / 10, 1)) * 0.10) --Penalizes tokens with short-lived activity spikes (e.g., airdrops or wash trading)
             )
         , 3) AS legitimacy_score,
         CASE
@@ -129,30 +128,30 @@ joined AS (
 SELECT 
     *,
     CASE
-        WHEN blockchain = 'solana' AND legitimacy_score > 0.79 THEN 'verified'
-        WHEN blockchain = 'bsc' AND legitimacy_score > 0.87 THEN 'verified'
-        WHEN blockchain = 'base' AND legitimacy_score > 0.90 THEN 'verified'
-        WHEN blockchain = 'ethereum' AND legitimacy_score > 0.90 THEN 'verified'
-        WHEN blockchain = 'polygon' AND legitimacy_score > 0.91 THEN 'verified'
-        WHEN blockchain = 'arbitrum' AND legitimacy_score > 0.88 THEN 'verified'
-        WHEN blockchain = 'avalanche' AND legitimacy_score > 0.87 THEN 'verified'
-        WHEN blockchain = 'optimism' AND legitimacy_score > 0.86 THEN 'verified'
-        WHEN blockchain = 'gnosis' AND legitimacy_score > 0.91 THEN 'verified'
-        WHEN blockchain = 'aptos' AND legitimacy_score > 0.15 THEN 'verified'
-        WHEN blockchain = 'kaia' AND legitimacy_score > 0.84 THEN 'verified'
-        WHEN blockchain = 'core' AND legitimacy_score > 0.91 THEN 'verified'
-        WHEN blockchain = 'osmosis' AND legitimacy_score > 0.84 THEN 'verified'
-        WHEN blockchain = 'mantle' AND legitimacy_score > 0.41 THEN 'verified'
-        WHEN blockchain = 'blast' AND legitimacy_score > 0.88 THEN 'verified'
-        WHEN blockchain = 'sei' AND legitimacy_score > 0.86 THEN 'verified'
-        WHEN blockchain = 'near' AND legitimacy_score > 0.01 THEN 'verified'
-        WHEN blockchain = 'eclipse' AND legitimacy_score > 0.95 THEN 'verified'
-        WHEN blockchain = 'ink' AND legitimacy_score > 0.92 THEN 'verified'
-        WHEN blockchain = 'flow' AND legitimacy_score > 0.18 THEN 'verified'
+        WHEN blockchain = 'aleo' AND legitimacy_score > 0.7 THEN 'verified'
+        WHEN blockchain = 'aptos' AND legitimacy_score > 0.9 THEN 'verified'
+        WHEN blockchain = 'arbitrum' AND legitimacy_score > 0.9 THEN 'verified'
+        WHEN blockchain = 'avalanche' AND legitimacy_score > 0.9 THEN 'verified'
         WHEN blockchain = 'axelar' AND legitimacy_score > 0.09 THEN 'verified'
-        WHEN blockchain = 'cosmos' AND legitimacy_score > 0.85 THEN 'verified'
-        WHEN blockchain = 'boba' AND legitimacy_score > 0.83 THEN 'verified'
-        WHEN blockchain = 'aleo' AND legitimacy_score > 0.12 THEN 'verified'
+        WHEN blockchain = 'base' AND legitimacy_score > 0.90 THEN 'verified'
+        WHEN blockchain = 'blast' AND legitimacy_score > 0.8 THEN 'verified'
+        WHEN blockchain = 'boba' AND legitimacy_score > 0.8 THEN 'verified'
+        WHEN blockchain = 'bsc' AND legitimacy_score > 0.9 THEN 'verified'
+        WHEN blockchain = 'core' AND legitimacy_score > 0.9 THEN 'verified'
+        WHEN blockchain = 'cosmos' AND legitimacy_score > 0.8 THEN 'verified'
+        WHEN blockchain = 'eclipse' AND legitimacy_score > 0.9 THEN 'verified'
+        WHEN blockchain = 'ethereum' AND legitimacy_score > 0.9 THEN 'verified'
+        WHEN blockchain = 'flow' AND legitimacy_score > 0.8 THEN 'verified'
+        WHEN blockchain = 'gnosis' AND legitimacy_score > 0.9 THEN 'verified'
+        WHEN blockchain = 'ink' AND legitimacy_score > 0.9 THEN 'verified'
+        WHEN blockchain = 'kaia' AND legitimacy_score > 0.8 THEN 'verified'
+        WHEN blockchain = 'mantle' AND legitimacy_score > 0.8 THEN 'verified'
+        WHEN blockchain = 'near' AND legitimacy_score > 0.8 THEN 'verified'
+        WHEN blockchain = 'optimism' AND legitimacy_score > 0.8 THEN 'verified'
+        WHEN blockchain = 'osmosis' AND legitimacy_score > 0.8 THEN 'verified'
+        WHEN blockchain = 'polygon' AND legitimacy_score > 0.9 THEN 'verified'
+        WHEN blockchain = 'sei' AND legitimacy_score > 0.8 THEN 'verified'
+        WHEN blockchain = 'solana' AND legitimacy_score > 0.90 THEN 'verified'
         ELSE 'not_verified'
     END AS chain_adjusted_verification_status
 FROM joined
