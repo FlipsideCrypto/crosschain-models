@@ -44,6 +44,7 @@ There is more information on how to use dbt docs in the last section of this doc
 - [ez_bridge_activity](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.defi__ez_bridge_activity)
 
 ### Stats Tables (crosschain.stats)
+- [ez_activity_metrics_daily](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.stats__ez_activity_metrics_daily)
 - [ez_core_metrics_hourly](https://flipsidecrypto.github.io/crosschain-models/#!/model/model.crosschain_models.stats__ez_core_metrics_hourly)
 
 ### Cosmos Tables (crosschain.cosmos)

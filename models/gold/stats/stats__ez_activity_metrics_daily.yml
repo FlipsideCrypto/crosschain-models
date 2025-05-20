@@ -13,14 +13,14 @@ models:
       - name: BLOCKCHAIN 
         description: '{{ doc("blockchain_column") }}'
       - name: BLOCK_DATE
-        description: '{{ doc("crosschain_block_number_min") }}'
+        description: '{{ doc("block_date") }}'
         tests:
           - not_null
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
               interval: 1
       - name: IS_QUALITY
-        description: '{{ doc("crosschain_block_number_max") }}'
+        description: '{{ doc("is_quality") }}'
       - name: TRANSACTION_COUNT
         description: '{{ doc("crosschain_transaction_count") }}'
       - name: TRANSACTION_COUNT_SUCCESS
