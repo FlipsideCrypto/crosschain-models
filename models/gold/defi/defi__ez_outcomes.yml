@@ -3,21 +3,19 @@ version: 2
 models:
   - name: defi__ez_outcomes
     description: >
-      A consolidated view that tracks the latest activities across different DeFi actions 
+      A consolidated view that tracks the latest activities across different outcome actions 
       (lp, swap, bridge) by blockchain and platform.
-      This model provides a simple way to monitor when the last activity of each type occurred.    
     
     columns:
       - name: blockchain
-        description: The blockchain network where the DeFi activity occurred (e.g., ethereum, polygon, etc.)
+        description: The blockchain network where the activity occurred
       
       - name: platform
-        description: The DeFi platform or protocol where the activity occurred (e.g., uniswap, curve, etc.)
+        description: The platform or protocol where the activity occurred
       
       - name: action
-        description: Type of DeFi action performed - one of 'lp' (liquidity provision), 'swap', or 'bridge'
+        description: Type of outcome action performed - one of 'lp', 'swap', or 'bridge'
       
       - name: last_action_timestamp
         description: >
           The timestamp of the most recent action of this type on this platform and blockchain.
-          Used for tracking freshness of data and activity patterns.
