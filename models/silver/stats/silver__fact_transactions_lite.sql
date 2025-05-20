@@ -399,15 +399,24 @@ WITH base AS (
         tx_hash,
         block_timestamp,
         tx_succeeded,
-        from_address AS sender,
+        COALESCE(
+            b.sei_address,
+            A.from_address
+        ) AS sender,
         tx_fee_precise AS fee_native,
-        modified_timestamp,
+        A.modified_timestamp,
         'sei' AS blockchain
     FROM
         {{ source(
             'sei_evm_core',
             'fact_transactions'
+        ) }} A
+        LEFT JOIN {{ source(
+            'sei_core',
+            'dim_address_mapping'
         ) }}
+        b
+        ON A.from_address = b.evm_address
     UNION ALL
     SELECT
         tx_id AS tx_hash,

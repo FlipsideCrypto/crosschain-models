@@ -1203,6 +1203,7 @@ sources:
       - name: fact_msg_attributes
       - name: dim_tokens
       - name: fact_transactions
+      - name: dim_address_mapping
 
   - name: sei_evm_core
     database: sei
