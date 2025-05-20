@@ -5,7 +5,8 @@
     materialized = 'incremental',
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
-    unique_key = ['blockchain','block_date']
+    unique_key = ['blockchain','block_date'],
+    tags = ['metrics_daily']
 ) }}
 
 {% if execute %}

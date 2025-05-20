@@ -3,7 +3,7 @@
     incremental_strategy = 'merge',
     unique_key = ['block_timestamp::DATE','tx_hash'],
     cluster_by = ['block_timestamp::DATE'],
-    tags = ['daily']
+    tags = ['metrics_daily']
 ) }}
 
 {% if execute %}

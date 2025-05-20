@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'view',
-    tags = ['daily']
+    tags = ['metrics_daily']
 ) }}
 
 WITH base AS (
