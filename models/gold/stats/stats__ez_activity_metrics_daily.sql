@@ -46,17 +46,25 @@ AND modified_timestamp >= '{{ max_mod }}'
 {% endset %}
 {% do run_query(dates_query) %}
 --create a dynamic where clause with literal block dates
-{% set date_filter %}
-A.block_timestamp :: DATE IN (
-    {% for date in run_query("SELECT DISTINCT block_date FROM silver.ez_activity_metrics__intermediate_tmp") %}
-        '{{ date[0] }}' {% if not loop.last %},
-        {% endif %}
-    {% endfor %}
-) {% endset %}
---roll transactions up to the hour/sender level
-{% set inc_query %}
-CREATE
-OR REPLACE temporary TABLE silver.ez_activity_metrics__tx_intermediate_tmp AS
+{% set date_query %}
+SELECT
+    DISTINCT block_date
+FROM
+    silver.ez_activity_metrics__intermediate_tmp {% endset %}
+    {% set date_results = run_query(date_query) %}
+    {% set date_filter %}
+    A.block_timestamp :: DATE IN ({% if date_results.rows | length > 0 %}
+        {% for date in date_results %}
+            '{{ date[0] }}' {% if not loop.last %},
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        '2099-01-01'
+    {% endif %}) {% endset %}
+    --roll transactions up to the hour/sender level
+    {% set inc_query %}
+    CREATE
+    OR REPLACE temporary TABLE silver.ez_activity_metrics__tx_intermediate_tmp AS
 SELECT
     A.blockchain,
     DATE_TRUNC(
