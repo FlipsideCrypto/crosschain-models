@@ -13,7 +13,7 @@ cosmos,uatom,ATOM,null
 eclipse,so11111111111111111111111111111111111111112,ETH,null
 ethereum,null,ETH,null
 flow,null,FLOW,null
-flow_evm,null,null,null
+flow_evm,null,FLOW,flow
 gnosis,null,XDAI,null
 ink,0x4200000000000000000000000000000000000006,WETH,null
 kaia,0x0000000000000000000000000000000000000000,KAIA,null
@@ -23,7 +23,7 @@ optimism,0x4200000000000000000000000000000000000006,WETH,null
 polygon,null,POL,null
 ronin,null,RON,null
 sei,null,SEI,null
-sei_evm,null,null,null
+sei_evm,null,SEI,sei
 solana,null,SOL,null
 stellar,null,XLM,null
 swell,null,ETH,ethereum
