@@ -21,7 +21,7 @@
 
 WITH nft_receipts AS (
     SELECT
-        DISTINCT nft_to_address AS address,
+        DISTINCT to_address AS address,
         MAX(block_timestamp) AS block_timestamp,
         COUNT(
             DISTINCT tx_hash
@@ -36,7 +36,7 @@ WITH nft_receipts AS (
 ),
 nft_transfers AS (
     SELECT
-        DISTINCT nft_from_address AS address,
+        DISTINCT from_address AS address,
         MAX(block_timestamp) AS block_timestamp,
         COUNT(
             DISTINCT tx_hash
