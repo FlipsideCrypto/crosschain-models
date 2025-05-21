@@ -147,7 +147,11 @@ outcomes_with_manual_mappings AS (
 -- MATCHING STRATEGY 1: Exact slug match
 exact_match AS (
     SELECT
-        o.*,
+        o.blockchain,
+        o.platform,
+        o.defillama_category,
+        o.action,
+        o.last_action_timestamp,
         FALSE AS is_imputed,
         OBJECT_CONSTRUCT(p.protocol_slug, p.protocol_id::NUMBER) AS defillama_metadata,
         'exact_slug_match' AS match_type
@@ -159,19 +163,33 @@ exact_match AS (
         p.protocol_slug is not null
 ),
 
--- MATCHING STRATEGY 2: Match on base name + version
-base_version_match AS (
+-- Modified approach - combine all fuzzy matches into a single comprehensive CTE
+all_fuzzy_matches AS (
     SELECT
-        o.*,
-        FALSE AS is_imputed,
-        OBJECT_CONSTRUCT(p.protocol_slug, p.protocol_id::NUMBER) AS defillama_metadata,
-        'exact_version_match' AS match_type
+        o.blockchain,
+        o.platform,
+        o.defillama_category,
+        o.action,
+        o.last_action_timestamp,
+        TRUE AS is_imputed,
+        p.protocol_slug,
+        p.protocol_id,
+        CASE
+            WHEN jarowinkler_similarity(p.protocol_slug, o.platform) > 95 THEN 'fuzzy_slug_match'
+            WHEN p.protocol_first_part = o.platform_base_name AND p.protocol_version = o.platform_version AND o.platform_version IS NOT NULL THEN 'exact_version_match'
+            WHEN jarowinkler_similarity(p.protocol_base_name, o.platform_base_name) > 95 AND p.protocol_version = o.platform_version AND o.platform_version IS NOT NULL THEN 'fuzzy_version_match'
+            WHEN SPLIT_PART(o.platform_base_name, '-', 1) = p.protocol_first_part THEN 'name_match'
+            WHEN jarowinkler_similarity(SPLIT_PART(o.platform_base_name, '-', 1), p.protocol_first_part) > 95 THEN 'fuzzy_name_match'
+            ELSE NULL
+        END AS match_subtype
     FROM
         outcomes_base o
-        LEFT JOIN defillama_protocols p
-        ON p.protocol_first_part = o.platform_base_name
-        AND p.protocol_version = o.platform_version
-        AND o.platform_version IS NOT NULL
+        JOIN defillama_protocols p
+        ON (jarowinkler_similarity(p.protocol_slug, o.platform) > 95) OR
+           (p.protocol_first_part = o.platform_base_name AND p.protocol_version = o.platform_version AND o.platform_version IS NOT NULL) OR
+           (jarowinkler_similarity(p.protocol_base_name, o.platform_base_name) > 95 AND p.protocol_version = o.platform_version AND o.platform_version IS NOT NULL) OR
+           (SPLIT_PART(o.platform_base_name, '-', 1) = p.protocol_first_part) OR
+           (jarowinkler_similarity(SPLIT_PART(o.platform_base_name, '-', 1), p.protocol_first_part) > 95)
     WHERE
         o.platform NOT IN (
             SELECT DISTINCT platform FROM exact_match WHERE defillama_metadata IS NOT NULL
@@ -179,33 +197,26 @@ base_version_match AS (
         AND p.protocol_slug is not null
 ),
 
--- MATCHING STRATEGY 4: Match on first part of name
-name_match AS (
+-- Aggregate fuzzy matches by platform and determine best match type
+fuzzy_matches_consolidated AS (
     SELECT
-        o.blockchain,
-        o.platform,
-        o.platform_version,
-        o.platform_base_name,
-        o.defillama_category,
-        o.action,
-        o.last_action_timestamp,
-        TRUE AS is_imputed,
-        OBJECT_AGG(p.protocol_slug, p.protocol_id::NUMBER) AS defillama_metadata,
-        'name_match' AS match_type
+        blockchain,
+        platform,
+        defillama_category,
+        action,
+        last_action_timestamp,
+        is_imputed,
+        OBJECT_AGG(protocol_slug, protocol_id::NUMBER) AS defillama_metadata,
+        MIN(match_subtype) AS match_type -- Using MIN to prioritize in alphabetical order
     FROM
-        outcomes_base o
-        LEFT JOIN defillama_protocols p
-        ON SPLIT_PART(o.platform_base_name, '-', 1) = p.protocol_first_part
-    WHERE
-        o.platform NOT IN (
-            SELECT DISTINCT platform FROM exact_match WHERE defillama_metadata IS NOT NULL
-            UNION 
-            SELECT DISTINCT platform FROM base_version_match WHERE defillama_metadata IS NOT NULL
-        )
-        AND p.protocol_slug is not null
-    GROUP BY 
-        o.blockchain, o.platform, o.platform_version, o.platform_base_name, 
-        o.defillama_category, o.action, o.last_action_timestamp
+        all_fuzzy_matches
+    GROUP BY
+        blockchain,
+        platform,
+        defillama_category,
+        action,
+        last_action_timestamp,
+        is_imputed
 ),
 
 -- MATCHING STRATEGY 5: Use manual/ChatGPT mappings as last resort
@@ -226,10 +237,8 @@ manual_match AS (
     WHERE
         o.platform NOT IN (
             SELECT DISTINCT platform FROM exact_match WHERE defillama_metadata IS NOT NULL
-            UNION 
-            SELECT DISTINCT platform FROM base_version_match WHERE defillama_metadata IS NOT NULL
             UNION
-            SELECT DISTINCT platform FROM name_match WHERE defillama_metadata IS NOT NULL
+            SELECT DISTINCT platform FROM fuzzy_matches_consolidated WHERE defillama_metadata IS NOT NULL
         )
         AND m.protocol_slug is not null
 ),
@@ -237,7 +246,11 @@ manual_match AS (
 -- Handle unmatched platforms
 unmatched AS (
     SELECT
-        o.*,
+        o.blockchain,
+        o.platform,
+        o.defillama_category,
+        o.action,
+        o.last_action_timestamp,
         FALSE AS is_imputed,
         NULL AS defillama_metadata,
         'no_match' AS match_type
@@ -246,10 +259,8 @@ unmatched AS (
     WHERE
         o.platform NOT IN (
             SELECT DISTINCT platform FROM exact_match WHERE defillama_metadata IS NOT NULL
-            UNION 
-            SELECT DISTINCT platform FROM base_version_match WHERE defillama_metadata IS NOT NULL
             UNION
-            SELECT DISTINCT platform FROM name_match WHERE defillama_metadata IS NOT NULL
+            SELECT DISTINCT platform FROM fuzzy_matches_consolidated WHERE defillama_metadata IS NOT NULL
             UNION
             SELECT DISTINCT platform FROM manual_match
         )
@@ -283,23 +294,7 @@ combined_results AS (
         defillama_metadata,
         match_type
     FROM
-        base_version_match
-    WHERE
-        defillama_metadata IS NOT NULL
-    
-    UNION ALL
-    
-    SELECT
-        blockchain,
-        platform,
-        defillama_category,
-        action,
-        last_action_timestamp,
-        is_imputed,
-        defillama_metadata,
-        match_type
-    FROM
-        name_match
+        fuzzy_matches_consolidated
     WHERE
         defillama_metadata IS NOT NULL
     
