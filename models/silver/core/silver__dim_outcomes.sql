@@ -67,10 +67,10 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         blockchain,
         platform,
         action
-)
+),
 
 -- Prepare base data with platform naming variations
-, outcomes_base AS (
+outcomes_base AS (
     SELECT
         blockchain,
         platform,
@@ -90,10 +90,10 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         last_action_timestamp
     FROM
         base b
-)
+),
 
 -- Manual mappings from seed file
-, manual_mappings AS (
+manual_mappings AS (
     SELECT
         platform,
         protocol_id,
@@ -101,18 +101,18 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         'seed_file_chatgpt' AS match_type
     FROM
         {{ ref('silver__outcomes_protocol_mappings') }}
-)
+),
 
 -- Platforms with manual mappings
-, manual_mapping_platforms AS (
+manual_mapping_platforms AS (
     SELECT
         DISTINCT platform
     FROM
         manual_mappings
-)
+),
 
 -- DeFiLlama protocol reference data
-, defillama_protocols AS (
+defillama_protocols AS (
     SELECT
         protocol_id,
         protocol_slug,
@@ -129,10 +129,10 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         ) AS protocol_first_part
     FROM
         {{ source('external_defillama', 'dim_protocols') }}
-)
+),
 
 -- Base data with potential manual mappings
-, outcomes_with_manual_mappings AS (
+outcomes_with_manual_mappings AS (
     SELECT
         o.*,
         m.protocol_id AS manual_protocol_id,
@@ -142,10 +142,10 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         outcomes_base o
         LEFT JOIN manual_mappings m
         ON o.platform = m.platform
-)
+),
 
 -- MATCHING STRATEGY 1: Exact slug match
-, exact_match AS (
+exact_match AS (
     SELECT
         o.*,
         p.protocol_id,
@@ -166,20 +166,10 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
             FROM
                 manual_mapping_platforms
         )
-)
-
--- Track exactly matched platforms
-, exact_match_platforms AS (
-    SELECT
-        DISTINCT platform
-    FROM
-        exact_match
-    WHERE
-        protocol_id IS NOT NULL
-)
+),
 
 -- MATCHING STRATEGY 2: Match on base name + version
-, base_version_match AS (
+base_version_match AS (
     SELECT
         o.*,
         p.protocol_id,
@@ -197,31 +187,12 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         AND o.platform_version IS NOT NULL
     WHERE
         o.platform NOT IN (
-            SELECT
-                platform
-            FROM
-                exact_match_platforms
+            SELECT DISTINCT platform FROM exact_match WHERE protocol_id IS NOT NULL
         )
-)
-
--- Combined exact matches
-, base_version_match_platforms AS (
-    SELECT
-        DISTINCT platform
-    FROM
-        base_version_match
-    WHERE
-        protocol_id IS NOT NULL
-)
-
-, all_exact_match_platforms AS (
-    SELECT platform FROM exact_match_platforms
-    UNION
-    SELECT platform FROM base_version_match_platforms
-)
+),
 
 -- MATCHING STRATEGY 3: Match on category + base name
-, category_match AS (
+category_match AS (
     SELECT
         o.blockchain,
         o.platform,
@@ -242,36 +213,19 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         LEFT JOIN defillama_protocols p
         ON p.protocol_base_name = o.platform_base_name
         AND p.category = o.defillama_category
-        AND ((o.platform_version IS NULL AND p.protocol_version IS NULL)
-            OR o.platform_version = p.protocol_version)
     WHERE
         o.platform NOT IN (
-            SELECT
-                platform
-            FROM
-                all_exact_match_platforms
+            SELECT DISTINCT platform FROM exact_match WHERE protocol_id IS NOT NULL
+            UNION 
+            SELECT DISTINCT platform FROM base_version_match WHERE protocol_id IS NOT NULL
         )
-    GROUP BY
-        o.blockchain,
-        o.platform,
-        o.platform_version,
-        o.platform_base_name,
-        o.defillama_category,
-        o.action,
-        o.last_action_timestamp
-)
+    GROUP BY 
+        o.blockchain, o.platform, o.platform_version, o.platform_base_name, 
+        o.defillama_category, o.action, o.last_action_timestamp
+),
 
-, category_match_platforms AS (
-    SELECT
-        DISTINCT platform
-    FROM
-        category_match
-    WHERE
-        protocol_id IS NOT NULL
-)
-
--- MATCHING STRATEGY 4: Name-based matching
-, name_match AS (
+-- MATCHING STRATEGY 4: Match on first part of name
+name_match AS (
     SELECT
         o.blockchain,
         o.platform,
@@ -293,69 +247,19 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         ON SPLIT_PART(o.platform_base_name, '-', 1) = p.protocol_first_part
     WHERE
         o.platform NOT IN (
-            SELECT
-                platform
-            FROM
-                all_exact_match_platforms
+            SELECT DISTINCT platform FROM exact_match WHERE protocol_id IS NOT NULL
+            UNION 
+            SELECT DISTINCT platform FROM base_version_match WHERE protocol_id IS NOT NULL
+            UNION
+            SELECT DISTINCT platform FROM category_match WHERE protocol_id IS NOT NULL
         )
-        AND o.platform NOT IN (
-            SELECT
-                platform
-            FROM
-                category_match_platforms
-        )
-    GROUP BY
-        o.blockchain,
-        o.platform,
-        o.platform_version,
-        o.platform_base_name,
-        o.defillama_category,
-        o.action,
-        o.last_action_timestamp
-)
+    GROUP BY 
+        o.blockchain, o.platform, o.platform_version, o.platform_base_name, 
+        o.defillama_category, o.action, o.last_action_timestamp
+),
 
-, name_match_platforms AS (
-    SELECT
-        DISTINCT platform
-    FROM
-        name_match
-    WHERE
-        protocol_id IS NOT NULL
-)
-
--- Combine auto-matched platforms
-, all_auto_matched_platforms AS (
-    SELECT
-        platform
-    FROM
-        exact_match
-    WHERE
-        protocol_id IS NOT NULL
-    UNION ALL
-    SELECT
-        platform
-    FROM
-        base_version_match
-    WHERE
-        protocol_id IS NOT NULL
-    UNION ALL
-    SELECT
-        platform
-    FROM
-        category_match
-    WHERE
-        protocol_id IS NOT NULL
-    UNION ALL
-    SELECT
-        platform
-    FROM
-        name_match
-    WHERE
-        protocol_id IS NOT NULL
-)
-
--- MATCHING STRATEGY 5: Use manual mappings as last resort
-, manual_match AS (
+-- MATCHING STRATEGY 5: Use manual/ChatGPT mappings as last resort
+manual_match AS (
     SELECT
         o.blockchain,
         o.platform,
@@ -364,12 +268,8 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         o.last_action_timestamp,
         m.protocol_id,
         TRUE AS is_imputed,
-        ARRAY_CONSTRUCT(
-            m.protocol_id
-        ) AS imputed_protocol_id,
-        ARRAY_CONSTRUCT(
-            m.protocol_slug
-        ) AS imputed_protocol_slug,
+        ARRAY_CONSTRUCT(m.protocol_id) AS imputed_protocol_id,
+        ARRAY_CONSTRUCT(m.protocol_slug) AS imputed_protocol_slug,
         m.match_type
     FROM
         outcomes_base o
@@ -377,28 +277,18 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         ON o.platform = m.platform
     WHERE
         o.platform NOT IN (
-            SELECT
-                platform
-            FROM
-                all_auto_matched_platforms
+            SELECT DISTINCT platform FROM exact_match WHERE protocol_id IS NOT NULL
+            UNION 
+            SELECT DISTINCT platform FROM base_version_match WHERE protocol_id IS NOT NULL
+            UNION
+            SELECT DISTINCT platform FROM category_match WHERE protocol_id IS NOT NULL
+            UNION
+            SELECT DISTINCT platform FROM name_match WHERE protocol_id IS NOT NULL
         )
-)
-
--- Combined matched platforms
-, all_matched_platforms AS (
-    SELECT
-        platform
-    FROM
-        all_auto_matched_platforms
-    UNION ALL
-    SELECT
-        platform
-    FROM
-        manual_match
-)
+),
 
 -- Handle unmatched platforms
-, unmatched AS (
+unmatched AS (
     SELECT
         o.*,
         NULL AS protocol_id,
@@ -412,15 +302,20 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         outcomes_base o
     WHERE
         o.platform NOT IN (
-            SELECT
-                platform
-            FROM
-                all_matched_platforms
+            SELECT DISTINCT platform FROM exact_match WHERE protocol_id IS NOT NULL
+            UNION 
+            SELECT DISTINCT platform FROM base_version_match WHERE protocol_id IS NOT NULL
+            UNION
+            SELECT DISTINCT platform FROM category_match WHERE protocol_id IS NOT NULL
+            UNION
+            SELECT DISTINCT platform FROM name_match WHERE protocol_id IS NOT NULL
+            UNION
+            SELECT DISTINCT platform FROM manual_match
         )
-)
+),
 
 -- Combine all results into a single CTE
-, combined_results AS (
+combined_results AS (
     SELECT
         blockchain,
         platform,
@@ -528,7 +423,6 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
 SELECT
     blockchain,
     platform,
-    defillama_category,
     action,
     last_action_timestamp,
     protocol_id,
