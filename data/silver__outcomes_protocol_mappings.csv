@@ -1,0 +1,60 @@
+platform,protocol_id,protocol_slug
+trader-joe-v1,468,joe-dex
+trader-joe-v2,2393,joe-v2
+zora: bridge,5566,zora-bridge
+zksync lite: bridge,3936,zksync-lite-bridge
+zksync era: diamond proxy,4844,zksync-era
+wormhole,1716,north-pole
+v2.ref-finance.near,612,vires-finance
+v1.jumbo_exchange.near,1547,jumbo-exchange
+stepn swap,2692,sevenswap
+starknet: starkgate eth bridge,3787,starknet-bridge
+sparta,1246,spartan
+ref.marior.near,2150,ribbon-earn
+ref-finance.near,2357,roe-finance
+raydium concentrated liquidity,4563,fenix-concentrated-liquidity
+polygon (matic): zkevm bridge,3785,polygon-zkevm-bridge
+polygon (matic): plasma bridge,5130,polynomial-bridge
+polygon (matic): erc20 bridge,3785,polygon-zkevm-bridge
+pharaoh_v1,3921,pharaoh-cl
+orca token swap,2008,forteswap
+optimism: l1 escrow,3784,optimism-bridge
+optimism: gateway,3784,optimism-bridge
+near: rainbow bridge,3866,rainbow-bridge
+meteora pools program,385,meteora-pools
+meteora dlmm pools program,385,meteora-pools
+meteora bonding,1532,metalx-lending
+mayan finance,113,yearn-finance
+lifinity swap v2,3686,lifinity-v2
+level-finance,4989,velo-finance
+jupiter swap v6,1817,jupiter-swap
+jupiter swap v5.1,1817,jupiter-swap
+jupiter swap v5,1817,jupiter-swap
+jupiter swap v4,1817,jupiter-swap
+jupiter aggregator v3,2141,jupiter-aggregator
+jupiter aggregator v2,2141,jupiter-aggregator
+hyperlane,5940,hyperlend
+gnosis chain: xdai bridge,1257,crosschain-bridge
+gnosis chain: eth-xdai omni bridge,1257,crosschain-bridge
+fraxswap,2121,frax-swap
+eywa,3034,eazyswap
+exchange.slowisfast.near,5638,ln-exchange-spot
+dln_debridge,1462,debridge
+dex.thundercontract.near,2828,thundercore-staking
+deBridge,1462,debridge
+circle-cctp-v2,5008,circle
+circle-cctp,5008,circle
+celer_cbridge,2578,beamer-bridge
+boba network: gateway,4944,bob-gateway
+beethoven-x,654,beets-dex
+baseswap-basex,3333,baseswap-v2
+base: base bridge,3780,base-bridge
+axie_infinity,6102,axie-infinity
+axie infinity: ronin bridge,6102,axie-infinity
+avalanche: old bridge,3779,avalanche-core-bridge
+avalanche: bridge,3779,avalanche-core-bridge
+arbitrum nova: bridge,3778,arbitrum-nova-bridge
+alienbase,3888,alien-base-v3
+Saber Stable Swap,5391,zkswap-stableswap
+Saber Router,419,saber
+ORCA Token Swap V2,4138,dragonswap-v2
