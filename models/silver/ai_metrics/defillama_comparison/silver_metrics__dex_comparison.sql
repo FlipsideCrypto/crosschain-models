@@ -11,7 +11,11 @@ WITH defillama AS (
     SELECT
         LOWER(
             REGEXP_SUBSTR(REGEXP_REPLACE(TRIM(protocol), '-v\\d+', ''), '^[^ ]+')) AS platform_name,
-            chain AS blockchain,
+            IFF(
+                chain = 'avax',
+                'avalanche',
+                chain
+            ) AS blockchain,
             SUM(volume) AS defillama_volume
             FROM
                 {{ source(

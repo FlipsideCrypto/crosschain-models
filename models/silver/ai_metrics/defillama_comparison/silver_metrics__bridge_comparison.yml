@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver_metrics__dex_comparison
+  - name: silver_metrics__bridge_comparison
     columns:
       - name: BLOCKCHAIN
         tests:
@@ -30,6 +30,6 @@ models:
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
               interval: 8
-      - name: DEX_COMPARISON_ID 
+      - name: BRIDGE_COMPARISON_ID 
         tests:
           - not_null
