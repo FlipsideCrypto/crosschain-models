@@ -196,7 +196,7 @@ exact_match AS (
         )
 ),
 
--- Modified approach - combine all fuzzy matches into a single comprehensive CTE
+-- MATCHING STRATEGY 2: Fuzzy matching methods
 all_fuzzy_matches AS (
     SELECT
         o.blockchain,
@@ -276,7 +276,7 @@ fuzzy_matches_consolidated AS (
     ) = 1
 ),
 
--- MATCHING STRATEGY 5: Use chatGPT mappings as last resort (LOWEST PRIORITY)
+-- MATCHING STRATEGY 3: ChatGPT seed doc mappings
 normal_priority_manual_match AS (
     SELECT
         o.blockchain,
