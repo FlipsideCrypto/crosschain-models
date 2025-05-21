@@ -158,6 +158,7 @@ FROM
     LEFT JOIN cg_cmc AS cg_add
     ON cg_add.provider = 'coingecko'
     AND A.address_lower = cg_add.token_address_lower
+    AND cg.blockchain IS NULL
     LEFT JOIN cg_cmc cmc
     ON cmc.provider = 'coinmarketcap'
     AND A.blockchain = cmc.blockchain
@@ -165,6 +166,7 @@ FROM
     LEFT JOIN cg_cmc cmc_add
     ON cmc_add.provider = 'coinmarketcap'
     AND A.address_lower = cmc_add.token_address_lower
+    AND cmc.blockchain IS NULL
     LEFT JOIN stell cs1_cg
     ON A.blockchain = 'stellar'
     AND cs1_cg.provider = 'coingecko'
