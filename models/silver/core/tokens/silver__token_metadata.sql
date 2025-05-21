@@ -104,7 +104,7 @@ SELECT
         WHEN blockchain = 'axelar' AND legitimacy_score > 0.09 THEN TRUE
         WHEN blockchain = 'base' AND legitimacy_score > 0.90 THEN TRUE
         WHEN blockchain = 'blast' AND legitimacy_score > 0.8 THEN TRUE
-        WHEN blockchain = 'bob' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'bob' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'boba' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'bsc' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'core' AND legitimacy_score > 0.9 THEN TRUE

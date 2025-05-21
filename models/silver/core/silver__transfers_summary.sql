@@ -207,8 +207,7 @@ all_transfers AS (
         to_account as to_address,
         amount
     FROM {{ source('stellar_core', 'fact_operations') }}
-    WHERE address is not null 
-        AND amount is not null
+    WHERE amount is not null
         AND {{ block_ts_filter }}
 
      UNION ALL
