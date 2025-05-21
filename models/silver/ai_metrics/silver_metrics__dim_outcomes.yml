@@ -17,24 +17,18 @@ models:
         description: The platform or protocol where the activity occurred
         tests:
           - not_null
-      - name: DEFILLAMA_CATEGORY
-        description: Category of the protocol in DeFiLlama (e.g., 'Dexes', 'Bridge')
       - name: ACTION
         description: Type of outcome action performed - one of 'lp', 'swap', or 'bridge'
         tests:
           - not_null
       - name: LAST_ACTION_TIMESTAMP
         description: The timestamp of the most recent action of this type on this platform and blockchain
-      - name: PROTOCOL_ID
-        description: DeFiLlama protocol ID that corresponds to the platform. Matched through various strategies or imputed from similar protocols
       - name: IS_IMPUTED
-        description: Boolean flag indicating whether the protocol_id was directly matched (FALSE) or imputed from similar protocols (TRUE)
-      - name: IMPUTED_PROTOCOL_ID
-        description: For imputed matches, an array of potential protocol IDs that could match the platform
-      - name: IMPUTED_PROTOCOL_SLUG
-        description: For imputed matches, an array of potential protocol slugs that could match the platform
+        description: Boolean flag indicating whether the protocol mapping was directly matched (FALSE) or imputed from similar protocols (TRUE)
+      - name: DEFILLAMA_METADATA
+        description: Object containing protocol slug and ID mappings from DeFiLlama
       - name: MATCH_TYPE
-        description: The matching strategy used to associate the platform with a protocol_id (exact_slug_match, exact_version_match, category_match, name_match, seed_file_chatgpt, no_match)
+        description: The matching strategy used to associate the platform with DeFiLlama protocols (exact_slug_match, fuzzy_slug_match, exact_version_match, fuzzy_version_match, name_match, fuzzy_name_match, manual_match, seed_file_chatgpt, no_match)
       - name: INSERTED_TIMESTAMP
         description: The timestamp when this record was first inserted
       - name: MODIFIED_TIMESTAMP
