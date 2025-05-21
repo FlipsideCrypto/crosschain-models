@@ -23,13 +23,13 @@ models:
           - not_null
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
-              interval: 8
+              interval: 1
       - name: MODIFIED_TIMESTAMP
         tests:
           - not_null
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
-              interval: 8
+              interval: 1
       - name: BRIDGE_COMPARISON_ID 
         tests:
           - not_null

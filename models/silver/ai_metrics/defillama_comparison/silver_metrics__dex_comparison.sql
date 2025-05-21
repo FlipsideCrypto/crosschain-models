@@ -42,14 +42,11 @@ WITH defillama AS (
                     GROUP BY
                         ALL
                 ),
-                crosschain_total_volume AS (
+                crosschain_chains AS (
                     SELECT
-                        blockchain,
-                        SUM(crosschain_volume) AS total_crosschain_volume
+                        DISTINCT blockchain
                     FROM
                         crosschain
-                    GROUP BY
-                        ALL
                 ),
                 defillama_total_volume AS (
                     SELECT
@@ -82,8 +79,8 @@ WITH defillama AS (
                             blockchain,
                             platform_name
                         )
-                        JOIN crosschain_total_volume USING (blockchain)
                         JOIN defillama_total_volume USING (blockchain)
+                        JOIN crosschain_chains USING (blockchain)
                     ORDER BY
                         defillama_volume DESC nulls last
                 ),
