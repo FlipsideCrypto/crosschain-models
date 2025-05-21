@@ -92,15 +92,41 @@ outcomes_base AS (
         base b
 ),
 
--- Manual mappings from seed file
+-- Manual mappings from seed file (split by match_type)
 manual_mappings AS (
     SELECT
         platform,
         protocol_id,
         protocol_slug,
-        'seed_file_chatgpt' AS match_type
+        match_type
     FROM
         {{ ref('silver__outcomes_protocol_mappings') }}
+),
+
+-- High priority manual mappings (match_type = 'manual_match')
+high_priority_manual_mappings AS (
+    SELECT
+        platform,
+        protocol_id,
+        protocol_slug,
+        match_type
+    FROM
+        manual_mappings
+    WHERE
+        match_type = 'manual_match'
+),
+
+-- Normal priority manual mappings (match_type = 'seed_file_chatgpt')
+normal_priority_manual_mappings AS (
+    SELECT
+        platform,
+        protocol_id,
+        protocol_slug,
+        match_type
+    FROM
+        manual_mappings
+    WHERE
+        match_type = 'seed_file_chatgpt'
 ),
 
 -- Platforms with manual mappings
@@ -144,7 +170,26 @@ outcomes_with_manual_mappings AS (
         ON o.platform = m.platform
 ),
 
--- MATCHING STRATEGY 1: Exact slug match
+-- MATCHING STRATEGY 0: High priority manual mappings (FIRST PRIORITY)
+high_priority_manual_match AS (
+    SELECT
+        o.blockchain,
+        o.platform,
+        o.defillama_category,
+        o.action,
+        o.last_action_timestamp,
+        TRUE AS is_imputed,
+        OBJECT_CONSTRUCT(m.protocol_slug, m.protocol_id::NUMBER) AS defillama_metadata,
+        m.match_type
+    FROM
+        outcomes_base o
+        JOIN high_priority_manual_mappings m
+        ON o.platform = m.platform
+    WHERE
+        m.protocol_slug is not null
+),
+
+-- MATCHING STRATEGY 1: Exact slug match (SECOND PRIORITY)
 exact_match AS (
     SELECT
         o.blockchain,
@@ -161,6 +206,9 @@ exact_match AS (
         ON p.protocol_slug = o.platform
     WHERE
         p.protocol_slug is not null
+        AND o.platform NOT IN (
+            SELECT DISTINCT platform FROM high_priority_manual_match
+        )
 ),
 
 -- Modified approach - combine all fuzzy matches into a single comprehensive CTE
@@ -192,6 +240,8 @@ all_fuzzy_matches AS (
            (jarowinkler_similarity(SPLIT_PART(o.platform_base_name, '-', 1), p.protocol_first_part) > 95)
     WHERE
         o.platform NOT IN (
+            SELECT DISTINCT platform FROM high_priority_manual_match
+            UNION
             SELECT DISTINCT platform FROM exact_match WHERE defillama_metadata IS NOT NULL
         )
         AND p.protocol_slug is not null
@@ -219,8 +269,8 @@ fuzzy_matches_consolidated AS (
         is_imputed
 ),
 
--- MATCHING STRATEGY 5: Use manual/ChatGPT mappings as last resort
-manual_match AS (
+-- MATCHING STRATEGY 5: Use chatGPT mappings as last resort (LOWEST PRIORITY)
+normal_priority_manual_match AS (
     SELECT
         o.blockchain,
         o.platform,
@@ -232,10 +282,12 @@ manual_match AS (
         m.match_type
     FROM
         outcomes_base o
-        JOIN manual_mappings m
+        JOIN normal_priority_manual_mappings m
         ON o.platform = m.platform
     WHERE
         o.platform NOT IN (
+            SELECT DISTINCT platform FROM high_priority_manual_match
+            UNION 
             SELECT DISTINCT platform FROM exact_match WHERE defillama_metadata IS NOT NULL
             UNION
             SELECT DISTINCT platform FROM fuzzy_matches_consolidated WHERE defillama_metadata IS NOT NULL
@@ -258,16 +310,32 @@ unmatched AS (
         outcomes_base o
     WHERE
         o.platform NOT IN (
+            SELECT DISTINCT platform FROM high_priority_manual_match
+            UNION
             SELECT DISTINCT platform FROM exact_match WHERE defillama_metadata IS NOT NULL
             UNION
             SELECT DISTINCT platform FROM fuzzy_matches_consolidated WHERE defillama_metadata IS NOT NULL
             UNION
-            SELECT DISTINCT platform FROM manual_match
+            SELECT DISTINCT platform FROM normal_priority_manual_match
         )
 ),
 
 -- Combine all results into a single CTE
 combined_results AS (
+    SELECT
+        blockchain,
+        platform,
+        defillama_category,
+        action,
+        last_action_timestamp,
+        is_imputed,
+        defillama_metadata,
+        match_type
+    FROM
+        high_priority_manual_match
+    
+    UNION ALL
+    
     SELECT
         blockchain,
         platform,
@@ -310,7 +378,7 @@ combined_results AS (
         defillama_metadata,
         match_type
     FROM
-        manual_match
+        normal_priority_manual_match
     
     UNION ALL
     

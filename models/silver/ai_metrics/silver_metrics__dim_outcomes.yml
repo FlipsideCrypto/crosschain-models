@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: silver__dim_outcomes
+  - name: silver_metrics__dim_outcomes
     description: A consolidated view that tracks the latest activities across different outcome actions (lp, swap, bridge) by blockchain and platform, with protocol mappings to DeFiLlama.
     tests:
       - dbt_utils.unique_combination_of_columns:
