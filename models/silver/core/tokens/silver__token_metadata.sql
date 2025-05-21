@@ -35,20 +35,6 @@ token_activity_percentiles AS (
         ROUND(PERCENT_RANK() OVER (PARTITION BY blockchain ORDER BY life_days), 2) AS longevity_pctl
     FROM token_activity_history
 ),
-known_tokens AS (
-    SELECT
-        address,
-        blockchain,
-        symbol,
-        decimals,
-        name
-    FROM 
-        {{ ref('silver__tokens') }}
-    where 
-        symbol is not null
-        or decimals is not null
-        or name is not null
-),
 
 
 transfers_today AS (
@@ -59,23 +45,9 @@ transfers_today AS (
         d.tx_count,
         d.unique_senders,
         d.amount,
-        COALESCE(t1.symbol, t2.symbol) as symbol,
-        COALESCE(t1.decimals, t2.decimals) as decimals,
-        COALESCE(t1.name, t2.name) as name,
-        CASE 
-            WHEN t1.address IS NOT NULL THEN FALSE
-            WHEN t2.address IS NOT NULL THEN TRUE
-            ELSE NULL 
-        END as is_imputed_token,
         ROUND(PERCENT_RANK() OVER (PARTITION BY d.blockchain, d.block_day ORDER BY tx_count), 2) AS tx_daily_pctl,
         ROUND(PERCENT_RANK() OVER (PARTITION BY d.blockchain, d.block_day ORDER BY unique_senders), 2) AS senders_daily_pctl
     FROM {{ ref('silver__transfers_summary') }} d
-    LEFT JOIN known_tokens t1
-        ON d.address = t1.address
-        AND d.blockchain = t1.blockchain
-    LEFT JOIN known_tokens t2
-        ON d.address = t2.address
-        AND t1.address IS NULL -- Only try the fallback if the first join failed
     {% if is_incremental() %}
     WHERE d.block_day > (SELECT MAX(block_day) FROM {{ this }})
     {% endif %}
@@ -86,9 +58,6 @@ joined AS (
         t.block_day,
         t.address,
         t.blockchain,
-        t.symbol,
-        t.decimals,
-        t.name,
         t.tx_count,
         t.unique_senders,
         t.amount,
@@ -128,31 +97,38 @@ joined AS (
 SELECT 
     *,
     CASE
-        WHEN blockchain = 'aleo' AND legitimacy_score > 0.7 THEN 'verified'
-        WHEN blockchain = 'aptos' AND legitimacy_score > 0.9 THEN 'verified'
-        WHEN blockchain = 'arbitrum' AND legitimacy_score > 0.9 THEN 'verified'
-        WHEN blockchain = 'avalanche' AND legitimacy_score > 0.9 THEN 'verified'
-        WHEN blockchain = 'axelar' AND legitimacy_score > 0.09 THEN 'verified'
-        WHEN blockchain = 'base' AND legitimacy_score > 0.90 THEN 'verified'
-        WHEN blockchain = 'blast' AND legitimacy_score > 0.8 THEN 'verified'
-        WHEN blockchain = 'boba' AND legitimacy_score > 0.8 THEN 'verified'
-        WHEN blockchain = 'bsc' AND legitimacy_score > 0.9 THEN 'verified'
-        WHEN blockchain = 'core' AND legitimacy_score > 0.9 THEN 'verified'
-        WHEN blockchain = 'cosmos' AND legitimacy_score > 0.8 THEN 'verified'
-        WHEN blockchain = 'eclipse' AND legitimacy_score > 0.9 THEN 'verified'
-        WHEN blockchain = 'ethereum' AND legitimacy_score > 0.9 THEN 'verified'
-        WHEN blockchain = 'flow' AND legitimacy_score > 0.8 THEN 'verified'
-        WHEN blockchain = 'gnosis' AND legitimacy_score > 0.9 THEN 'verified'
-        WHEN blockchain = 'ink' AND legitimacy_score > 0.9 THEN 'verified'
-        WHEN blockchain = 'kaia' AND legitimacy_score > 0.8 THEN 'verified'
-        WHEN blockchain = 'mantle' AND legitimacy_score > 0.8 THEN 'verified'
-        WHEN blockchain = 'near' AND legitimacy_score > 0.8 THEN 'verified'
-        WHEN blockchain = 'optimism' AND legitimacy_score > 0.8 THEN 'verified'
-        WHEN blockchain = 'osmosis' AND legitimacy_score > 0.8 THEN 'verified'
-        WHEN blockchain = 'polygon' AND legitimacy_score > 0.9 THEN 'verified'
-        WHEN blockchain = 'sei' AND legitimacy_score > 0.8 THEN 'verified'
-        WHEN blockchain = 'solana' AND legitimacy_score > 0.90 THEN 'verified'
-        ELSE 'not_verified'
-    END AS chain_adjusted_verification_status
+        WHEN blockchain = 'aleo' AND legitimacy_score > 0.7 THEN TRUE
+        WHEN blockchain = 'aptos' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'arbitrum' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'avalanche' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'axelar' AND legitimacy_score > 0.09 THEN TRUE
+        WHEN blockchain = 'base' AND legitimacy_score > 0.90 THEN TRUE
+        WHEN blockchain = 'blast' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'bob' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'boba' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'bsc' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'core' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'cosmos' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'eclipse' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'ethereum' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'flow' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'gnosis' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'ink' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'kaia' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'mantle' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'maya' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'near' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'optimism' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'osmosis' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'polygon' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'ronin' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'sei' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'solana' AND legitimacy_score > 0.90 THEN TRUE
+        WHEN blockchain = 'stellar' AND legitimacy_score > 0.90 THEN TRUE
+        WHEN blockchain = 'swell' AND legitimacy_score > 0.90 THEN TRUE
+        WHEN blockchain = 'thorchain' AND legitimacy_score > 0.90 THEN TRUE
+        WHEN blockchain = 'ton' AND legitimacy_score > 0.90 THEN TRUE
+        ELSE FALSE
+    END AS is_verified
 FROM joined
 QUALIFY ROW_NUMBER() OVER (PARTITION BY address, blockchain, block_day ORDER BY block_day DESC) = 1
