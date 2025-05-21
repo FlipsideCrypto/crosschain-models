@@ -20,8 +20,6 @@ FROM
 {% endif %}
 {% endif %}
 
-
--- Gather latest activity timestamps by platform and action type
 WITH base AS (
     SELECT
         blockchain,
@@ -155,19 +153,6 @@ defillama_protocols AS (
         ) AS protocol_first_part
     FROM
         {{ source('external_defillama', 'dim_protocols') }}
-),
-
--- Base data with potential manual mappings
-outcomes_with_manual_mappings AS (
-    SELECT
-        o.*,
-        m.protocol_id AS manual_protocol_id,
-        m.protocol_slug AS manual_protocol_slug,
-        m.match_type AS manual_match_type
-    FROM
-        outcomes_base o
-        LEFT JOIN manual_mappings m
-        ON o.platform = m.platform
 ),
 
 -- MATCHING STRATEGY 0: High priority manual mappings (FIRST PRIORITY)
