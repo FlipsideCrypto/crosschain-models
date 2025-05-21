@@ -803,7 +803,7 @@ WHERE
 {% endif %}
 UNION ALL
 SELECT
-    asset_id :: STRING AS address,
+    asset_issuer || '-' || asset_code :: STRING AS address,
     asset_code AS symbol,
     NULL AS NAME,
     NULL AS decimals,
