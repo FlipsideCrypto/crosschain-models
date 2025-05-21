@@ -148,36 +148,23 @@ outcomes_with_manual_mappings AS (
 exact_match AS (
     SELECT
         o.*,
-        p.protocol_id,
-        p.protocol_slug,
-        p.protocol_version,
         FALSE AS is_imputed,
-        NULL AS imputed_protocol_id,
-        NULL AS imputed_protocol_slug,
+        OBJECT_CONSTRUCT(p.protocol_slug, p.protocol_id::NUMBER) AS defillama_metadata,
         'exact_slug_match' AS match_type
     FROM
         outcomes_base o
         LEFT JOIN defillama_protocols p
         ON p.protocol_slug = o.platform
     WHERE
-        o.platform NOT IN (
-            SELECT
-                platform
-            FROM
-                manual_mapping_platforms
-        )
+        p.protocol_slug is not null
 ),
 
 -- MATCHING STRATEGY 2: Match on base name + version
 base_version_match AS (
     SELECT
         o.*,
-        p.protocol_id,
-        p.protocol_slug,
-        p.protocol_version,
         FALSE AS is_imputed,
-        NULL AS imputed_protocol_id,
-        NULL AS imputed_protocol_slug,
+        OBJECT_CONSTRUCT(p.protocol_slug, p.protocol_id::NUMBER) AS defillama_metadata,
         'exact_version_match' AS match_type
     FROM
         outcomes_base o
@@ -187,41 +174,9 @@ base_version_match AS (
         AND o.platform_version IS NOT NULL
     WHERE
         o.platform NOT IN (
-            SELECT DISTINCT platform FROM exact_match WHERE protocol_id IS NOT NULL
+            SELECT DISTINCT platform FROM exact_match WHERE defillama_metadata IS NOT NULL
         )
-),
-
--- MATCHING STRATEGY 3: Match on category + base name
-category_match AS (
-    SELECT
-        o.blockchain,
-        o.platform,
-        o.platform_version,
-        o.platform_base_name,
-        o.defillama_category,
-        o.action,
-        o.last_action_timestamp,
-        MIN(p.protocol_id) AS protocol_id,
-        MIN(p.protocol_slug) AS protocol_slug,
-        MIN(p.protocol_version) AS protocol_version,
-        TRUE AS is_imputed,
-        ARRAY_AGG(DISTINCT p.protocol_id) WITHIN GROUP (ORDER BY p.protocol_id) AS imputed_protocol_id,
-        ARRAY_AGG(DISTINCT p.protocol_slug) WITHIN GROUP (ORDER BY p.protocol_slug) AS imputed_protocol_slug,
-        'category_match' AS match_type
-    FROM
-        outcomes_base o
-        LEFT JOIN defillama_protocols p
-        ON p.protocol_base_name = o.platform_base_name
-        AND p.category = o.defillama_category
-    WHERE
-        o.platform NOT IN (
-            SELECT DISTINCT platform FROM exact_match WHERE protocol_id IS NOT NULL
-            UNION 
-            SELECT DISTINCT platform FROM base_version_match WHERE protocol_id IS NOT NULL
-        )
-    GROUP BY 
-        o.blockchain, o.platform, o.platform_version, o.platform_base_name, 
-        o.defillama_category, o.action, o.last_action_timestamp
+        AND p.protocol_slug is not null
 ),
 
 -- MATCHING STRATEGY 4: Match on first part of name
@@ -234,12 +189,8 @@ name_match AS (
         o.defillama_category,
         o.action,
         o.last_action_timestamp,
-        MIN(p.protocol_id) AS protocol_id,
-        MIN(p.protocol_slug) AS protocol_slug,
-        MIN(p.protocol_version) AS protocol_version,
         TRUE AS is_imputed,
-        ARRAY_AGG(DISTINCT p.protocol_id) WITHIN GROUP (ORDER BY p.protocol_id) AS imputed_protocol_id,
-        ARRAY_AGG(DISTINCT p.protocol_slug) WITHIN GROUP (ORDER BY p.protocol_slug) AS imputed_protocol_slug,
+        OBJECT_AGG(p.protocol_slug, p.protocol_id::NUMBER) AS defillama_metadata,
         'name_match' AS match_type
     FROM
         outcomes_base o
@@ -247,12 +198,11 @@ name_match AS (
         ON SPLIT_PART(o.platform_base_name, '-', 1) = p.protocol_first_part
     WHERE
         o.platform NOT IN (
-            SELECT DISTINCT platform FROM exact_match WHERE protocol_id IS NOT NULL
+            SELECT DISTINCT platform FROM exact_match WHERE defillama_metadata IS NOT NULL
             UNION 
-            SELECT DISTINCT platform FROM base_version_match WHERE protocol_id IS NOT NULL
-            UNION
-            SELECT DISTINCT platform FROM category_match WHERE protocol_id IS NOT NULL
+            SELECT DISTINCT platform FROM base_version_match WHERE defillama_metadata IS NOT NULL
         )
+        AND p.protocol_slug is not null
     GROUP BY 
         o.blockchain, o.platform, o.platform_version, o.platform_base_name, 
         o.defillama_category, o.action, o.last_action_timestamp
@@ -266,10 +216,8 @@ manual_match AS (
         o.defillama_category,
         o.action,
         o.last_action_timestamp,
-        m.protocol_id,
         TRUE AS is_imputed,
-        ARRAY_CONSTRUCT(m.protocol_id) AS imputed_protocol_id,
-        ARRAY_CONSTRUCT(m.protocol_slug) AS imputed_protocol_slug,
+        OBJECT_CONSTRUCT(m.protocol_slug, m.protocol_id::NUMBER) AS defillama_metadata,
         m.match_type
     FROM
         outcomes_base o
@@ -277,38 +225,31 @@ manual_match AS (
         ON o.platform = m.platform
     WHERE
         o.platform NOT IN (
-            SELECT DISTINCT platform FROM exact_match WHERE protocol_id IS NOT NULL
+            SELECT DISTINCT platform FROM exact_match WHERE defillama_metadata IS NOT NULL
             UNION 
-            SELECT DISTINCT platform FROM base_version_match WHERE protocol_id IS NOT NULL
+            SELECT DISTINCT platform FROM base_version_match WHERE defillama_metadata IS NOT NULL
             UNION
-            SELECT DISTINCT platform FROM category_match WHERE protocol_id IS NOT NULL
-            UNION
-            SELECT DISTINCT platform FROM name_match WHERE protocol_id IS NOT NULL
+            SELECT DISTINCT platform FROM name_match WHERE defillama_metadata IS NOT NULL
         )
+        AND m.protocol_slug is not null
 ),
 
 -- Handle unmatched platforms
 unmatched AS (
     SELECT
         o.*,
-        NULL AS protocol_id,
-        NULL AS protocol_slug,
-        NULL AS protocol_version,
         FALSE AS is_imputed,
-        NULL AS imputed_protocol_id,
-        NULL AS imputed_protocol_slug,
+        NULL AS defillama_metadata,
         'no_match' AS match_type
     FROM
         outcomes_base o
     WHERE
         o.platform NOT IN (
-            SELECT DISTINCT platform FROM exact_match WHERE protocol_id IS NOT NULL
+            SELECT DISTINCT platform FROM exact_match WHERE defillama_metadata IS NOT NULL
             UNION 
-            SELECT DISTINCT platform FROM base_version_match WHERE protocol_id IS NOT NULL
+            SELECT DISTINCT platform FROM base_version_match WHERE defillama_metadata IS NOT NULL
             UNION
-            SELECT DISTINCT platform FROM category_match WHERE protocol_id IS NOT NULL
-            UNION
-            SELECT DISTINCT platform FROM name_match WHERE protocol_id IS NOT NULL
+            SELECT DISTINCT platform FROM name_match WHERE defillama_metadata IS NOT NULL
             UNION
             SELECT DISTINCT platform FROM manual_match
         )
@@ -322,15 +263,13 @@ combined_results AS (
         defillama_category,
         action,
         last_action_timestamp,
-        protocol_id,
         is_imputed,
-        imputed_protocol_id,
-        imputed_protocol_slug,
+        defillama_metadata,
         match_type
     FROM
         exact_match
     WHERE
-        protocol_id IS NOT NULL
+        defillama_metadata IS NOT NULL
     
     UNION ALL
     
@@ -340,15 +279,13 @@ combined_results AS (
         defillama_category,
         action,
         last_action_timestamp,
-        protocol_id,
         is_imputed,
-        imputed_protocol_id,
-        imputed_protocol_slug,
+        defillama_metadata,
         match_type
     FROM
         base_version_match
     WHERE
-        protocol_id IS NOT NULL
+        defillama_metadata IS NOT NULL
     
     UNION ALL
     
@@ -358,33 +295,13 @@ combined_results AS (
         defillama_category,
         action,
         last_action_timestamp,
-        protocol_id,
         is_imputed,
-        imputed_protocol_id,
-        imputed_protocol_slug,
-        match_type
-    FROM
-        category_match
-    WHERE
-        protocol_id IS NOT NULL
-    
-    UNION ALL
-    
-    SELECT
-        blockchain,
-        platform,
-        defillama_category,
-        action,
-        last_action_timestamp,
-        protocol_id,
-        is_imputed,
-        imputed_protocol_id,
-        imputed_protocol_slug,
+        defillama_metadata,
         match_type
     FROM
         name_match
     WHERE
-        protocol_id IS NOT NULL
+        defillama_metadata IS NOT NULL
     
     UNION ALL
     
@@ -394,10 +311,8 @@ combined_results AS (
         defillama_category,
         action,
         last_action_timestamp,
-        protocol_id,
         is_imputed,
-        imputed_protocol_id,
-        imputed_protocol_slug,
+        defillama_metadata,
         match_type
     FROM
         manual_match
@@ -410,10 +325,8 @@ combined_results AS (
         defillama_category,
         action,
         last_action_timestamp,
-        protocol_id,
         is_imputed,
-        imputed_protocol_id,
-        imputed_protocol_slug,
+        defillama_metadata,
         match_type
     FROM
         unmatched
@@ -425,10 +338,8 @@ SELECT
     platform,
     action,
     last_action_timestamp,
-    protocol_id,
     is_imputed,
-    imputed_protocol_id,
-    imputed_protocol_slug,
+    defillama_metadata,
     match_type,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
