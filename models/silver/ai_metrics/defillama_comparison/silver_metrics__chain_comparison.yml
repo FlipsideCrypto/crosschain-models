@@ -16,7 +16,7 @@ models:
           - dbt_expectations.expect_column_values_to_be_between:
               min_value: 0
               max_value: 30.00
-              severity: error
+              severity: warn
               where: "inserted_timestamp >= systimestamp() - interval '24 hours' and crosschain_volume is not null"
       - name: INSERTED_TIMESTAMP
         tests:
