@@ -702,12 +702,15 @@ sources:
     schema: silver
     tables:
       - name: polymarket_markets
+      
   - name: external_defillama
     database: external
     schema: defillama
     tables:
       - name: fact_dex_volume
       - name: fact_bridge_volume_by_chain
+      - name: dim_protocols
+    
 
   #=============================================================================
   # FLOW
@@ -1332,3 +1335,4 @@ sources:
     schema: core
     tables:
       - name: fact_jetton_metadata
+
