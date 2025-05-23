@@ -1,10 +1,11 @@
-name: dbt_test_daily
-run-name: dbt_test_daily
+name: dbt_run_ai_metrics
+run-name: dbt_run_ai_metrics
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 4 * * *'
+    # Runs Monday at 9:00 AM EST (14:00 UTC) (see https://crontab.guru)
+    - cron: '0 14 * * 1'
     
 env:
   DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
@@ -41,8 +42,11 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt test --exclude "crosschain_models,tag:gha_tasks" "crosschain_models,tag:ai_metrics" livequery_models
-          
+          dbt run -m "crosschain_models,tag:ai_metrics"
+      - name: Run DBT Tests
+        run: |
+          dbt test -m "crosschain_models,tag:ai_metrics"
+
   notify-failure:
     needs: [run_dbt_jobs]
     if: failure()
