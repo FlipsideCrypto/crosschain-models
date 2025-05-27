@@ -549,7 +549,7 @@ results_with_restrictions AS (
         COALESCE(ar.user_retention_value, 'MEDIUM') AS user_retention_value,
         COALESCE(ar.is_onboarding_action, FALSE) AS is_onboarding_action,
         COALESCE(ar.is_yield_generating, FALSE) AS is_yield_generating,
-        COALESCE(ar.journey_pattern_type, 'MIDDLE') AS journey_pattern_type,
+        COALESCE(ar.journey_pattern_type, 'MIDDLE') AS journey_pattern_type
     FROM combined_results c
     LEFT JOIN action_restrictions ar 
         ON LOWER(c.action) = ar.action_type
