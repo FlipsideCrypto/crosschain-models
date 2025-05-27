@@ -5,7 +5,7 @@
     tags = ['daily']
 ) }}
 
-WITH ver AS (
+WITH ver_xfer AS (
 
     SELECT
         blockchain,
@@ -17,6 +17,29 @@ WITH ver AS (
     GROUP BY
         blockchain,
         address
+),
+ver_external AS (
+    SELECT
+        DISTINCT CASE
+            chain_id
+            WHEN 42161 THEN 'arbiturm'
+            WHEN 43114 THEN 'avalanche'
+            WHEN 56 THEN 'bsc'
+            WHEN 8453 THEN 'base'
+            WHEN 81457 THEN 'blast'
+            WHEN 1 THEN 'ethereum'
+            WHEN 10 THEN 'optimism'
+            WHEN 137 THEN 'polygon'
+        END AS blockchain,
+        LOWER(token_address) AS address_lower
+    FROM
+        {{ source(
+            'external_tokenlists',
+            'ez_verified_tokens'
+        ) }}
+    WHERE
+        provider = 'Uniswap Labs Default'
+        AND blockchain IS NOT NULL
 ),
 cg_cmc AS (
     SELECT
@@ -35,6 +58,13 @@ cg_cmc AS (
         inserted_timestamp
     FROM
         {{ ref('silver__token_asset_metadata_all_providers') }}
+        qualify ROW_NUMBER() over(
+            PARTITION BY blockchain,
+            token_address_lower,
+            provider
+            ORDER BY
+                inserted_timestamp DESC
+        ) = 1
 ),
 stell AS (
     SELECT
@@ -126,6 +156,10 @@ SELECT
         b.is_verified,
         FALSE
     ) AS is_verified,
+    CASE
+        WHEN b_ex.blockchain IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END AS is_verified_external,
     A.symbol,
     A.decimals,
     A.name,
@@ -148,9 +182,12 @@ SELECT
     '{{ invocation_id }}' AS _invocation_id
 FROM
     token_base A
-    LEFT JOIN ver b
+    LEFT JOIN ver_xfer b
     ON A.blockchain = b.blockchain
     AND A.address_lower = b.address_lower
+    LEFT JOIN ver_external b_ex
+    ON A.blockchain = b_ex.blockchain
+    AND A.address_lower = b_ex.address_lower
     LEFT JOIN cg_cmc AS cg
     ON cg.provider = 'coingecko'
     AND A.blockchain = cg.blockchain
