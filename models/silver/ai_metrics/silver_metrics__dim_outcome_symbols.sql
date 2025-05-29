@@ -17,17 +17,21 @@ FROM {{ this }}
 
 WITH symbols_by_lp AS (
     SELECT 
-        blockchain,
-        platform,
+        l.blockchain,
+        l.platform,
         'lp' as action,
-        pool_name,
-        COUNT(*) as symbol_count,
-        ROW_NUMBER() OVER (PARTITION BY blockchain, platform ORDER BY COUNT(*) DESC) as rn
-    FROM {{ ref('defi__dim_dex_liquidity_pools') }}
+        l.pool_name,
+        l.pool_address,
+        SUM(COALESCE(s.amount_in_usd, 0)) as volume_usd,
+        ROW_NUMBER() OVER (PARTITION BY l.blockchain, l.platform ORDER BY SUM(COALESCE(s.amount_in_usd, 0)) DESC) as rn
+    FROM {{ ref('defi__dim_dex_liquidity_pools') }} l
+    LEFT JOIN {{ ref('defi__ez_dex_swaps') }} s
+        ON l.blockchain = s.blockchain 
+        AND l.pool_address = s.contract_address
     {% if is_incremental() %}
-    WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
+    WHERE l.modified_timestamp :: DATE >= '{{ max_mod }}'
     {% endif %}
-    GROUP BY blockchain, platform, pool_name
+    GROUP BY l.blockchain, l.platform, l.pool_name, l.pool_address
     QUALIFY rn <= 5
 ),
 
@@ -40,7 +44,8 @@ lp_symbols_agg AS (
             'rank_' || rn::string, 
             OBJECT_CONSTRUCT(
                 'pool_name', pool_name,
-                'count', symbol_count
+                'pool_address', pool_address,
+                'volume_usd', volume_usd
             )
         ) as top_symbols
     FROM symbols_by_lp
@@ -54,8 +59,8 @@ symbols_by_swap AS (
         'swap' as action,
         symbol_in,
         symbol_out,
-        COUNT(*) as symbol_count,
-        ROW_NUMBER() OVER (PARTITION BY blockchain, platform ORDER BY COUNT(*) DESC) as rn
+        SUM(amount_in_usd) as volume_usd,
+        ROW_NUMBER() OVER (PARTITION BY blockchain, platform ORDER BY SUM(amount_in_usd) DESC) as rn
     FROM {{ ref('defi__ez_dex_swaps') }}
     {% if is_incremental() %}
     WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
@@ -73,7 +78,7 @@ swap_symbols_agg AS (
             'rank_' || rn::string, 
             OBJECT_CONSTRUCT(
                 'symbols', ARRAY_CONSTRUCT(symbol_in, symbol_out),
-                'count', symbol_count
+                'volume_usd', volume_usd
             )
         ) as top_symbols
     FROM symbols_by_swap
