@@ -1,3 +1,7 @@
+  -- depends_on: {{ ref('defi__dim_dex_liquidity_pools') }}
+  -- depends_on: {{ ref('defi__ez_dex_swaps') }}
+  -- depends_on: {{ ref('defi__fact_bridge_activity') }}
+
 {{ config(
     materialized = 'incremental',
     unique_key = ['blockchain', 'platform', 'action'],
@@ -5,16 +9,53 @@
     tags = ['daily']
 ) }}
 
-{% if execute %}
 {% if is_incremental() %}
 {% set max_mod_query %}
 SELECT MAX(modified_timestamp) :: DATE AS modified_timestamp
 FROM {{ this }}
 {% endset %}
 {% set max_mod = run_query(max_mod_query)[0][0] %}
-{% endif %}
-{% endif %}
 
+{% set new_check_query %}
+WITH check_new_combinations AS (
+    SELECT DISTINCT blockchain, platform, action 
+    FROM (
+        SELECT blockchain, platform, 'lp' as action 
+        FROM {{ ref('defi__dim_dex_liquidity_pools') }}
+        WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
+        UNION
+        SELECT blockchain, platform, 'swap' as action 
+        FROM {{ ref('defi__ez_dex_swaps') }}
+        WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
+        UNION
+        SELECT blockchain, platform, 'bridge' as action 
+        FROM {{ ref('defi__fact_bridge_activity') }}
+        WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
+    ) a
+    EXCEPT
+    SELECT DISTINCT blockchain, platform, action
+    FROM {{ this }}
+)
+
+SELECT COUNT(*) FROM check_new_combinations
+{% endset %}
+{% set new_count = run_query(new_check_query)[0][0] %}
+
+{% if new_count == 0 %}
+    -- Return empty result to skip processing
+    SELECT
+        blockchain,
+        platform,
+        action,
+        top_symbols,
+        inserted_timestamp,
+        modified_timestamp,
+        outcome_symbols_id,
+        _invocation_id
+    FROM {{ this }}
+    WHERE 1=0
+
+{% else %}
 WITH symbols_by_lp AS (
     SELECT 
         l.blockchain,
@@ -28,9 +69,6 @@ WITH symbols_by_lp AS (
     LEFT JOIN {{ ref('defi__ez_dex_swaps') }} s
         ON l.blockchain = s.blockchain 
         AND l.pool_address = s.contract_address
-    {% if is_incremental() %}
-    WHERE l.modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
     GROUP BY l.blockchain, l.platform, l.pool_name, l.pool_address
     QUALIFY rn <= 5
 ),
@@ -62,9 +100,6 @@ symbols_by_swap AS (
         SUM(COALESCE(amount_in_usd, 0)) as volume_usd,
         ROW_NUMBER() OVER (PARTITION BY blockchain, platform ORDER BY SUM(COALESCE(amount_in_usd, 0)) DESC) as rn
     FROM {{ ref('defi__ez_dex_swaps') }}
-    {% if is_incremental() %}
-    WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
     GROUP BY blockchain, platform, symbol_in, symbol_out
     QUALIFY rn <= 5
 ),
@@ -98,9 +133,6 @@ symbols_by_bridge AS (
     LEFT JOIN {{ ref('silver__tokens') }} t
         ON b.token_address = t.address
         AND b.blockchain = t.blockchain
-    {% if is_incremental() %}
-    WHERE b.modified_timestamp :: DATE >= '{{ max_mod }}'
-    {% endif %}
     GROUP BY b.blockchain, b.platform, b.direction, t.symbol
     QUALIFY rn <= 5
 ),
@@ -171,3 +203,5 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['blockchain', 'platform', 'action']) }} AS outcome_symbols_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM combined_symbols 
+{% endif %}
+{% endif %}
