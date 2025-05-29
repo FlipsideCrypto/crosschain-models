@@ -59,8 +59,8 @@ symbols_by_swap AS (
         'swap' as action,
         symbol_in,
         symbol_out,
-        SUM(amount_in_usd) as volume_usd,
-        ROW_NUMBER() OVER (PARTITION BY blockchain, platform ORDER BY SUM(amount_in_usd) DESC) as rn
+        SUM(COALESCE(amount_in_usd, 0)) as volume_usd,
+        ROW_NUMBER() OVER (PARTITION BY blockchain, platform ORDER BY SUM(COALESCE(amount_in_usd, 0)) DESC) as rn
     FROM {{ ref('defi__ez_dex_swaps') }}
     {% if is_incremental() %}
     WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
