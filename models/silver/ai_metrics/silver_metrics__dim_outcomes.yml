@@ -23,8 +23,8 @@ models:
           - not_null
       - name: LAST_ACTION_TIMESTAMP
         description: The timestamp of the most recent action of this type on this platform and blockchain
-      - name: TOP_SYMBOLS
-        description: Object containing the most frequently used tokens or pairs for this action on this platform
+      - name: TOP_SYMBOLS_30D
+        description: Object containing the most frequently used tokens or pairs for this action on this platform in the last 30 days
       - name: RESTRICTION_CATEGORY
         description: Category of restrictions applied to this action type (e.g., MANDATORY_FIRST_STEP, INTERMEDIATE_ONLY, etc.)
       - name: RECOMMENDED_JOURNEY_POSITION

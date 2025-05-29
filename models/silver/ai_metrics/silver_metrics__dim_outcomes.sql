@@ -1,24 +1,8 @@
 {{ config(
-    materialized = 'incremental',
+    materialized = 'table',
     unique_key = ['outcome_id'],
-    merge_exclude_columns = ['inserted_timestamp'],
     tags = ['daily']
 ) }}
-
-{% if execute %}
-
-{% if is_incremental() %}
-{% set max_mod_query %}
-
-SELECT
-    MAX(modified_timestamp) :: DATE AS modified_timestamp
-FROM
-    {{ this }}
-
-    {% endset %}
-    {% set max_mod = run_query(max_mod_query) [0] [0] %}
-{% endif %}
-{% endif %}
 
 WITH base AS (
     SELECT
@@ -28,9 +12,6 @@ WITH base AS (
         MAX(creation_time) AS last_action_timestamp
     FROM
         {{ ref('defi__dim_dex_liquidity_pools') }}
-{% if is_incremental() %}
-WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
-{% endif %}
     GROUP BY
         blockchain,
         platform,
@@ -43,9 +24,6 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         MAX(block_timestamp) AS last_action_timestamp
     FROM
         {{ ref('defi__ez_dex_swaps') }}
-{% if is_incremental() %}
-WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
-{% endif %}
     GROUP BY
         blockchain,
         platform,
@@ -58,9 +36,6 @@ WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
         MAX(block_timestamp) AS last_action_timestamp
     FROM
         {{ ref('defi__fact_bridge_activity') }}
-{% if is_incremental() %}
-WHERE modified_timestamp :: DATE >= '{{ max_mod }}'
-{% endif %}
     GROUP BY
         blockchain,
         platform,
@@ -543,7 +518,7 @@ SELECT
     o.platform,
     o.action,
     o.last_action_timestamp,
-    s.top_symbols,
+    s.top_symbols as top_symbols_30D,
     o.restriction_category,
     o.recommended_journey_position,
     o.can_be_journey_start,
