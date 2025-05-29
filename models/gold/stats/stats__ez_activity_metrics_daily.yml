@@ -7,7 +7,6 @@ models:
           combination_of_columns:
             - BLOCK_DATE
             - BLOCKCHAIN
-            - IS_QUALITY
 
     columns:
       - name: BLOCKCHAIN 
@@ -18,21 +17,43 @@ models:
           - not_null
           - dbt_expectations.expect_row_values_to_have_recent_data:
               datepart: day
-              interval: 1
-      - name: IS_QUALITY
-        description: '{{ doc("is_quality") }}'
+              interval: 2
       - name: TRANSACTION_COUNT
         description: '{{ doc("crosschain_transaction_count") }}'
-      - name: TRANSACTION_COUNT_SUCCESS
-        description: '{{ doc("crosschain_transaction_count_success") }}'
-      - name: TRANSACTION_COUNT_FAILED
-        description: '{{ doc("crosschain_transaction_count_failed") }}'
+        tests:
+          - not_null
+      - name: QUALITY_TRANSACTION_COUNT
+        description: '{{ doc("crosschain_transaction_count") }}'
+        tests:
+          - not_null
+      - name: QUALITY_TRANSACTION_COUNT_SUCCEEDED
+        description: '{{ doc("crosschain_quality_transaction_count_success") }}'
+        tests:
+          - not_null
       - name: UNIQUE_INITIATOR_COUNT
         description: '{{ doc("crosschain_unique_from_count") }}'
+        tests:
+          - not_null
+      - name: QUALITY_UNIQUE_INITIATOR_COUNT
+        description: '{{ doc("crosschain_quality_unique_from_count") }}'
+        tests:
+          - not_null
       - name: TOTAL_FEES_NATIVE
         description: '{{ doc("crosschain_total_fees_native") }}'
+        tests:
+          - not_null
       - name: TOTAL_FEES_USD
         description: '{{ doc("crosschain_total_fees_usd") }}'
+        tests:
+          - not_null
+      - name: QUALITY_TOTAL_FEES_NATIVE
+        description: '{{ doc("crosschain_quality_total_fees_native") }}'
+        tests:
+          - not_null
+      - name: QUALITY_TOTAL_FEES_USD
+        description: '{{ doc("crosschain_quality_total_fees_usd") }}'
+        tests:
+          - not_null
       - name: EZ_ACTIVITY_METRICS_DAILY_ID
         description: '{{ doc("pk") }}'   
       - name: INSERTED_TIMESTAMP

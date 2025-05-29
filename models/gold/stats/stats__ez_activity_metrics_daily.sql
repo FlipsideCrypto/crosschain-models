@@ -6,6 +6,7 @@
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
     unique_key = ['blockchain','block_date'],
+    cluster_by = ['blockchain','block_date'],
     tags = ['metrics_daily']
 ) }}
 
@@ -42,6 +43,7 @@ WHERE
 AND modified_timestamp >= '{{ max_mod }}'
 {% else %}
     AND block_timestamp :: DATE >= '2025-01-01'
+    AND block_timestamp :: DATE <= '2025-01-10'
 {% endif %}
 
 {% endset %}
@@ -93,20 +95,38 @@ GROUP BY
     block_timestamp_hour,
     sender {% endset %}
     {% do run_query(inc_query) %}
+    --find distinct score dates
+    {% set score_dates_query %}
+    CREATE
+    OR REPLACE temporary TABLE silver.ez_activity_metrics__score_dates_intermediate_tmp AS
+SELECT
+    DISTINCT A.blockchain,
+    A.score_date
+FROM
+    {{ source(
+        'datascience_onchain_scores',
+        'all_scores'
+    ) }} A {% endset %}
+    {% do run_query(score_dates_query) %}
     --find block dates where we do not have a score for that exact date
     {% set score_asof_query %}
     CREATE
     OR REPLACE temporary TABLE silver.ez_activity_metrics__scores_asof_intermediate_tmp AS
 SELECT
     DISTINCT A.blockchain,
-    A.block_date
+    A.block_date,
+    b.score_date
 FROM
-    silver.ez_activity_metrics__intermediate_tmp A
-    LEFT JOIN datascience.onchain_scores.all_scores b_ex
-    ON A.blockchain = b_ex.blockchain
-    AND A.block_date = b_ex.score_date
-WHERE
-    b_ex.blockchain IS NULL {% endset %}
+    ez_activity_metrics__intermediate_tmp A asof
+    JOIN silver.ez_activity_metrics__score_dates_intermediate_tmp b match_condition (
+        A.block_date >= score_date
+    )
+    ON A.blockchain = b.blockchain qualify ROW_NUMBER() over (
+        PARTITION BY A.blockchain,
+        A.block_Date
+        ORDER BY
+            ABS(DATEDIFF('day', score_date, A.block_date))
+    ) = 1 {% endset %}
     {% do run_query(score_asof_query) %}
     --Get the score for that block date or the closest date we have prior to that date
     {% set scores_query %}
@@ -115,64 +135,23 @@ WHERE
 SELECT
     A.blockchain,
     A.user_address,
-    A.score_date,
     b.block_date,
-    A.total_score,
-    1 AS rn
+    A.total_score
 FROM
     {{ source(
         'datascience_onchain_scores',
         'all_scores'
     ) }} A
-    JOIN silver.ez_activity_metrics__intermediate_tmp b
+    JOIN silver.ez_activity_metrics__scores_asof_intermediate_tmp b
     ON A.blockchain = b.blockchain
-    AND A.score_date = b.block_date
-UNION ALL
-SELECT
-    A.blockchain,
-    A.user_address,
-    A.score_date,
-    b.block_date,
-    A.total_score,
-    ROW_NUMBER() over (
-        PARTITION BY A.blockchain,
-        A.user_address,
-        b.block_Date
-        ORDER BY
-            score_date DESC
-    ) AS rn
-FROM
-    {{ source(
-        'datascience_onchain_scores',
-        'all_scores'
-    ) }} A
-    JOIN (
-        SELECT
-            blockchain,
-            MIN(block_Date) AS block_Date_min,
-            MAX(block_Date) AS block_Date_max
-        FROM
-            silver.ez_activity_metrics__scores_asof_intermediate_tmp
-        GROUP BY
-            blockchain
-    ) inn
-    ON A.blockchain = inn.blockchain
-    AND A.score_Date >= inn.block_Date_min - 7
-    AND A.score_Date <= inn.block_Date_max + 7 asof
-    JOIN silver.ez_activity_metrics__scores_asof_intermediate_tmp b match_condition (
-        score_date <= b.block_date
-    )
-    ON A.blockchain = b.blockchain
-WHERE
-    b.block_date IS NOT NULL {% endset %}
+    AND A.score_date = b.score_date {% endset %}
     {% do run_query(scores_query) %}
     --delete the scores temp with a score less than 4 or the additional rows from the asof join
     {% set scores_del_query %}
 DELETE FROM
     silver.ez_activity_metrics__scores_intermediate_tmp
 WHERE
-    rn > 1
-    OR total_score < 4 {% endset %}
+    total_score < 4 {% endset %}
     {% do run_query(scores_del_query) %}
 {% endif %}
 
@@ -180,11 +159,12 @@ WHERE
 WITH prices AS (
     SELECT
         A.hour,
-        A.blockchain,
+        b.blockchain,
         A.price
     FROM
-        price.ez_prices_hourly A
-        JOIN silver.native_fee_token b
+        {{ ref('price__ez_prices_hourly') }} A
+        JOIN {{ ref('silver__native_fee_token') }}
+        b
         ON A.blockchain = COALESCE(
             b.blockchain_override,
             b.blockchain
@@ -249,8 +229,7 @@ SELECT
     ) AS quality_total_fees_usd,
     {{ dbt_utils.generate_surrogate_key(['a.blockchain',' A.block_timestamp_hour :: DATE']) }} AS ez_activity_metrics_daily_id,
     SYSDATE() AS inserted_timestamp,
-    SYSDATE() AS modified_timestamp,
-    '{{ invocation_id }}' AS _invocation_id
+    SYSDATE() AS modified_timestamp
 FROM
     silver.ez_activity_metrics__tx_intermediate_tmp A asof
     JOIN prices b match_condition (
@@ -261,7 +240,6 @@ FROM
     ON A.blockchain = C.blockchain
     AND A.sender = C.user_address
     AND A.block_timestamp_hour :: DATE = C.block_date
-    AND C.rn = 1
 GROUP BY
     A.blockchain,
     A.block_timestamp_hour :: DATE

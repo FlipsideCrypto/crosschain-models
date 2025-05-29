@@ -34,9 +34,21 @@ The number of transactions in the hour.
 
 {% enddocs %}
 
+{% docs crosschain_quality_transaction_count %}
+
+The number of transactions in the hour for addresses with a score of 4 or higher
+
+{% enddocs %}
+
 {% docs crosschain_transaction_count_success %}
 
 The number of successful transactions in the hour.
+
+{% enddocs %}
+
+{% docs crosschain_quality_transaction_count_success %}
+
+The number of successful transactions in the hour for addresses with a score of 4 or higher
 
 {% enddocs %}
 
@@ -49,6 +61,12 @@ The number of failed transactions in the hour.
 {% docs crosschain_unique_from_count %}
 
 The number of unique initiator or origin from addresses in the hour.
+
+{% enddocs %}
+
+{% docs crosschain_quality_unique_from_count %}
+
+The number of unique initiator or origin from addresses in the hour for addresses with a score of 4 or higher
 
 {% enddocs %}
 
@@ -67,5 +85,17 @@ The sum of all fees in the hour, in the native fee currency.
 {% docs crosschain_total_fees_usd %}
 
 The sum of all fees in the hour, in USD.
+
+{% enddocs %}
+
+{% docs crosschain_quality_total_fees_native %}
+
+The sum of all fees in the hour, in the native fee currency for addresses with a score of 4 or higher
+
+{% enddocs %}
+
+{% docs crosschain_quality_total_fees_usd %}
+
+The sum of all fees in the hour, in USD for addresses with a score of 4 or higher
 
 {% enddocs %}
