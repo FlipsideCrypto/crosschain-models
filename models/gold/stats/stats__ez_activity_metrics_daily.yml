@@ -1,0 +1,62 @@
+version: 2
+models:
+  - name: stats__ez_activity_metrics_daily
+    description: "An aggregated daily view of cross-chain activity metrics, including transaction counts, fees, and unique initiators. This model also contains and IS_QUALITY flag that indicates whether the transaction initiator has a user score of 4 or higher."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCK_DATE
+            - BLOCKCHAIN
+
+    columns:
+      - name: BLOCKCHAIN 
+        description: '{{ doc("blockchain_column") }}'
+      - name: BLOCK_DATE
+        description: '{{ doc("block_date") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 2
+      - name: TRANSACTION_COUNT
+        description: '{{ doc("crosschain_transaction_count") }}'
+        tests:
+          - not_null
+      - name: QUALITY_TRANSACTION_COUNT
+        description: '{{ doc("crosschain_transaction_count") }}'
+        tests:
+          - not_null
+      - name: QUALITY_TRANSACTION_COUNT_SUCCEEDED
+        description: '{{ doc("crosschain_quality_transaction_count_success") }}'
+        tests:
+          - not_null
+      - name: UNIQUE_INITIATOR_COUNT
+        description: '{{ doc("crosschain_unique_from_count") }}'
+        tests:
+          - not_null
+      - name: QUALITY_UNIQUE_INITIATOR_COUNT
+        description: '{{ doc("crosschain_quality_unique_from_count") }}'
+        tests:
+          - not_null
+      - name: TOTAL_FEES_NATIVE
+        description: '{{ doc("crosschain_total_fees_native") }}'
+        tests:
+          - not_null
+      - name: TOTAL_FEES_USD
+        description: '{{ doc("crosschain_total_fees_usd") }}'
+        tests:
+          - not_null
+      - name: QUALITY_TOTAL_FEES_NATIVE
+        description: '{{ doc("crosschain_quality_total_fees_native") }}'
+        tests:
+          - not_null
+      - name: QUALITY_TOTAL_FEES_USD
+        description: '{{ doc("crosschain_quality_total_fees_usd") }}'
+        tests:
+          - not_null
+      - name: EZ_ACTIVITY_METRICS_DAILY_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 
