@@ -6,7 +6,7 @@
 WITH token_activity_history AS (
     SELECT
         address,
-        blockchain,
+        REPLACE(blockchain,'_evm') as blockchain,
         AVG(tx_count) AS avg_tx,
         AVG(unique_senders) AS avg_senders,
         COUNT(*) AS active_days,
@@ -101,30 +101,30 @@ SELECT
         WHEN blockchain = 'aptos' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'arbitrum' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'avalanche' AND legitimacy_score > 0.9 THEN TRUE
-        WHEN blockchain = 'axelar' AND legitimacy_score > 0.09 THEN TRUE
-        WHEN blockchain = 'base' AND legitimacy_score > 0.90 THEN TRUE
+        WHEN blockchain = 'axelar' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'base' AND legitimacy_score > 0.95 THEN TRUE
         WHEN blockchain = 'blast' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'bob' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'boba' AND legitimacy_score > 0.8 THEN TRUE
-        WHEN blockchain = 'bsc' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'bsc' AND legitimacy_score > 0.94 THEN TRUE
         WHEN blockchain = 'core' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'cosmos' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'eclipse' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'ethereum' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'flow' AND legitimacy_score > 0.8 THEN TRUE
-        WHEN blockchain = 'gnosis' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'gnosis' AND legitimacy_score > 0.93 THEN TRUE
         WHEN blockchain = 'ink' AND legitimacy_score > 0.9 THEN TRUE
-        WHEN blockchain = 'kaia' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'kaia' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'mantle' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'maya' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'near' AND legitimacy_score > 0.8 THEN TRUE
-        WHEN blockchain = 'optimism' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'optimism' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'osmosis' AND legitimacy_score > 0.8 THEN TRUE
-        WHEN blockchain = 'polygon' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'polygon' AND legitimacy_score > 0.94 THEN TRUE
         WHEN blockchain = 'ronin' AND legitimacy_score > 0.9 THEN TRUE
-        WHEN blockchain = 'sei' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'sei' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'solana' AND legitimacy_score > 0.90 THEN TRUE
-        WHEN blockchain = 'stellar' AND legitimacy_score > 0.90 THEN TRUE
+        WHEN blockchain = 'stellar' AND legitimacy_score > 0.95 THEN TRUE
         WHEN blockchain = 'swell' AND legitimacy_score > 0.90 THEN TRUE
         WHEN blockchain = 'thorchain' AND legitimacy_score > 0.90 THEN TRUE
         WHEN blockchain = 'ton' AND legitimacy_score > 0.90 THEN TRUE
