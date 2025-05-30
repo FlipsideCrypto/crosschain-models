@@ -42,7 +42,7 @@ SELECT
     CURRENT_DATE :: TIMESTAMP AS insert_date,
     'ethereum' AS blockchain,
     LOWER(
-        A.address :: STRING
+        A.contract_address :: STRING
     ) AS address,
     'flipside' AS creator,
     COALESCE(
@@ -53,13 +53,13 @@ SELECT
         n.l2_label,
         t.l2_label
     ) AS label_subtype,
-    NAME AS project_name,
-    NAME AS address_name,
+    token_name AS project_name,
+    token_name AS address_name,
     NULL AS delete_flag,
     _inserted_timestamp,
     sysdate() as inserted_timestamp,
     sysdate() as modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['A.address']) }} AS labels_eth_contracts_table_id,
+    {{ dbt_utils.generate_surrogate_key(['A.contract_address']) }} AS labels_eth_contracts_table_id,
     '{{ invocation_id }}' as _invocation_id
 FROM
     {{ source(
@@ -67,9 +67,9 @@ FROM
         'contracts'
     ) }} A
     LEFT JOIN tokens t
-    ON A.address = t.address
+    ON A.contract_address = t.address
     LEFT JOIN nfts n
-    ON A.address = n.address
+    ON A.contract_address = n.address
 WHERE
     label_type IS NOT NULL
     AND project_name IS NOT NULL

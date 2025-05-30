@@ -1,0 +1,35 @@
+version: 2
+models:
+  - name: silver_metrics__chain_comparison
+    columns:
+      - name: BLOCKCHAIN
+        tests:
+          - not_null
+      - name: CATEGORY
+        tests:
+          - not_null
+      - name: DEFILLAMA_VOLUME
+        tests:
+          - not_null
+      - name: DIFF_DEFILLAMA_PERCENT
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 30.00
+              severity: warn
+              where: "inserted_timestamp >= systimestamp() - interval '24 hours' and crosschain_volume is not null"
+      - name: INSERTED_TIMESTAMP
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: MODIFIED_TIMESTAMP
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: CHAIN_COMPARISON_ID 
+        tests:
+          - not_null
