@@ -25,6 +25,7 @@ WITH evm_transfers AS (
             source('avalanche_core', 'ez_token_transfers'),
             source('base_core', 'ez_token_transfers'),
             source('blast_core', 'ez_token_transfers'),
+            source('bob_core', 'ez_token_transfers'),
             source('boba_core', 'ez_token_transfers'),
             source('bsc_core', 'ez_token_transfers'),
             source('core_core', 'ez_token_transfers'),
@@ -35,12 +36,14 @@ WITH evm_transfers AS (
             source('mantle_core', 'ez_token_transfers'),
             source('optimism_core', 'ez_token_transfers'),
             source('polygon_core', 'ez_token_transfers'),
+            source('ronin_core', 'ez_token_transfers'),
             source('sei_evm_core', 'ez_token_transfers'),
             source('flow_evm_core', 'ez_token_transfers'),
         ],
         where=block_ts_filter
     ) }}
 ),
+
 
 all_transfers AS (
     -- EVM Chains
@@ -145,6 +148,19 @@ all_transfers AS (
 
     SELECT 
         DATE(block_timestamp) as block_day,
+        asset as address,
+        'maya' as blockchain,
+        fact_transfers_id as tx_hash,
+        from_address,
+        to_address,
+        cacao_amount as amount
+    FROM {{ source('maya_core', 'fact_transfers') }}
+    WHERE {{ block_ts_filter }}
+
+    UNION ALL
+
+    SELECT 
+        DATE(block_timestamp) as block_day,
         contract_address as address,
         'near' as blockchain,
         tx_hash,
@@ -179,6 +195,47 @@ all_transfers AS (
         amount
     FROM {{ source('solana_core', 'fact_transfers') }}
     WHERE {{ block_ts_filter }}
+
+    UNION ALL
+
+    SELECT 
+        DATE(block_timestamp) as block_day,
+        asset_issuer||'-'||asset_code as address,
+        'stellar' as blockchain,
+        transaction_id::STRING as tx_hash,
+        from_account as from_address,
+        to_account as to_address,
+        amount
+    FROM {{ source('stellar_core', 'fact_operations') }}
+    WHERE amount is not null
+        AND {{ block_ts_filter }}
+
+     UNION ALL
+
+    SELECT 
+        DATE(block_timestamp) as block_day,
+        asset as address,
+        'thorchain' as blockchain,
+        fact_transfers_id as tx_hash,
+        from_address,
+        to_address,
+        rune_amount as amount
+    FROM {{ source('thorchain_core', 'fact_transfers') }}
+    WHERE {{ block_ts_filter }}
+
+      UNION ALL
+
+    SELECT 
+        DATE(block_timestamp) as block_day,
+        jetton_master as address,
+        'ton' as blockchain,
+        tx_hash,
+        source as from_address,
+        destination as to_address,
+        amount
+    FROM {{ source('ton_core', 'fact_jetton_events') }}
+    WHERE type = 'transfer'
+        AND {{ block_ts_filter }} 
    
 ),
 

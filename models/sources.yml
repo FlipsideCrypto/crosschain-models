@@ -1301,6 +1301,7 @@ sources:
     schema: core
     tables:
       - name: dim_assets
+      - name: fact_operations
       - name: fact_transactions
 
   - name: stellar_stats
@@ -1366,5 +1367,6 @@ sources:
     database: ton
     schema: core
     tables:
+      - name: fact_jetton_events
       - name: fact_jetton_metadata
       - name: fact_transactions
