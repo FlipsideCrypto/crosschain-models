@@ -9,13 +9,26 @@
 WITH tokes AS (
 
     SELECT
-        token_address
+        DISTINCT token_address
     FROM
-        {{ ref('silver__token_asset_metadata_priority') }}
+        {{ ref('silver__token_asset_metadata_coingecko') }}
     WHERE
-        blockchain IN (
+        platform IN (
             'ton',
-            'toncoin'
+            'toncoin',
+            'the open network'
+        )
+        AND token_address LIKE 'E%'
+    UNION ALL
+    SELECT
+        DISTINCT token_address
+    FROM
+        {{ ref('silver__token_asset_metadata_coinmarketcap') }}
+    WHERE
+        platform IN (
+            'ton',
+            'toncoin',
+            'the open network'
         )
         AND token_address LIKE 'E%'
 
@@ -45,4 +58,6 @@ SELECT
     SYSDATE() AS modified_timestamp,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    tokes
+    tokes qualify(ROW_NUMBER() over (PARTITION BY token_address
+ORDER BY
+    token_address_raw DESC) = 1)

@@ -10,9 +10,6 @@ WITH coin_gecko AS (
 
     SELECT
         recorded_hour,
-        token_address,
-        platform,
-        platform_id,
         CLOSE AS price,
         is_imputed,
         id,
@@ -35,9 +32,6 @@ WHERE
 coin_market_cap AS (
     SELECT
         recorded_hour,
-        token_address,
-        platform,
-        platform_id,
         CLOSE AS price,
         is_imputed,
         id,
@@ -60,9 +54,6 @@ WHERE
 ibc_prices AS (
     SELECT
         recorded_hour,
-        token_address,
-        'cosmos' AS platform,
-        'cosmos' AS platform_id,
         CLOSE AS price,
         is_imputed,
         id,
@@ -100,59 +91,23 @@ all_providers AS (
 ),
 mapping AS (
     SELECT
-        recorded_hour,
-        token_address,
-        TRIM(REPLACE(platform, '-', ' ')) AS platform_adj,
-        CASE
-            WHEN platform IN (
-                'arbitrum',
-                'arbitrum-one'
-            ) THEN 'arbitrum'
-            WHEN platform IN (
-                'avalanche',
-                'avalanche c-chain'
-            ) THEN 'avalanche'
-            WHEN platform IN (
-                'binance-smart-chain',
-                'binancecoin',
-                'bnb'
-            ) THEN 'bsc'
-            WHEN platform IN (
-                'bob network',
-                'bob-network'
-            ) THEN 'bob'
-            WHEN platform IN (
-                'gnosis',
-                'xdai',
-                'gnosis chain'
-            ) THEN 'gnosis'
-            WHEN platform IN (
-                'optimism',
-                'optimistic-ethereum'
-            ) THEN 'optimism'
-            WHEN platform IN (
-                'polygon',
-                'polygon-pos'
-            ) THEN 'polygon'
-            WHEN platform IN (
-                'cosmos',
-                'evmos',
-                'osmosis',
-                'terra',
-                'terra2'
-            ) THEN 'cosmos'
-            ELSE platform_adj
-        END AS blockchain,
-        platform AS blockchain_name,
-        platform_id AS blockchain_id,
-        price,
-        is_imputed,
-        id,
-        provider,
-        source,
-        _inserted_timestamp
+        A.recorded_hour,
+        A.id,
+        A.price,
+        A.is_imputed,
+        b.token_address,
+        b.platform_adj,
+        b.blockchain,
+        b.blockchain_name,
+        b.blockchain_id,
+        A.provider,
+        A.source,
+        A._inserted_timestamp
     FROM
-        all_providers
+        all_providers A
+        JOIN {{ ref('silver__token_asset_metadata_all_providers') }}
+        b
+        ON A.id = b.id
 )
 SELECT
     recorded_hour,

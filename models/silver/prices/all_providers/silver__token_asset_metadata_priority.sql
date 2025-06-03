@@ -18,11 +18,14 @@ WITH all_providers AS (
         blockchain_id,
         provider,
         CASE
-            WHEN provider = 'coingecko' THEN 1
-            WHEN provider = 'coinmarketcap' THEN 2
-            WHEN provider = 'osmosis-onchain' THEN 3
-            WHEN provider = 'solana-onchain' THEN 4
-            WHEN provider = 'solscan' THEN 5
+            WHEN provider = 'coingecko' AND source <> 'cg enhanced' THEN 1
+            WHEN provider = 'coinmarketcap'  AND source <> 'cmc enhanced' THEN 2
+            WHEN provider = 'coingecko' THEN 3
+            WHEN provider = 'coinmarketcap' THEN 4
+            WHEN provider = 'osmosis-onchain' THEN 5
+            WHEN provider = 'solana-onchain' THEN 6
+            WHEN provider = 'solscan' THEN 7
+            ELSE 99
         END AS priority,
         source,
         is_deprecated,
