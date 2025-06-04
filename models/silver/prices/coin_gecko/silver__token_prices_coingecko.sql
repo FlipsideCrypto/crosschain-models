@@ -12,11 +12,10 @@ WITH base_prices AS (
 
     SELECT
         p.recorded_hour,
-        {# m.token_address, #}
+        m.token_address,
         p.id,
-        {# m.platform,
+        m.platform,
         m.platform_id,
-        #}
         p.close,
         p.source,
         p._inserted_timestamp
@@ -24,15 +23,17 @@ WITH base_prices AS (
         {{ ref(
             'bronze__all_prices_coingecko'
         ) }}
-        p {# INNER JOIN {{ ref(
-        'silver__token_asset_metadata_coingecko'
-) }}
-m
-ON m.id = LOWER(TRIM(p.id)) #}
-WHERE
-    p.close <> 0
-    AND p.recorded_hour :: DATE <> '1970-01-01' {# AND m.token_address IS NOT NULL
-    AND m.platform_id IS NOT NULL #}
+        p
+        INNER JOIN {{ ref(
+            'silver__token_asset_metadata_coingecko'
+        ) }}
+        m
+        ON m.id = LOWER(TRIM(p.id))
+    WHERE
+        p.close <> 0
+        AND p.recorded_hour :: DATE <> '1970-01-01'
+        AND m.token_address IS NOT NULL
+        AND m.platform_id IS NOT NULL
 
 {% if is_incremental() %}
 AND p._inserted_timestamp >= (
@@ -42,7 +43,7 @@ AND p._inserted_timestamp >= (
         {{ this }}
 )
 {% endif %}
-) {# ,
+),
 latest_supported_assets AS (
     -- get the latest supported timestamp for each asset
     SELECT
@@ -56,27 +57,27 @@ latest_supported_assets AS (
     GROUP BY
         1,
         2
-) #}
+)
 
 {% if is_incremental() %},
 price_gaps AS (
     -- identify missing prices by token_address and platform_id
     SELECT
-        id,
-        {# platform_id, #}
+        token_address,
+        platform_id,
         recorded_hour,
         prev_recorded_hour,
         gap
     FROM
         (
             SELECT
-                id,
+                token_address,
                 platform_id,
                 recorded_hour,
                 LAG(
                     recorded_hour,
                     1
-                ) over (PARTITION BY LOWER(id), platform_id
+                ) over (PARTITION BY LOWER(token_address), platform_id
             ORDER BY
                 recorded_hour ASC) AS prev_RECORDED_HOUR,
                 DATEDIFF(
@@ -187,11 +188,7 @@ token_asset_metadata AS (
                 AND d.platform_id = p.platform_id
                 AND d.date_hour = p.recorded_hour
                 LEFT JOIN latest_supported_assets s
-                ON LOWER(
-                    d.token_address
-                ) = LOWER(
-                    s.token_address
-                )
+                ON LOWER(d.token_address) = LOWER(s.token_address)
                 AND d.platform_id = s.platform_id
         )
     {% endif %},
@@ -213,11 +210,7 @@ token_asset_metadata AS (
         FROM
             base_prices p
             LEFT JOIN latest_supported_assets s
-            ON LOWER(
-                p.token_address
-            ) = LOWER(
-                s.token_address
-            )
+            ON LOWER(p.token_address) = LOWER(s.token_address)
             AND p.platform_id = s.platform_id
         WHERE
             close_price IS NOT NULL
