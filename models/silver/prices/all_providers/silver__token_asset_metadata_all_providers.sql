@@ -316,6 +316,10 @@ SELECT
     A.provider,
     source,
     is_deprecated,
+    COALESCE(
+        C.is_verified,
+        FALSE
+    ) AS is_verified,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
@@ -326,6 +330,9 @@ FROM
     LEFT JOIN {{ ref('silver__provider_platform_blockchain_map') }}
     b
     ON A.platform = b.platform
-    AND A.provider = b.provider qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain_id, A.provider
+    AND A.provider = b.provider
+    LEFT JOIN {{ ref('silver__tokens_enhanced') }} C
+    ON A.token_address = C.address
+    AND LOWER(A.blockchain) = (LOWER(C.blockchain) qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain_id, A.provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

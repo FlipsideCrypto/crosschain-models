@@ -10,6 +10,9 @@ WITH coin_gecko AS (
 
     SELECT
         recorded_hour,
+        token_address,
+        platform,
+        platform_id,
         CLOSE AS price,
         is_imputed,
         id,
@@ -32,6 +35,9 @@ WHERE
 coin_market_cap AS (
     SELECT
         recorded_hour,
+        token_address,
+        platform,
+        platform_id,
         CLOSE AS price,
         is_imputed,
         id,
@@ -54,6 +60,9 @@ WHERE
 ibc_prices AS (
     SELECT
         recorded_hour,
+        token_address,
+        'cosmos' AS platform,
+        'cosmos' AS platform_id,
         CLOSE AS price,
         is_imputed,
         id,
@@ -91,23 +100,24 @@ all_providers AS (
 ),
 mapping AS (
     SELECT
-        A.recorded_hour,
-        A.id,
-        A.price,
-        A.is_imputed,
-        b.token_address,
+        recorded_hour,
+        token_address,
         b.platform_adj,
         b.blockchain,
-        b.blockchain_name,
-        b.blockchain_id,
-        A.provider,
-        A.source,
-        A._inserted_timestamp
+        A.platform AS blockchain_name,
+        A.platform_id AS blockchain_id,
+        price,
+        is_imputed,
+        id,
+        provider,
+        source,
+        _inserted_timestamp
     FROM
         all_providers A
-        JOIN {{ ref('silver__token_asset_metadata_all_providers') }}
+        LEFT JOIN {{ ref('silver__provider_platform_blockchain_map') }}
         b
-        ON A.id = b.id
+        ON A.platform = b.platform
+        AND A.provider = b.provider
 )
 SELECT
     recorded_hour,
