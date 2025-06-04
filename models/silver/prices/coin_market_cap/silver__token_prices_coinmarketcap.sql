@@ -12,7 +12,10 @@ WITH base_prices AS (
 
     SELECT
         p.recorded_hour,
+        m.token_address,
         p.id,
+        m.platform,
+        m.platform_id,
         p.close,
         p.source,
         p._inserted_timestamp
@@ -21,9 +24,16 @@ WITH base_prices AS (
             'bronze__all_prices_coinmarketcap'
         ) }}
         p
+        INNER JOIN {{ ref(
+            'silver__token_asset_metadata_coinmarketcap'
+        ) }}
+        m
+        ON m.id = LOWER(TRIM(p.id))
     WHERE
         p.close <> 0
         AND p.recorded_hour :: DATE <> '1970-01-01'
+        AND m.token_address IS NOT NULL
+        AND m.platform_id IS NOT NULL
 
 {% if is_incremental() %}
 AND p._inserted_timestamp >= (
@@ -37,14 +47,16 @@ AND p._inserted_timestamp >= (
 latest_supported_assets AS (
     -- get the latest supported timestamp for each asset
     SELECT
-        id,
+        token_address,
+        platform_id,
         DATE_TRUNC('hour', MAX(_inserted_timestamp)) AS last_supported_timestamp
     FROM
         {{ ref(
             'silver__token_asset_metadata_coinmarketcap'
         ) }}
     GROUP BY
-        1
+        1,
+        2
 )
 
 {% if is_incremental() %},
@@ -176,11 +188,7 @@ token_asset_metadata AS (
                 AND d.platform_id = p.platform_id
                 AND d.date_hour = p.recorded_hour
                 LEFT JOIN latest_supported_assets s
-                ON LOWER(
-                    d.token_address
-                ) = LOWER(
-                    s.token_address
-                )
+                ON LOWER(d.token_address) = LOWER(s.token_address)
                 AND d.platform_id = s.platform_id
         )
     {% endif %},
@@ -202,11 +210,7 @@ token_asset_metadata AS (
         FROM
             base_prices p
             LEFT JOIN latest_supported_assets s
-            ON LOWER(
-                p.token_address
-            ) = LOWER(
-                s.token_address
-            )
+            ON LOWER(p.token_address) = LOWER(s.token_address)
             AND p.platform_id = s.platform_id
         WHERE
             close_price IS NOT NULL
