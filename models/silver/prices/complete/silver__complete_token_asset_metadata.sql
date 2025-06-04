@@ -27,7 +27,7 @@ WITH asset_metadata AS (
         A._inserted_timestamp
     FROM
         {{ ref('silver__token_asset_metadata_priority') }} A
-        LEFT JOIN {{ ref('core__dim_contracts') }} C
+        LEFT JOIN {{ ref('silver__tokens') }} C
         ON LOWER(
             C.address
         ) = LOWER(
@@ -66,7 +66,7 @@ heal_model AS (
     FROM
         {{ this }}
         t0
-        LEFT JOIN {{ ref('core__dim_contracts') }} C
+        LEFT JOIN {{ ref('silver__tokens') }} C
         ON LOWER(
             C.address
         ) = LOWER(
@@ -94,7 +94,7 @@ heal_model AS (
                     SELECT
                         1
                     FROM
-                        {{ ref('core__dim_contracts') }} C
+                        {{ ref('silver__tokens') }} C
                     WHERE
                         C.modified_timestamp > DATEADD('DAY', -90, SYSDATE())
                         AND C.decimals IS NOT NULL
@@ -128,7 +128,7 @@ heal_model AS (
                     SELECT
                         1
                     FROM
-                        {{ ref('core__dim_contracts') }} C
+                        {{ ref('silver__tokens') }} C
                     WHERE
                         C.modified_timestamp > DATEADD('DAY', -90, SYSDATE())
                         AND C.symbol IS NOT NULL
