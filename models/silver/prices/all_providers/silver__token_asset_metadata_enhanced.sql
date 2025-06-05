@@ -11,8 +11,15 @@ WITH cg_from_enhanced AS (
     SELECT
         A.coingecko_id AS id,
         A.address AS token_address,
-        b.name,
-        b.symbol,
+        COALESCE(
+            A.name,
+            b.name
+        ) AS NAME,
+        COALESCE(
+            A.symbol,
+            b.symbol
+        ) AS symbol,
+        A.decimals decimals,
         blockchain AS platform,
         blockchain AS platform_id,
         'coingecko' AS provider,
@@ -50,8 +57,15 @@ cmc_from_enhanced AS (
     SELECT
         A.coinmarketcap_id AS id,
         A.address AS token_address,
-        b.name,
-        b.symbol,
+        COALESCE(
+            A.name,
+            b.name
+        ) AS NAME,
+        COALESCE(
+            A.symbol,
+            b.symbol
+        ) AS symbol,
+        A.decimals decimals,
         blockchain AS platform,
         blockchain AS platform_id,
         'coinmarketcap' AS provider,
@@ -101,6 +115,7 @@ SELECT
     id,
     A.name,
     A.symbol,
+    A.decimals,
     b.platform_adj,
     b.blockchain,
     A.platform AS blockchain_name,

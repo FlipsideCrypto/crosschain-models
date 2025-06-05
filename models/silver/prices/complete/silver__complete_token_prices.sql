@@ -222,21 +222,42 @@ final_final AS (
         FINAL
     UNION ALL
     SELECT
-        HOUR,
-        token_address,
-        asset_id,
-        symbol,
-        NAME,
-        decimals,
-        price,
-        blockchain,
-        blockchain_name,
-        blockchain_id,
-        is_imputed,
-        is_deprecated,
-        provider,
-        source,
-        _inserted_timestamp
+        p.recorded_hour AS HOUR,
+        p.token_address,
+        p.id AS asset_id,
+        m.symbol,
+        m.name,
+        m.decimals,
+        p.price,
+        p.blockchain,
+        p.blockchain_name,
+        p.blockchain_id,
+        p.is_imputed,
+        FALSE AS is_deprecated,
+        p.provider,
+        p.source,
+        p._inserted_timestamp
+    FROM
+        {{ ref('silver__token_prices_all_providers_enhanced') }}
+        p
+        LEFT JOIN {{ ref('silver__token_asset_metadata_enhanced') }}
+        m
+        ON LOWER(
+            p.token_address
+        ) = LOWER(
+            m.token_address
+        )
+        AND p.blockchain = m.blockchain
+
+{% if is_incremental() %}
+WHERE
+    p.modified_timestamp >= (
+        SELECT
+            MAX(modified_timestamp)
+        FROM
+            {{ this }}
+    )
+{% endif %}
 )
 SELECT
     *,

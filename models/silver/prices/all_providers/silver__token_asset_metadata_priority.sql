@@ -18,13 +18,11 @@ WITH all_providers AS (
         blockchain_id,
         provider,
         CASE
-            WHEN provider = 'coingecko' AND source <> 'cg enhanced' THEN 1
-            WHEN provider = 'coinmarketcap'  AND source <> 'cmc enhanced' THEN 2
-            WHEN provider = 'coingecko' THEN 3
-            WHEN provider = 'coinmarketcap' THEN 4
-            WHEN provider = 'osmosis-onchain' THEN 5
-            WHEN provider = 'solana-onchain' THEN 6
-            WHEN provider = 'solscan' THEN 7
+            WHEN provider = 'coingecko' THEN 1
+            WHEN provider = 'coinmarketcap' THEN 2
+            WHEN provider = 'osmosis-onchain' THEN 3
+            WHEN provider = 'solana-onchain' THEN 4
+            WHEN provider = 'solscan' THEN 5
             ELSE 99
         END AS priority,
         source,
@@ -63,5 +61,4 @@ SELECT
 FROM
     all_providers qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain
 ORDER BY
-    _inserted_timestamp DESC, priority ASC, id ASC, blockchain_id ASC nulls last)) = 1
--- select the last inserted record (latest supported provider), then by priority etc.
+    _inserted_timestamp DESC, priority ASC, id ASC, blockchain_id ASC nulls last)) = 1 -- select the last inserted record (latest supported provider), then by priority etc.

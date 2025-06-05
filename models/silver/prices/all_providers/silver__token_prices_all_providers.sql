@@ -109,7 +109,7 @@ mapping AS (
         price,
         is_imputed,
         id,
-        provider,
+        a.provider,
         source,
         _inserted_timestamp
     FROM
