@@ -42,7 +42,6 @@ exchange.slowisfast.near,5638,ln-exchange-spot,seed_file_chatgpt
 dln_debridge,1462,debridge,seed_file_chatgpt
 dex.thundercontract.near,2828,thundercore-staking,seed_file_chatgpt
 deBridge,1462,debridge,seed_file_chatgpt
-circle-cctp-v2,,circle,seed_file_chatgpt
 circle-cctp,,circle,seed_file_chatgpt
 celer_cbridge,2578,beamer-bridge,seed_file_chatgpt
 boba network: gateway,4944,bob-gateway,seed_file_chatgpt
