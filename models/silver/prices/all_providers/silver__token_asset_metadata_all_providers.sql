@@ -192,82 +192,6 @@ WHERE
     )
 {% endif %}
 ),
-cg_from_enhanced AS (
-    SELECT
-        A.coingecko_id AS id,
-        A.address AS token_address,
-        b.name,
-        b.symbol,
-        blockchain AS platform,
-        blockchain AS platform_id,
-        'coingecko' AS provider,
-        'cg enhanced' AS source,
-        FALSE AS is_deprecated,
-        modified_timestamp AS _inserted_timestamp
-    FROM
-        {{ ref('silver__tokens_enhanced') }} A
-        LEFT JOIN (
-            SELECT
-                DISTINCT id,
-                token_address,
-                NAME,
-                symbol
-            FROM
-                {{ ref('silver__token_asset_metadata_coingecko') }}
-        ) b
-        ON A.coingecko_id = b.id
-    WHERE
-        LOWER(
-            A.address
-        ) <> LOWER(b.token_address)
-
-{% if is_incremental() %}
-AND A.modified_timestamp >= (
-    SELECT
-        MAX(_inserted_timestamp)
-    FROM
-        {{ this }}
-)
-{% endif %}
-),
-cmc_from_enhanced AS (
-    SELECT
-        A.coinmarketcap_id AS id,
-        A.address AS token_address,
-        b.name,
-        b.symbol,
-        blockchain AS platform,
-        blockchain AS platform_id,
-        'coinmarketcap' AS provider,
-        'cmc enhanced' AS source,
-        FALSE AS is_deprecated,
-        modified_timestamp AS _inserted_timestamp
-    FROM
-        {{ ref('silver__tokens_enhanced') }} A
-        LEFT JOIN (
-            SELECT
-                DISTINCT id,
-                token_address,
-                NAME,
-                symbol
-            FROM
-                {{ ref('silver__token_asset_metadata_coinmarketcap') }}
-        ) b
-        ON A.coinmarketcap_id = b.id
-    WHERE
-        LOWER(
-            A.address
-        ) <> LOWER(b.token_address)
-
-{% if is_incremental() %}
-AND A.modified_timestamp >= (
-    SELECT
-        MAX(_inserted_timestamp)
-    FROM
-        {{ this }}
-)
-{% endif %}
-),
 all_providers AS (
     SELECT
         *
@@ -293,16 +217,6 @@ all_providers AS (
         *
     FROM
         solana_onchain
-    UNION ALL
-    SELECT
-        *
-    FROM
-        cg_from_enhanced
-    UNION ALL
-    SELECT
-        *
-    FROM
-        cmc_from_enhanced
 )
 SELECT
     token_address,
@@ -323,7 +237,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','b.blockchain_id','a.provider']) }} AS token_asset_metadata_all_providers_id,
+    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','blockchain_id','provider']) }} AS token_asset_metadata_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     all_providers A
@@ -333,6 +247,6 @@ FROM
     AND A.provider = b.provider
     LEFT JOIN {{ ref('silver__tokens_enhanced') }} C
     ON A.token_address = C.address
-    AND LOWER(A.blockchain) = (LOWER(C.blockchain) qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain_id, A.provider
+    AND LOWER(A.blockchain) = (LOWER(C.blockchain) qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain_id, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

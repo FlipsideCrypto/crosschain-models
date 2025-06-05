@@ -200,6 +200,43 @@ SELECT
 FROM
     heal_model
 {% endif %}
+),
+final_final AS (
+    SELECT
+        HOUR,
+        token_address,
+        asset_id,
+        symbol,
+        NAME,
+        decimals,
+        price,
+        blockchain,
+        blockchain_name,
+        blockchain_id,
+        is_imputed,
+        is_deprecated,
+        provider,
+        source,
+        _inserted_timestamp
+    FROM
+        FINAL
+    UNION ALL
+    SELECT
+        HOUR,
+        token_address,
+        asset_id,
+        symbol,
+        NAME,
+        decimals,
+        price,
+        blockchain,
+        blockchain_name,
+        blockchain_id,
+        is_imputed,
+        is_deprecated,
+        provider,
+        source,
+        _inserted_timestamp
 )
 SELECT
     *,
