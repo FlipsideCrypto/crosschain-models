@@ -1,6 +1,8 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['address', 'blockchain', 'block_day']
+    unique_key = ['address', 'blockchain', 'block_day'],
+    tags = ['daily']
+
 ) }}
 
 WITH token_activity_history AS (
@@ -99,25 +101,25 @@ SELECT
     CASE
         WHEN blockchain = 'aleo' AND legitimacy_score > 0.7 THEN TRUE
         WHEN blockchain = 'aptos' AND legitimacy_score > 0.9 THEN TRUE
-        WHEN blockchain = 'arbitrum' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'arbitrum' AND legitimacy_score > 0.92 THEN TRUE
         WHEN blockchain = 'avalanche' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'axelar' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'base' AND legitimacy_score > 0.95 THEN TRUE
-        WHEN blockchain = 'blast' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'blast' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'bob' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'boba' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'bsc' AND legitimacy_score > 0.94 THEN TRUE
         WHEN blockchain = 'core' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'cosmos' AND legitimacy_score > 0.8 THEN TRUE
-        WHEN blockchain = 'eclipse' AND legitimacy_score > 0.9 THEN TRUE
+        WHEN blockchain = 'eclipse' AND legitimacy_score > 0.95 THEN TRUE
         WHEN blockchain = 'ethereum' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'flow' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'gnosis' AND legitimacy_score > 0.93 THEN TRUE
         WHEN blockchain = 'ink' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'kaia' AND legitimacy_score > 0.9 THEN TRUE
-        WHEN blockchain = 'mantle' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'mantle' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'maya' AND legitimacy_score > 0.8 THEN TRUE
-        WHEN blockchain = 'near' AND legitimacy_score > 0.8 THEN TRUE
+        WHEN blockchain = 'near' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'optimism' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'osmosis' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'polygon' AND legitimacy_score > 0.94 THEN TRUE
@@ -127,7 +129,7 @@ SELECT
         WHEN blockchain = 'stellar' AND legitimacy_score > 0.95 THEN TRUE
         WHEN blockchain = 'swell' AND legitimacy_score > 0.90 THEN TRUE
         WHEN blockchain = 'thorchain' AND legitimacy_score > 0.90 THEN TRUE
-        WHEN blockchain = 'ton' AND legitimacy_score > 0.90 THEN TRUE
+        WHEN blockchain = 'ton' AND legitimacy_score > 0.92 THEN TRUE
         ELSE FALSE
     END AS is_verified
 FROM joined

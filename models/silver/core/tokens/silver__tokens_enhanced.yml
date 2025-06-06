@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: silver__tokens_enhanced
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ADDRESS
+            - BLOCKCHAIN
+    columns:
+
+      - name: ADDRESS
+        tests:
+          - not_null
+
+      - name: BLOCKCHAIN
+        tests:
+          - not_null
+
+      - name: TX_COUNT
+        tests:
+          - not_null
+
+      - name: UNIQUE_SENDERS
+        tests:
+          - not_null
+
+      - name: AMOUNT
+
+      - name: TRANSFERS_ID
+        tests:
+          - unique
+          - not_null 

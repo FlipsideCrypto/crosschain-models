@@ -200,7 +200,7 @@ all_transfers AS (
 
     SELECT 
         DATE(block_timestamp) as block_day,
-        asset_issuer||'-'||asset_code as address,
+        UPPER(asset_issuer||'-'||asset_code) as address,
         'stellar' as blockchain,
         transaction_id::STRING as tx_hash,
         from_account as from_address,
@@ -208,6 +208,7 @@ all_transfers AS (
         amount
     FROM {{ source('stellar_core', 'fact_operations') }}
     WHERE amount is not null
+        AND type_string ILIKE '%payment%'
         AND {{ block_ts_filter }}
 
      UNION ALL

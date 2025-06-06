@@ -1,6 +1,7 @@
 {{ config(
     materialized = 'table',
-    unique_key = ['blockchain']
+    unique_key = ['blockchain'],
+    tags = ['daily']
 ) }}
 
 WITH token_level_scores AS (
