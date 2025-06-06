@@ -222,7 +222,11 @@ final_final AS (
         FINAL
     UNION ALL
     SELECT
-        p.recorded_hour AS HOUR,
+        DATEADD(
+            HOUR,
+            1,
+            p.recorded_hour
+        ) AS HOUR,
         p.token_address,
         p.id AS asset_id,
         m.symbol,
@@ -266,6 +270,6 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['HOUR','LOWER(token_address)','blockchain']) }} AS complete_token_prices_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    FINAL qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain, HOUR
+    final_final qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain, HOUR
 ORDER BY
     _inserted_timestamp DESC)) = 1

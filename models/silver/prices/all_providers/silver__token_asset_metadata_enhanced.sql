@@ -2,7 +2,6 @@
     materialized = 'incremental',
     unique_key = ['token_asset_metadata_all_providers_id'],
     incremental_strategy = 'delete+insert',
-    cluster_by = ['_inserted_timestamp::DATE'],
     tags = ['prices']
 ) }}
 
@@ -86,7 +85,8 @@ cmc_from_enhanced AS (
         ) b
         ON A.coinmarketcap_id = b.id
     WHERE
-        LOWER(
+        blockchain NOT IN ('osmosis')
+        AND LOWER(
             A.address
         ) <> LOWER(b.token_address)
 
