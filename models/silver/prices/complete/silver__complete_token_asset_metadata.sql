@@ -24,14 +24,10 @@ WITH asset_metadata AS (
         is_deprecated,
         A.provider,
         A.source,
-        COALESCE(
-            C.is_verified,
-            FALSE
-        ) AS is_verified,
         A._inserted_timestamp
     FROM
         {{ ref('silver__token_asset_metadata_priority') }} A
-        LEFT JOIN {{ ref('silver__tokens_enhanced') }} C
+        LEFT JOIN {{ ref('core__dim_contracts') }} C
         ON LOWER(
             C.address
         ) = LOWER(
@@ -66,15 +62,11 @@ heal_model AS (
         is_deprecated,
         provider,
         source,
-        COALESCE(
-            C.is_verified,
-            FALSE
-        ) AS is_verified,
         t0._inserted_timestamp
     FROM
         {{ this }}
         t0
-        LEFT JOIN {{ ref('silver__tokens_enhanced') }} C
+        LEFT JOIN {{ ref('core__dim_contracts') }} C
         ON LOWER(
             C.address
         ) = LOWER(
@@ -102,7 +94,7 @@ heal_model AS (
                     SELECT
                         1
                     FROM
-                        {{ ref('silver__tokens_enhanced') }} C
+                        {{ ref('core__dim_contracts') }} C
                     WHERE
                         C.modified_timestamp > DATEADD('DAY', -90, SYSDATE())
                         AND C.decimals IS NOT NULL
@@ -136,7 +128,7 @@ heal_model AS (
                     SELECT
                         1
                     FROM
-                        {{ ref('silver__tokens_enhanced') }} C
+                        {{ ref('core__dim_contracts') }} C
                     WHERE
                         C.modified_timestamp > DATEADD('DAY', -90, SYSDATE())
                         AND C.symbol IS NOT NULL
@@ -175,7 +167,6 @@ SELECT
     is_deprecated,
     provider,
     source,
-    is_verified,
     _inserted_timestamp
 FROM
     heal_model
@@ -185,9 +176,9 @@ SELECT
     *,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','a.blockchain']) }} AS complete_token_asset_metadata_id,
+    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','blockchain']) }} AS complete_token_asset_metadata_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    FINAL A qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), A.blockchain
+    FINAL qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain
 ORDER BY
     _inserted_timestamp DESC)) = 1

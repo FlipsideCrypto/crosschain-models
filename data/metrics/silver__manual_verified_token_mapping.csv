@@ -36,7 +36,7 @@ aptos,0x377adc4848552eb2ea17259be928001923efe12271fef1667e2b784f04a7cf3a,cg,thal
 aptos,0x416416665d52c0868d5a9f02801a4035bfcfb24f117618b2b6c1f921128caf3b,cg,amnis-staked-aptos-coin,
 aptos,0x43782fca70e1416fc0c75954942dadd4af8d305a608b6153397ad5801b71e72d,,,
 aptos,0x4def3d3dee27308886f0a3611dd161ce34f977a9a5de4e80b237225923492a2a::coin::T,,,
-aptos,0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin,cg,aptos,
+aptos,0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin,cg,aptos,scam
 aptos,0x50fdfa97914bd00b656e3041e143f157c84931eb1ca7224b8a8570e7d5be70f2,,,
 aptos,0x5b0976a3a48c17c87419242e0533838d2fc4624cd30434f54020cf6bafa18812,,,
 aptos,0x7217ddb8006d44e945286edb847ef3c75c3c9ea5fb855f576baacac5c0edc239,,,
@@ -171,7 +171,7 @@ core,0x98cd652fd1f5324a1af6d64b3f6c8dcf2d8cd0d3,,,
 core,0x9e99442af8eae003038cbd0d36d60a0ca7a0fbde,,,
 core,0xac98bb397b8ba98fffdd0124cdc50fa08d7c7a00,,,
 core,0xc0e49f8c615d3d4c245970f6dc528e4a47d69a44,cg,icecreamswap,
-core,0xc0e5f8e2a9a2f1fbf34ab4d5fbf417ffd02fdb79,cg,pepe,
+core,0xc0e5f8e2a9a2f1fbf34ab4d5fbf417ffd02fdb79,cg,pepe,not real
 core,0xf06c8db5f143fc9359d6af8bd07adc845d2f3ef8,,,
 cosmos,ibc/4CC44260793F84006656DD868E017578F827A492978161DA31D7572BCB3F4289,,,
 cosmos,stuatom,cg,stride-staked-atom,

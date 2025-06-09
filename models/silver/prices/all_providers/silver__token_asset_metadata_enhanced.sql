@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['token_asset_metadata_all_providers_id'],
+    unique_key = ['token_asset_metadata_enhanced_id'],
     incremental_strategy = 'delete+insert',
     tags = ['prices']
 ) }}
@@ -30,16 +30,23 @@ WITH cg_from_enhanced AS (
         {{ ref('silver__tokens_enhanced') }} A
         LEFT JOIN (
             SELECT
-                DISTINCT id,
+                id,
                 token_address,
                 NAME,
                 symbol
             FROM
                 {{ ref('silver__token_asset_metadata_coingecko') }}
+                qualify ROW_NUMBER() over (
+                    PARTITION BY id,
+                    token_address
+                    ORDER BY
+                        _inserted_timestamp DESC
+                ) = 1
         ) b
         ON A.coingecko_id = b.id
     WHERE
-        LOWER(
+        A.is_verified
+        AND LOWER(
             A.address
         ) <> LOWER(b.token_address)
 
@@ -76,16 +83,23 @@ cmc_from_enhanced AS (
         {{ ref('silver__tokens_enhanced') }} A
         LEFT JOIN (
             SELECT
-                DISTINCT id,
+                id,
                 token_address,
                 NAME,
                 symbol
             FROM
                 {{ ref('silver__token_asset_metadata_coinmarketcap') }}
+                qualify ROW_NUMBER() over (
+                    PARTITION BY id,
+                    token_address
+                    ORDER BY
+                        _inserted_timestamp DESC
+                ) = 1
         ) b
         ON A.coinmarketcap_id = b.id
     WHERE
-        blockchain NOT IN ('osmosis')
+        A.is_verified
+        AND blockchain NOT IN ('osmosis')
         AND LOWER(
             A.address
         ) <> LOWER(b.token_address)
@@ -111,7 +125,7 @@ all_providers AS (
         cmc_from_enhanced
 )
 SELECT
-    token_address,
+    A.token_address,
     id,
     A.name,
     A.symbol,
@@ -127,13 +141,13 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','b.blockchain_id','a.provider']) }} AS token_asset_metadata_all_providers_id,
+    {{ dbt_utils.generate_surrogate_key(['LOWER(a.token_address)','b.blockchain','a.provider']) }} AS token_asset_metadata_enhanced_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
     all_providers A
     LEFT JOIN {{ ref('silver__provider_platform_blockchain_map') }}
     b
     ON A.platform = b.platform
-    AND A.provider = b.provider qualify ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain_id, A.provider
+    AND A.provider = b.provider qualify ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), b.blockchain, A.provider
 ORDER BY
     _inserted_timestamp DESC) = 1

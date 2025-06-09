@@ -251,17 +251,17 @@ final_final AS (
         ) = LOWER(
             m.token_address
         )
-        AND p.blockchain = m.blockchain
+        AND p.blockchain = m.blockchain {# {% if is_incremental() %}
+    WHERE
+        p.modified_timestamp >= (
+            SELECT
+                MAX(modified_timestamp)
+            FROM
+                {{ this }}
+        )
+    {% endif %}
 
-{% if is_incremental() %}
-WHERE
-    p.modified_timestamp >= (
-        SELECT
-            MAX(modified_timestamp)
-        FROM
-            {{ this }}
-    )
-{% endif %}
+    #}
 )
 SELECT
     *,
