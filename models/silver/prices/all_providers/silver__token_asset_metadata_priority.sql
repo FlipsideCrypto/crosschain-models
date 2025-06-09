@@ -23,7 +23,6 @@ WITH all_providers AS (
             WHEN provider = 'osmosis-onchain' THEN 3
             WHEN provider = 'solana-onchain' THEN 4
             WHEN provider = 'solscan' THEN 5
-            ELSE 99
         END AS priority,
         source,
         is_deprecated,
@@ -61,4 +60,5 @@ SELECT
 FROM
     all_providers qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain
 ORDER BY
-    _inserted_timestamp DESC, priority ASC, id ASC, blockchain_id ASC nulls last)) = 1 -- select the last inserted record (latest supported provider), then by priority etc.
+    _inserted_timestamp DESC, priority ASC, id ASC, blockchain_id ASC nulls last)) = 1
+-- select the last inserted record (latest supported provider), then by priority etc.

@@ -17,17 +17,19 @@ models:
         tests:
           - not_null
 
-      - name: TX_COUNT
+      - name: is_verified
         tests:
           - not_null
 
-      - name: UNIQUE_SENDERS
+      - name: is_verified_external
         tests:
           - not_null
 
-      - name: AMOUNT
+      - name: has_price_mapping
+        tests:
+          - not_null
 
-      - name: TRANSFERS_ID
+      - name: tokens_enhanced_id
         tests:
           - unique
           - not_null 

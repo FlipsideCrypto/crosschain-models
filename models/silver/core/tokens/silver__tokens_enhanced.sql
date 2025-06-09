@@ -302,6 +302,7 @@ SELECT
         ) IS NOT NULL THEN TRUE
         ELSE FALSE
     END has_price_mapping,
+    {{ dbt_utils.generate_surrogate_key(['a.address','a.blockchain' ]) }} AS tokens_enhanced_id,
     SYSDATE() AS modified_timestamp,
     SYSDATE() AS inserted_timestamp,
     '{{ invocation_id }}' AS _invocation_id
