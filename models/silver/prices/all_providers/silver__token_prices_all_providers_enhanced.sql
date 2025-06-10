@@ -6,8 +6,25 @@
     tags = ['prices']
 ) }}
 
-WITH coin_gecko AS (
+WITH newly_verified AS (
 
+    SELECT
+        address,
+        blockchain,
+        coingecko_id,
+        coinmarketcap_id
+    FROM
+        {{ ref('silver__tokens_enhanced') }}
+    WHERE
+        is_verified
+        AND first_verified_timestamp >= (
+            SELECT
+                MAX(modified_timestamp)
+            FROM
+                {{ this }}
+        )
+),
+coin_gecko AS (
     SELECT
         recorded_hour,
         CLOSE AS price,
@@ -21,11 +38,19 @@ WITH coin_gecko AS (
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp >= (
+    modified_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(modified_timestamp)
         FROM
             {{ this }}
+    )
+    OR id IN (
+        SELECT
+            id
+        FROM
+            newly_verified
+        WHERE
+            coingecko_id IS NOT NULL
     )
 {% endif %}
 ),
@@ -43,11 +68,19 @@ coin_market_cap AS (
 
 {% if is_incremental() %}
 WHERE
-    _inserted_timestamp >= (
+    modified_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(modified_timestamp)
         FROM
             {{ this }}
+    )
+    OR id IN (
+        SELECT
+            id
+        FROM
+            newly_verified
+        WHERE
+            coinmarketcap_id IS NOT NULL
     )
 {% endif %}
 ),

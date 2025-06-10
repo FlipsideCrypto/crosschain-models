@@ -1,7 +1,8 @@
 {{ config(
     materialized = 'incremental',
     unique_key = ['token_asset_metadata_enhanced_id'],
-    incremental_strategy = 'delete+insert',
+    incremental_strategy = 'merge',
+    merge_exclude_columns = ['inserted_timestamp'],
     tags = ['prices']
 ) }}
 
@@ -44,7 +45,6 @@ WITH cg_from_enhanced AS (
     WHERE
         A.is_verified
         AND coingecko_id IS NOT NULL
-        AND blockchain NOT IN ('osmosis')
 
 {% if is_incremental() %}
 AND A.modified_timestamp >= (
@@ -94,7 +94,6 @@ cmc_from_enhanced AS (
     WHERE
         A.is_verified
         AND coinmarketcap_id IS NOT NULL
-        AND blockchain NOT IN ('osmosis')
 
 {% if is_incremental() %}
 AND A.modified_timestamp >= (
