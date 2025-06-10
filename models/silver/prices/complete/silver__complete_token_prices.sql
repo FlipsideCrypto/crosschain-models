@@ -3,7 +3,7 @@
     unique_key = ['complete_token_prices_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['hour::DATE','blockchain'],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(asset_id, token_address, symbol, name),SUBSTRING(asset_id, token_address, symbol, name)",
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(asset_id, token_address, symbol, name, complete_token_prices_id),SUBSTRING(asset_id, token_address, symbol, name)",
     tags = ['prices','heal']
 ) }}
 
