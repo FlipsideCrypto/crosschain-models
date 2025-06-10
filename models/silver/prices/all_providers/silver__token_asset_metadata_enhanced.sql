@@ -18,9 +18,8 @@ WITH cg_from_enhanced AS (
             A.symbol,
             b.symbol
         ) AS symbol,
-        A.decimals decimals,
-        blockchain AS platform,
-        blockchain AS platform_id,
+        A.decimals,
+        A.blockchain,
         'coingecko' AS provider,
         'cg enhanced' AS source,
         FALSE AS is_deprecated,
@@ -28,17 +27,15 @@ WITH cg_from_enhanced AS (
         modified_timestamp AS _inserted_timestamp
     FROM
         {{ ref('silver__tokens_enhanced') }} A
-        LEFT JOIN (
+        JOIN (
             SELECT
                 id,
-                token_address,
                 NAME,
                 symbol
             FROM
                 {{ ref('silver__token_asset_metadata_coingecko') }}
                 qualify ROW_NUMBER() over (
-                    PARTITION BY id,
-                    token_address
+                    PARTITION BY id
                     ORDER BY
                         _inserted_timestamp DESC
                 ) = 1
@@ -46,9 +43,8 @@ WITH cg_from_enhanced AS (
         ON A.coingecko_id = b.id
     WHERE
         A.is_verified
-        AND LOWER(
-            A.address
-        ) <> LOWER(b.token_address)
+        AND coingecko_id IS NOT NULL
+        AND blockchain NOT IN ('osmosis')
 
 {% if is_incremental() %}
 AND A.modified_timestamp >= (
@@ -71,9 +67,8 @@ cmc_from_enhanced AS (
             A.symbol,
             b.symbol
         ) AS symbol,
-        A.decimals decimals,
-        blockchain AS platform,
-        blockchain AS platform_id,
+        A.decimals,
+        A.blockchain,
         'coinmarketcap' AS provider,
         'cmc enhanced' AS source,
         FALSE AS is_deprecated,
@@ -81,7 +76,7 @@ cmc_from_enhanced AS (
         modified_timestamp AS _inserted_timestamp
     FROM
         {{ ref('silver__tokens_enhanced') }} A
-        LEFT JOIN (
+        JOIN (
             SELECT
                 id,
                 token_address,
@@ -90,8 +85,7 @@ cmc_from_enhanced AS (
             FROM
                 {{ ref('silver__token_asset_metadata_coinmarketcap') }}
                 qualify ROW_NUMBER() over (
-                    PARTITION BY id,
-                    token_address
+                    PARTITION BY id
                     ORDER BY
                         _inserted_timestamp DESC
                 ) = 1
@@ -99,10 +93,8 @@ cmc_from_enhanced AS (
         ON A.coinmarketcap_id = b.id
     WHERE
         A.is_verified
+        AND coinmarketcap_id IS NOT NULL
         AND blockchain NOT IN ('osmosis')
-        AND LOWER(
-            A.address
-        ) <> LOWER(b.token_address)
 
 {% if is_incremental() %}
 AND A.modified_timestamp >= (
@@ -130,10 +122,10 @@ SELECT
     A.name,
     A.symbol,
     A.decimals,
-    b.platform_adj,
-    b.blockchain,
-    A.platform AS blockchain_name,
-    A.platform_id AS blockchain_id,
+    A.blockchain AS platform_adj,
+    A.blockchain,
+    A.blockchain AS blockchain_name,
+    A.blockchain AS blockchain_id,
     A.provider,
     source,
     is_deprecated,
@@ -141,13 +133,9 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['LOWER(a.token_address)','b.blockchain','a.provider']) }} AS token_asset_metadata_enhanced_id,
+    {{ dbt_utils.generate_surrogate_key(['LOWER(a.token_address)','a.blockchain','a.provider']) }} AS token_asset_metadata_enhanced_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers A
-    LEFT JOIN {{ ref('silver__provider_platform_blockchain_map') }}
-    b
-    ON A.platform = b.platform
-    AND A.provider = b.provider qualify ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), b.blockchain, A.provider
+    all_providers A qualify ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), A.blockchain, A.provider
 ORDER BY
     _inserted_timestamp DESC) = 1

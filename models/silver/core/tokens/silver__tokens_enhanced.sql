@@ -251,17 +251,17 @@ token_base AS (
         ) AS ton_asset_code
     FROM
         {{ ref('silver__tokens') }}
-        {# {% if is_incremental() %}
-    WHERE
-        modified_timestamp :: DATE >= (
-            SELECT
-                MAX(modified_timestamp)
-            FROM
-                {{ this }}
-        )
-    {% endif %}
+        --Look for new tokens in the last 30 days to somewhat limit the lookback
 
-    #}
+{% if is_incremental() %}
+WHERE
+    inserted_timestamp :: DATE >= (
+        SELECT
+            MAX(modified_timestamp) :: DATE - 30
+        FROM
+            {{ this }}
+    )
+{% endif %}
 )
 SELECT
     A.blockchain,

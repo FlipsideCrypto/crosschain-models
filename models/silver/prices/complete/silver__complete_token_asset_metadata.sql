@@ -171,14 +171,69 @@ SELECT
 FROM
     heal_model
 {% endif %}
+),
+final_final AS (
+    SELECT
+        token_address,
+        asset_id,
+        symbol,
+        NAME,
+        decimals,
+        blockchain,
+        blockchain_name,
+        blockchain_id,
+        is_deprecated,
+        provider,
+        source,
+        _inserted_timestamp
+    FROM
+        FINAL
+    UNION ALL
+    SELECT
+        token_address,
+        id AS asset_id,
+        symbol,
+        NAME,
+        decimals,
+        blockchain,
+        blockchain_name,
+        blockchain_id,
+        is_deprecated,
+        provider,
+        source,
+        _inserted_timestamp
+    FROM
+        {{ ref('silver__token_asset_metadata_enhanced') }} A
+
+{% if is_incremental() %}
+WHERE
+    A.modified_timestamp >= (
+        SELECT
+            MAX(modified_timestamp)
+        FROM
+            {{ this }}
+    )
+{% endif %}
 )
 SELECT
-    *,
+    A.*,
+    COALESCE(
+        b.is_verified,
+        FALSE
+    ) AS is_verified,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','blockchain']) }} AS complete_token_asset_metadata_id,
+    {{ dbt_utils.generate_surrogate_key(['LOWER(a.token_address)','a.blockchain']) }} AS complete_token_asset_metadata_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    FINAL qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain
+    final_final A
+    LEFT JOIN {{ ref('silver__tokens_enhanced') }}
+    b
+    ON LOWER(
+        A.token_address
+    ) = LOWER(
+        b.address
+    )
+    AND A.blockchain = b.blockchain qualify(ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), A.blockchain
 ORDER BY
     _inserted_timestamp DESC)) = 1

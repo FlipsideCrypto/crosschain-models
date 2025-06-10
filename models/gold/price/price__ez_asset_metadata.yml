@@ -20,6 +20,8 @@ models:
         description: '{{ doc("prices_is_native") }}'
       - name: IS_DEPRECATED
         description: '{{ doc("prices_is_deprecated") }}'
+      - name: IS_VERIFIED
+        description: '{{ doc("prices_is_verified") }}'
       - name: EZ_ASSET_METADATA_ID
         description: '{{ doc("pk") }}'   
       - name: INSERTED_TIMESTAMP

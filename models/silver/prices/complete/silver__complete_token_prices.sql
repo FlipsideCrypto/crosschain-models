@@ -251,25 +251,37 @@ final_final AS (
         ) = LOWER(
             m.token_address
         )
-        AND p.blockchain = m.blockchain {# {% if is_incremental() %}
-    WHERE
-        p.modified_timestamp >= (
-            SELECT
-                MAX(modified_timestamp)
-            FROM
-                {{ this }}
-        )
-    {% endif %}
+        AND p.blockchain = m.blockchain
 
-    #}
+{% if is_incremental() %}
+WHERE
+    p.modified_timestamp >= (
+        SELECT
+            MAX(modified_timestamp)
+        FROM
+            {{ this }}
+    )
+{% endif %}
 )
 SELECT
-    *,
+    A.*,
+    COALESCE(
+        b.is_verified,
+        FALSE
+    ) AS is_verified,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['HOUR','LOWER(token_address)','blockchain']) }} AS complete_token_prices_id,
+    {{ dbt_utils.generate_surrogate_key(['HOUR','LOWER(a.token_address)','a.blockchain']) }} AS complete_token_prices_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    final_final qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain, HOUR
+    final_final A
+    LEFT JOIN {{ ref('silver__tokens_enhanced') }}
+    b
+    ON LOWER(
+        A.token_address
+    ) = LOWER(
+        b.address
+    )
+    AND A.blockchain = b.blockchain qualify(ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), A.blockchain, HOUR
 ORDER BY
     _inserted_timestamp DESC)) = 1
