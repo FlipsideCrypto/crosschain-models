@@ -118,7 +118,7 @@ all_providers AS (
 )
 SELECT
     A.token_address,
-    id,
+    A.id,
     A.name,
     A.symbol,
     A.decimals,
@@ -127,15 +127,22 @@ SELECT
     A.blockchain AS blockchain_name,
     A.blockchain AS blockchain_id,
     A.provider,
-    source,
-    is_deprecated,
-    is_verified,
-    _inserted_timestamp,
+    A.source,
+    A.is_deprecated,
+    A.is_verified,
+    A._inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['LOWER(a.token_address)','a.blockchain','a.provider']) }} AS token_asset_metadata_enhanced_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers A qualify ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), A.blockchain, A.provider
+    all_providers A
+    LEFT JOIN {{ ref('silver__token_asset_metadata_all_providers') }}
+    b
+    ON A.token_address = b.token_address
+    AND A.blockchain = b.blockchain
+    AND A.provider = b.provider
+WHERE
+    b.token_address IS NULL qualify ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), A.blockchain, A.provider
 ORDER BY
-    _inserted_timestamp DESC) = 1
+    A._inserted_timestamp DESC) = 1
