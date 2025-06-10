@@ -207,7 +207,7 @@ base_realtime AS (
         _inserted_timestamp
     FROM
         {{ ref('bronze__streamline_hourly_prices_coingecko_realtime') }}
-        s,
+        s, --includes `prices/streamline__hourly_prices_coingecko_history_range.sql`, requested adhoc
         LATERAL FLATTEN(
             input => DATA
         ) f
