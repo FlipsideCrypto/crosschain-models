@@ -2,102 +2,117 @@
     materialized = 'incremental',
     unique_key = ['address', 'blockchain', 'block_day'],
     tags = ['daily']
-
 ) }}
 
-WITH token_activity_history AS (
-    SELECT
-        address,
-        REPLACE(blockchain,'_evm') as blockchain,
-        AVG(tx_count) AS avg_tx,
-        AVG(unique_senders) AS avg_senders,
-        COUNT(*) AS active_days,
-        VARIANCE(tx_count) AS var_tx,
-        VARIANCE(unique_senders) AS var_senders,
-        MAX(tx_count) AS max_tx,
-        MAX(unique_senders) AS max_senders,
-        DATEDIFF('day', MIN(block_day), MAX(block_day)) + 1 AS life_days,
-        COUNT(*) / NULLIF(DATEDIFF('day', MIN(block_day), MAX(block_day)) + 1, 0) AS consistency,
-        MAX(tx_count) / NULLIF(AVG(tx_count), 0) AS tx_spike_ratio,
-        MAX(tx_count) / NULLIF(SUM(tx_count), 0) AS tx_skew_ratio
-    FROM 
-        {{ ref('silver__transfers_summary') }}
-    GROUP BY 
-        address, blockchain
-    HAVING 
-        active_days >= 5
-),
-
-token_activity_percentiles AS (
-    SELECT
-        *,
-        ROUND(PERCENT_RANK() OVER (PARTITION BY blockchain ORDER BY avg_tx), 2) AS tx_pctl,
-        ROUND(PERCENT_RANK() OVER (PARTITION BY blockchain ORDER BY avg_senders), 2) AS senders_pctl,
-        ROUND(PERCENT_RANK() OVER (PARTITION BY blockchain ORDER BY consistency), 2) AS consistency_pctl,
-        ROUND(PERCENT_RANK() OVER (PARTITION BY blockchain ORDER BY life_days), 2) AS longevity_pctl
-    FROM token_activity_history
-),
-
-
-transfers_today AS (
+WITH daily_metrics AS (
     SELECT
         d.block_day,
         d.address,
-        d.blockchain,
+        REPLACE(d.blockchain,'_evm') as blockchain,
         d.tx_count,
         d.unique_senders,
         d.amount,
-        ROUND(PERCENT_RANK() OVER (PARTITION BY d.blockchain, d.block_day ORDER BY tx_count), 2) AS tx_daily_pctl,
-        ROUND(PERCENT_RANK() OVER (PARTITION BY d.blockchain, d.block_day ORDER BY unique_senders), 2) AS senders_daily_pctl
+        -- Calculate daily percentiles
+        ROUND(CUME_DIST() OVER (PARTITION BY d.blockchain, d.block_day ORDER BY tx_count), 2) AS tx_daily_pctl,
+        ROUND(CUME_DIST() OVER (PARTITION BY d.blockchain, d.block_day ORDER BY unique_senders), 2) AS senders_daily_pctl,
+        -- Calculate rolling metrics up to current day
+        AVG(d.tx_count) OVER (
+            PARTITION BY d.address, d.blockchain 
+            ORDER BY d.block_day 
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS avg_tx,
+        AVG(d.unique_senders) OVER (
+            PARTITION BY d.address, d.blockchain 
+            ORDER BY d.block_day 
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS avg_senders,
+        COUNT(*) OVER (
+            PARTITION BY d.address, d.blockchain 
+            ORDER BY d.block_day 
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS active_days,
+        VARIANCE(d.tx_count) OVER (
+            PARTITION BY d.address, d.blockchain 
+            ORDER BY d.block_day 
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS var_tx,
+        VARIANCE(d.unique_senders) OVER (
+            PARTITION BY d.address, d.blockchain 
+            ORDER BY d.block_day 
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS var_senders,
+        MAX(d.tx_count) OVER (
+            PARTITION BY d.address, d.blockchain 
+            ORDER BY d.block_day 
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS max_tx,
+        MAX(d.unique_senders) OVER (
+            PARTITION BY d.address, d.blockchain 
+            ORDER BY d.block_day 
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS max_senders,
+        ROW_NUMBER() OVER (
+            PARTITION BY d.address, d.blockchain 
+            ORDER BY d.block_day
+        ) AS life_days,
+        -- Calculate max tx percentile
+        MAX(ROUND(CUME_DIST() OVER (PARTITION BY d.blockchain, d.block_day ORDER BY tx_count), 2)) OVER (
+            PARTITION BY d.address, d.blockchain 
+            ORDER BY d.block_day 
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS max_tx_pctl,
+        -- Calculate avg tx percentile
+        ROUND(CUME_DIST() OVER (
+            PARTITION BY d.blockchain, d.block_day 
+            ORDER BY AVG(d.tx_count) OVER (
+                PARTITION BY d.address, d.blockchain 
+                ORDER BY d.block_day 
+                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            )
+        ), 2) AS avg_tx_pctl,
+        MAX(d.tx_count) OVER (
+            PARTITION BY d.address, d.blockchain 
+            ORDER BY d.block_day 
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) / NULLIF(
+            SUM(d.tx_count) OVER (
+                PARTITION BY d.address, d.blockchain 
+                ORDER BY d.block_day 
+                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            ), 0
+        ) AS tx_skew_ratio
     FROM {{ ref('silver__transfers_summary') }} d
     {% if is_incremental() %}
     WHERE d.block_day > (SELECT MAX(block_day) FROM {{ this }})
     {% endif %}
 ),
 
-joined AS (
+daily_percentiles AS (
     SELECT
-        t.block_day,
-        t.address,
-        t.blockchain,
-        t.tx_count,
-        t.unique_senders,
-        t.amount,
-        t.tx_daily_pctl,
-        t.senders_daily_pctl,
-
-        h.avg_tx,
-        h.avg_senders,
-        h.active_days,
-        h.consistency,
-        h.life_days,
-        h.tx_spike_ratio,
-        h.tx_skew_ratio,
-
-        h.tx_pctl,
-        h.senders_pctl,
-        h.consistency_pctl,
-        h.longevity_pctl,
-        ROUND(
-            (
-                (h.tx_pctl * 0.25) + --How active the token is in terms of raw transaction count, relative to others on the same chain
-                (h.senders_pctl * 0.25) + --How widely used it is (number of unique senders)
-                (h.consistency_pctl * 0.25) + --How consistently active it is day-to-day (vs. bursty or dormant)
-                (h.longevity_pctl * 0.15) + --How long the token has been consistently active (sustained presence)
-                ((1 - LEAST(h.tx_spike_ratio / 10, 1)) * 0.10) --Penalizes tokens with short-lived activity spikes (e.g., airdrops or wash trading)
-            )
-        , 3) AS legitimacy_score,
-        CASE
-            WHEN (h.tx_spike_ratio > 10 AND h.active_days < 10) THEN 'spike_anomaly'
-            ELSE 'normal'
-        END AS anomaly_flag
-    FROM transfers_today t
-    LEFT JOIN token_activity_percentiles h
-        ON t.address = h.address AND t.blockchain = h.blockchain
+        *,
+        ROUND(CUME_DIST() OVER (PARTITION BY blockchain, block_day ORDER BY avg_tx), 2) AS tx_pctl,
+        ROUND(CUME_DIST() OVER (PARTITION BY blockchain, block_day ORDER BY avg_senders), 2) AS senders_pctl,
+        ROUND(CUME_DIST() OVER (PARTITION BY blockchain, block_day ORDER BY life_days), 2) AS longevity_pctl,
+        -- Calculate spike ratio based on percentiles
+        NULLIF(max_tx_pctl, 0) / NULLIF(avg_tx_pctl, 0) AS tx_spike_ratio
+    FROM daily_metrics
+    WHERE active_days >= 5
 )
 
 SELECT 
     *,
+    ROUND(
+        (
+            (tx_pctl * 0.40) + --How active the token is in terms of raw transaction count, relative to others on the same chain
+            (senders_pctl * 0.40) + --How widely used it is (number of unique senders)
+            (longevity_pctl * 0.10) + --How long the token has been consistently active (sustained presence)
+            ((1 - LEAST(tx_spike_ratio / 10, 1)) * 0.10) --Penalizes tokens with short-lived activity spikes (e.g., airdrops or wash trading)
+        )
+    , 3) AS legitimacy_score,
+    CASE
+        WHEN (tx_spike_ratio > 10 AND active_days < 10) THEN 'spike_anomaly'
+        ELSE 'normal'
+    END AS anomaly_flag,
     CASE
         WHEN blockchain = 'aleo' AND legitimacy_score > 0.7 THEN TRUE
         WHEN blockchain = 'aptos' AND legitimacy_score > 0.9 THEN TRUE
@@ -132,5 +147,4 @@ SELECT
         WHEN blockchain = 'ton' AND legitimacy_score > 0.92 THEN TRUE
         ELSE FALSE
     END AS is_verified
-FROM joined
-QUALIFY ROW_NUMBER() OVER (PARTITION BY address, blockchain, block_day ORDER BY block_day DESC) = 1
+FROM daily_percentiles
