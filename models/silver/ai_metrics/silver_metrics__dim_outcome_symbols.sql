@@ -10,7 +10,7 @@ WITH symbols_by_lp AS (
         'lp' AS action,
         l.pool_name,
         l.pool_address,
-        SUM(COALESCE(s.amount_in_usd, 0)) AS volume_usd,
+        ROUND(SUM(COALESCE(s.amount_in_usd, 0)), 2) AS volume_usd,
         ROW_NUMBER() OVER (
             PARTITION BY l.blockchain, l.platform 
             ORDER BY SUM(COALESCE(s.amount_in_usd, 0)) DESC
@@ -55,7 +55,7 @@ symbols_by_swap AS (
         'swap' AS action,
         symbol_in,
         symbol_out,
-        SUM(COALESCE(amount_in_usd, 0)) AS volume_usd,
+        ROUND(SUM(COALESCE(amount_in_usd, 0)), 2) AS volume_usd,
         ROW_NUMBER() OVER (
             PARTITION BY blockchain, platform 
             ORDER BY SUM(COALESCE(amount_in_usd, 0)) DESC
@@ -126,7 +126,8 @@ bridge_symbols_agg AS (
                     'symbol', symbol,
                     'tx_count', tx_count
                 )
-            ) AS inbound_symbols
+            ) AS inbound_symbols,
+            SUM(tx_count) AS total_inbound_tx_count
         FROM symbols_by_bridge
         WHERE direction = 'inbound'
         GROUP BY 
@@ -145,7 +146,8 @@ bridge_symbols_agg AS (
                     'symbol', symbol,
                     'tx_count', tx_count
                 )
-            ) AS outbound_symbols
+            ) AS outbound_symbols,
+            SUM(tx_count) AS total_outbound_tx_count
         FROM symbols_by_bridge
         WHERE direction = 'outbound'
         GROUP BY 
@@ -159,7 +161,9 @@ bridge_symbols_agg AS (
         COALESCE(i.action, o.action) AS action,
         OBJECT_CONSTRUCT(
             'inbound', i.inbound_symbols,
-            'outbound', o.outbound_symbols
+            'outbound', o.outbound_symbols,
+            'total_inbound_tx_count', COALESCE(i.total_inbound_tx_count, 0),
+            'total_outbound_tx_count', COALESCE(o.total_outbound_tx_count, 0)
         ) AS top_symbols
     FROM inbound_agg i
     FULL OUTER JOIN outbound_agg o
