@@ -2,6 +2,7 @@
     materialized = 'incremental',
     unique_key = ['blockchain', 'address'],
     merge_exclude_columns = ['inserted_timestamp'],
+    full_refresh = false,
     tags = ['daily']
 ) }}
 
@@ -221,16 +222,36 @@ man AS (
         blockchain,
         address,
         LOWER(address) AS address_lower,
-        provider,
-        id
+        cg_id,
+        cmc_id
     FROM
         {{ ref('silver__manual_verified_token_mapping') }}
     WHERE
-        id IS NOT NULL
-        AND invalid_reason IS NULL qualify ROW_NUMBER() over(
+        COALESCE(
+            cg_id,
+            cmc_id
+        ) IS NOT NULL
+        AND invalid_reason IS NULL --just double check that we don't have any dupes
+        qualify ROW_NUMBER() over(
             PARTITION BY blockchain,
-            address_lower,
-            provider
+            address_lower
+            ORDER BY
+                address_lower DESC
+        ) = 1
+),
+-- overrides for the is_verified flag
+man_ver AS (
+    SELECT
+        blockchain,
+        address,
+        LOWER(address) AS address_lower,
+        verified_override
+    FROM
+        {{ ref('silver__manual_verified_token_mapping') }}
+    WHERE
+        verified_override IS NOT NULL qualify ROW_NUMBER() over(
+            PARTITION BY blockchain,
+            address_lower
             ORDER BY
                 address_lower DESC
         ) = 1
@@ -272,6 +293,7 @@ FINAL AS (
         A.blockchain,
         A.address,
         CASE
+            WHEN mv.verified_override IS NOT NULL THEN man_ver
             WHEN b.blockchain IS NOT NULL
             OR b_ex.blockchain IS NOT NULL THEN TRUE
             ELSE FALSE
@@ -284,22 +306,22 @@ FINAL AS (
         A.decimals,
         A.name,
         COALESCE(
+            man_cg.id,
             cg.id,
             cg_add.id,
             cs1_cg.id,
             cs2_cg.id,
             c_ton_cg.id,
-            native_cg.id,
-            man_cg.id
+            native_cg.id
         ) AS coingecko_id,
         COALESCE(
+            man_cmc.id,
             cmc.id,
             cmc_add.id,
             cs1_cmc.id,
             cs2_cmc.id,
             c_ton_cmc.id,
-            native_cmc.id,
-            man_cmc.id
+            native_cmc.id
         ) AS coinmarketcap_id,
         CASE
             WHEN COALESCE(
@@ -310,6 +332,9 @@ FINAL AS (
         END has_price_mapping
     FROM
         token_base A
+        LEFT JOIN man_ver mv
+        ON A.blockchain = man_ver.blockchain
+        AND A.address_lower = man_ver.address_lower
         LEFT JOIN ver_xfer b
         ON A.blockchain = b.blockchain
         AND A.address_lower = b.address_lower
@@ -377,15 +402,13 @@ FINAL AS (
         LEFT JOIN man man_cg
         ON A.blockchain = man_cg.blockchain
         AND A.address_lower = man_cg.address_lower
-        AND man_cg.provider = 'cg'
-        AND cg.id IS NULL
-        AND cg_add.id IS NULL
+        AND A.id = man_cg.cg_id
+        AND man_cg.cg_id IS NOT NULL
         LEFT JOIN man man_cmc
         ON A.blockchain = man_cmc.blockchain
         AND A.address_lower = man_cmc.address_lower
-        AND man_cmc.provider = 'cmc'
-        AND cmc.id IS NULL
-        AND cmc_add.id IS NULL
+        AND A.id = man_cmc.cmc_id
+        AND man_cmc.cmc_id IS NOT NULL
 )
 SELECT
     A.blockchain,
