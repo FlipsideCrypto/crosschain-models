@@ -6,6 +6,10 @@ WITH base AS (
         {{ ref('silver__tokens_enhanced') }}
     WHERE
         is_verified
+        AND COALESCE(
+            coingecko_id,
+            coinmarketcap_id
+        ) IS NULL
     EXCEPT
     SELECT
         blockchain,
