@@ -6,7 +6,7 @@
     tags = ['prices']
 ) }}
 
-WITH newly_verified AS (
+WITH is_verified_modified AS (
 
     SELECT
         address,
@@ -17,12 +17,16 @@ WITH newly_verified AS (
         {{ ref('silver__tokens_enhanced') }}
     WHERE
         is_verified
-        AND first_verified_timestamp >= (
-            SELECT
-                MAX(modified_timestamp)
-            FROM
-                {{ this }}
-        )
+
+{% if is_incremental() %}
+AND is_verified_modified_timestamp >= (
+    SELECT
+        MAX(modified_timestamp)
+    FROM
+        {{ this }}
+)
+)
+{% endif %}
 ),
 coin_gecko AS (
     SELECT
@@ -48,7 +52,7 @@ WHERE
         SELECT
             id
         FROM
-            newly_verified
+            is_verified_modified
         WHERE
             coingecko_id IS NOT NULL
     )
@@ -78,7 +82,7 @@ WHERE
         SELECT
             id
         FROM
-            newly_verified
+            is_verified_modified
         WHERE
             coinmarketcap_id IS NOT NULL
     )

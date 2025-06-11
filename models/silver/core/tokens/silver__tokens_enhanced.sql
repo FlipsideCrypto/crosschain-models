@@ -228,8 +228,8 @@ man AS (
         {{ ref('silver__manual_verified_token_mapping') }}
     WHERE
         COALESCE(
-            cg_id,
-            cmc_id
+            cg_id :: STRING,
+            cmc_id :: STRING
         ) IS NOT NULL
         AND invalid_reason IS NULL --just double check that we don't have any dupes
         qualify ROW_NUMBER() over(
@@ -293,7 +293,7 @@ FINAL AS (
         A.blockchain,
         A.address,
         CASE
-            WHEN mv.verified_override IS NOT NULL THEN man_ver
+            WHEN mv.verified_override IS NOT NULL THEN mv.verified_override
             WHEN b.blockchain IS NOT NULL
             OR b_ex.blockchain IS NOT NULL THEN TRUE
             ELSE FALSE
@@ -306,7 +306,7 @@ FINAL AS (
         A.decimals,
         A.name,
         COALESCE(
-            man_cg.id,
+            man_cg.cg_id,
             cg.id,
             cg_add.id,
             cs1_cg.id,
@@ -315,7 +315,7 @@ FINAL AS (
             native_cg.id
         ) AS coingecko_id,
         COALESCE(
-            man_cmc.id,
+            man_cmc.cmc_id :: STRING,
             cmc.id,
             cmc_add.id,
             cs1_cmc.id,
@@ -325,16 +325,16 @@ FINAL AS (
         ) AS coinmarketcap_id,
         CASE
             WHEN COALESCE(
-                coingecko_id,
-                coinmarketcap_id
+                coingecko_id :: STRING,
+                coinmarketcap_id :: STRING
             ) IS NOT NULL THEN TRUE
             ELSE FALSE
         END has_price_mapping
     FROM
         token_base A
         LEFT JOIN man_ver mv
-        ON A.blockchain = man_ver.blockchain
-        AND A.address_lower = man_ver.address_lower
+        ON A.blockchain = mv.blockchain
+        AND A.address_lower = mv.address_lower
         LEFT JOIN ver_xfer b
         ON A.blockchain = b.blockchain
         AND A.address_lower = b.address_lower
@@ -402,12 +402,10 @@ FINAL AS (
         LEFT JOIN man man_cg
         ON A.blockchain = man_cg.blockchain
         AND A.address_lower = man_cg.address_lower
-        AND A.id = man_cg.cg_id
         AND man_cg.cg_id IS NOT NULL
         LEFT JOIN man man_cmc
         ON A.blockchain = man_cmc.blockchain
         AND A.address_lower = man_cmc.address_lower
-        AND A.id = man_cmc.cmc_id
         AND man_cmc.cmc_id IS NOT NULL
 )
 SELECT
@@ -424,11 +422,14 @@ SELECT
 
 {% if is_incremental() %}
 CASE
-    WHEN A.is_verified THEN COALESCE(curr_val.first_verified_timestamp, SYSDATE())END AS first_verified_timestamp,
+    WHEN A.is_verified <> COALESCE(
+        curr_val.is_verified,
+        FALSE
+    ) THEN COALESCE(curr_val.is_verified_modified_timestamp, SYSDATE())END AS is_verified_modified_timestamp,
     {% else %}
         CASE
             WHEN A.is_verified THEN SYSDATE()
-        END AS first_verified_timestamp,
+        END AS is_verified_modified_timestamp,
     {% endif %}
 
     {{ dbt_utils.generate_surrogate_key(['a.address','a.blockchain' ]) }} AS tokens_enhanced_id,

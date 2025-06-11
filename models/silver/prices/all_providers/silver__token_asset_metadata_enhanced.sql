@@ -6,8 +6,30 @@
     tags = ['prices']
 ) }}
 
-WITH cg_from_enhanced AS (
+WITH
 
+{% if is_incremental() %}
+is_verified_modified AS (
+
+    SELECT
+        address,
+        blockchain,
+        coingecko_id,
+        coinmarketcap_id,
+        is_verified
+    FROM
+        {{ ref('silver__tokens_enhanced') }}
+    WHERE
+        is_verified_modified_timestamp >= (
+            SELECT
+                MAX(modified_timestamp)
+            FROM
+                {{ this }}
+        )
+),
+{% endif %}
+
+cg_from_enhanced AS (
     SELECT
         A.coingecko_id AS id,
         A.address AS token_address,
@@ -47,11 +69,19 @@ WITH cg_from_enhanced AS (
         AND coingecko_id IS NOT NULL
 
 {% if is_incremental() %}
-AND A.modified_timestamp >= (
-    SELECT
-        MAX(_inserted_timestamp)
-    FROM
-        {{ this }}
+AND (
+    A.modified_timestamp >= (
+        SELECT
+            MAX(modified_timestamp)
+        FROM
+            {{ this }}
+    )
+    OR A.blockchain || '--' || A.address IN (
+        SELECT
+            blockchain || '--' || address
+        FROM
+            is_verified_modified
+    )
 )
 {% endif %}
 ),
@@ -96,11 +126,19 @@ cmc_from_enhanced AS (
         AND coinmarketcap_id IS NOT NULL
 
 {% if is_incremental() %}
-AND A.modified_timestamp >= (
-    SELECT
-        MAX(_inserted_timestamp)
-    FROM
-        {{ this }}
+AND (
+    A.modified_timestamp >= (
+        SELECT
+            MAX(modified_timestamp)
+        FROM
+            {{ this }}
+    )
+    OR A.blockchain || '--' || A.address IN (
+        SELECT
+            blockchain || '--' || address
+        FROM
+            is_verified_modified
+    )
 )
 {% endif %}
 ),
