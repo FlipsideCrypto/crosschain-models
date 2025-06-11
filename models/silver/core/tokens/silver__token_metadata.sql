@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['address', 'blockchain', 'block_day'],
+    unique_key = ['token_metadata_id'],
     tags = ['daily']
 ) }}
 
@@ -9,6 +9,14 @@ WITH daily_metrics AS (
         d.block_day,
         d.address,
         REPLACE(d.blockchain,'_evm') as blockchain,
+        c.symbol,
+        c.NAME,
+        c.decimals,
+        COALESCE(c.created_block_timestamp, MIN(d.block_day) OVER (
+            PARTITION BY d.address, d.blockchain 
+            ORDER BY d.block_day 
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        )) as first_block_timestamp,
         d.tx_count,
         d.unique_senders,
         d.amount,
@@ -48,11 +56,11 @@ WITH daily_metrics AS (
             ORDER BY d.block_day 
             ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
         ) AS max_senders,
-        ROW_NUMBER() OVER (
-            PARTITION BY d.address, d.blockchain 
-            ORDER BY d.block_day
-        ) AS life_days
+        DATEDIFF('day', DATE(c.created_block_timestamp), d.block_day) as life_days,
     FROM {{ ref('silver__transfers_summary') }} d
+        LEFT JOIN {{ ref('silver__contracts') }} c
+        ON d.address = c.address
+        AND d.blockchain = c.blockchain
     {% if is_incremental() %}
     WHERE d.block_day > (SELECT MAX(block_day) FROM {{ this }})
     {% endif %}
@@ -104,6 +112,10 @@ SELECT
     block_day,
     address,
     blockchain,
+    symbol,
+    NAME,
+    decimals,
+    first_block_timestamp,
     tx_count,
     unique_senders,
     ROUND(amount, 2) as amount,
@@ -119,10 +131,10 @@ SELECT
     longevity_pctl,
     ROUND(
         (
-            (tx_pctl * 0.40) + --How active the token is in terms of raw transaction count, relative to others on the same chain
-            (senders_pctl * 0.40) + --How widely used it is (number of unique senders)
-            (longevity_pctl * 0.10) + --How long the token has been consistently active (sustained presence)
-            ((1 - LEAST(tx_spike_ratio / 10, 1)) * 0.10) --Penalizes tokens with short-lived activity spikes (e.g., airdrops or wash trading)
+            (tx_daily_pctl * 0.30) + --How active the token is in terms of raw transaction count, relative to others on the same chain
+            (senders_daily_pctl * 0.30) + --How widely used it is (number of unique senders)
+            (longevity_pctl * 0.20) + --How long the token has been consistently active (sustained presence)
+            ((1 - LEAST(tx_spike_ratio / 10, 1)) * 0.20) --Penalizes tokens with short-lived activity spikes (e.g., airdrops or wash trading)
         )
     , 3) AS legitimacy_score,
     CASE
@@ -162,5 +174,10 @@ SELECT
         WHEN blockchain = 'thorchain' AND legitimacy_score > 0.90 THEN TRUE
         WHEN blockchain = 'ton' AND legitimacy_score > 0.92 THEN TRUE
         ELSE FALSE
-    END AS is_verified
-FROM final_metrics
+    END AS is_verified,
+    {{ dbt_utils.generate_surrogate_key(['block_day','address','blockchain' ]) }} AS token_metadata_id,
+    SYSDATE() AS modified_timestamp,
+    SYSDATE() AS inserted_timestamp,
+    '{{ invocation_id }}' AS _invocation_id
+FROM 
+    final_metrics f
