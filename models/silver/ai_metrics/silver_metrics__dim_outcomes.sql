@@ -1,6 +1,8 @@
 {{ config(
-    materialized = 'table',
+    materialized = 'incremental',
     unique_key = ['outcome_id'],
+    merge_exclude_columns = ['inserted_timestamp'],
+    cluster_by = ['modified_timestamp::DATE'],
     tags = ['daily']
 ) }}
 
@@ -12,6 +14,12 @@ WITH base AS (
         MAX(creation_time) AS last_action_timestamp
     FROM
         {{ ref('defi__dim_dex_liquidity_pools') }}
+    {% if is_incremental() %}
+    WHERE creation_time > (
+        SELECT MAX(last_action_timestamp)
+        FROM {{ this }}
+    )
+    {% endif %}
     GROUP BY
         blockchain,
         platform,
@@ -24,6 +32,12 @@ WITH base AS (
         MAX(block_timestamp) AS last_action_timestamp
     FROM
         {{ ref('defi__ez_dex_swaps') }}
+    {% if is_incremental() %}
+    WHERE block_timestamp > (
+        SELECT MAX(last_action_timestamp)
+        FROM {{ this }}
+    )
+    {% endif %}
     GROUP BY
         blockchain,
         platform,
@@ -36,6 +50,12 @@ WITH base AS (
         MAX(block_timestamp) AS last_action_timestamp
     FROM
         {{ ref('defi__fact_bridge_activity') }}
+    {% if is_incremental() %}
+    WHERE block_timestamp > (
+        SELECT MAX(last_action_timestamp)
+        FROM {{ this }}
+    )
+    {% endif %}
     GROUP BY
         blockchain,
         platform,

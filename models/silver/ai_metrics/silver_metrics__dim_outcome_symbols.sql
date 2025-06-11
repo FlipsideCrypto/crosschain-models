@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'table',
-    tags = ['daily']
+    tags = ['weekly']
 ) }}
 
 WITH symbols_by_lp AS (
