@@ -2,7 +2,7 @@
 create or replace function {{ schema }}.udf_hex_to_int(hex string)
 returns string
 language python
-runtime_version = '3.8'
+runtime_version = '3.9'
 handler = 'hex_to_int'
 as
 $$
@@ -26,7 +26,7 @@ $$;
 create or replace function {{ schema }}.udf_hex_to_int(encoding string, hex string)
 returns string
 language python
-runtime_version = '3.8'
+runtime_version = '3.9'
 handler = 'hex_to_int'
 as
 $$
