@@ -723,7 +723,6 @@ sources:
     schema: silver
     tables:
       - name: polymarket_markets
-      
   - name: external_defillama
     database: external
     schema: defillama
