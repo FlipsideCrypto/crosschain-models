@@ -1,0 +1,61 @@
+version: 2
+models:
+  - name: silver_metrics__dim_outcomes
+    description: A consolidated view that tracks the latest activities across different outcome actions (lp, swap, bridge) by blockchain and platform, with protocol mappings to DeFiLlama.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCKCHAIN
+            - PLATFORM
+            - ACTION
+    columns:
+      - name: BLOCKCHAIN
+        description: The blockchain network where the activity occurred
+        tests:
+          - not_null
+      - name: PLATFORM
+        description: The platform or protocol where the activity occurred
+        tests:
+          - not_null
+      - name: ACTION
+        description: Type of outcome action performed - one of 'lp', 'swap', or 'bridge'
+        tests:
+          - not_null
+      - name: LAST_ACTION_TIMESTAMP
+        description: The timestamp of the most recent action of this type on this platform and blockchain
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: TOP_SYMBOLS_30D
+        description: Object containing the most frequently used tokens or pairs for this action on this platform in the last 30 days
+      - name: IS_IMPUTED
+        description: Boolean flag indicating whether the protocol mapping was directly matched (FALSE) or imputed via a fuzzy matching strategy (TRUE)
+        tests:
+          - not_null
+      - name: DEFILLAMA_METADATA
+        description: Object containing protocol slug and ID mappings from DeFiLlama
+      - name: MATCH_TYPE
+        description: The matching strategy used to associate the platform with DeFiLlama protocols (exact_slug_match, fuzzy_slug_match, exact_version_match, fuzzy_version_match, name_match, fuzzy_name_match, manual_match, seed_file_chatgpt, no_match)
+        tests:
+          - not_null
+      - name: INSERTED_TIMESTAMP
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: MODIFIED_TIMESTAMP
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+      - name: OUTCOME_ID
+        tests:
+          - not_null
+          - unique
+      - name: _INVOCATION_ID
+        tests:
+          - not_null
