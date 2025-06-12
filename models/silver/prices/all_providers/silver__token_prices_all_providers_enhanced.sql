@@ -25,7 +25,6 @@ AND is_verified_modified_timestamp >= (
     FROM
         {{ this }}
 )
-)
 {% endif %}
 ),
 coin_gecko AS (
