@@ -406,7 +406,6 @@ SELECT
     o.platform,
     o.action,
     o.last_action_timestamp,
-    s.top_symbols as top_symbols_30D,
     o.is_imputed,
     o.defillama_metadata,
     o.match_type,
@@ -416,7 +415,3 @@ SELECT
     '{{ invocation_id }}' AS _invocation_id
 FROM
     combined_results o
-LEFT JOIN {{ ref('silver_metrics__dim_outcome_symbols') }} s
-    ON o.blockchain = s.blockchain 
-    AND o.platform = s.platform
-    AND o.action = s.action
