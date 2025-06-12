@@ -23,41 +23,34 @@ models:
           - not_null
       - name: LAST_ACTION_TIMESTAMP
         description: The timestamp of the most recent action of this type on this platform and blockchain
+        tests:
+          - not_null
       - name: TOP_SYMBOLS_30D
         description: Object containing the most frequently used tokens or pairs for this action on this platform in the last 30 days
-      - name: RESTRICTION_CATEGORY
-        description: Category of restrictions applied to this action type (e.g., MANDATORY_FIRST_STEP, INTERMEDIATE_ONLY, etc.)
-      - name: RECOMMENDED_JOURNEY_POSITION
-        description: The recommended position (1-3) of this action in a user journey
-      - name: CAN_BE_JOURNEY_START
-        description: Boolean indicating if this action can be the first step in a user journey
-      - name: CAN_BE_JOURNEY_END
-        description: Boolean indicating if this action can be the final step in a user journey
-      - name: REQUIRES_FOLLOWUP_ACTION
-        description: Boolean indicating if this action must be followed by another action
-      - name: CAN_BE_STANDALONE
-        description: Boolean indicating if this action can exist as a single-step journey
-      - name: TYPICAL_NEXT_ACTIONS
-        description: Array of action types that commonly follow this action
-      - name: USER_RETENTION_VALUE
-        description: Qualitative measure of how well this action retains users (LOW, MEDIUM, HIGH, VERY_HIGH)
-      - name: IS_ONBOARDING_ACTION
-        description: Boolean indicating if this action is typically used for onboarding new users
-      - name: IS_YIELD_GENERATING
-        description: Boolean indicating if this action generates yield for the user
-      - name: JOURNEY_PATTERN_TYPE
-        description: The typical pattern this action follows in user journeys (ENTRY, MIDDLE, ENDPOINT)
       - name: IS_IMPUTED
         description: Boolean flag indicating whether the protocol mapping was directly matched (FALSE) or imputed from similar protocols (TRUE)
+        tests:
+          - not_null
       - name: DEFILLAMA_METADATA
         description: Object containing protocol slug and ID mappings from DeFiLlama
       - name: MATCH_TYPE
         description: The matching strategy used to associate the platform with DeFiLlama protocols (exact_slug_match, fuzzy_slug_match, exact_version_match, fuzzy_version_match, name_match, fuzzy_name_match, manual_match, seed_file_chatgpt, no_match)
+        tests:
+          - not_null
       - name: INSERTED_TIMESTAMP
         description: The timestamp when this record was first inserted
+        tests:
+          - not_null
       - name: MODIFIED_TIMESTAMP
         description: The timestamp when this record was last modified
+        tests:
+          - not_null
       - name: OUTCOME_ID
         description: A surrogate key generated from the blockchain, platform and action fields
+        tests:
+          - not_null
+          - unique
       - name: _INVOCATION_ID
         description: The DBT invocation ID that created or last updated this record
+        tests:
+          - not_null

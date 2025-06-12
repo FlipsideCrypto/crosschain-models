@@ -18,6 +18,7 @@ WITH base AS (
     WHERE creation_time > (
         SELECT MAX(last_action_timestamp)
         FROM {{ this }}
+        WHERE action = 'lp'
     )
     {% endif %}
     GROUP BY
@@ -36,6 +37,7 @@ WITH base AS (
     WHERE block_timestamp > (
         SELECT MAX(last_action_timestamp)
         FROM {{ this }}
+        WHERE action = 'swap'
     )
     {% endif %}
     GROUP BY
@@ -54,6 +56,7 @@ WITH base AS (
     WHERE block_timestamp > (
         SELECT MAX(last_action_timestamp)
         FROM {{ this }}
+        WHERE action = 'bridge'
     )
     {% endif %}
     GROUP BY
