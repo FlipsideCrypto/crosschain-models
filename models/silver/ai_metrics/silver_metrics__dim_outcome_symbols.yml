@@ -1,0 +1,46 @@
+version: 2
+models:
+  - name: silver_metrics__dim_outcome_symbols
+    description: A consolidated view that tracks the top symbols (tokens, pairs, or pools) for each platform and action type over the last 30 days. Runs on a weekly basis.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCKCHAIN
+            - PLATFORM
+            - ACTION
+    columns:
+      - name: BLOCKCHAIN
+        description: The blockchain network where the activity occurred
+        tests:
+          - not_null
+      - name: PLATFORM
+        description: The platform or protocol where the activity occurred
+        tests:
+          - not_null
+      - name: ACTION
+        description: Type of outcome action performed - one of 'lp', 'swap', or 'bridge'
+        tests:
+          - not_null
+      - name: TOP_SYMBOLS
+        description: Object containing the top symbols for this action on this platform in the last 30 days. For LP actions, contains pool information. For swaps, contains token pairs. For bridges, contains inbound and outbound token information.
+      - name: INSERTED_TIMESTAMP
+        description: The timestamp when this record was first inserted
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 8
+      - name: MODIFIED_TIMESTAMP
+        description: The timestamp when this record was last modified
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 8
+      - name: OUTCOME_SYMBOLS_ID
+        tests:
+          - not_null
+          - unique
+      - name: _INVOCATION_ID
+        tests:
+          - not_null 

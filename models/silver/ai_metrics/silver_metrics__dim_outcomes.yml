@@ -25,10 +25,13 @@ models:
         description: The timestamp of the most recent action of this type on this platform and blockchain
         tests:
           - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
       - name: TOP_SYMBOLS_30D
         description: Object containing the most frequently used tokens or pairs for this action on this platform in the last 30 days
       - name: IS_IMPUTED
-        description: Boolean flag indicating whether the protocol mapping was directly matched (FALSE) or imputed from similar protocols (TRUE)
+        description: Boolean flag indicating whether the protocol mapping was directly matched (FALSE) or imputed via a fuzzy matching strategy (TRUE)
         tests:
           - not_null
       - name: DEFILLAMA_METADATA
@@ -38,19 +41,21 @@ models:
         tests:
           - not_null
       - name: INSERTED_TIMESTAMP
-        description: The timestamp when this record was first inserted
         tests:
           - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
       - name: MODIFIED_TIMESTAMP
-        description: The timestamp when this record was last modified
         tests:
           - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
       - name: OUTCOME_ID
-        description: A surrogate key generated from the blockchain, platform and action fields
         tests:
           - not_null
           - unique
       - name: _INVOCATION_ID
-        description: The DBT invocation ID that created or last updated this record
         tests:
           - not_null

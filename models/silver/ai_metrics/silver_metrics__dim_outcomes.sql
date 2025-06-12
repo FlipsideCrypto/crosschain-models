@@ -161,7 +161,7 @@ high_priority_manual_match AS (
         o.defillama_category,
         o.action,
         o.last_action_timestamp,
-        TRUE AS is_imputed,
+        FALSE AS is_imputed,
         OBJECT_CONSTRUCT(m.protocol_slug, m.protocol_id::NUMBER) AS defillama_metadata,
         m.match_type
     FROM
