@@ -178,17 +178,18 @@ solana_onchain AS (
         'solana-onchain' AS provider,
         'solana-onchain' AS source,
         FALSE AS is_deprecated,
-        modified_timestamp as _inserted_timestamp
+        modified_timestamp AS _inserted_timestamp
     FROM
         {{ ref('silver__onchain_solana_metadata') }}
 
 {% if is_incremental() %}
-WHERE modified_timestamp >= (
-    SELECT
-        MAX(_inserted_timestamp)
-    FROM
-        {{ this }}
-)
+WHERE
+    modified_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp)
+        FROM
+            {{ this }}
+    )
 {% endif %}
 ),
 all_providers AS (
@@ -220,60 +221,32 @@ all_providers AS (
 SELECT
     token_address,
     id,
-    NAME,
-    symbol,
-    TRIM(REPLACE(platform, '-', ' ')) AS platform_adj,
-    CASE
-        WHEN platform IN (
-            'arbitrum',
-            'arbitrum-one'
-        ) THEN 'arbitrum'
-        WHEN platform IN (
-            'avalanche',
-            'avalanche c-chain'
-        ) THEN 'avalanche'
-        WHEN platform IN (
-            'binance-smart-chain',
-            'binancecoin',
-            'bnb'
-        ) THEN 'bsc'
-        WHEN platform IN (
-            'bob network',
-            'bob-network'
-        ) THEN 'bob'
-        WHEN platform IN (
-            'gnosis',
-            'xdai',
-            'gnosis chain'
-        ) THEN 'gnosis'
-        WHEN platform IN (
-            'optimism',
-            'optimistic-ethereum'
-        ) THEN 'optimism'
-        WHEN platform IN (
-            'polygon',
-            'polygon-pos'
-        ) THEN 'polygon'
-        WHEN platform IN (
-            'cosmos',
-            'evmos',
-            'osmosis',
-            'terra',
-            'terra2'
-        ) THEN 'cosmos'
-        ELSE platform_adj
-    END AS blockchain,
-    platform AS blockchain_name,
-    platform_id AS blockchain_id,
-    provider,
+    A.name,
+    A.symbol,
+    b.platform_adj,
+    b.blockchain,
+    A.platform AS blockchain_name,
+    A.platform_id AS blockchain_id,
+    A.provider,
     source,
     is_deprecated,
+    COALESCE(
+        C.is_verified,
+        FALSE
+    ) AS is_verified,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','blockchain_id','provider']) }} AS token_asset_metadata_all_providers_id,
+    {{ dbt_utils.generate_surrogate_key(['LOWER(token_address)','blockchain_id','a.provider']) }} AS token_asset_metadata_all_providers_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    all_providers qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain_id, provider
+    all_providers A
+    LEFT JOIN {{ ref('silver__provider_platform_blockchain_map') }}
+    b
+    ON A.platform = b.platform
+    AND A.provider = b.provider
+    LEFT JOIN {{ ref('silver__tokens_enhanced') }} C
+    ON A.token_address = C.address
+    AND (LOWER(b.blockchain)) = LOWER(C.blockchain) qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain_id, A.provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

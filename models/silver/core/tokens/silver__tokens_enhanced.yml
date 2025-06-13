@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: silver__tokens_enhanced
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ADDRESS
+            - BLOCKCHAIN
+    columns:
+
+      - name: ADDRESS
+        tests:
+          - not_null
+
+      - name: BLOCKCHAIN
+        tests:
+          - not_null
+
+      - name: is_verified
+        tests:
+          - not_null
+
+      - name: is_verified_external
+        tests:
+          - not_null
+
+      - name: has_price_mapping
+        tests:
+          - not_null
+
+      - name: tokens_enhanced_id
+        tests:
+          - unique
+          - not_null 

@@ -1,0 +1,23 @@
+version: 2
+models:
+  - name: silver__token_asset_metadata_enhanced
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - LOWER(TOKEN_ADDRESS)
+            - BLOCKCHAIN
+            - PROVIDER
+          
+    columns:
+      - name: PROVIDER
+        tests:
+          - not_null
+      - name: TOKEN_ADDRESS
+        tests:
+          - not_null
+      - name: BLOCKCHAIN
+        tests:
+          - not_null
+      - name: BLOCKCHAIN_ID
+        tests:
+          - not_null

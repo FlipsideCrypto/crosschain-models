@@ -135,3 +135,10 @@ Lowest price of the recorded hour in USD
 Closing price of the recorded hour in USD
 
 {% enddocs %}
+
+{% docs prices_is_verified %}
+
+A boolean flag indicating if the token is verified by either uniswap labs or passing a threshold of transfers metrics on the chain.
+ 
+
+{% enddocs %}
