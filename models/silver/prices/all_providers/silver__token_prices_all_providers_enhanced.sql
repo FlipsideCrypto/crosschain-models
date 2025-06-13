@@ -5,8 +5,11 @@
     cluster_by = ['recorded_hour::DATE'],
     tags = ['prices']
 ) }}
+-- depends_on: {{ ref('silver__tokens_enhanced') }}
+WITH
 
-WITH is_verified_modified AS (
+{% if is_incremental() %}
+is_verified_modified AS (
 
     SELECT
         address,
@@ -16,17 +19,15 @@ WITH is_verified_modified AS (
     FROM
         {{ ref('silver__tokens_enhanced') }}
     WHERE
-        is_verified
-
-{% if is_incremental() %}
-AND is_verified_modified_timestamp >= (
-    SELECT
-        MAX(modified_timestamp)
-    FROM
-        {{ this }}
-)
-{% endif %}
+        is_verified_modified_timestamp >= (
+            SELECT
+                MAX(modified_timestamp)
+            FROM
+                {{ this }}
+        )
 ),
+{% endif %}
+
 coin_gecko AS (
     SELECT
         recorded_hour,
@@ -49,7 +50,7 @@ WHERE
     )
     OR id IN (
         SELECT
-            id
+            coingecko_id
         FROM
             is_verified_modified
         WHERE
@@ -79,7 +80,7 @@ WHERE
     )
     OR id IN (
         SELECT
-            id
+            coinmarketcap_id
         FROM
             is_verified_modified
         WHERE
@@ -122,10 +123,6 @@ mapping AS (
         JOIN {{ ref('silver__token_asset_metadata_enhanced') }}
         b
         ON A.id = b.id
-        AND b.source IN (
-            'cg enhanced',
-            'cmc enhanced'
-        )
 )
 SELECT
     recorded_hour,

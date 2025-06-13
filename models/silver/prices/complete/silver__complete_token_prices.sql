@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['complete_token_prices_id'],
+    unique_key = ['blockchain','hour','LOWER(token_address)'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['hour::DATE','blockchain'],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(asset_id, token_address, symbol, name, complete_token_prices_id),SUBSTRING(asset_id, token_address, symbol, name)",
@@ -58,6 +58,19 @@ WHERE
             MAX(modified_timestamp)
         FROM
             {{ this }}
+    )
+    OR p.token_address || '--' || p.blockchain IN (
+        SELECT
+            address || '--' || blockchain
+        FROM
+            {{ ref('silver__tokens_enhanced') }} A
+        WHERE
+            is_verified_modified_timestamp >= (
+                SELECT
+                    MAX(modified_timestamp)
+                FROM
+                    {{ this }}
+            )
     ) qualify(ROW_NUMBER() over (PARTITION BY LOWER(p.token_address), p.blockchain, HOUR
 ORDER BY
     p._inserted_timestamp DESC, p.modified_timestamp DESC)) = 1
@@ -260,6 +273,19 @@ WHERE
             MAX(modified_timestamp)
         FROM
             {{ this }}
+    )
+    OR p.token_address || '--' || p.blockchain IN (
+        SELECT
+            address || '--' || blockchain
+        FROM
+            {{ ref('silver__tokens_enhanced') }} A
+        WHERE
+            is_verified_modified_timestamp >= (
+                SELECT
+                    MAX(modified_timestamp)
+                FROM
+                    {{ this }}
+            )
     )
 {% endif %}
 )

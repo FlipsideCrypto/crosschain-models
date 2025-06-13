@@ -50,7 +50,7 @@ cg_from_enhanced AS (
         modified_timestamp AS _inserted_timestamp
     FROM
         {{ ref('silver__tokens_enhanced') }} A
-        JOIN (
+        LEFT JOIN (
             SELECT
                 id,
                 NAME,
@@ -65,8 +65,7 @@ cg_from_enhanced AS (
         ) b
         ON A.coingecko_id = b.id
     WHERE
-        A.is_verified
-        AND coingecko_id IS NOT NULL
+        coingecko_id IS NOT NULL
 
 {% if is_incremental() %}
 AND (
@@ -106,7 +105,7 @@ cmc_from_enhanced AS (
         modified_timestamp AS _inserted_timestamp
     FROM
         {{ ref('silver__tokens_enhanced') }} A
-        JOIN (
+        LEFT JOIN (
             SELECT
                 id,
                 token_address,
@@ -122,8 +121,7 @@ cmc_from_enhanced AS (
         ) b
         ON A.coinmarketcap_id = b.id
     WHERE
-        A.is_verified
-        AND coinmarketcap_id IS NOT NULL
+        coinmarketcap_id IS NOT NULL
 
 {% if is_incremental() %}
 AND (
@@ -152,6 +150,41 @@ all_providers AS (
         *
     FROM
         cmc_from_enhanced
+    UNION ALL
+    SELECT
+        NULL id,
+        A.address AS token_address,
+        A.name,
+        A.symbol,
+        A.decimals,
+        A.blockchain,
+        'none' AS provider,
+        'enhanced' AS source,
+        FALSE AS is_deprecated,
+        is_verified,
+        modified_timestamp AS _inserted_timestamp
+    FROM
+        {{ ref('silver__tokens_enhanced') }} A
+    WHERE
+        coinmarketcap_id IS NULL
+        AND coingecko_id IS NULL
+
+{% if is_incremental() %}
+AND (
+    A.modified_timestamp >= (
+        SELECT
+            MAX(modified_timestamp)
+        FROM
+            {{ this }}
+    )
+    OR A.blockchain || '--' || A.address IN (
+        SELECT
+            blockchain || '--' || address
+        FROM
+            is_verified_modified
+    )
+)
+{% endif %}
 )
 SELECT
     A.token_address,

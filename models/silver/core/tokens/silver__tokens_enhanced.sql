@@ -145,26 +145,6 @@ cg_cmc_add_only AS (
                 inserted_timestamp DESC
         ) = 1
 ),
-cg_cmc_native AS (
-    SELECT
-        id,
-        REPLACE(
-            blockchain,
-            ' protocol'
-        ) AS blockchain,
-        source,
-        symbol,
-        provider,
-        inserted_timestamp
-    FROM
-        {{ ref('silver__native_asset_metadata_all_providers') }}
-        qualify ROW_NUMBER() over(
-            PARTITION BY blockchain,
-            provider
-            ORDER BY
-                inserted_timestamp DESC
-        ) = 1
-),
 --stellar uses weird token logic so we have a custom CTE to handle it
 stell AS (
     SELECT
@@ -311,8 +291,7 @@ FINAL AS (
             cg_add.id,
             cs1_cg.id,
             cs2_cg.id,
-            c_ton_cg.id,
-            native_cg.id
+            c_ton_cg.id
         ) AS coingecko_id,
         COALESCE(
             man_cmc.cmc_id :: STRING,
@@ -320,8 +299,7 @@ FINAL AS (
             cmc_add.id,
             cs1_cmc.id,
             cs2_cmc.id,
-            c_ton_cmc.id,
-            native_cmc.id
+            c_ton_cmc.id
         ) AS coinmarketcap_id,
         CASE
             WHEN COALESCE(
@@ -385,20 +363,6 @@ FINAL AS (
         ON A.blockchain = 'ton'
         AND c_ton_cmc.provider = 'coinmarketcap'
         AND A.address_lower = c_ton_cmc.token_address_raw_lower
-        LEFT JOIN cg_cmc_native native_cg
-        ON A.blockchain = native_cg.blockchain
-        AND A.blockchain IN (
-            'thorchain',
-            'maya'
-        )
-        AND native_cg.provider = 'coingecko'
-        LEFT JOIN cg_cmc_native native_cmc
-        ON A.blockchain = native_cmc.blockchain
-        AND A.blockchain IN (
-            'thorchain',
-            'maya'
-        )
-        AND native_cmc.provider = 'coinmarketcap'
         LEFT JOIN man man_cg
         ON A.blockchain = man_cg.blockchain
         AND A.address_lower = man_cg.address_lower
@@ -425,19 +389,23 @@ CASE
     WHEN A.is_verified <> COALESCE(
         curr_val.is_verified,
         FALSE
-    ) THEN COALESCE(curr_val.is_verified_modified_timestamp, SYSDATE())END AS is_verified_modified_timestamp,
-    {% else %}
-        CASE
-            WHEN A.is_verified THEN SYSDATE()
-        END AS is_verified_modified_timestamp,
-    {% endif %}
+    ) THEN COALESCE(curr_val.is_verified_modified_timestamp, SYSDATE())
+    ELSE (
+        curr_val.is_verified_modified_timestamp
+    )
+END AS is_verified_modified_timestamp,
+{% else %}
+    CASE
+        WHEN A.is_verified THEN SYSDATE()
+    END AS is_verified_modified_timestamp,
+{% endif %}
 
-    {{ dbt_utils.generate_surrogate_key(['a.address','a.blockchain' ]) }} AS tokens_enhanced_id,
-    SYSDATE() AS modified_timestamp,
-    SYSDATE() AS inserted_timestamp,
-    '{{ invocation_id }}' AS _invocation_id
-    FROM
-        FINAL A
+{{ dbt_utils.generate_surrogate_key(['a.address','a.blockchain' ]) }} AS tokens_enhanced_id,
+SYSDATE() AS modified_timestamp,
+SYSDATE() AS inserted_timestamp,
+'{{ invocation_id }}' AS _invocation_id
+FROM
+    FINAL A
 
 {% if is_incremental() %}
 LEFT JOIN {{ this }}

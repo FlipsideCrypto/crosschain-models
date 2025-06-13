@@ -214,6 +214,10 @@ WHERE
             {{ this }}
     )
 {% endif %}
+
+qualify(ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), A.blockchain
+ORDER BY
+    provider)) = 1
 )
 SELECT
     A.*,
