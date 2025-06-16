@@ -11,6 +11,7 @@ aptos,0x9770fa9c725cbd97eb50b2be5f7416efdfd1f1554beb0750d4dae4c64e860da3::fa_to_
 aptos,0xa2eda21a58856fda86451436513b867c97eecb4ba099da5775520e0f7492e852::coin::T,tether,,,
 aptos,0xe568e9322107a5c9ba4cbd05a630a5586aa73e744ada246c3efb0f4ce3e295f3,tether,,,
 aptos,0xedc2704f2cef417a06d1756a04a16a9fa6faaed13af469be9cdfcac5a21a8e2e,aptos,,,
+aptos,0xa,aptos,,,
 arbitrum,0x0c84331e39d6658cd6e6b9ba04736cc4c4734351,,,variableDebtArbWETH?,FALSE
 arbitrum,0x2bcc6d6cdbbdc0a4071e48bb3b969b06b3330c07,solana,,,
 arbitrum,0x3caae25ee616f2c8e13c74da0813402eae3f496b,camelot-token,,,

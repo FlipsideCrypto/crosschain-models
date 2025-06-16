@@ -137,7 +137,10 @@ cg_cmc_add_only AS (
         cg_cmc
     WHERE
         token_address_lower NOT IN (
-            '0x7f27352d5f83db87a5a3e00f4b07cc2138d8ee52' -- real contract is bnb, on flow it's usdc
+            -- real contract is bnb, on flow it's usdc
+            '0x7f27352d5f83db87a5a3e00f4b07cc2138d8ee52',
+            --movement/aptos
+            '0xa'
         ) qualify ROW_NUMBER() over(
             PARTITION BY token_address_lower
             ORDER BY
