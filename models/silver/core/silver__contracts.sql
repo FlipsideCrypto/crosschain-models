@@ -581,7 +581,7 @@ WITH base AS (
         ) }}
     UNION ALL
     SELECT
-        contract_address AS address,
+        asset_identifier AS address,
         symbol,
         NAME,
         decimals,
