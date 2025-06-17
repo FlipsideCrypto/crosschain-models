@@ -10,22 +10,24 @@
 WITH asset_ids AS (
     SELECT value::STRING AS id
     FROM TABLE(FLATTEN(INPUT => PARSE_JSON(
-        {% if var('ASSET_IDS') is string %}
-            '["{{ var("ASSET_IDS") }}"]'
+        {% if var('ASSET_IDS','') is string %}
+            '["{{ var("ASSET_IDS",'') }}"]'
         {% else %}
-            '{{ var("ASSET_IDS") | tojson }}'
+            '{{ var("ASSET_IDS",'[]') | tojson }}'
         {% endif %}
     ))) --pass unique asset_ids when necessary as a single string or array of strings, e.g. "ASSET_IDS":"wrapped-avax" or "ASSET_IDS":["wrapped-avax", "usd-coin"]
+    WHERE id <> ''  --filter out empty asset IDs
 ),
 calls AS (
     SELECT
         id,
-        '{{ var("START_DATE") }}' :: DATE AS start_date, --format must be string "YYYY-MM-DD", e.g. "START_DATE":"2025-02-01"
-        '{{ var("END_DATE") }}' :: DATE AS end_date, --format must be string "YYYY-MM-DD", e.g. "END_DATE":"2025-02-28"
+        '{{ var("START_DATE", "2025-01-01") }}' :: DATE AS start_date, --format must be string "YYYY-MM-DD", e.g. "START_DATE":"2025-02-01"
+        '{{ var("END_DATE", "2025-01-31") }}' :: DATE AS end_date, --format must be string "YYYY-MM-DD", e.g. "END_DATE":"2025-02-28"
         DATE_PART('EPOCH', start_date) :: INTEGER AS start_ts,
         DATE_PART('EPOCH', end_date) :: INTEGER AS end_ts,
         '{service}/api/v3/coins/' || id || '/ohlc/range?vs_currency=usd&from=' || start_ts || '&to=' || end_ts || '&interval=hourly&precision=full&x_cg_pro_api_key={Authentication}' AS api_url
     FROM asset_ids
+    WHERE id IS NOT NULL AND id <> ''
 )
 SELECT
     start_ts AS partition_key,
