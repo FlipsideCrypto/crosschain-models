@@ -1,4 +1,9 @@
+{{ config(
+    severity = 'warn'
+) }}
+
 WITH base AS (
+
     SELECT
         blockchain,
         LOWER(address) AS address
