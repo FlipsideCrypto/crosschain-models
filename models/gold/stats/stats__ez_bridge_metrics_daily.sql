@@ -1,6 +1,4 @@
--- depends_on: {{ ref('silver__fact_transactions_lite') }}
--- depends_on: {{ ref('price__ez_prices_hourly') }}
--- depends_on: {{ ref('silver__native_fee_token') }}
+-- depends_on: {{ ref('defi__ez_bridge_activity') }}
 {{ config(
     materialized = 'incremental',
     incremental_strategy = 'merge',
@@ -30,9 +28,10 @@ FROM
 --get the distinct blockchains & block dates that we are processing
 {% set dates_query %}
 CREATE
-OR REPLACE temporary TABLE silver.ez_activity_bridge__intermediate_tmp AS
+OR REPLACE temporary TABLE silver.ez_bridge_metrics__intermediate_tmp AS
 SELECT
-    DISTINCT blockchain,
+    DISTINCT source_chain,
+    destination_chain,
     block_timestamp :: DATE AS block_date
 FROM
     {{ ref('defi__ez_bridge_activity') }}
@@ -41,9 +40,7 @@ WHERE
 
 {% if is_incremental() %}
 AND modified_timestamp >= '{{ max_mod }}'
-{% else %}
-    AND block_timestamp :: DATE >= '2025-01-01'
-    AND block_timestamp :: DATE <= '2025-01-10'
+AND block_timestamp :: DATE >= '2025-01-01'
 {% endif %}
 
 {% endset %}
@@ -53,7 +50,7 @@ AND modified_timestamp >= '{{ max_mod }}'
 SELECT
     DISTINCT block_date
 FROM
-    silver.ez_activity_bridge__intermediate_tmp {% endset %}
+    silver.ez_bridge_metrics__intermediate_tmp {% endset %}
     {% set date_results = run_query(date_query) %}
     {% set date_filter %}
     A.block_timestamp :: DATE IN ({% if date_results.rows | length > 0 %}
@@ -64,103 +61,112 @@ FROM
     {% else %}
         '2099-01-01'
     {% endif %}) {% endset %}
-    --roll transactions up to the hour/sender level
-    {# {% set inc_query %}
-    CREATE
-    OR REPLACE temporary TABLE silver.ez_activity_metrics__intermediate_tmp AS #}
-    WITH roll AS (
-        SELECT
-            A.blockchain,
-            block_timestamp :: DATE AS block_date,
-            SUM(CASE
-                WHEN direction = 'inbound' THEN amount_usd
-                ELSE 0
-            END) AS  total_inbound_volume,
-                 count( distinct CASE
-                WHEN direction = 'inbound' THEN destination_address
-            END) AS  distinct_inbound_addresses,
-              count( distinct CASE
-                WHEN direction = 'inbound' THEN tx_hash
-            END) AS  distinct_inbound_transactions,
+{% endif %}
 
-             SUM(CASE
-                WHEN direction = 'outbound' THEN amount_usd
-                ELSE 0
-            END) AS  total_outbound_volume,
-                 count( distinct CASE
-                WHEN direction = 'outbound' THEN source_address
-            END) AS  distinct_outbound_addresses,
-              count( distinct CASE
-                WHEN direction = 'outbound' THEN tx_hash
-            END) AS  distinct_outbound_transactions,
-
-        
-        FROM
-            {{ ref('defi__ez_bridge_activity') }} A
-            JOIN silver.ez_activity_metrics__intermediate_tmp b
-            ON A.blockchain = b.blockchain
-            AND A.block_timestamp :: DATE = b.block_date
-        WHERE
-            {{ date_filter }}
-        GROUP BY
-            A.blockchain,
-            block_timestamp_hour,
-            sender
-    )
+WITH ib AS (
+    SELECT
+        A.destination_chain AS blockchain,
+        A.block_timestamp :: DATE AS block_date,
+        SUM(
+            {# CASE
+            WHEN is_verified THEN amount_usd
+            ELSE 0
+        END #}
+        amount_usd
+) AS total_inbound_volume,
+COUNT(
+    DISTINCT destination_address
+) AS distinct_inbound_addresses,
+COUNT(
+    DISTINCT tx_hash
+) AS distinct_inbound_transactions
+FROM
+    {{ ref('defi__ez_bridge_activity') }} A
+    JOIN silver.ez_bridge_metrics__intermediate_tmp b
+    ON A.source_chain = b.source_chain
+    AND A.destination_chain = b.destination_chain
+    AND A.block_timestamp :: DATE = b.block_date
+WHERE
+    direction = 'inbound'
+    AND {{ date_filter }}
+GROUP BY
+    A.destination_chain,
+    A.block_timestamp :: DATE
+),
+ob AS (
+    SELECT
+        A.source_chain AS blockchain,
+        A.block_timestamp :: DATE AS block_date,
+        SUM(
+            {# CASE
+            WHEN is_verified THEN amount_usd
+            ELSE 0
+        END #}
+        amount_usd
+) AS total_outbound_volume,
+COUNT(
+    DISTINCT source_address
+) AS distinct_outbound_addresses,
+COUNT(
+    DISTINCT tx_hash
+) AS distinct_outbound_transactions
+FROM
+    {{ ref('defi__ez_bridge_activity') }} A
+    JOIN silver.ez_bridge_metrics__intermediate_tmp b
+    ON A.source_chain = b.source_chain
+    AND A.destination_chain = b.destination_chain
+    AND A.block_timestamp :: DATE = b.block_date
+WHERE
+    direction = 'outbound'
+    AND {{ date_filter }}
+GROUP BY
+    A.source_chain,
+    A.block_timestamp :: DATE
+),
+base AS (
+    SELECT
+        DISTINCT blockchain,
+        block_date
+    FROM
+        ib
+    UNION
+    SELECT
+        DISTINCT blockchain,
+        block_date
+    FROM
+        ob
+)
 SELECT
     A.blockchain,
-    A.block_timestamp_hour :: DATE AS block_date,
-    SUM(transaction_count) AS transaction_count,
-    SUM(
-        CASE
-            WHEN C.blockchain IS NOT NULL THEN transaction_count
-            ELSE 0
-        END
-    ) AS quality_transaction_count,
-    SUM(transaction_count_succeeded) AS transaction_count_succeeded,
-    SUM(
-        CASE
-            WHEN C.blockchain IS NOT NULL THEN transaction_count_succeeded
-            ELSE 0
-        END
-    ) AS quality_transaction_count_succeeded,
-    COUNT(
-        DISTINCT sender
-    ) AS unique_initiator_count,
-    COUNT(
-        DISTINCT CASE
-            WHEN C.blockchain IS NOT NULL THEN sender
-        END
-    ) AS quality_unique_initiator_count,
-    SUM(total_fees_native) AS total_fees_native,
-    SUM(
-        CASE
-            WHEN C.blockchain IS NOT NULL THEN total_fees_native
-            ELSE 0
-        END
-    ) AS quality_total_fees_native,
-    SUM(
-        total_fees_native * price
-    ) AS total_fees_usd,
-    SUM(
-        CASE
-            WHEN C.blockchain IS NOT NULL THEN total_fees_native * price
-            ELSE 0
-        END
-    ) AS quality_total_fees_usd,
-    {{ dbt_utils.generate_surrogate_key(['a.blockchain',' A.block_timestamp_hour :: DATE']) }} AS ez_activity_metrics_daily_id,
+    A.block_date,
+    ib.total_inbound_volume,
+    ib.distinct_inbound_addresses,
+    ib.distinct_inbound_transactions,
+    ob.total_outbound_volume,
+    ob.distinct_outbound_addresses,
+    ob.distinct_outbound_transactions,
+    COALESCE(
+        ib.total_inbound_volume,
+        0
+    ) - COALESCE(
+        ob.total_outbound_volume,
+        0
+    ) AS net_volume,
+    COALESCE(
+        ib.total_inbound_volume,
+        0
+    ) + COALESCE(
+        ob.total_outbound_volume,
+        0
+    ) AS gross_volume,
+    {{ dbt_utils.generate_surrogate_key(['a.blockchain',' A.block_date']) }} AS ez_bridge_metrics_daily_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM
-    silver.ez_activity_metrics__tx_intermediate_tmp A asof
-    JOIN prices b match_condition (
-        A.block_timestamp_hour >= b.hour
-    )
-    ON A.blockchain = b.blockchain
-    LEFT JOIN silver.ez_activity_metrics__scores_intermediate_tmp C
-    ON A.blockchain = C.blockchain
-    AND A.sender = C.user_address
-    AND A.block_timestamp_hour :: DATE = C.block_date
-GROUP BY
-    A.blockchain,
-    A.block_timestamp_hour :: DATE
+    base A
+    LEFT JOIN ib
+    ON A.blockchain = ib.blockchain
+    AND A.block_date = ib.block_date
+    LEFT JOIN ob
+    ON A.blockchain = ob.blockchain
+    AND A.block_date = ob.block_date
