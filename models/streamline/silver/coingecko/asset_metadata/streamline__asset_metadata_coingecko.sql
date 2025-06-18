@@ -13,7 +13,7 @@ WITH calls AS (
         '{service}/api/v3/coins/list?include_platform=true&x_cg_pro_api_key={Authentication}' AS api_url
 )
 SELECT
-    DATE_PART('EPOCH', SYSDATE()) :: INTEGER AS partition_key,
+    DATE_PART('EPOCH', SYSDATE()::DATE) :: INTEGER AS partition_key,
     {{ target.database }}.live.udf_api(
         'GET',
         api_url,

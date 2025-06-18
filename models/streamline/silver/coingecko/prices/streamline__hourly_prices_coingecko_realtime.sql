@@ -29,7 +29,7 @@ calls AS (
         assets
 )
 SELECT
-    DATE_PART('EPOCH', SYSDATE()) :: INTEGER AS partition_key,
+    DATE_PART('EPOCH', SYSDATE()::DATE) :: INTEGER AS partition_key,
     {{ target.database }}.live.udf_api(
         'GET',
         api_url,
