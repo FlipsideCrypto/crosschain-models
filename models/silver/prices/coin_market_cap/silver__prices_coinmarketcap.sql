@@ -4,6 +4,7 @@
     unique_key = ['prices_coinmarketcap_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE'],
+    full_refresh = false,
     tags = ['prices']
 ) }}
 
@@ -45,9 +46,7 @@ latest_supported_assets AS (
         ) }}
     GROUP BY
         1
-)
-
-{% if is_incremental() %},
+) {# {% if is_incremental() %},
 price_gaps AS (
     -- identify missing prices by id
     SELECT
@@ -152,6 +151,7 @@ imputed_prices AS (
         ON d.id = s.id
 )
 {% endif %},
+#},
 FINAL AS (
     SELECT
         p.recorded_hour,
@@ -169,23 +169,23 @@ FINAL AS (
         LEFT JOIN latest_supported_assets s
         ON p.id = s.id
     WHERE
+        close_price IS NOT NULL {# {% if is_incremental() %}
+    UNION ALL
+    SELECT
+        date_hour AS recorded_hour,
+        id,
+        final_price AS close_price,
+        imputed AS is_imputed,
+        source,
+        _inserted_timestamp
+    FROM
+        imputed_prices
+    WHERE
         close_price IS NOT NULL
+        AND is_imputed
+    {% endif %}
 
-{% if is_incremental() %}
-UNION ALL
-SELECT
-    date_hour AS recorded_hour,
-    id,
-    final_price AS close_price,
-    imputed AS is_imputed,
-    source,
-    _inserted_timestamp
-FROM
-    imputed_prices
-WHERE
-    close_price IS NOT NULL
-    AND is_imputed
-{% endif %}
+    #}
 )
 SELECT
     recorded_hour,
