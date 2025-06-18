@@ -4,6 +4,7 @@
     unique_key = ['prices_coingecko_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['recorded_hour::DATE'],
+    full_refresh = false,
     tags = ['prices']
 ) }}
 
