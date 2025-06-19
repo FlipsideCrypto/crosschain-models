@@ -607,11 +607,18 @@ FROM
         'near_core',
         'dim_ft_contract_metadata'
     ) }}
+WHERE
+    address IS NOT NULL
 
 {% if is_incremental() %}
-WHERE
-    modified_timestamp :: DATE >= '{{ max_mod }}'
+AND modified_timestamp :: DATE >= '{{ max_mod }}'
 {% endif %}
+
+qualify ROW_NUMBER() over (
+    PARTITION BY contract_address
+    ORDER BY
+        symbol DESC
+) = 1
 UNION ALL
 SELECT
     address,

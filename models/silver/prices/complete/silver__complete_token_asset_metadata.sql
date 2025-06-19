@@ -238,6 +238,8 @@ FROM
     ) = LOWER(
         b.address
     )
-    AND A.blockchain = b.blockchain qualify(ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), A.blockchain
+    AND A.blockchain = b.blockchain
+WHERE
+    A.token_address IS NOT NULL qualify(ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), A.blockchain
 ORDER BY
     _inserted_timestamp DESC)) = 1
