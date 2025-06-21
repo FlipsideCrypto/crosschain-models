@@ -103,13 +103,16 @@ mapping AS (
         recorded_hour,
         token_address,
         b.platform_adj,
-        b.blockchain,
+        COALESCE(
+            b.blockchain,
+            A.platform
+        ) AS blockchain,
         A.platform AS blockchain_name,
         A.platform_id AS blockchain_id,
         price,
         is_imputed,
         id,
-        a.provider,
+        A.provider,
         source,
         _inserted_timestamp
     FROM
