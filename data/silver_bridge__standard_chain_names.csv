@@ -1,0 +1,282 @@
+variation,standardized_name
+abstract,abstract
+acala,acala
+agoric,agoric
+ailayer,ailayer
+aleph zero evm,aleph_zero_evm
+algorand,algorand
+ancient8,ancient8
+animechain,animechain
+apechain,apechain
+ape,apechain
+aptos,aptos
+arb,arbitrum
+arbitrum,arbitrum
+arbitrum nova,arbitrum_nova
+archway,archway
+astar,astar
+astar zkevm,astar_zkevm
+astar-polkadot,astar_polkadot
+aurora,aurora
+avalanche,avalanche
+avalanche c-chain,avalanche
+axelarnet,axelarnet
+b2,b2
+b3,b3
+babylon,babylon
+bahamut,bahamut
+base,base
+bb,bb
+beam,beam
+berachain,berachain
+bevm,bevm
+bevm2,bevm2
+binance smart chain,bsc
+bitcoin,bitcoin
+bitlayer,bitlayer
+blast,blast
+bnb,bsc
+bnb smart chain testnet,bsc_testnet
+bob,bob
+boba,boba
+bouncebit,bouncebit
+bsc,bsc
+bsquared,bsquared
+c4e,c4e
+canto,canto
+carbon,carbon
+casper,casper
+celestia,celestia
+celo,celo
+cheesechain,cheesechain
+chihuahua,chihuahua
+ckb,ckb
+coinweb,coinweb
+comdex,comdex
+concrete,concrete
+conflux,conflux
+conflux_espace,conflux_espace
+core,core
+coredao,core
+corn,corn
+cosmoshub,cosmoshub
+crab,crab
+crescent,crescent
+cronos,cronos
+cronos_zkevm,cronos_zkevm
+crypto,crypto
+cyber,cyber
+defiverse mainnet,defiverse
+degen chain,degen
+degen,degen
+dexalot,dexalot
+dfk,dfk_chain
+dfk_chain,dfk_chain
+dm2_verse,dm2_verse
+dogechain,dogechain
+dos_chain,dos_chain
+duck,duck
+dymension,dymension
+ebi,ebi
+eclipse,eclipse
+edu,edu
+elys,elys
+endurance smart chain,endurance
+eos,eos
+eth,ethereum
+ethereum,ethereum
+etherlink,etherlink
+everclear,everclear
+evmos,evmos
+fantom,fantom
+fetch,fetch
+filecoin,filecoin
+flame,flame
+flare,flare
+flow_evm,flow_evm
+fraxchain,fraxchain
+fraxtal,fraxtal
+fuel,fuel
+fuse,fuse
+glue,glue
+gnosis,gnosis
+goat,goat
+goerli,goerli
+gravity,gravity
+gravity alpha mainnet,gravity
+gunz,gunz
+harmony,harmony
+hash,hash
+hedera,hedera
+hemi,hemi
+homeverse,homeverse
+horizen_eon,horizen_eon
+huobi eco,huobi_eco
+huobi eco chain,huobi_eco
+hubble,hubble
+hyperevm,hyperevm
+immutable,immutable
+immutable x,immutable
+inevm,inevm
+initia,initia
+injective,injective
+ink,ink
+iota,iota
+iotex,iotex
+jackal,jackal
+japan_open_chain,japan_open_chain
+juno,juno
+kaia,kaia
+karura,karura
+kava,kava
+ki,ki
+klaytn,klaytn
+koii,koii
+kroma,kroma
+kujira,kujira
+lava,lava
+lens,lens
+lightlink,lightlink
+linea,linea
+lisk,lisk
+loot,loot
+lukso,lukso
+lyra,lyra
+manta,manta_pacific
+manta_pacific,manta_pacific
+mantle,mantle
+masa,masa
+merlin,merlin
+merlin mainnet,merlin
+metachain one mainnet,metachain_one
+meter,meter
+metis,metis
+mind,mind
+mint,mint
+mode,mode
+moonbeam,moonbeam
+moonriver,moonriver
+morph,morph
+movement,movement
+nautilus,nautilus
+near,near
+neox,neox
+neutron,neutron
+nibiru,nibiru
+noble,noble
+nolus,nolus
+oasis,oasis
+oasis sapphire,oasis_sapphire
+oasys,oasys
+oasys mainnet,oasys
+okbchain,okbchain
+okx,okx
+okxchain,okx
+ontology,ontology
+opbnb,opbnb
+opbnb mainnet,opbnb
+optimism,optimism
+optopia,optopia
+orderly,orderly
+osmosis,osmosis
+other,other
+otherworld_space,otherworld_space
+peaq,peaq
+persistence,persistence
+plume,plume
+polygon,polygon
+polygon zkevm,polygon_zkevm
+proof of play apex,proof_of_play_apex
+rari_chain,rari_chain
+re.al,re.al
+redstone,redstone
+regen,regen
+reya,reya
+ronin,ronin
+rootstock,rootstock
+ropsten,ropsten
+rsk,rsk
+saga,saga
+sanko,sanko
+scroll,scroll
+secret,secret
+sei,sei
+shape,shape
+shibarium,shibarium
+shiden,shiden
+shimmer,shimmer
+skale,skale
+skale calypso,skale_calypso
+skale europa,skale_europa
+skale nebula,skale_nebula
+snaxchain,snaxchain
+sol,solana
+solana,solana
+sommelier,sommelier
+soneium,soneium
+sonic,sonic
+sonic mainnet,sonic
+sophon,sophon
+stacks,stacks
+stargaze,stargaze
+starknet,starknet
+stellar,stellar
+story,story
+stks,stks
+stkz,stkz
+stride,stride
+subtensor_evm,subtensor_evm
+sui,sui
+superposition,superposition
+swell network,swell
+swell,swell
+taiko,taiko
+taker,taker
+tangle,tangle
+telos,telos
+telosevm,telosevm
+tenet,tenet
+teritori,teritori
+terra,terra
+terra classic,terra_classic
+terra2,terra
+tezos,tezos
+thunder,thunder
+tiltyard,tiltyard
+tomochain,tomochain
+ton,ton
+tron,tron
+umee,umee
+unichain,unichain
+unit zero mainnet,unit_zero
+vana,vana
+viction,viction
+waves,waves
+wemix,wemix
+world chain,worldchain
+worldchain,worldchain
+wormchain,wormchain
+x layer,x_layer
+x_layer,x_layer
+xai mainnet,xai
+xai,xai
+xchain,xchain
+xdc,xdc
+xion,xion
+xlayer,x_layer
+xlm,xlm
+xpla,xpla
+xrpl,xrpl
+zeta,zeta
+zetachain,zetachain
+zetachain mainnet,zetachain
+zircuit,zircuit
+zkfair,zkfair
+zklink,zklink
+zklink nova,zklink_nova
+zksync,zksync_era
+zksync era,zksync_era
+zksync_era,zksync_era
+zksync lite,zksync_lite
+zora,zora
+zzz,zzz
