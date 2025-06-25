@@ -729,6 +729,8 @@ sources:
     tables:
       - name: fact_dex_volume
       - name: fact_bridge_volume_by_chain
+      - name: dim_protocols
+    
   - name: external_tokenlists
     database: external
     schema: tokenlists
