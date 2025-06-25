@@ -81,13 +81,14 @@ defiverse mainnet,defiverse
 degen,degen
 degen chain,degen
 dexalot,dexalot
-dfk,dfk_chain
-dfk chain,dfk_chain
-dfk_chain,dfk_chain
+dfk,dfk
+dfk chain,dfk
+dfk_chain,dfk
 dm2_verse,dm2_verse
 dogechain,dogechain
 dogechain mainnet,dogechain
-dos_chain,dos_chain
+dos_chain,dos
+dos,dos
 duck,duck
 dymension,dymension
 ebi,ebi
@@ -188,10 +189,10 @@ oasis,oasis
 oasis sapphire,oasis_sapphire
 oasys,oasys
 oasys mainnet,oasys
-okbchain,okbchain
+okbchain,okb
 okx,okx
 okxchain,okx
-okxchain mainnet,okxchain
+okxchain mainnet,okx
 ontology,ontology
 ontology mainnet,ontology
 op mainnet,optimism
@@ -212,7 +213,8 @@ polygon pos,polygon
 polygon zkevm,polygon_zkevm
 proof of play apex,proof_of_play_apex
 publicmint mainnet,ronin
-rari_chain,rari_chain
+rari_chain,rari
+rari,rari
 re.al,re.al
 redstone,redstone
 regen,regen
@@ -265,9 +267,9 @@ telosevm,telosevm
 tenet,tenet
 teritori,teritori
 terra,terra
-terra classic,terra_classic
-terra-2,terra
-terra2,terra
+terra classic,terra
+terra-2,terra2
+terra2,terra2
 tezos,tezos
 thunder,thunder
 tiltyard,tiltyard
