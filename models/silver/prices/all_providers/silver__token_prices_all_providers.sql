@@ -102,57 +102,25 @@ mapping AS (
     SELECT
         recorded_hour,
         token_address,
-        TRIM(REPLACE(platform, '-', ' ')) AS platform_adj,
-        CASE
-            WHEN platform IN (
-                'arbitrum',
-                'arbitrum-one'
-            ) THEN 'arbitrum'
-            WHEN platform IN (
-                'avalanche',
-                'avalanche c-chain'
-            ) THEN 'avalanche'
-            WHEN platform IN (
-                'binance-smart-chain',
-                'binancecoin',
-                'bnb'
-            ) THEN 'bsc'
-            WHEN platform IN (
-                'bob network',
-                'bob-network'
-            ) THEN 'bob'
-            WHEN platform IN (
-                'gnosis',
-                'xdai',
-                'gnosis chain'
-            ) THEN 'gnosis'
-            WHEN platform IN (
-                'optimism',
-                'optimistic-ethereum'
-            ) THEN 'optimism'
-            WHEN platform IN (
-                'polygon',
-                'polygon-pos'
-            ) THEN 'polygon'
-            WHEN platform IN (
-                'cosmos',
-                'evmos',
-                'osmosis',
-                'terra',
-                'terra2'
-            ) THEN 'cosmos'
-            ELSE platform_adj
-        END AS blockchain,
-        platform AS blockchain_name,
-        platform_id AS blockchain_id,
+        b.platform_adj,
+        COALESCE(
+            b.blockchain,
+            A.platform
+        ) AS blockchain,
+        A.platform AS blockchain_name,
+        A.platform_id AS blockchain_id,
         price,
         is_imputed,
         id,
-        provider,
+        A.provider,
         source,
         _inserted_timestamp
     FROM
-        all_providers
+        all_providers A
+        LEFT JOIN {{ ref('silver__provider_platform_blockchain_map') }}
+        b
+        ON A.platform = b.platform
+        AND A.provider = b.provider
 )
 SELECT
     recorded_hour,

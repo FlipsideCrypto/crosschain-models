@@ -731,6 +731,11 @@ sources:
       - name: fact_bridge_volume_by_chain
       - name: dim_protocols
     
+  - name: external_tokenlists
+    database: external
+    schema: tokenlists
+    tables:
+      - name: ez_verified_tokens
 
   #=============================================================================
   # FLOW
@@ -1303,6 +1308,7 @@ sources:
     schema: core
     tables:
       - name: dim_assets
+      - name: fact_operations
       - name: fact_transactions
 
   - name: stellar_stats
@@ -1368,5 +1374,6 @@ sources:
     database: ton
     schema: core
     tables:
+      - name: fact_jetton_events
       - name: fact_jetton_metadata
       - name: fact_transactions

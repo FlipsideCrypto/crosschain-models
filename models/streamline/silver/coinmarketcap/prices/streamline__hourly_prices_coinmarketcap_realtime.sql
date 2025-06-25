@@ -73,7 +73,7 @@ calls AS (
         grouped_assets
 )
 SELECT
-    end_time_epoch AS partition_key,
+    DATE_PART('EPOCH', SYSDATE()::DATE) :: INTEGER AS partition_key,
     {{ target.database }}.live.udf_api(
         'GET',
         api_url,

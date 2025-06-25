@@ -3,7 +3,7 @@
     persist_docs ={ "relation": true,
     "columns": true },
     meta ={ 'database_tags':{ 'table':{ 'PURPOSE': 'PRICES, METADATA',
-    } } },
+    }} },
     tags = ['prices']
 ) }}
 
@@ -15,7 +15,9 @@ SELECT
             'solana',
             'bitcoin',
             'flow',
-            'aptos'
+            'aptos',
+            'ton',
+            'stellar'
         ) THEN p.token_address
         ELSE LOWER(
             p.token_address
@@ -29,11 +31,13 @@ SELECT
     FALSE AS is_native,
     is_imputed,
     is_deprecated,
+    is_verified,
     inserted_timestamp,
     modified_timestamp,
     complete_token_prices_id AS ez_prices_hourly_id
 FROM
-    {{ ref('silver__complete_token_prices') }} p
+    {{ ref('silver__complete_token_prices') }}
+    p
 UNION ALL
 SELECT
     HOUR,
@@ -46,6 +50,7 @@ SELECT
     TRUE AS is_native,
     is_imputed,
     is_deprecated,
+    TRUE AS is_verified,
     inserted_timestamp,
     modified_timestamp,
     complete_native_prices_id AS ez_prices_hourly_id

@@ -3,7 +3,7 @@
     unique_key = ['complete_token_prices_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['hour::DATE','blockchain'],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(asset_id, token_address, symbol, name),SUBSTRING(asset_id, token_address, symbol, name)",
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(asset_id, token_address, symbol, name, complete_token_prices_id),SUBSTRING(asset_id, token_address, symbol, name)",
     tags = ['prices','heal']
 ) }}
 
@@ -58,6 +58,19 @@ WHERE
             MAX(modified_timestamp)
         FROM
             {{ this }}
+    )
+    OR p.token_address || '--' || p.blockchain IN (
+        SELECT
+            address || '--' || blockchain
+        FROM
+            {{ ref('silver__tokens_enhanced') }} A
+        WHERE
+            is_verified_modified_timestamp >= (
+                SELECT
+                    MAX(modified_timestamp)
+                FROM
+                    {{ this }}
+            )
     ) qualify(ROW_NUMBER() over (PARTITION BY LOWER(p.token_address), p.blockchain, HOUR
 ORDER BY
     p._inserted_timestamp DESC, p.modified_timestamp DESC)) = 1
@@ -200,14 +213,101 @@ SELECT
 FROM
     heal_model
 {% endif %}
+),
+final_final AS (
+    SELECT
+        HOUR,
+        token_address,
+        asset_id,
+        symbol,
+        NAME,
+        decimals,
+        price,
+        blockchain,
+        blockchain_name,
+        blockchain_id,
+        is_imputed,
+        is_deprecated,
+        provider,
+        source,
+        _inserted_timestamp
+    FROM
+        FINAL
+    UNION ALL
+    SELECT
+        DATEADD(
+            HOUR,
+            1,
+            p.recorded_hour
+        ) AS HOUR,
+        p.token_address,
+        p.id AS asset_id,
+        m.symbol,
+        m.name,
+        m.decimals,
+        p.price,
+        p.blockchain,
+        p.blockchain_name,
+        p.blockchain_id,
+        p.is_imputed,
+        FALSE AS is_deprecated,
+        p.provider,
+        p.source,
+        p._inserted_timestamp
+    FROM
+        {{ ref('silver__token_prices_all_providers_enhanced') }}
+        p
+        LEFT JOIN {{ ref('silver__token_asset_metadata_enhanced') }}
+        m
+        ON LOWER(
+            p.token_address
+        ) = LOWER(
+            m.token_address
+        )
+        AND p.blockchain = m.blockchain
+
+{% if is_incremental() %}
+WHERE
+    p.modified_timestamp >= (
+        SELECT
+            MAX(modified_timestamp)
+        FROM
+            {{ this }}
+    )
+    OR p.token_address || '--' || p.blockchain IN (
+        SELECT
+            address || '--' || blockchain
+        FROM
+            {{ ref('silver__tokens_enhanced') }} A
+        WHERE
+            is_verified_modified_timestamp >= (
+                SELECT
+                    MAX(modified_timestamp)
+                FROM
+                    {{ this }}
+            )
+    )
+{% endif %}
 )
 SELECT
-    *,
+    A.*,
+    COALESCE(
+        b.is_verified,
+        FALSE
+    ) AS is_verified,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['HOUR','LOWER(token_address)','blockchain']) }} AS complete_token_prices_id,
+    {{ dbt_utils.generate_surrogate_key(['HOUR','LOWER(a.token_address)','a.blockchain']) }} AS complete_token_prices_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    FINAL qualify(ROW_NUMBER() over (PARTITION BY LOWER(token_address), blockchain, HOUR
+    final_final A
+    LEFT JOIN {{ ref('silver__tokens_enhanced') }}
+    b
+    ON LOWER(
+        A.token_address
+    ) = LOWER(
+        b.address
+    )
+    AND A.blockchain = b.blockchain qualify(ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), A.blockchain, HOUR
 ORDER BY
     _inserted_timestamp DESC)) = 1
