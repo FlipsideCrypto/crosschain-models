@@ -29,8 +29,8 @@ SELECT
 FROM
     {{ ref('silver__complete_bridge_activity') }} b 
 
-    LEFT JOIN {{ ref('silver_bridge__standard_chain_names') }} s1 
+    LEFT JOIN {{ ref('silver_bridge__standard_chain_seed') }} s1 
     ON b.source_chain = s1.variation
 
-    LEFT JOIN {{ ref('silver_bridge__standard_chain_names') }} s2 
+    LEFT JOIN {{ ref('silver_bridge__standard_chain_seed') }} s2 
     ON b.destination_chain = s2.variation
