@@ -110,6 +110,7 @@ filecoin,filecoin
 flame,flame
 flare,flare
 flow_evm,flow_evm
+flow,flow
 fraxchain,fraxchain
 fraxtal,fraxtal
 fuel,fuel
@@ -171,6 +172,8 @@ metachain one mainnet,metachain_one
 meter,meter
 metis,metis
 metis andromeda mainnet,metis
+milkomeda,milkomeda
+milkomeda c1 (cardano),milkomeda
 mind,mind
 mint,mint
 mode,mode
@@ -258,6 +261,7 @@ sui,sui
 superposition,superposition
 swell,swell
 swell network,swell
+sx network,sx_network
 taiko,taiko
 taker,taker
 tangle,tangle
