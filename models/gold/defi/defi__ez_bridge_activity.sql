@@ -12,8 +12,8 @@ SELECT
     block_number,
     block_timestamp,
     tx_hash,
-    source_chain,
-    destination_chain,
+    COALESCE(s1.standardized_name, b.source_chain) AS source_chain,
+    COALESCE(s2.standardized_name, b.destination_chain) AS destination_chain,
     bridge_address,
     source_address,
     destination_address,
@@ -27,4 +27,10 @@ SELECT
     modified_timestamp,
     complete_bridge_activity_id AS ez_bridge_activity_id
 FROM
-    {{ ref('silver__complete_bridge_activity') }}
+    {{ ref('silver__complete_bridge_activity') }} b 
+
+    LEFT JOIN {{ ref('silver_bridge__standard_chain_seed') }} s1 
+    ON b.source_chain = s1.variation
+
+    LEFT JOIN {{ ref('silver_bridge__standard_chain_seed') }} s2 
+    ON b.destination_chain = s2.variation
