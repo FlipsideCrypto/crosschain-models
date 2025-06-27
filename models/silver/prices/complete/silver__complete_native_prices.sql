@@ -22,7 +22,7 @@ WITH base_prices AS (
         ) AS symbol_adj,
         m.name,
         m.decimals,
-        price,
+        CASE WHEN p.price < 0 THEN 0 ELSE p.price END AS price,
         p.blockchain,
         is_imputed,
         m.is_deprecated,
