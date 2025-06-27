@@ -12,15 +12,15 @@ WITH coingecko AS (
     SELECT
         id,
         recorded_hour,
-        OPEN,
-        high,
-        low,
-        CLOSE,
+        CASE WHEN p.OPEN < 0 THEN 0 ELSE p.OPEN END AS OPEN,
+        CASE WHEN p.high < 0 THEN 0 ELSE p.high END AS high,
+        CASE WHEN p.low < 0 THEN 0 ELSE p.low END AS low,
+        CASE WHEN p.CLOSE < 0 THEN 0 ELSE p.CLOSE END AS CLOSE,
         'coingecko' AS provider,
         source,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__all_prices_coingecko') }}
+        {{ ref('bronze__all_prices_coingecko') }} p
 
 {% if is_incremental() %}
 WHERE _inserted_timestamp >= (
@@ -35,15 +35,15 @@ coinmarketcap AS (
     SELECT
         id,
         recorded_hour,
-        OPEN,
-        high,
-        low,
-        CLOSE,
+        CASE WHEN p.OPEN < 0 THEN 0 ELSE p.OPEN END AS OPEN,
+        CASE WHEN p.high < 0 THEN 0 ELSE p.high END AS high,
+        CASE WHEN p.low < 0 THEN 0 ELSE p.low END AS low,
+        CASE WHEN p.CLOSE < 0 THEN 0 ELSE p.CLOSE END AS CLOSE,
         'coinmarketcap' AS provider,
         source,
         _inserted_timestamp
     FROM
-        {{ ref('bronze__all_prices_coinmarketcap') }}
+        {{ ref('bronze__all_prices_coinmarketcap') }} p
 
 {% if is_incremental() %}
 WHERE _inserted_timestamp >= (
@@ -68,10 +68,10 @@ all_providers AS (
 SELECT
     id AS asset_id,
     recorded_hour,
-    CASE WHEN OPEN < 0 THEN 0 ELSE OPEN END AS OPEN,
-    CASE WHEN high < 0 THEN 0 ELSE high END AS high,
-    CASE WHEN low < 0 THEN 0 ELSE low END AS low,
-    CASE WHEN CLOSE < 0 THEN 0 ELSE CLOSE END AS CLOSE,
+    OPEN,
+    high,
+    low,
+    CLOSE,
     provider,
     source,
     _inserted_timestamp,
