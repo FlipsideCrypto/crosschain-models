@@ -21,7 +21,7 @@ WITH prices AS (
         UPPER(symbol) AS symbol,
         NAME,
         decimals,
-        price,
+        CASE WHEN p.price < 0 THEN 0 ELSE p.price END AS price,
         p.blockchain,
         p.blockchain_name,
         p.blockchain_id,
