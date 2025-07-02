@@ -31,7 +31,7 @@ aptos,0x84d7aeef42d38a5ffc3ccef853e1b82e4958659d16a7de736a29c55fbbeb0114::staked
 aptos,0xb614bfdf9edc39b330bbf9c3c5bcd0473eee2f6d4e21748629cc367869ece627,,32027,,TRUE
 aptos,0x5ae6789dd2fec1a9ec9cccfb3acaf12e93d432f0a3a42c92fe1a9d490b7bbc06::mkl_token::MKL,,32997,,TRUE
 aptos,0x8d87a65ba30e09357fa2edea2c80dbac296e5dec2b18287113500b902942929d::celer_coin_manager::WethCoin,wrapped-ether-celer,,,TRUE
-aptos,'0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDT','layerzero-bridged-usdt-aptos,,,TRUE
+aptos,0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDT,layerzero-bridged-usdt-aptos,,,TRUE
 arbitrum,0x0c84331e39d6658cd6e6b9ba04736cc4c4734351,,,variableDebtArbWETH?,FALSE
 arbitrum,0x2bcc6d6cdbbdc0a4071e48bb3b969b06b3330c07,solana,,,
 arbitrum,0x3caae25ee616f2c8e13c74da0813402eae3f496b,camelot-token,,,
