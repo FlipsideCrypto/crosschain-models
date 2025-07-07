@@ -1,0 +1,11 @@
+version: 2
+models:
+  - name: silver__token_score_percentiles_dim
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCKCHAIN
+    columns:
+      - name: BLOCKCHAIN
+        tests:
+          - not_null 

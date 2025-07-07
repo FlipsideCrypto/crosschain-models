@@ -1,0 +1,59 @@
+platform,protocol_id,protocol_slug,match_type
+trader-joe-v1,468,joe-dex,manual_match
+trader-joe-v2,2393,joe-v2,manual_match
+zora: bridge,5566,zora-bridge,seed_file_chatgpt
+zksync lite: bridge,3936,zksync-lite-bridge,seed_file_chatgpt
+zksync era: diamond proxy,4844,zksync-era,seed_file_chatgpt
+wormhole,1716,north-pole,seed_file_chatgpt
+v2.ref-finance.near,612,vires-finance,seed_file_chatgpt
+v1.jumbo_exchange.near,1547,jumbo-exchange,seed_file_chatgpt
+stepn swap,2692,sevenswap,seed_file_chatgpt
+starknet: starkgate eth bridge,3787,starknet-bridge,seed_file_chatgpt
+sparta,1246,spartan,seed_file_chatgpt
+ref.marior.near,2150,ribbon-earn,seed_file_chatgpt
+ref-finance.near,2357,roe-finance,seed_file_chatgpt
+raydium concentrated liquidity,4563,fenix-concentrated-liquidity,seed_file_chatgpt
+polygon (matic): zkevm bridge,3785,polygon-zkevm-bridge,seed_file_chatgpt
+polygon (matic): plasma bridge,5130,polynomial-bridge,seed_file_chatgpt
+polygon (matic): erc20 bridge,3785,polygon-zkevm-bridge,seed_file_chatgpt
+pharaoh_v1,3921,pharaoh-cl,seed_file_chatgpt
+orca token swap,2008,forteswap,seed_file_chatgpt
+optimism: l1 escrow,3784,optimism-bridge,seed_file_chatgpt
+optimism: gateway,3784,optimism-bridge,seed_file_chatgpt
+near: rainbow bridge,3866,rainbow-bridge,seed_file_chatgpt
+meteora pools program,385,meteora-pools,seed_file_chatgpt
+meteora dlmm pools program,385,meteora-pools,seed_file_chatgpt
+meteora bonding,1532,metalx-lending,seed_file_chatgpt
+mayan finance,113,yearn-finance,seed_file_chatgpt
+lifinity swap v2,3686,lifinity-v2,seed_file_chatgpt
+level-finance,4989,velo-finance,seed_file_chatgpt
+jupiter swap v6,1817,jupiter-swap,seed_file_chatgpt
+jupiter swap v5.1,1817,jupiter-swap,seed_file_chatgpt
+jupiter swap v5,1817,jupiter-swap,seed_file_chatgpt
+jupiter swap v4,1817,jupiter-swap,seed_file_chatgpt
+jupiter aggregator v3,2141,jupiter-aggregator,seed_file_chatgpt
+jupiter aggregator v2,2141,jupiter-aggregator,seed_file_chatgpt
+hyperlane,5940,hyperlend,seed_file_chatgpt
+gnosis chain: xdai bridge,1257,crosschain-bridge,seed_file_chatgpt
+gnosis chain: eth-xdai omni bridge,1257,crosschain-bridge,seed_file_chatgpt
+fraxswap,2121,frax-swap,seed_file_chatgpt
+eywa,3034,eazyswap,seed_file_chatgpt
+exchange.slowisfast.near,5638,ln-exchange-spot,seed_file_chatgpt
+dln_debridge,1462,debridge,seed_file_chatgpt
+dex.thundercontract.near,2828,thundercore-staking,seed_file_chatgpt
+deBridge,1462,debridge,seed_file_chatgpt
+circle-cctp,,circle,seed_file_chatgpt
+celer_cbridge,2578,beamer-bridge,seed_file_chatgpt
+boba network: gateway,4944,bob-gateway,seed_file_chatgpt
+beethoven-x,654,beets-dex,seed_file_chatgpt
+baseswap-basex,3333,baseswap-v2,seed_file_chatgpt
+base: base bridge,3780,base-bridge,seed_file_chatgpt
+axie_infinity,6102,axie-infinity,seed_file_chatgpt
+axie infinity: ronin bridge,6102,axie-infinity,seed_file_chatgpt
+avalanche: old bridge,3779,avalanche-core-bridge,seed_file_chatgpt
+avalanche: bridge,3779,avalanche-core-bridge,seed_file_chatgpt
+arbitrum nova: bridge,3778,arbitrum-nova-bridge,seed_file_chatgpt
+alienbase,3888,alien-base-v3,seed_file_chatgpt
+Saber Stable Swap,5391,zkswap-stableswap,seed_file_chatgpt
+Saber Router,419,saber,seed_file_chatgpt
+ORCA Token Swap V2,4138,dragonswap-v2,seed_file_chatgpt

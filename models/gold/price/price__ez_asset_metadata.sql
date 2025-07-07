@@ -14,7 +14,9 @@ SELECT
             'solana',
             'bitcoin',
             'flow',
-            'aptos'
+            'aptos',
+            'ton',
+            'stellar'
         ) THEN A.token_address
         ELSE LOWER(
             A.token_address
@@ -27,6 +29,7 @@ SELECT
     blockchain,
     FALSE AS is_native,
     is_deprecated,
+    is_verified,
     inserted_timestamp,
     modified_timestamp,
     complete_token_asset_metadata_id AS ez_asset_metadata_id
@@ -42,6 +45,7 @@ SELECT
     blockchain,
     TRUE AS is_native,
     is_deprecated,
+    TRUE AS is_verified,
     inserted_timestamp,
     modified_timestamp,
     complete_native_asset_metadata_id AS ez_asset_metadata_id

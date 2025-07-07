@@ -607,11 +607,18 @@ FROM
         'near_core',
         'dim_ft_contract_metadata'
     ) }}
+WHERE
+    address IS NOT NULL
 
 {% if is_incremental() %}
-WHERE
-    modified_timestamp :: DATE >= '{{ max_mod }}'
+AND modified_timestamp :: DATE >= '{{ max_mod }}'
 {% endif %}
+
+qualify ROW_NUMBER() over (
+    PARTITION BY contract_address
+    ORDER BY
+        symbol DESC
+) = 1
 UNION ALL
 SELECT
     address,
@@ -634,6 +641,41 @@ WHERE
 {% if is_incremental() %}
 AND modified_timestamp :: DATE >= '{{ max_mod }}'
 {% endif %}
+UNION ALL
+SELECT
+    A.currency AS address,
+    b.project_name AS symbol,
+    b.label AS NAME,
+    b.decimal AS decimals,
+    NULL AS created_block_number,
+    NULL AS created_block_timestamp,
+    NULL AS created_tx_hash,
+    NULL AS creator_address,
+    'osmosis' AS blockchain
+FROM
+    {{ source(
+        'osmosis_core',
+        'fact_transfers'
+    ) }} A
+    LEFT JOIN {{ source(
+        'osmosis_core',
+        'dim_tokens'
+    ) }}
+    b
+    ON A.currency = b.address
+WHERE
+    TRY_TO_DECIMAL(currency) IS NULL
+    AND currency NOT LIKE '%,%'
+
+{% if is_incremental() %}
+AND A.modified_timestamp :: DATE >= '{{ max_mod }}'
+{% endif %}
+
+qualify ROW_NUMBER() over (
+    PARTITION BY A.currency
+    ORDER BY
+        A.block_timestamp DESC
+) = 1
 UNION ALL
 SELECT
     address,
@@ -768,7 +810,7 @@ WHERE
 {% endif %}
 UNION ALL
 SELECT
-    asset_id :: STRING AS address,
+    asset_issuer || '-' || asset_code :: STRING AS address,
     asset_code AS symbol,
     NULL AS NAME,
     NULL AS decimals,
