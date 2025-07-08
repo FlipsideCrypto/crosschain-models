@@ -84,35 +84,35 @@ WHERE
     )
 {% endif %}
 ),
-{# blast AS (
-SELECT
-    'blast' AS blockchain,
-    platform,
-    block_number,
-    block_timestamp,
-    tx_hash,
-    blockchain AS source_chain,
-    destination_chain,
-    bridge_address,
-    sender AS source_address,
-    destination_chain_receiver AS destination_address,
-    'outbound' AS direction,
-    token_address,
-    token_symbol,
-    amount_unadj AS amount_raw,
-    amount,
-    amount_usd,
-    token_is_verified,
-    modified_timestamp AS _inserted_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
-    {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
-FROM
-    {{ source(
-        'blast_defi',
-        'ez_bridge_activity'
-    ) }}
+core AS (
+    SELECT
+        'core' AS blockchain,
+        platform,
+        block_number,
+        block_timestamp,
+        tx_hash,
+        blockchain AS source_chain,
+        destination_chain,
+        bridge_address,
+        sender AS source_address,
+        destination_chain_receiver AS destination_address,
+        'outbound' AS direction,
+        token_address,
+        token_symbol,
+        amount_unadj AS amount_raw,
+        amount,
+        amount_usd,
+        token_is_verified,
+        modified_timestamp AS _inserted_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
+    FROM
+        {{ source(
+            'core_defi',
+            'ez_bridge_activity'
+        ) }}
 
-{% if is_incremental() and 'blast' not in var('HEAL_MODELS') %}
+{% if is_incremental() and 'core' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
@@ -122,7 +122,6 @@ WHERE
     )
 {% endif %}
 ),
-#}
 avalanche AS (
     SELECT
         'avalanche' AS blockchain,
@@ -351,6 +350,44 @@ WHERE
     )
 {% endif %}
 ),
+ink AS (
+    SELECT
+        'ink' AS blockchain,
+        platform,
+        block_number,
+        block_timestamp,
+        tx_hash,
+        blockchain AS source_chain,
+        destination_chain,
+        bridge_address,
+        sender AS source_address,
+        destination_chain_receiver AS destination_address,
+        'outbound' AS direction,
+        token_address,
+        token_symbol,
+        amount_unadj AS amount_raw,
+        amount,
+        amount_usd,
+        token_is_verified,
+        modified_timestamp AS _inserted_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
+    FROM
+        {{ source(
+            'ink_defi',
+            'ez_bridge_activity'
+        ) }}
+
+{% if is_incremental() and 'ink' not in var('HEAL_MODELS') %}
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
 solana AS (
     SELECT
         'solana' AS blockchain,
@@ -474,11 +511,12 @@ all_chains_bridge AS (
     SELECT
         *
     FROM
-        optimism {# UNION ALL
+        optimism
+    UNION ALL
     SELECT
         *
     FROM
-        blast #}
+        core
     UNION ALL
     SELECT
         *
@@ -509,6 +547,11 @@ all_chains_bridge AS (
         *
     FROM
         gnosis
+    UNION ALL
+    SELECT
+        *
+    FROM
+        ink
     UNION ALL
     SELECT
         *
