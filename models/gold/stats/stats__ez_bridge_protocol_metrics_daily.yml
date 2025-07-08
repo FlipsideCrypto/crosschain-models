@@ -1,0 +1,61 @@
+version: 2
+models:
+  - name: stats__ez_bridge_protocol_metrics_daily
+    description: "An aggregated daily view of cross-chain bridging metrics, including volume, distinct addresses and unique transactions."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCK_DATE
+            - BLOCKCHAIN
+            - PROTOCOL
+
+    columns:
+      - name: BLOCKCHAIN 
+        description: '{{ doc("blockchain_column") }}'
+      - name: PROTOCOL 
+        description: '{{ doc("bridge_platform") }}'
+      - name: BLOCK_DATE
+        description: '{{ doc("block_date") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 2
+      - name: total_inbound_volume
+        description: 'USD value of all verified tokens brought onto BLOCKCHAIN from any other chain grouped by bridge protocol'
+        # tests:
+        #   - not_null
+      - name: distinct_inbound_addresses
+        description: '# unique addresses receiving bridged tokens onto BLOCKCHAIN from any other chain grouped by bridge protocol'
+        # tests:
+        #   - not_null
+      - name: distinct_inbound_transactions
+        description: '# unique tx hashes for bridge tokens brought onto BLOCKCHAIN from any other chain grouped by bridge protocol'
+        # tests:
+        #   - not_null
+      - name: total_outbound_volume
+        description: 'USD value of all tokens taken off BLOCKCHAIN to any other chain grouped by bridge protocol'
+        # tests:
+        #   - not_null
+      - name: distinct_outbound_addresses
+        description: '# unique addresses sending tokens off BLOCKCHAIN to any other chain grouped by bridge protocol'
+        # tests:
+        #   - not_null
+      - name: distinct_outbound_transactions
+        description: '# unique tx hashes for tokens taken off BLOCKCHAIN to any other chain grouped by bridge protocol'
+        # tests:
+        #   - not_null
+      - name: net_volume
+        description: 'total_inbound_volume - total_outbound_volume'
+        # tests:
+        #   - not_null
+      - name: gross_volume
+        description: 'total_inbound_volume + total_outbound_volume'
+        # tests:
+        #   - not_null
+      - name: EZ_BRIDGE_METRICS_DAILY_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 

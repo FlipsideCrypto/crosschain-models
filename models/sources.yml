@@ -52,7 +52,7 @@ sources:
     database: aptos
     schema: defi
     tables:
-      - name: fact_bridge_activity
+      - name: ez_bridge_activity
 
   - name: aptos_observ
     database: aptos
@@ -1266,7 +1266,7 @@ sources:
     schema: defi
     tables:
       - name: fact_swaps
-      - name: fact_bridge_activity
+      - name: ez_bridge_activity
 
   - name: solana_observ
     database: solana

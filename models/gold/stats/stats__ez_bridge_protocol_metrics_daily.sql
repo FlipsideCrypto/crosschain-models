@@ -3,8 +3,8 @@
     materialized = 'incremental',
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
-    unique_key = ['blockchain','block_date'],
-    cluster_by = ['blockchain','block_date'],
+    unique_key = ['blockchain','block_date','protocol'],
+    cluster_by = ['blockchain','block_date','protocol'],
     tags = ['metrics_daily']
 ) }}
 
@@ -72,6 +72,7 @@ WITH target_chains_cte AS (
 ib AS (
     SELECT
         A.destination_chain AS blockchain,
+        A.platform AS protocol,
         A.block_timestamp :: DATE AS block_date,
         SUM(
             CASE
@@ -102,11 +103,13 @@ ib AS (
         {{ date_filter }}
     GROUP BY
         A.destination_chain,
+        A.platform,
         A.block_timestamp :: DATE
 ),
 ob AS (
     SELECT
         A.source_chain AS blockchain,
+        A.platform AS protocol,
         A.block_timestamp :: DATE AS block_date,
         SUM(
             CASE
@@ -137,23 +140,27 @@ ob AS (
         {{ date_filter }}
     GROUP BY
         A.source_chain,
+        A.platform,
         A.block_timestamp :: DATE
 ),
 base AS (
     SELECT
         DISTINCT blockchain,
-        block_date
+        block_date,
+        protocol
     FROM
         ib
     UNION
     SELECT
         DISTINCT blockchain,
-        block_date
+        block_date,
+        protocol
     FROM
         ob
 )
 SELECT
     A.blockchain,
+    A.protocol,
     A.block_date,
     ib.total_inbound_volume,
     ib.distinct_inbound_addresses,
@@ -175,7 +182,7 @@ SELECT
         ob.total_outbound_volume,
         0
     ) AS gross_volume,
-    {{ dbt_utils.generate_surrogate_key(['a.blockchain',' A.block_date']) }} AS ez_bridge_metrics_daily_id,
+    {{ dbt_utils.generate_surrogate_key(['a.blockchain','a.protocol',' A.block_date']) }} AS ez_bridge_protocol_metrics_daily_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM
@@ -183,6 +190,8 @@ FROM
     LEFT JOIN ib
     ON A.blockchain = ib.blockchain
     AND A.block_date = ib.block_date
+    AND A.protocol = ib.protocol
     LEFT JOIN ob
     ON A.blockchain = ob.blockchain
     AND A.block_date = ob.block_date
+    AND A.protocol = ob.protocol
