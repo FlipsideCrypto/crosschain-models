@@ -182,7 +182,7 @@ SELECT
         ob.total_outbound_volume,
         0
     ) AS gross_volume,
-    {{ dbt_utils.generate_surrogate_key(['a.blockchain','a.protocol',' A.block_date']) }} AS ez_bridge_protocol_metrics_daily_id,
+    {{ dbt_utils.generate_surrogate_key(['a.blockchain','a.protocol','a.block_date']) }} AS ez_bridge_protocol_metrics_daily_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM
