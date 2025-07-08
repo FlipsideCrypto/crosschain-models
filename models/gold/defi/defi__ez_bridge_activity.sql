@@ -23,6 +23,7 @@ SELECT
     amount_raw,
     amount,
     amount_usd,
+    token_is_verified,
     inserted_timestamp,
     modified_timestamp,
     complete_bridge_activity_id AS ez_bridge_activity_id

@@ -46,6 +46,9 @@ models:
       - name: AMOUNT_RAW
         tests:
           - dbt_expectations.expect_column_to_exist
+      - name: TOKEN_IS_VERIFIED
+        tests:
+          - dbt_expectations.expect_column_to_exist
       - name: COMPLETE_BRIDGE_ACTIVITY_ID
         tests:
           - not_null

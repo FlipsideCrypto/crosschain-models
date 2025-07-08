@@ -52,7 +52,7 @@ sources:
     database: aptos
     schema: defi
     tables:
-      - name: fact_bridge_activity
+      - name: ez_bridge_activity
 
   - name: aptos_observ
     database: aptos
@@ -515,6 +515,12 @@ sources:
       - name: dim_contracts
       - name: fact_transactions      
       - name: ez_token_transfers
+  
+  - name: core_defi
+    database: core
+    schema: defi
+    tables:
+      - name: ez_bridge_activity
 
   - name: core_silver
     database: core
@@ -876,6 +882,12 @@ sources:
       - name: dim_contracts
       - name: fact_transactions
       - name: ez_token_transfers
+  - name: ink_defi
+    database: ink
+    schema: defi
+    tables:
+      - name: ez_bridge_activity
+
   - name: ink_silver
     database: ink
     schema: silver
@@ -1266,7 +1278,7 @@ sources:
     schema: defi
     tables:
       - name: fact_swaps
-      - name: fact_bridge_activity
+      - name: ez_bridge_activity
 
   - name: solana_observ
     database: solana
