@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: stats__ez_bridge_protocol_metrics_daily
-    description: "An aggregated daily view of cross-chain bridging metrics, including volume, distinct addresses and unique transactions."
+    description: "An aggregated daily view of cross-chain bridging metrics, including volume, distinct addresses and unique transactions grouped by blockchain and bridge protocol."
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
