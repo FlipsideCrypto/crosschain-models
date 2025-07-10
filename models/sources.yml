@@ -53,6 +53,7 @@ sources:
     schema: defi
     tables:
       - name: ez_bridge_activity
+      - name: ez_dex_swaps
 
   - name: aptos_observ
     database: aptos
@@ -521,6 +522,7 @@ sources:
     schema: defi
     tables:
       - name: ez_bridge_activity
+      - name: ez_dex_swaps
 
   - name: core_silver
     database: core
@@ -887,6 +889,7 @@ sources:
     schema: defi
     tables:
       - name: ez_bridge_activity
+      # - name: ez_dex_swaps
 
   - name: ink_silver
     database: ink
@@ -1279,6 +1282,7 @@ sources:
     tables:
       - name: fact_swaps
       - name: ez_bridge_activity
+      - name: ez_dex_swaps
 
   - name: solana_observ
     database: solana

@@ -3,7 +3,7 @@
     incremental_strategy = 'delete+insert',
     unique_key = ['_unique_key'],
     cluster_by = ['block_timestamp::DATE','blockchain','platform'],
-    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_hash, contract_address, trader, token_in, token_out, symbol_in, symbol_out), SUBSTRING(trader, token_in, token_out, symbol_in, symbol_out)",
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_hash, contract_address, trader, token_in, token_out, symbol_in, symbol_out, _unique_key), SUBSTRING(trader, token_in, token_out, symbol_in, symbol_out)",
     tags = ['hourly']
 ) }}
 
@@ -27,7 +27,13 @@ WITH ethereum AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
+        token_in_is_verified,
+        token_out_is_verified,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -66,7 +72,13 @@ optimism AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
+        token_in_is_verified,
+        token_out_is_verified,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -105,7 +117,13 @@ avalanche AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
+        token_in_is_verified,
+        token_out_is_verified,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -144,7 +162,13 @@ polygon AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
+        token_in_is_verified,
+        token_out_is_verified,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -183,7 +207,13 @@ bsc AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
+        token_in_is_verified,
+        token_out_is_verified,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -222,7 +252,13 @@ arbitrum AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
+        token_in_is_verified,
+        token_out_is_verified,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -261,7 +297,13 @@ base AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
+        token_in_is_verified,
+        token_out_is_verified,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -281,9 +323,9 @@ WHERE
     )
 {% endif %}
 ),
-blast AS (
+core AS (
     SELECT
-        'blast' AS blockchain,
+        'core' AS blockchain,
         platform,
         block_number,
         block_timestamp,
@@ -300,17 +342,23 @@ blast AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
+        token_in_is_verified,
+        token_out_is_verified,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
     FROM
         {{ source(
-            'blast_defi',
+            'core_defi',
             'ez_dex_swaps'
         ) }}
 
-{% if is_incremental() and 'blast' not in var('HEAL_MODELS') %}
+{% if is_incremental() and 'core' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
@@ -320,6 +368,52 @@ WHERE
     )
 {% endif %}
 ),
+{# ink AS (
+SELECT
+    'ink' AS blockchain,
+    platform,
+    block_number,
+    block_timestamp,
+    tx_hash,
+    contract_address,
+    origin_from_address AS trader,
+    token_in,
+    symbol_in,
+    amount_in_unadj AS amount_in_raw,
+    amount_in,
+    amount_in_usd,
+    token_out,
+    symbol_out,
+    amount_out_unadj AS amount_out_raw,
+    amount_out,
+    amount_out_usd,
+    token_in_is_verified,
+    token_out_is_verified,
+    CONCAT(
+        tx_hash :: STRING,
+        '-',
+        event_index :: STRING
+    ) AS _log_id,
+    modified_timestamp AS _inserted_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+    {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
+FROM
+    {{ source(
+        'ink_defi',
+        'ez_dex_swaps'
+    ) }}
+
+{% if is_incremental() and 'ink' not in var('HEAL_MODELS') %}
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "6 hours") }}'
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
+#}
 gnosis AS (
     SELECT
         'gnosis' AS blockchain,
@@ -339,7 +433,13 @@ gnosis AS (
         amount_out_unadj AS amount_out_raw,
         amount_out,
         amount_out_usd,
-        CONCAT(tx_hash :: STRING, '-', event_index :: STRING) AS _log_id,
+        token_in_is_verified,
+        token_out_is_verified,
+        CONCAT(
+            tx_hash :: STRING,
+            '-',
+            event_index :: STRING
+        ) AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
         {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
@@ -359,55 +459,57 @@ WHERE
     )
 {% endif %}
 ),
-osmosis AS (
-    SELECT
-        'osmosis' AS blockchain,
-        'osmosis' platform,
-        s.block_id AS block_number,
-        s.block_timestamp,
-        s.tx_id AS tx_hash,
-        pool_address AS contract_address,
-        trader AS trader,
-        from_currency AS token_in,
-        NULL AS symbol_in,
-        from_amount AS amount_in_raw,
-        CASE
-            WHEN s.from_decimal IS NOT NULL THEN from_amount / power(
-                10,
-                s.from_decimal
-            )
-        END AS amount_in,
-        NULL AS amount_in_usd,
-        to_currency AS token_out,
-        NULL AS symbol_out,
-        to_amount AS amount_out_raw,
-        CASE
-            WHEN s.to_decimal IS NOT NULL THEN to_amount / power(
-                10,
-                s.to_decimal
-            )
-        END AS amount_out,
-        NULL AS amount_out_usd,
-        CONCAT(
-            s.tx_id,
-            '-',
-            s._BODY_INDEX
-        ) AS _log_id,
-        s.modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['fact_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
-        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
-    FROM
-        {{ source(
-            'osmosis_defi',
-            'fact_swaps'
-        ) }}
-        s
-        LEFT JOIN {{ source(
-            'osmosis_defi',
-            'dim_liquidity_pools'
-        ) }}
-        p
-        ON s.pool_id = p.pool_id
+{# osmosis AS (
+SELECT
+    'osmosis' AS blockchain,
+    'osmosis' platform,
+    s.block_id AS block_number,
+    s.block_timestamp,
+    s.tx_id AS tx_hash,
+    pool_address AS contract_address,
+    trader AS trader,
+    from_currency AS token_in,
+    NULL AS symbol_in,
+    from_amount AS amount_in_raw,
+    CASE
+        WHEN s.from_decimal IS NOT NULL THEN from_amount / power(
+            10,
+            s.from_decimal
+        )
+    END AS amount_in,
+    NULL AS amount_in_usd,
+    to_currency AS token_out,
+    NULL AS symbol_out,
+    to_amount AS amount_out_raw,
+    CASE
+        WHEN s.to_decimal IS NOT NULL THEN to_amount / power(
+            10,
+            s.to_decimal
+        )
+    END AS amount_out,
+    NULL AS amount_out_usd,
+    FALSE AS token_in_is_verified,
+    FALSE AS token_out_is_verified,
+    CONCAT(
+        s.tx_id,
+        '-',
+        s._BODY_INDEX
+    ) AS _log_id,
+    s.modified_timestamp AS _inserted_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['fact_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+    {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
+FROM
+    {{ source(
+        'osmosis_defi',
+        'fact_swaps'
+    ) }}
+    s
+    LEFT JOIN {{ source(
+        'osmosis_defi',
+        'dim_liquidity_pools'
+    ) }}
+    p
+    ON s.pool_id = p.pool_id
 
 {% if is_incremental() and 'osmosis' not in var('HEAL_MODELS') %}
 WHERE
@@ -419,6 +521,7 @@ WHERE
     )
 {% endif %}
 ),
+#}
 solana AS (
     SELECT
         'solana' AS blockchain,
@@ -429,35 +532,35 @@ solana AS (
         program_id AS contract_address,
         swapper AS trader,
         swap_from_mint AS token_in,
-        NULL AS symbol_in,
-        swap_from_amount AS amount_in_raw,
-        amount_in_raw AS amount_in,
-        NULL AS amount_in_usd,
+        swap_from_symbol AS symbol_in,
+        NULL AS amount_in_raw,
+        swap_from_amount AS amount_in,
+        swap_from_amount_usd AS amount_in_usd,
         swap_to_mint AS token_out,
-        NULL AS symbol_out,
-        swap_to_amount AS amount_out_raw,
-        amount_out_raw AS amount_out,
-        NULL AS amount_out_usd,
-        _log_id,
+        swap_to_symbol AS symbol_out,
+        NULL AS amount_out_raw,
+        swap_to_amount AS amount_out,
+        swap_to_amount_usd AS amount_out_usd,
+        swap_from_is_verified AS token_in_is_verified,
+        swap_to_is_verified AS token_out_is_verified,
+        ez_swaps_id AS _log_id,
         modified_timestamp AS _inserted_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['fact_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
-        {{ dbt_utils.generate_surrogate_key(['fact_swaps_id','blockchain']) }} AS _unique_key
+        {{ dbt_utils.generate_surrogate_key(['ez_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['ez_swaps_id','blockchain']) }} AS _unique_key
     FROM
         {{ source(
             'solana_defi',
-            'fact_swaps'
+            'ez_dex_swaps'
         ) }}
-    WHERE
-        succeeded
-        AND _log_id IS NOT NULL
 
 {% if is_incremental() and 'solana' not in var('HEAL_MODELS') %}
-AND _inserted_timestamp >= (
-    SELECT
-        MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
-    FROM
-        {{ this }}
-)
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
+        FROM
+            {{ this }}
+    )
 {% endif %}
 ),
 near AS (
@@ -473,12 +576,14 @@ near AS (
         symbol_in,
         amount_in_raw,
         amount_in,
-        NULL AS amount_in_usd,
+        amount_in_usd AS amount_in_usd,
         LOWER(token_out_contract) AS token_out,
         symbol_out,
         amount_out_raw,
         amount_out,
-        NULL AS amount_out_usd,
+        amount_out_usd AS amount_out_usd,
+        token_in_is_verified,
+        token_out_is_verified,
         ez_dex_swaps_id AS _log_id,
         modified_timestamp AS _inserted_timestamp,
         {{ dbt_utils.generate_surrogate_key(['_log_id','blockchain']) }} AS complete_dex_swaps_id,
@@ -490,6 +595,47 @@ near AS (
         ) }}
 
 {% if is_incremental() and 'near' not in var('HEAL_MODELS') %}
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
+aptos AS (
+    SELECT
+        'aptos' AS blockchain,
+        platform,
+        block_number,
+        block_timestamp,
+        tx_hash,
+        event_address AS contract_address,
+        swapper,
+        token_in,
+        symbol_in,
+        amount_in_unadj AS amount_in_raw,
+        amount_in,
+        amount_in_usd,
+        token_out,
+        symbol_out,
+        amount_out_unadj AS amount_out_raw,
+        amount_out,
+        amount_out_usd,
+        token_in_is_verified,
+        token_out_is_verified,
+        ez_dex_swaps_id AS _log_id,
+        modified_timestamp AS _inserted_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['_log_id','blockchain']) }} AS complete_dex_swaps_id,
+        {{ dbt_utils.generate_surrogate_key(['_log_id','blockchain']) }} AS _unique_key
+    FROM
+        {{ source(
+            'aptos_defi',
+            'ez_dex_swaps'
+        ) }}
+
+{% if is_incremental() and 'aptos' not in var('HEAL_MODELS') %}
 WHERE
     _inserted_timestamp >= (
         SELECT
@@ -538,18 +684,23 @@ all_chains_dex AS (
     SELECT
         *
     FROM
-        blast
+        core {# UNION ALL
+    SELECT
+        *
+    FROM
+        ink #}
     UNION ALL
     SELECT
         *
     FROM
         gnosis
     UNION ALL
-    SELECT
+        {# SELECT
         *
     FROM
         osmosis
     UNION ALL
+        #}
     SELECT
         *
     FROM
@@ -559,19 +710,11 @@ all_chains_dex AS (
         *
     FROM
         near
-),
-prices AS (
+    UNION ALL
     SELECT
-        HOUR,
-        token_address,
-        symbol,
-        decimals,
-        price,
-        blockchain
+        *
     FROM
-        {{ ref('price__ez_prices_hourly') }}
-    WHERE
-        NOT is_native
+        aptos
 )
 SELECT
     d.blockchain,
@@ -582,53 +725,17 @@ SELECT
     d.contract_address,
     d.trader,
     d.token_in,
-    COALESCE(
-        d.symbol_in,
-        p_in.symbol
-    ) AS symbol_in,
+    d.symbol_in,
+    token_in_is_verified,
     d.amount_in_raw,
     d.amount_in,
-    CASE
-        WHEN d.blockchain IN (
-            'ethereum',
-            'optimism',
-            'base',
-            'blast',
-            'arbitrum',
-            'polygon',
-            'bsc',
-            'avalanche',
-            'gnosis'
-        ) THEN d.amount_in_usd
-        ELSE ROUND(
-            p_in.price * d.amount_in,
-            2
-        )
-    END AS amount_in_usd,
+    d.amount_in_usd,
     d.token_out,
-    COALESCE(
-        d.symbol_out,
-        p_out.symbol
-    ) AS symbol_out,
+    d.symbol_out,
+    token_out_is_verified,
     d.amount_out_raw,
     d.amount_out,
-    CASE
-        WHEN d.blockchain IN (
-            'ethereum',
-            'optimism',
-            'base',
-            'blast',
-            'arbitrum',
-            'polygon',
-            'bsc',
-            'avalanche',
-            'gnosis'
-        ) THEN d.amount_out_usd
-        ELSE ROUND(
-            p_out.price * d.amount_out,
-            2
-        )
-    END AS amount_out_usd,
+    d.amount_out_usd,
     d._log_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
@@ -637,25 +744,3 @@ SELECT
     d._unique_key
 FROM
     all_chains_dex d
-    LEFT JOIN prices p_in
-    ON REPLACE(
-        d.blockchain,
-        'osmosis',
-        'cosmos'
-    ) = p_in.blockchain
-    AND d.token_in = p_in.token_address
-    AND DATE_TRUNC(
-        'hour',
-        d.block_timestamp
-    ) = p_in.hour
-    LEFT JOIN prices p_out
-    ON REPLACE(
-        d.blockchain,
-        'osmosis',
-        'cosmos'
-    ) = p_out.blockchain
-    AND d.token_out = p_out.token_address
-    AND DATE_TRUNC(
-        'hour',
-        d.block_timestamp
-    ) = p_out.hour

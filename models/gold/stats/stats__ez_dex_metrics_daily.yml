@@ -1,0 +1,39 @@
+version: 2
+models:
+  - name: stats__ez_dex_metrics_daily
+    description: "An aggregated daily view of cross-chain dex metrics, including volume, distinct addresses and unique transactions grouped by blockchain."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCK_DATE
+            - BLOCKCHAIN
+
+    columns:
+      - name: BLOCKCHAIN 
+        description: '{{ doc("blockchain_column") }}'
+      - name: BLOCK_DATE
+        description: '{{ doc("block_date") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 2
+      - name: swap_count
+        description: 'The number of swaps that occurred on BLOCKCHAIN on BLOCK_DATE'
+        tests:
+          - not_null
+      - name: distinct_swapper_count
+        description: '# unique addresses swapping tokens on BLOCKCHAIN from any dex protocol'
+        tests:
+          - not_null
+      - name: gross_dex_volume_usd
+        description:  
+        description: 'USD value of all swaps of verified tokens on BLOCKCHAIN on any dex protocol'
+        # tests:
+        #   - not_null 
+      - name: EZ_DEX_METRICS_DAILY_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 

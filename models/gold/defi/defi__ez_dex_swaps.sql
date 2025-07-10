@@ -3,7 +3,7 @@
     persist_docs ={ "relation": true,
     "columns": true },
     meta ={ 'database_tags':{ 'table':{ 'PURPOSE': 'DEX, SWAPS',
-    } } }
+    }} }
 ) }}
 
 SELECT
@@ -16,10 +16,12 @@ SELECT
     trader,
     token_in,
     symbol_in,
+    token_in_is_verified,
     amount_in_raw,
     amount_in,
     amount_in_usd,
     token_out,
+    token_out_is_verified,
     symbol_out,
     amount_out_raw,
     amount_out,
