@@ -1,0 +1,58 @@
+version: 2
+models:
+  - name: stats__ez_dex_token_metrics_daily
+    description: "An aggregated daily view of cross-chain dex metrics, including volume, distinct addresses and unique transactions grouped by blockchain and token. This only includes verified tokens."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCK_DATE
+            - BLOCKCHAIN
+            - TOKEN_ADDRESS
+
+    columns:
+      - name: BLOCKCHAIN 
+        description: '{{ doc("blockchain_column") }}'
+      - name: TOKEN_ADDRESS 
+        description: '{{ doc("prices_token_address") }}'
+      - name: SYMBOL 
+        description: '{{ doc("prices_symbol") }}'
+      - name: BLOCK_DATE
+        description: '{{ doc("block_date") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 2
+      - name: buy_swap_count
+        description: 'The number of buy swaps that occurred on BLOCKCHAIN on BLOCK_DATE'
+        # tests:
+        #   - not_null
+      - name: buy_volume
+        description: 'The buy volume of swaps that occurred on BLOCKCHAIN on BLOCK_DATE in the token specified by TOKEN_ADDRESS'
+        # tests:
+        #   - not_null
+      - name: buy_usd_volume
+        description:  
+        description: 'USD value of all buy swaps of the token on BLOCKCHAIN on any dex protocol'
+        # tests:
+        #   - not_null
+      - name: sell_swap_count
+        description: 'The number of sell swaps that occurred on BLOCKCHAIN on BLOCK_DATE'
+        # tests:
+        #   - not_null
+      - name: sell_volume
+        description: 'The sell volume of swaps that occurred on BLOCKCHAIN on BLOCK_DATE in the token specified by TOKEN_ADDRESS'
+        # tests:
+        #   - not_null
+      - name: sell_usd_volume
+        description: 'USD value of all sell swaps of the token on BLOCKCHAIN on any dex protocol'
+      - name: net_purchased
+        description: 'buy_volume - sell_volume'
+      - name: net_purchased_usd
+        description: 'buy_usd_volume - sell_usd_volume'
+      - name: EZ_DEX_TOKEN_METRICS_DAILY_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 
