@@ -47,6 +47,7 @@ sources:
       - name: fact_transactions
       - name: fact_transfers
       - name: ez_native_transfers
+      - name: ez_transfers
 
   - name: aptos_defi
     database: aptos
@@ -385,6 +386,7 @@ sources:
       - name: dim_contracts
       - name: fact_transactions
       - name: ez_token_transfers
+      - name: ez_native_transfers
 
   - name: bob_silver
     database: bob
@@ -403,6 +405,7 @@ sources:
       - name: dim_contracts
       - name: fact_transactions
       - name: ez_token_transfers
+      - name: ez_native_transfers
 
   - name: boba_silver
     database: boba
@@ -516,6 +519,7 @@ sources:
       - name: dim_contracts
       - name: fact_transactions      
       - name: ez_token_transfers
+      - name: ez_native_transfers
   
   - name: core_defi
     database: core
@@ -770,6 +774,7 @@ sources:
       - name: dim_contracts
       - name: fact_transactions
       - name: ez_token_transfers
+      - name: ez_native_transfers
 
   - name: flow_observ
     database: flow
@@ -884,6 +889,7 @@ sources:
       - name: dim_contracts
       - name: fact_transactions
       - name: ez_token_transfers
+      - name: ez_native_transfers
   - name: ink_defi
     database: ink
     schema: defi
@@ -1275,6 +1281,7 @@ sources:
       - name: fact_transactions
       - name: fact_transfers
       - name: dim_tokens
+      - name: ez_transfers
 
   - name: solana_defi
     database: solana
