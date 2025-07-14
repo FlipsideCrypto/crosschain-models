@@ -7,8 +7,8 @@ aptos,0x416416665d52c0868d5a9f02801a4035bfcfb24f117618b2b6c1f921128caf3b,amnis-s
 aptos,0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin,,,scam,FALSE
 aptos,0x50fdfa97914bd00b656e3041e143f157c84931eb1ca7224b8a8570e7d5be70f2,usd-coin,,,
 aptos,0x94ed76d3d66cb0b6e7a3ab81acf830e3a50b8ae3cfb9edc0abea635a11185ff4,move-dollar,,,
-aptos,0x9770fa9c725cbd97eb50b2be5f7416efdfd1f1554beb0750d4dae4c64e860da3::fa_to_coin_wrapper::WrappedUSDT,tether,,,
-aptos,0xa2eda21a58856fda86451436513b867c97eecb4ba099da5775520e0f7492e852::coin::T,tether,,,
+aptos,0x9770fa9c725cbd97eb50b2be5f7416efdfd1f1554beb0750d4dae4c64e860da3::fa_to_coin_wrapper::WrappedUSDT,tether,,,TRUE
+aptos,0xa2eda21a58856fda86451436513b867c97eecb4ba099da5775520e0f7492e852::coin::T,tether,,,TRUE
 aptos,0xe568e9322107a5c9ba4cbd05a630a5586aa73e744ada246c3efb0f4ce3e295f3,tether,,,
 aptos,0xedc2704f2cef417a06d1756a04a16a9fa6faaed13af469be9cdfcac5a21a8e2e,aptos,,,
 aptos,0xa,aptos,,,
@@ -32,6 +32,7 @@ aptos,0xb614bfdf9edc39b330bbf9c3c5bcd0473eee2f6d4e21748629cc367869ece627,,32027,
 aptos,0x5ae6789dd2fec1a9ec9cccfb3acaf12e93d432f0a3a42c92fe1a9d490b7bbc06::mkl_token::MKL,,32997,,TRUE
 aptos,0x8d87a65ba30e09357fa2edea2c80dbac296e5dec2b18287113500b902942929d::celer_coin_manager::WethCoin,wrapped-ether-celer,,,TRUE
 aptos,0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDT,layerzero-bridged-usdt-aptos,,,TRUE
+aptos,0x50038be55be5b964cfa32cf128b5cf05f123959f286b4cc02b86cafd48945f89,blackrock-usd-institutional-digital-liquidity-fund,,,TRUE
 arbitrum,0x0c84331e39d6658cd6e6b9ba04736cc4c4734351,,,variableDebtArbWETH?,FALSE
 arbitrum,0x2bcc6d6cdbbdc0a4071e48bb3b969b06b3330c07,solana,,,
 arbitrum,0x3caae25ee616f2c8e13c74da0813402eae3f496b,camelot-token,,,
