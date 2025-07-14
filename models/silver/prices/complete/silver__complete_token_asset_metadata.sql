@@ -242,4 +242,4 @@ FROM
 WHERE
     A.token_address IS NOT NULL qualify(ROW_NUMBER() over (PARTITION BY LOWER(A.token_address), A.blockchain
 ORDER BY
-    _inserted_timestamp DESC)) = 1
+    (asset_id IS NOT NULL) DESC, _inserted_timestamp DESC)) = 1
