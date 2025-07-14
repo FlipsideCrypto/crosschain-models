@@ -35,11 +35,11 @@ FROM
     {{ ref('silver__transfers') }}
 WHERE
     block_timestamp :: DATE < SYSDATE() :: DATE
-    AND block_timestamp :: DATE >= '2025-07-01'
+    AND block_timestamp :: DATE >= '2025-01-01'
 
 {% if is_incremental() %}
 AND modified_timestamp >= '{{ max_mod }}'
-AND block_timestamp :: DATE >= '2025-07-01'
+AND block_timestamp :: DATE >= '2025-01-01'
 {% endif %}
 
 {% endset %}
@@ -91,10 +91,6 @@ SELECT
     A.blockchain,
     A.block_date,
     A.token_address,
-    COALESCE(
-        b.is_verified,
-        FALSE
-    ) AS token_is_verified,
     b.symbol,
     COALESCE(
         stablecoin_transfer_volume_usd,
@@ -105,7 +101,9 @@ SELECT
     SYSDATE() AS modified_timestamp
 FROM
     xfer A
-    LEFT JOIN {{ ref('silver__tokens_enhanced') }}
+    JOIN {{ ref('silver__tokens_enhanced') }}
     b
     ON A.blockchain = b.blockchain
     AND A.token_address = b.address
+WHERE
+    is_verified

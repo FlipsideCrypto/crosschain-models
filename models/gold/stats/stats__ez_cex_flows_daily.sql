@@ -35,11 +35,11 @@ FROM
     {{ ref('silver__transfers') }}
 WHERE
     block_timestamp :: DATE < SYSDATE() :: DATE
-    AND block_timestamp :: DATE >= '2025-07-01'
+    AND block_timestamp :: DATE >= '2025-01-01'
 
 {% if is_incremental() %}
 AND modified_timestamp >= '{{ max_mod }}'
-AND block_timestamp :: DATE >= '2025-07-01'
+AND block_timestamp :: DATE >= '2025-01-01'
 {% endif %}
 
 {% endset %}
