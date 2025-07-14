@@ -225,6 +225,7 @@ SELECT
         b.is_verified,
         FALSE
     ) AS is_verified,
+    b.is_verified_modified_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     {{ dbt_utils.generate_surrogate_key(['LOWER(a.token_address)','a.blockchain']) }} AS complete_token_asset_metadata_id,
