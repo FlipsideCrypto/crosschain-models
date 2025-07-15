@@ -1,0 +1,60 @@
+version: 2
+models:
+  - name: stats__ez_cex_flows_daily
+    description: "An aggregated daily view of central exchange flows metrics, including withdrawal and deposit volume, distinct addresses and unique transactions grouped by blockchain."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCK_DATE
+            - BLOCKCHAIN
+
+    columns:
+      - name: BLOCKCHAIN 
+        description: '{{ doc("blockchain_column") }}'
+      - name: BLOCK_DATE
+        description: '{{ doc("block_date") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 2
+      - name: withdrawal_volume_usd
+        description: 'USD value of all tokens withdrawn from any centralized exchange to the blockchain'
+        # tests:
+        #   - not_null
+      - name: withdrawal_txn_count
+        description: '# unique tx hashes for all tokens withdrawn from any centralized exchange to the blockchain'
+        # tests:
+        #   - not_null
+      - name: deposit_volume_usd
+        description: 'USD value of all tokens deposited to any centralized exchange from the blockchain'
+        # tests:
+        #   - not_null
+      - name: deposit_txn_count
+        description: '# unique tx hashes for all tokens deposited to any centralized exchange from the blockchain'
+        # tests:
+        #   - not_null
+      - name: unique_withdrawing_addresses
+        description: '# unique addresses that withdrew tokens from any centralized exchange to the blockchain'
+        # tests:
+        #   - not_null
+      - name: unique_depositing_addresses
+        description: '# unique addresses that deposited tokens to any centralized exchange from the blockchain'
+        # tests:
+        #   - not_null
+      - name: net_cex_flow_usd
+        description: 'withdrawal_volume_usd - deposit_volume_usd'
+        # tests:
+        #   - not_null
+      - name: net_cex_flow_txn_count
+        description: 'withdrawal_txn_count - deposit_txn_count'
+      - name: net_cex_flow_percent_of_deposits
+        description: 'Percentage of net CEX flow relative to deposit volume, calculated as (net_cex_flow_usd / deposit_volume_usd) * 100'
+        # tests:
+        #   - not_null
+      - name: EZ_CEX_FLOWS_DAILY_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 

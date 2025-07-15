@@ -1,0 +1,30 @@
+version: 2
+models:
+  - name: stats__ez_stablecoin_flows_daily
+    description: "An aggregated daily view of stablecoin flows metrics, including transfer volume grouped by blockchain"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCK_DATE
+            - BLOCKCHAIN
+
+    columns:
+      - name: BLOCKCHAIN 
+        description: '{{ doc("blockchain_column") }}'
+      - name: BLOCK_DATE
+        description: '{{ doc("block_date") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 2
+      - name: stablecoin_transfer_volume_usd
+        description: 'USD value of all stablecoin transfers on the blockchain'
+        tests:
+          - not_null 
+      - name: EZ_STABLECOIN_FLOWS_DAILY_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 
