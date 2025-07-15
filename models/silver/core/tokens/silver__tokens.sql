@@ -791,7 +791,7 @@ UNION ALL
 SELECT
     token_address AS address,
     LOWER(symbol) AS symbol,
-    token_name AS NAME,
+    NAME,
     decimals,
     NULL AS created_block_number,
     NULL AS created_block_timestamp,
@@ -800,8 +800,8 @@ SELECT
     'solana' AS blockchain
 FROM
     {{ source(
-        'solana_core',
-        'dim_tokens'
+        'solana_silver',
+        'solscan_tokens'
     ) }}
 
 {% if is_incremental() %}
