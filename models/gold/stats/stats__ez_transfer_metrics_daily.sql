@@ -1,4 +1,4 @@
--- depends_on: {{ ref('silver__fact_transactions_lite') }}
+-- depends_on: {{ ref('silver__transfers') }}
 -- depends_on: {{ ref('price__ez_prices_hourly') }}
 -- depends_on: {{ ref('silver__native_fee_token') }}
 {{ config(
@@ -30,20 +30,20 @@ FROM
 --get the distinct blockchains & block dates that we are processing
 {% set dates_query %}
 CREATE
-OR REPLACE temporary TABLE silver.ez_activity_metrics__intermediate_tmp AS
+OR REPLACE temporary TABLE silver.ez_transfer_metrics__intermediate_tmp AS
 SELECT
     DISTINCT blockchain,
     block_timestamp :: DATE AS block_date
 FROM
-    {{ ref('silver__fact_transactions_lite') }}
+    {{ ref('silver__transfers') }}
 WHERE
     block_timestamp :: DATE < SYSDATE() :: DATE
 
 {% if is_incremental() %}
-AND modified_timestamp >= '{{ max_mod }}'
+{# AND modified_timestamp >= '{{ max_mod }}' #}
+AND block_timestamp :: DATE >= '2025-07-01'
 {% else %}
     AND block_timestamp :: DATE >= '2025-01-01'
-    AND block_timestamp :: DATE <= '2025-01-10'
 {% endif %}
 
 {% endset %}
@@ -53,7 +53,7 @@ AND modified_timestamp >= '{{ max_mod }}'
 SELECT
     DISTINCT block_date
 FROM
-    silver.ez_activity_metrics__intermediate_tmp {% endset %}
+    silver.ez_transfer_metrics__intermediate_tmp {% endset %}
     {% set date_results = run_query(date_query) %}
     {% set date_filter %}
     A.block_timestamp :: DATE IN ({% if date_results.rows | length > 0 %}
@@ -67,38 +67,36 @@ FROM
     --roll transactions up to the hour/sender level
     {% set inc_query %}
     CREATE
-    OR REPLACE temporary TABLE silver.ez_activity_metrics__tx_intermediate_tmp AS
+    OR REPLACE temporary TABLE silver.ez_transfer_metrics__xfer_intermediate_tmp AS
 SELECT
     A.blockchain,
+    {# A.block_timestamp :: DATE AS block_date, #}
     DATE_TRUNC(
         'hour',
-        block_timestamp
+        A.block_timestamp
     ) AS block_timestamp_hour,
-    sender,
-    COUNT(1) AS transaction_count,
+    A.from_address,
     SUM(
-        CASE
-            WHEN tx_succeeded THEN 1
-            ELSE 0
-        END
-    ) AS transaction_count_succeeded,
-    SUM(fee_native) AS total_fees_native
+        A.amount_usd
+    ) AS amount_usd,
+    SUM(amount) AS amount
 FROM
-    {{ ref('silver__fact_transactions_lite') }} A
-    JOIN silver.ez_activity_metrics__intermediate_tmp b
+    {{ ref('silver__transfers') }} A
+    JOIN silver.ez_transfer_metrics__intermediate_tmp b
     ON A.blockchain = b.blockchain
     AND A.block_timestamp :: DATE = b.block_date
 WHERE
     {{ date_filter }}
+    AND A.token_is_verified
 GROUP BY
     A.blockchain,
     block_timestamp_hour,
-    sender {% endset %}
+    from_address {% endset %}
     {% do run_query(inc_query) %}
     --find distinct score dates
     {% set score_dates_query %}
     CREATE
-    OR REPLACE temporary TABLE silver.ez_activity_metrics__score_dates_intermediate_tmp AS
+    OR REPLACE temporary TABLE silver.ez_transfer_metrics__score_dates_intermediate_tmp AS
 SELECT
     DISTINCT A.blockchain,
     A.score_date
@@ -111,14 +109,14 @@ FROM
     --find block dates where we do not have a score for that exact date
     {% set score_asof_query %}
     CREATE
-    OR REPLACE temporary TABLE silver.ez_activity_metrics__scores_asof_intermediate_tmp AS
+    OR REPLACE temporary TABLE silver.ez_transfer_metrics__scores_asof_intermediate_tmp AS
 SELECT
     DISTINCT A.blockchain,
     A.block_date,
     b.score_date
 FROM
-    ez_activity_metrics__intermediate_tmp A asof
-    JOIN silver.ez_activity_metrics__score_dates_intermediate_tmp b match_condition (
+    ez_transfer_metrics__intermediate_tmp A asof
+    JOIN silver.ez_transfer_metrics__score_dates_intermediate_tmp b match_condition (
         A.block_date >= score_date
     )
     ON A.blockchain = b.blockchain qualify ROW_NUMBER() over (
@@ -131,7 +129,7 @@ FROM
     --Get the score for that block date or the closest date we have prior to that date
     {% set scores_query %}
     CREATE
-    OR REPLACE temporary TABLE silver.ez_activity_metrics__scores_intermediate_tmp AS
+    OR REPLACE temporary TABLE silver.ez_transfer_metrics__scores_intermediate_tmp AS
 SELECT
     A.blockchain,
     A.user_address,
@@ -142,14 +140,14 @@ FROM
         'datascience_onchain_scores',
         'all_scores'
     ) }} A
-    JOIN silver.ez_activity_metrics__scores_asof_intermediate_tmp b
+    JOIN silver.ez_transfer_metrics__scores_asof_intermediate_tmp b
     ON A.blockchain = b.blockchain
     AND A.score_date = b.score_date {% endset %}
     {% do run_query(scores_query) %}
     --delete the scores temp with a score less than 4 or the additional rows from the asof join
     {% set scores_del_query %}
 DELETE FROM
-    silver.ez_activity_metrics__scores_intermediate_tmp
+    silver.ez_transfer_metrics__scores_intermediate_tmp
 WHERE
     total_score < 4 {% endset %}
     {% do run_query(scores_del_query) %}
@@ -183,62 +181,40 @@ WITH prices AS (
             SELECT
                 MIN(block_date) -3
             FROM
-                silver.ez_activity_metrics__intermediate_tmp
+                silver.ez_transfer_metrics__intermediate_tmp
         )
 )
 SELECT
     A.blockchain,
     A.block_timestamp_hour :: DATE AS block_date,
-    SUM(transaction_count) AS transaction_count,
+    SUM(amount_usd) AS total_transfer_volume_usd,
+    SUM(
+        amount_usd / price
+    ) AS in_unit_total_transfer_volume,
     SUM(
         CASE
-            WHEN C.blockchain IS NOT NULL THEN transaction_count
+            WHEN C.blockchain IS NOT NULL THEN amount_usd
             ELSE 0
         END
-    ) AS quality_transaction_count,
-    SUM(transaction_count_succeeded) AS transaction_count_succeeded,
+    ) AS quality_total_transfer_volume_usd,
     SUM(
         CASE
-            WHEN C.blockchain IS NOT NULL THEN transaction_count_succeeded
+            WHEN C.blockchain IS NOT NULL THEN amount_usd / price
             ELSE 0
         END
-    ) AS quality_transaction_count_succeeded,
-    COUNT(
-        DISTINCT sender
-    ) AS unique_initiator_count,
-    COUNT(
-        DISTINCT CASE
-            WHEN C.blockchain IS NOT NULL THEN sender
-        END
-    ) AS quality_unique_initiator_count,
-    SUM(total_fees_native) AS total_fees_native,
-    SUM(
-        CASE
-            WHEN C.blockchain IS NOT NULL THEN total_fees_native
-            ELSE 0
-        END
-    ) AS quality_total_fees_native,
-    SUM(
-        total_fees_native * price
-    ) AS total_fees_usd,
-    SUM(
-        CASE
-            WHEN C.blockchain IS NOT NULL THEN total_fees_native * price
-            ELSE 0
-        END
-    ) AS quality_total_fees_usd,
-    {{ dbt_utils.generate_surrogate_key(['a.blockchain',' A.block_timestamp_hour :: DATE']) }} AS ez_activity_metrics_daily_id,
+    ) AS in_unit_quality_total_transfer_volume,
+    {{ dbt_utils.generate_surrogate_key(['a.blockchain',' A.block_timestamp_hour :: DATE']) }} AS ez_transfer_metrics_daily_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM
-    silver.ez_activity_metrics__tx_intermediate_tmp A asof
+    silver.ez_transfer_metrics__xfer_intermediate_tmp A asof
     JOIN prices b match_condition (
         A.block_timestamp_hour >= b.hour
     )
     ON A.blockchain = b.blockchain
-    LEFT JOIN silver.ez_activity_metrics__scores_intermediate_tmp C
+    LEFT JOIN silver.ez_transfer_metrics__scores_intermediate_tmp C
     ON A.blockchain = C.blockchain
-    AND A.sender = C.user_address
+    AND A.from_address = C.user_address
     AND A.block_timestamp_hour :: DATE = C.block_date
 GROUP BY
     A.blockchain,

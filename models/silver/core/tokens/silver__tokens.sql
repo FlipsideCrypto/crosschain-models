@@ -924,3 +924,4 @@ SELECT
     '{{ invocation_id }}' AS _invocation_id
 FROM
     base
+    where address is not null

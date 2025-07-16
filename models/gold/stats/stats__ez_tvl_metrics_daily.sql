@@ -9,29 +9,38 @@ WITH source_data AS (
     SELECT
         DATE :: DATE AS DATE,
         chain,
-        SPLIT_PART(
-            chain,
-            '-',
-            1
+        LOWER(
+            SPLIT_PART(
+                chain,
+                '-',
+                1
+            )
         ) AS clean_chain,
         tvl_usd AS daily_tvl
     FROM
-        EXTERNAL.defillama.fact_chain_tvl
+        {{ source(
+            'external_defillama',
+            'fact_chain_tvl'
+        ) }}
     WHERE
-        1 = 1 -- Need at least 90 days of history for rolling calcs + current day
-        {# and DATE BETWEEN CURRENT_DATE() - 90
-        AND CURRENT_DATE() #}
+        DATE IS NOT NULL
+        AND tvl_usd > 0
         AND clean_chain NOT IN (
             'dcAndLsOverlap',
             'liquidstaking',
             'doublecounted',
             'borrowed'
-        )
+        ) qualify ROW_NUMBER() over (
+            PARTITION BY clean_chain,
+            DATE
+            ORDER BY
+                tvl_usd DESC
+        ) = 1
 ),
 tvl_metrics AS (
     SELECT
         DATE,
-        clean_chain AS chain,
+        clean_chain AS blockchain,
         daily_tvl AS current_tvl,
         -- Lagged TVL values for daily change calculations
         LAG(
@@ -97,8 +106,8 @@ tvl_metrics AS (
         source_data
 )
 SELECT
+    blockchain,
     DATE AS block_date,
-    LOWER(chain) AS blockchain,
     current_tvl,
     current_tvl - prev_1_day_tvl AS day_1_change,
     -- Absolute daily changes
@@ -109,9 +118,8 @@ SELECT
     ROUND(
         ((rolling_90d_min_tvl - rolling_90d_max_tvl) / NULLIF(rolling_90d_max_tvl, 0)) * 100,
         2
-    ) AS max_drawdown_pct_90d -- Rolling 90-day maximum drawdown percentage,,
-    {{ dbt_utils.generate_surrogate_key(['a.blockchain','a.block_date']) }} AS ez_stablecoin_flows_daily_id,
-    MAX(inserted_timestamp) AS inserted_timestamp,
-    MAX(modified_timestamp) AS modified_timestamp
+    ) AS max_drawdown_pct_90d,
+    -- Rolling 90-day maximum drawdown percentage,,
+    {{ dbt_utils.generate_surrogate_key(['blockchain','block_date']) }} AS ez_tvl_metrics_daily_id
 FROM
     tvl_metrics
