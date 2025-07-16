@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: stats__ez_tvl_metrics_daily
+  - name: stats__ez_tvl_chain_metrics_daily
     description: "An daily view of total value locked by blockchain with metrics related to the to the previous day and last 90 days. This data is soruced from defillama"
     tests:
       - dbt_utils.unique_combination_of_columns:
