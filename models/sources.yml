@@ -743,6 +743,7 @@ sources:
       - name: fact_bridge_volume_by_chain
       - name: dim_protocols
       - name: fact_chain_tvl
+      - name: fact_protocol_tvl
     
   - name: external_tokenlists
     database: external
