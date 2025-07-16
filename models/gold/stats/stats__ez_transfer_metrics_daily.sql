@@ -40,8 +40,7 @@ WHERE
     block_timestamp :: DATE < SYSDATE() :: DATE
 
 {% if is_incremental() %}
-{# AND modified_timestamp >= '{{ max_mod }}' #}
-AND block_timestamp :: DATE >= '2025-07-01'
+AND modified_timestamp >= '{{ max_mod }}'
 {% else %}
     AND block_timestamp :: DATE >= '2025-01-01'
 {% endif %}
@@ -203,7 +202,7 @@ SELECT
             ELSE 0
         END
     ) AS in_unit_quality_total_transfer_volume,
-    {{ dbt_utils.generate_surrogate_key(['a.blockchain',' A.block_timestamp_hour :: DATE']) }} AS ez_transfer_metrics_daily_id,
+    {{ dbt_utils.generate_surrogate_key(['a.blockchain','A.block_timestamp_hour :: DATE']) }} AS ez_transfer_metrics_daily_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM
