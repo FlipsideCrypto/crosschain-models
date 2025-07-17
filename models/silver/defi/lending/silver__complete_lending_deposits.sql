@@ -376,8 +376,16 @@ all_chains_deposits AS (
 SELECT
     blockchain,
     platform,
-    lower(split_part(platform,' ', 1)) as protocol,
-    IFF(NULLIF(TRIM(SPLIT_PART(platform, ' ',2)), '') IS NULL, 'v1', lower(SPLIT_PART(platform,' ',2))) AS version,
+    CASE 
+        WHEN platform = 'Morpho Blue' THEN 'morpho-blue'
+        ELSE lower(split_part(platform, ' ', 1))
+    END AS protocol,
+    CASE 
+        WHEN platform = 'Morpho Blue' THEN 'v1'
+        WHEN platform = 'Aave AMM' THEN 'v2'
+        WHEN NULLIF(TRIM(SPLIT_PART(platform, ' ',2)), '') IS NULL THEN 'v1'
+        ELSE lower(SPLIT_PART(platform,' ',2))
+    END AS version,
     block_number,
     block_timestamp,
     tx_hash,
