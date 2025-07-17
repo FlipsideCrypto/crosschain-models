@@ -376,6 +376,8 @@ all_chains_withdraws AS (
 SELECT
     blockchain,
     platform,
+    lower(split_part(platform,' ', 1)) as protocol,
+    IFF(NULLIF(TRIM(SPLIT_PART(platform, ' ',2)), '') IS NULL, 'v1', lower(SPLIT_PART(platform,' ',2))) AS version,
     block_number,
     block_timestamp,
     tx_hash,
