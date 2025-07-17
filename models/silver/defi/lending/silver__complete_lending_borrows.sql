@@ -377,7 +377,7 @@ SELECT
     blockchain,
     platform,
     CASE 
-        WHEN platform = 'Morpho Blue' THEN 'morpho-blue'
+        WHEN platform = 'Morpho Blue' THEN 'morpho_blue'
         ELSE lower(split_part(platform, ' ', 1))
     END AS protocol,
     CASE 
