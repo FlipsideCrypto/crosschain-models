@@ -1,6 +1,7 @@
 -- depends_on: {{ ref('silver__transfers') }}
 -- depends_on: {{ ref('price__ez_prices_hourly') }}
 -- depends_on: {{ ref('silver__native_fee_token') }}
+-- depends_on: {{ ref('core__dim_labels') }}
 {{ config(
     materialized = 'incremental',
     incremental_strategy = 'merge',
@@ -65,6 +66,38 @@ FROM
     {% else %}
         '2099-01-01'
     {% endif %}) {% endset %}
+    --get the labels
+    {% set labels_query %}
+    CREATE
+    OR REPLACE temporary TABLE silver.ez_transfer_protocol_labels__intermediate_tmp AS
+SELECT
+    blockchain,
+    address,
+    project_name AS label
+FROM
+    {{ ref('core__dim_labels') }}
+WHERE
+    blockchain IN (
+        SELECT
+            blockchain
+        FROM
+            silver.ez_transfer_protocol_metrics__intermediate_tmp
+    )
+    AND label_type NOT IN (
+        'cex',
+        'flotsam',
+        'token',
+        'chadmin'
+    )
+    AND CONCAT(
+        label_type,
+        '-',
+        label_subtype
+    ) NOT IN (
+        'nft-general_contract',
+        'nft-nf_token_contract'
+    ) {% endset %}
+    {% do run_query(labels_query) %}
     --roll transactions up to the hour/sender level
     {% set inc_query %}
     CREATE
@@ -75,6 +108,8 @@ SELECT
     A.origin_from_address,
     A.from_address,
     A.to_address,
+    c_from.label AS from_label,
+    c_to.label AS to_label,
     SUM(
         A.amount_usd
     ) AS amount_usd
@@ -83,14 +118,27 @@ FROM
     JOIN silver.ez_transfer_protocol_metrics__intermediate_tmp b
     ON A.blockchain = b.blockchain
     AND A.block_timestamp :: DATE = b.block_date
+    LEFT JOIN silver.ez_transfer_protocol_labels__intermediate_tmp c_from
+    ON A.blockchain = c_from.blockchain
+    AND A.from_address = c_from.address
+    LEFT JOIN silver.ez_transfer_protocol_labels__intermediate_tmp c_to
+    ON A.blockchain = c_to.blockchain
+    AND A.to_address = c_to.address
 WHERE
     {{ date_filter }}
+    AND COALESCE(
+        c_from.label,
+        c_to.label
+    ) IS NOT NULL
     AND A.token_is_verified
 GROUP BY
     A.blockchain,
-    block_date,
-    from_address,
-    to_address {% endset %}
+    A.block_timestamp :: DATE,
+    A.origin_from_address,
+    A.from_address,
+    A.to_address,
+    c_from.label,
+    c_to.label {% endset %}
     {% do run_query(inc_query) %}
     --find distinct score dates
     {% set score_dates_query %}
@@ -139,58 +187,23 @@ FROM
         'datascience_onchain_scores',
         'all_scores'
     ) }} A
-    JOIN silver.ez_transfer_metrics__scores_asof_intermediate_tmp b
+    JOIN silver.ez_transfer_protocol_metrics__scores_asof_intermediate_tmp b
     ON A.blockchain = b.blockchain
     AND A.score_date = b.score_date {% endset %}
     {% do run_query(scores_query) %}
     --delete the scores temp with a score less than 4 or the additional rows from the asof join
     {% set scores_del_query %}
 DELETE FROM
-    silver.ez_transfer_metrics__scores_intermediate_tmp
+    silver.ez_transfer_protocol_metrics__scores_intermediate_tmp
 WHERE
     total_score < 4 {% endset %}
     {% do run_query(scores_del_query) %}
-    --get the cex labels
-    {% set labels_query %}
-    CREATE
-    OR REPLACE temporary TABLE silver.ez_transfer_protocol_labels__intermediate_tmp AS
-SELECT
-    blockchain,
-    address,
-    label_type,
-    label_subtype
-FROM
-    {{ ref('core__dim_labels') }}
-WHERE
-    blockchain IN (
-        SELECT
-            blockchain
-        FROM
-            silver.ez_transfer_protocol_metrics__intermediate_tmp
-    )
-    AND label_type NOT IN (
-        'cex',
-        'flotsam',
-        'token',
-        'chadmin'
-    )
-    AND CONCAT(
-        label_type,
-        '-',
-        label_subtype
-    ) NOT IN (
-        'nft-general_contract',
-        'nft-nf_token_contract'
-    ) {% endset %}
-    {% do run_query(labels_query) %}
 {% endif %}
 
 WITH ob AS (
     SELECT
         block_date,
-        LOWER(
-            b_from.label
-        ) AS label,
+        from_label AS label,
         SUM(amount_usd) AS amount_usd,
         SUM(
             CASE
@@ -200,34 +213,34 @@ WITH ob AS (
         ) AS quality_amount_usd,
         SUM(
             CASE
-                WHEN b_from.label = b_to.label THEN amount_usd
+                WHEN from_label = to_label THEN amount_usd
                 ELSE 0
             END
-        ) AS internal_amount_usd
+        ) AS internal_amount_usd,
+        SUM(
+            CASE
+                WHEN
+                WHEN C.blockchain IS NOT NULL
+                AND from_label = to_label THEN amount_usd
+                ELSE 0
+            END
+        ) AS quality_internal_amount_usd
     FROM
         silver.ez_transfer_protocol_metrics__xfer_intermediate_tmp A
-        LEFT JOIN silver.ez_transfer_protocol_labels__intermediate_tmp b_from
-        ON A.from_address = b_from.address
-        LEFT JOIN silver.ez_transfer_protocol_labels__intermediate_tmp b_to
-        ON A.from_address = b_to.address
         LEFT JOIN silver.ez_transfer_protocol_metrics__scores_intermediate_tmp C
         ON A.blockchain = C.blockchain
         AND A.origin_from_address = C.user_address
         AND A.block_date = C.block_date
     WHERE
-        b_from.label <> 'EOA_or_other'
+        from_label IS NOT NULL
     GROUP BY
         block_date,
-        LOWER(
-            b_from.label
-        )
+        from_label
 ),
 ib AS (
     SELECT
         block_date,
-        LOWER(
-            b_to.label
-        ) AS label,
+        to_label AS label,
         SUM(amount_usd) AS amount_usd,
         SUM(
             CASE
@@ -237,10 +250,18 @@ ib AS (
         ) AS quality_amount_usd,
         SUM(
             CASE
-                WHEN b_from.label = b_to.label THEN amount_usd
+                WHEN from_label = to_label THEN amount_usd
                 ELSE 0
             END
-        ) AS internal_amount_usd
+        ) AS internal_amount_usd,
+        SUM(
+            CASE
+                WHEN
+                WHEN C.blockchain IS NOT NULL
+                AND from_label = to_label THEN amount_usd
+                ELSE 0
+            END
+        ) AS quality_internal_amount_usd
     FROM
         silver.ez_transfer_protocol_metrics__xfer_intermediate_tmp A
         LEFT JOIN silver.ez_transfer_protocol_labels__intermediate_tmp b_from
@@ -252,12 +273,10 @@ ib AS (
         AND A.origin_from_address = C.user_address
         AND A.block_date = C.block_date
     WHERE
-        b_to.label <> 'EOA_or_other'
+        to_label IS NOT NULL
     GROUP BY
         block_date,
-        LOWER(
-            b_to.label
-        )
+        to_label
 )
 SELECT
     blockchain,
@@ -272,6 +291,27 @@ SELECT
         0
     ) AS outflow_usd,
     inflow_usd - outflow_usd AS net_usd_inflow,
+    SUM(
+        CASE
+            WHEN internal_amount_usd IS NOT NULL THEN internal_amount_usd
+            ELSE inflow_usd + outflow_usd
+        END
+    ) AS gross_usd_volume,
+    COALESCE(
+        ib.quality_amount_usd,
+        0
+    ) AS quality_inflow_usd,
+    COALESCE(
+        ob.quality_amount_usd,
+        0
+    ) AS quality_outflow_usd,
+    quality_inflow_usd - quality_outflow_usd AS quality_net_usd_inflow,
+    SUM(
+        CASE
+            WHEN quality_internal_amount_usd IS NOT NULL THEN quality_internal_amount_usd
+            ELSE quality_inflow_usd + quality_outflow_usd
+        END
+    ) AS quality_gross_usd_volume,
     {{ dbt_utils.generate_surrogate_key(['blockchain',' block_date','protocol']) }} AS ez_transfer_protocol_metrics_daily_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
