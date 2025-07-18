@@ -219,7 +219,6 @@ WITH ob AS (
         ) AS internal_amount_usd,
         SUM(
             CASE
-                WHEN
                 WHEN C.blockchain IS NOT NULL
                 AND from_label = to_label THEN amount_usd
                 ELSE 0
@@ -256,7 +255,6 @@ ib AS (
         ) AS internal_amount_usd,
         SUM(
             CASE
-                WHEN
                 WHEN C.blockchain IS NOT NULL
                 AND from_label = to_label THEN amount_usd
                 ELSE 0
