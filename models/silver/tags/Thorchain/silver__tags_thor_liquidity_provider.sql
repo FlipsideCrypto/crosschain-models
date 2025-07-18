@@ -154,3 +154,9 @@ SELECT
     '{{ invocation_id }}' AS _invocation_id
 FROM
     final_table A
+QUALIFY(
+    ROW_NUMBER() over (
+        PARTITION BY address 
+        ORDER BY block_id DESC
+    ) = 1
+)
