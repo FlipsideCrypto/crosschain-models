@@ -9,6 +9,8 @@
 SELECT
     blockchain,
     platform,
+    protocol,
+    version,
     block_number,
     block_timestamp,
     tx_hash,

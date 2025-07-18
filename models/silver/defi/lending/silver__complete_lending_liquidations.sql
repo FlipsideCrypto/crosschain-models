@@ -403,6 +403,18 @@ all_chains_liquidations AS (
 SELECT
     blockchain,
     platform,
+    CASE 
+        WHEN platform = 'Morpho Blue' THEN 'morpho_blue'
+        WHEN platform = 'Joe Lend' THEN 'joe_lend'
+        ELSE lower(split_part(platform, ' ', 1))
+    END AS protocol,
+    CASE 
+        WHEN platform = 'Morpho Blue' THEN 'v1'
+        WHEN platform = 'Joe Lend' THEN 'v1'
+        WHEN platform = 'Aave AMM' THEN 'v2'
+        WHEN NULLIF(TRIM(SPLIT_PART(platform, ' ',2)), '') IS NULL THEN 'v1'
+        ELSE lower(SPLIT_PART(platform,' ',2))
+    END AS version,
     block_number,
     block_timestamp,
     tx_hash,

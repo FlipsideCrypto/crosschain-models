@@ -1,0 +1,107 @@
+version: 2
+models:
+  - name: chain_stats__ez_ethereum_metrics_daily
+    description: 'Daily aggregated metrics for Ethereum blockchain including transaction activity, fees, DEX volumes, bridge flows, CEX flows, and TVL data. All metrics are calculated at the daily level (YYYY-MM-DD format) and include both total activity and quality user activity (Flipside score >= 4).'
+    
+    columns:
+      - name: day_
+        description: 'The date in YYYY-MM-DD format - all stats are aggregated at the daily level'
+        
+      - name: active_users_count
+        description: 'Number of origin_from_address (Externally Owned Accounts EOAs) that submitted a transaction'
+        
+      - name: active_quality_users_count
+        description: 'Number of EOAs with a Flipside score of 4 or higher that submitted a transaction'
+        
+      - name: transaction_count
+        description: 'Number of transactions submitted by any origin_from_address (EOA)'
+        
+      - name: quality_transaction_count
+        description: 'Number of transactions submitted by EOAs with a Flipside score of 4 or higher'
+        
+      - name: total_fees
+        description: 'Total transaction fees paid, denominated in Ether (ETH)'
+        
+      - name: total_fees_usd
+        description: 'USD denominated total transaction fees paid (converting ETH to USD via ETH price)'
+        
+      - name: quality_total_fees
+        description: 'Total transaction fees paid by EOAs with a Flipside score of 4 or higher, denominated in Ether (ETH)'
+        
+      - name: quality_total_fees_usd
+        description: 'USD denominated total transaction fees paid by EOAs with a Flipside score of 4 or higher (converting ETH to USD via ETH price)'
+        
+      - name: stablecoin_transfer_volume_usd
+        description: 'Value of all stablecoin transfers for any reason (USD)'
+        
+      - name: in_unit_total_transfer_volume
+        description: 'Value of all token transfers of any token for any reason, denominated in ETH to reduce price effects (token price changes can be different than fundamental activity changes)'
+        
+      - name: total_transfer_volume_usd
+        description: 'Value of all token transfers for any reason (direct, swap, liquidity deposit, staking, etc.), denominated in USD accepting price effects'
+        
+      - name: in_unit_quality_total_transfer_volume
+        description: 'Value of all token transfers FROM EOAs with a Flipside score of 4 or higher for any reason, denominated in ETH'
+        
+      - name: quality_total_transfer_volume_usd
+        description: 'Value of all token transfers FROM EOAs with a Flipside score of 4 or higher for any reason, denominated in USD'
+        
+      - name: cex_withdrawal_volume_usd
+        description: 'Value of central exchange token withdrawals (USD)'
+        
+      - name: cex_withdrawal_tx_count
+        description: 'Number of central exchange token withdrawal transactions'
+        
+      - name: cex_unique_withdrawing_addresses
+        description: 'Number of unique addresses that withdrew from a central exchange'
+        
+      - name: cex_deposit_volume_usd
+        description: 'Value of central exchange token deposits (USD)'
+        
+      - name: cex_deposit_tx_count
+        description: 'Number of central exchange token deposit transactions'
+        
+      - name: cex_unique_depositing_addresses
+        description: 'Number of unique addresses that deposited to a central exchange'
+        
+      - name: cex_net_flow_usd
+        description: 'Net CEX flow (withdrawal_volume_usd - deposit_volume_usd). Note that if activity and price are correlated, this value can be negative even if more tokens are withdrawn than deposited'
+        
+      - name: chain_gross_dex_volume_usd
+        description: 'USD value of token sell volume on Decentralized Exchanges (DEXs) protocols'
+        
+      - name: chain_swap_count
+        description: 'Number of swap transactions on Decentralized Exchanges (DEXs) protocols'
+        
+      - name: chain_swapper_count
+        description: 'Number of unique EOAs that have submitted a swap transaction on Decentralized Exchanges (DEXs) protocols'
+        
+      - name: tvl_usd
+        description: 'Total Value Locked - USD value of tokens locked in smart contracts. INCLUDES borrowed tokens, liquid staking, and staking'
+        
+      - name: in_unit_tvl
+        description: 'Total Value Locked in ETH denominated terms to reduce price effects'
+        
+      - name: bridge_inbound_volume_usd
+        description: 'Value of bridge inflows onto Ethereum, denominated in USD'
+        
+      - name: bridge_inbound_addresses
+        description: 'Number of unique addresses receiving a bridge inflow'
+        
+      - name: bridge_inbound_tx_count
+        description: 'Number of bridge inflow transactions'
+        
+      - name: bridge_outbound_volume_usd
+        description: 'Value of bridge outflows from Ethereum, denominated in USD'
+        
+      - name: bridge_outbound_addresses
+        description: 'Number of unique addresses sending a bridge outflow'
+        
+      - name: bridge_outbound_tx_count
+        description: 'Number of bridge outflow transactions'
+        
+      - name: bridge_gross_volume_usd
+        description: 'Value of bridge outflows from Ethereum, denominated in USD'
+        
+      - name: bridge_net_inbound_usd
+        description: 'Value of bridge inflows minus outflows, denominated in USD. Note that if activity and price are correlated, this value can be negative even if more tokens are brought onto chain than off'
