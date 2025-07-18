@@ -1,0 +1,14 @@
+version: 2
+models:
+  - name: chain_stats__ez_ethereum_allowlist
+    description: 'Verified tokens for Ethereum blockchain. Appended with a tracks asset column that inidicates ETH, BTC, USD, or is an alt coin'
+    
+    columns:
+      - name: blockchain
+        description: 'The name of the blockchain (e.g., Ethereum, Ethereum, etc.)'
+        
+      - name: symbol
+        description: 'The symbol of the token (e.g., ETH, BTC, USDC, etc.)'
+        
+      - name: tracks_asset
+        description: 'the asset that the token tracks, which can be ETH, BTC, USD, or an alt token. This is used to indicate the primary asset that the token is associated with'
