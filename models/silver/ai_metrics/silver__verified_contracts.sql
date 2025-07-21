@@ -1,6 +1,6 @@
 {{ config (
     materialized = "table",
-    tags = ['ai_metrics'],
+    tags = ['daily'],
     cluster_by = ["blockchain"],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(contract_address)"
 ) }}
