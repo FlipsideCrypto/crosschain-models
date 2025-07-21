@@ -976,6 +976,12 @@ sources:
       - name: ez_token_transfers
       - name: dim_contracts
 
+  - name: mantle_defi
+    database: mantle
+    schema: defi
+    tables:
+      - name: ez_bridge_activity
+
   - name: mantle_silver
     database: mantle
     schema: silver

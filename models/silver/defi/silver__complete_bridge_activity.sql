@@ -12,6 +12,8 @@ WITH ethereum AS (
     SELECT
         'ethereum' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -50,6 +52,8 @@ optimism AS (
     SELECT
         'optimism' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -88,6 +92,8 @@ core AS (
     SELECT
         'core' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -126,6 +132,8 @@ avalanche AS (
     SELECT
         'avalanche' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -164,6 +172,8 @@ polygon AS (
     SELECT
         'polygon' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -202,6 +212,8 @@ bsc AS (
     SELECT
         'bsc' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -240,6 +252,8 @@ arbitrum AS (
     SELECT
         'arbitrum' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -278,6 +292,8 @@ base AS (
     SELECT
         'base' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -316,6 +332,8 @@ gnosis AS (
     SELECT
         'gnosis' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -354,6 +372,8 @@ ink AS (
     SELECT
         'ink' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -388,10 +408,52 @@ WHERE
     )
 {% endif %}
 ),
+mantle AS (
+    SELECT
+        'mantle' AS blockchain,
+        platform,
+        protocol,
+        protocol_version,
+        block_number,
+        block_timestamp,
+        tx_hash,
+        blockchain AS source_chain,
+        destination_chain,
+        bridge_address,
+        sender AS source_address,
+        destination_chain_receiver AS destination_address,
+        'outbound' AS direction,
+        token_address,
+        token_symbol,
+        amount_unadj AS amount_raw,
+        amount,
+        amount_usd,
+        token_is_verified,
+        modified_timestamp AS _inserted_timestamp,
+        {{ dbt_utils.generate_surrogate_key(['ez_bridge_activity_id','blockchain']) }} AS complete_bridge_activity_id,
+        {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
+    FROM
+        {{ source(
+            'mantle_defi',
+            'ez_bridge_activity'
+        ) }}
+
+{% if is_incremental() and 'mantle' not in var('HEAL_MODELS') %}
+WHERE
+    _inserted_timestamp >= (
+        SELECT
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
+        FROM
+            {{ this }}
+    )
+{% endif %}
+),
 solana AS (
     SELECT
         'solana' AS blockchain,
         platform,
+        NULL AS protocol,
+        NULL AS protocol_version,
         block_id AS block_number,
         block_timestamp,
         tx_id AS tx_hash,
@@ -430,6 +492,8 @@ aptos AS (
     SELECT
         'aptos' AS blockchain,
         platform,
+        NULL AS protocol,
+        NULL AS protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -468,6 +532,8 @@ near AS (
     SELECT
         'near' AS blockchain,
         platform,
+        NULL AS protocol,
+        NULL AS protocol_version,
         block_id AS block_number,
         block_timestamp,
         tx_hash,
@@ -556,6 +622,11 @@ all_chains_bridge AS (
     SELECT
         *
     FROM
+        mantle
+    UNION ALL
+    SELECT
+        *
+    FROM
         solana
     UNION ALL
     SELECT
@@ -571,6 +642,8 @@ all_chains_bridge AS (
 SELECT
     b.blockchain,
     b.platform,
+    b.protocol,
+    b.protocol_version,
     b.block_number,
     b.block_timestamp,
     b.tx_hash,
