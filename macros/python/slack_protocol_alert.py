@@ -4,6 +4,7 @@ import sys
 import requests
 import re
 import os
+import subprocess
 
 def create_protocol_checklist(protocols_by_chain):
     if not protocols_by_chain:
@@ -27,15 +28,18 @@ def send_slack_message(webhook_url, message):
     response = requests.post(webhook_url, json=payload)
     return response.status_code == 200
 
-def parse_dbt_output(output_file):
-    """Parse the dbt operation output which contains agate.Row format"""
+def get_protocol_data():
+    """Get protocol data by running the query directly"""
     try:
-        with open(output_file, 'r') as f:
-            content = f.read()
+        # Run dbt to execute the query
+        result = subprocess.run([
+            'dbt', 'run-operation', 'run_custom_query', 
+            '--args', '{query: "SELECT modified_timestamp :: DATE AS DATE, blockchain, platform_name AS protocol, defillama_volume_percent FROM silver_metrics__bridge_comparison WHERE defillama_volume_percent > 9.99 qualify RANK() over (ORDER BY modified_timestamp :: DATE DESC) = 1"}'
+        ], capture_output=True, text=True)
         
-        # Extract the agate.Row lines
+        # Parse the output
         data = []
-        for line in content.split('\n'):
+        for line in result.stdout.split('\n'):
             if 'Row: <agate.Row:' in line:
                 # Extract the data from the agate.Row format
                 match = re.search(r'Row: <agate\.Row: \(([^)]+)\)>', line)
@@ -59,26 +63,21 @@ def parse_dbt_output(output_file):
         
         return data
     except Exception as e:
-        print(f"Error parsing dbt output: {e}")
+        print(f"Error getting protocol data: {e}")
         return []
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python slack_protocol_alert.py <protocols_file>")
-        sys.exit(1)
-    
-    protocols_file = sys.argv[1]
     webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
     
     if not webhook_url:
         print("ERROR: SLACK_WEBHOOK_URL environment variable is required")
         sys.exit(1)
     
-    # Parse the dbt output
-    data = parse_dbt_output(protocols_file)
+    # Get data from the query
+    data = get_protocol_data()
     
     if not data:
-        print("No data found or error parsing file")
+        print("No data found or error parsing query results")
         return
     
     # Group by blockchain
