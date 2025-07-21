@@ -907,6 +907,28 @@ qualify ROW_NUMBER() over (
         update_time_onchain DESC,
         update_time_metadata DESC
 ) = 1
+UNION ALL
+SELECT
+    coin_type AS address,
+    symbol,
+    NAME,
+    decimals,
+    NULL AS created_block_number,
+    NULL AS created_block_timestamp,
+    NULL AS created_tx_hash,
+    NULL AS creator_address,
+    'sui' AS blockchain
+FROM
+    {{ source(
+        'sui_core',
+        'dim_tokens'
+    ) }}
+WHERE
+    decimals IS NOT NULL
+
+{% if is_incremental() %}
+AND modified_timestamp :: DATE >= '{{ max_mod }}'
+{% endif %}
 )
 SELECT
     address,
@@ -924,4 +946,5 @@ SELECT
     '{{ invocation_id }}' AS _invocation_id
 FROM
     base
-    where address is not null
+WHERE
+    address IS NOT NULL
