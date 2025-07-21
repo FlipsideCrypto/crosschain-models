@@ -2,6 +2,7 @@
 -- depends_on: {{ ref('price__ez_prices_hourly') }}
 -- depends_on: {{ ref('silver__native_fee_token') }}
 -- depends_on: {{ ref('core__dim_labels') }}
+-- depends_on: {{ ref('silver__verified_contracts') }}
 {{ config(
     materialized = 'incremental',
     incremental_strategy = 'merge',
@@ -39,14 +40,13 @@ FROM
     {{ ref('silver__transfers') }}
 WHERE
     block_timestamp :: DATE < SYSDATE() :: DATE
+    AND block_timestamp :: DATE >= '2025-01-01'
 
 {% if is_incremental() %}
-{# AND modified_timestamp >= '{{ max_mod }}' #}
-AND block_timestamp :: DATE >= '2025-01-01'
-AND block_timestamp :: DATE <= '2025-01-01'
+AND modified_timestamp >= '{{ max_mod }}'
 {% else %}
     AND block_timestamp :: DATE >= '2025-01-01'
-    AND block_timestamp :: DATE <= '2025-01-01'
+    AND block_timestamp :: DATE <= '2025-01-03'
 {% endif %}
 
 {% endset %}
@@ -89,7 +89,7 @@ FROM
             blockchain,
             address,
             project_name AS label,
-            2 A priority
+            2 AS priority
         FROM
             {{ ref('core__dim_labels') }}
         WHERE
