@@ -6,7 +6,7 @@
     materialized = 'incremental',
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
-    unique_key = ['blockchain','block_date'],
+    unique_key = ['blockchain','block_date','protocol'],
     cluster_by = ['blockchain','block_date'],
     tags = ['metrics_daily']
 ) }}
@@ -42,10 +42,11 @@ WHERE
 
 {% if is_incremental() %}
 {# AND modified_timestamp >= '{{ max_mod }}' #}
-AND block_timestamp :: DATE >= '2025-07-01'
+AND block_timestamp :: DATE >= '2025-01-01'
+AND block_timestamp :: DATE <= '2025-01-01'
 {% else %}
     AND block_timestamp :: DATE >= '2025-01-01'
-    AND block_timestamp :: DATE >= '2025-01-03'
+    AND block_timestamp :: DATE <= '2025-01-01'
 {% endif %}
 
 {% endset %}
@@ -202,7 +203,8 @@ WHERE
 
 WITH ob AS (
     SELECT
-        block_date,
+        A.block_date,
+        A.blockchain,
         from_label AS label,
         SUM(amount_usd) AS amount_usd,
         SUM(
@@ -233,12 +235,14 @@ WITH ob AS (
     WHERE
         from_label IS NOT NULL
     GROUP BY
-        block_date,
+        A.block_date,
+        A.blockchain,
         from_label
 ),
 ib AS (
     SELECT
-        block_date,
+        A.block_date,
+        A.blockchain,
         to_label AS label,
         SUM(amount_usd) AS amount_usd,
         SUM(
@@ -273,7 +277,8 @@ ib AS (
     WHERE
         to_label IS NOT NULL
     GROUP BY
-        block_date,
+        A.block_date,
+        A.blockchain,
         to_label
 )
 SELECT
@@ -289,11 +294,12 @@ SELECT
         0
     ) AS outflow_usd,
     inflow_usd - outflow_usd AS net_usd_inflow,
-    SUM(
+    COALESCE(
         CASE
             WHEN internal_amount_usd IS NOT NULL THEN internal_amount_usd
             ELSE inflow_usd + outflow_usd
-        END
+        END,
+        0
     ) AS gross_usd_volume,
     COALESCE(
         ib.quality_amount_usd,
@@ -304,18 +310,16 @@ SELECT
         0
     ) AS quality_outflow_usd,
     quality_inflow_usd - quality_outflow_usd AS quality_net_usd_inflow,
-    SUM(
-        CASE
-            WHEN quality_internal_amount_usd IS NOT NULL THEN quality_internal_amount_usd
-            ELSE quality_inflow_usd + quality_outflow_usd
-        END
-    ) AS quality_gross_usd_volume,
+    CASE
+        WHEN quality_internal_amount_usd IS NOT NULL THEN quality_internal_amount_usd
+        ELSE quality_inflow_usd + quality_outflow_usd
+    END AS quality_gross_usd_volume,
     {{ dbt_utils.generate_surrogate_key(['blockchain',' block_date','protocol']) }} AS ez_transfer_protocol_metrics_daily_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM
-    ob A full
-    OUTER JOIN ib b USING(
+    ob full
+    OUTER JOIN ib USING(
         blockchain,
         block_date,
         label
