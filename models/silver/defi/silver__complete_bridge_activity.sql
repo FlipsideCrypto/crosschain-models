@@ -412,7 +412,7 @@ solana AS (
     SELECT
         'solana' AS blockchain,
         platform,
-        NULL AS protocol,
+        platform AS protocol,
         NULL AS protocol_version,
         block_id AS block_number,
         block_timestamp,
@@ -452,7 +452,7 @@ aptos AS (
     SELECT
         'aptos' AS blockchain,
         platform,
-        NULL AS protocol,
+        platform AS protocol,
         NULL AS protocol_version,
         block_number,
         block_timestamp,
@@ -492,7 +492,7 @@ near AS (
     SELECT
         'near' AS blockchain,
         platform,
-        NULL AS protocol,
+        platform AS protocol,
         NULL AS protocol_version,
         block_id AS block_number,
         block_timestamp,
