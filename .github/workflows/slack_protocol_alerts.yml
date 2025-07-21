@@ -37,6 +37,6 @@ jobs:
           
       - name: Send protocol alert
         run: |
-          python scripts/slack_protocol_alert.py
+          python macros/python/slack_protocol_alert.py
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
