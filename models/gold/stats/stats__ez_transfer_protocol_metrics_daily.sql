@@ -74,30 +74,51 @@ FROM
 SELECT
     blockchain,
     address,
-    project_name AS label
+    label
 FROM
-    {{ ref('core__dim_labels') }}
-WHERE
-    blockchain IN (
+    (
         SELECT
-            blockchain
+            blockchain,
+            contract_address address,
+            platform AS label,
+            1 AS priority
         FROM
-            silver.ez_transfer_protocol_metrics__intermediate_tmp
-    )
-    AND label_type NOT IN (
-        'cex',
-        'flotsam',
-        'token',
-        'chadmin'
-    )
-    AND CONCAT(
-        label_type,
-        '-',
-        label_subtype
-    ) NOT IN (
-        'nft-general_contract',
-        'nft-nf_token_contract'
-    ) {% endset %}
+            {{ ref('silver__verified_contracts') }}
+        UNION ALL
+        SELECT
+            blockchain,
+            address,
+            project_name AS label,
+            2 A priority
+        FROM
+            {{ ref('core__dim_labels') }}
+        WHERE
+            blockchain IN (
+                SELECT
+                    blockchain
+                FROM
+                    silver.ez_transfer_protocol_metrics__intermediate_tmp
+            )
+            AND label_type NOT IN (
+                'cex',
+                'flotsam',
+                'token',
+                'chadmin'
+            )
+            AND CONCAT(
+                label_type,
+                '-',
+                label_subtype
+            ) NOT IN (
+                'nft-general_contract',
+                'nft-nf_token_contract'
+            )
+    ) qualify ROW_NUMBER() over (
+        PARTITION BY blockchain,
+        address
+        ORDER BY
+            priority ASC
+    ) = 1 {% endset %}
     {% do run_query(labels_query) %}
     --roll transactions up to the hour/sender level
     {% set inc_query %}
