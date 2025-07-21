@@ -1,0 +1,34 @@
+name: Slack Protocol Alert
+on:
+  workflow_call:
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: true
+
+jobs:
+  notify-protocols:
+    runs-on: ubuntu-latest
+    environment: workflow_prod
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          
+      - name: Install dependencies
+        run: |
+          pip install requests
+          pip install dbt-core dbt-snowflake
+          
+      - name: Extract failed protocols
+        run: |
+          dbt run-operation get_high_volume_protocols > failed_protocols.json
+          
+      - name: Send protocol alert
+        run: |
+          python macros/python/slack_protocol_alert.py failed_protocols.json
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -1,0 +1,13 @@
+[0m07:27:42  Running with dbt=1.7.6
+[0m07:27:43  Registered adapter: snowflake=1.7.0
+[0m07:27:44  Found 393 models, 1359 tests, 24 seeds, 5 operations, 5 analyses, 529 sources, 0 exposures, 0 metrics, 1043 macros, 0 groups, 0 semantic models
+[0m07:27:46  Query executed successfully
+[0m07:27:46  Number of rows returned: 8
+[0m07:27:46  Row: <agate.Row: (datetime.date(2025, 7, 7), 'polygon', 'circle', Decimal('15.68'))>
+[0m07:27:46  Row: <agate.Row: (datetime.date(2025, 7, 7), 'solana', 'layerzero', Decimal('15.26'))>
+[0m07:27:46  Row: <agate.Row: (datetime.date(2025, 7, 7), 'arbitrum', 'circle', Decimal('11.41'))>
+[0m07:27:46  Row: <agate.Row: (datetime.date(2025, 7, 7), 'arbitrum', 'hyperliquid', Decimal('40.72'))>
+[0m07:27:46  Row: <agate.Row: (datetime.date(2025, 7, 7), 'base', 'base', Decimal('12.03'))>
+[0m07:27:46  Row: <agate.Row: (datetime.date(2025, 7, 7), 'ethereum', 'usdt0', Decimal('11.82'))>
+[0m07:27:46  Row: <agate.Row: (datetime.date(2025, 7, 7), 'optimism', 'circle', Decimal('26.78'))>
+[0m07:27:46  Row: <agate.Row: (datetime.date(2025, 7, 7), 'polygon', 'polygon', Decimal('74.38'))>

@@ -47,6 +47,13 @@ jobs:
         run: |
           dbt test -m "crosschain_models,tag:ai_metrics"
 
+  notify-protocols:
+  needs: [run_dbt_jobs]
+  if: always()  
+  uses: ./.github/workflows/slack_protocol_alert.yml
+  secrets:
+    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
   notify-failure:
     needs: [run_dbt_jobs]
     if: failure()
