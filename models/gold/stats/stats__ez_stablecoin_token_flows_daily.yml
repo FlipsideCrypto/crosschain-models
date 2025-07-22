@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: stats__ez_stablecoin_token_flows_daily
-    description: "An aggregated daily view of stablecoin flows metrics, including transfer volume grouped by blockchain and token_address"
+    description: "An aggregated daily view of stablecoin flows metrics, including transfer volume grouped by blockchain and token_address. This model only accounts of net transfer volume per token address, per address, per transaction then rolls up to the daily level."
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
