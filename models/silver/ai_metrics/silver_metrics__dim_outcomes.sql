@@ -3,7 +3,7 @@
     unique_key = ['outcome_id'],
     merge_exclude_columns = ['inserted_timestamp'],
     cluster_by = ['modified_timestamp::DATE'],
-    tags = ['daily']
+    tags = ['daily','dex']
 ) }}
 
 WITH base AS (
@@ -51,7 +51,7 @@ WITH base AS (
         'bridge' AS action,
         MAX(block_timestamp) AS last_action_timestamp
     FROM
-        {{ ref('defi__fact_bridge_activity') }}
+        {{ ref('defi__ez_bridge_activity') }}
     {% if is_incremental() %}
     WHERE block_timestamp > (
         SELECT MAX(last_action_timestamp)

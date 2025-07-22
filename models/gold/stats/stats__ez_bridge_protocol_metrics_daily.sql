@@ -5,7 +5,7 @@
     merge_exclude_columns = ["inserted_timestamp"],
     unique_key = ['blockchain','block_date','protocol'],
     cluster_by = ['blockchain','block_date','protocol'],
-    tags = ['metrics_daily']
+    tags = ['metrics_daily','bridge']
 ) }}
 
 {% if execute %}

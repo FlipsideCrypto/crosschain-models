@@ -3,7 +3,8 @@
     persist_docs ={ "relation": true,
     "columns": true },
     meta ={ 'database_tags':{ 'table':{ 'PURPOSE': 'DEX, LIQUIDITY, POOLS, LP, SWAPS',
-    } } }   
+    } } },
+    tags = ['dex']
 ) }}
 
 WITH base AS (

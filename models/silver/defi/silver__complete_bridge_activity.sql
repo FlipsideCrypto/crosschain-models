@@ -4,7 +4,7 @@
     unique_key = ['_unique_key'],
     cluster_by = ['block_timestamp::DATE','blockchain','platform'],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_hash, bridge_address, source_address, destination_address, source_chain, destination_chain, token_address, token_symbol), SUBSTRING(bridge_address, source_address, destination_address, source_chain, destination_chain, token_address, token_symbol)",
-    tags = ['hourly']
+    tags = ['hourly','bridge']
 ) }}
 
 WITH ethereum AS (
