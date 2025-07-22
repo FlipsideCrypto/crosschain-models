@@ -533,7 +533,7 @@ WITH base AS (
     SELECT
         token_address AS address,
         LOWER(symbol) AS symbol,
-        token_name AS NAME,
+        NAME,
         decimals,
         NULL AS created_block_number,
         NULL AS created_block_timestamp,
@@ -551,9 +551,10 @@ WITH base AS (
         {{ dbt_utils.generate_surrogate_key(['blockchain','address']) }} AS dim_contracts_id
     FROM
         {{ source(
-            'solana_core',
-            'dim_tokens'
+            'solana_silver',
+            'solscan_token'
         ) }}
+        where decimals is not null
     UNION ALL
     SELECT
         token_address AS address,

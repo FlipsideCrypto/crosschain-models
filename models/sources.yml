@@ -1282,7 +1282,6 @@ sources:
     tables:
       - name: fact_transactions
       - name: fact_transfers
-      - name: dim_tokens
       - name: ez_transfers
 
   - name: solana_defi
