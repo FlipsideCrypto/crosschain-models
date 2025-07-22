@@ -5,7 +5,7 @@
     merge_exclude_columns = ["inserted_timestamp"],
     unique_key = ['blockchain','block_date','protocol'],
     cluster_by = ['blockchain','block_date','protocol'],
-    tags = ['metrics_daily']
+    tags = ['metrics_daily','dex']
 ) }}
 
 {% if execute %}
@@ -66,7 +66,7 @@ FROM
 WITH swaps AS (
     SELECT
         A.blockchain,
-        A.platform AS protocol,
+        A.protocol AS protocol,
         A.block_timestamp :: DATE AS block_date,
         COUNT(1) AS swap_count,
         COUNT(

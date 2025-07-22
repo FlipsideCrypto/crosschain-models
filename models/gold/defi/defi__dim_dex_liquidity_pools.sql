@@ -3,7 +3,8 @@
     persist_docs ={ "relation": true,
     "columns": true },
     meta ={ 'database_tags':{ 'table':{ 'PURPOSE': 'DEX, LIQUIDITY, POOLS, LP, SWAPS',
-    } } }   
+    } } },
+    tags = ['dex']
 ) }}
 
 WITH base AS (
@@ -11,6 +12,8 @@ WITH base AS (
     SELECT
         'ethereum' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -38,6 +41,8 @@ WITH base AS (
     SELECT
         'optimism' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -65,6 +70,8 @@ WITH base AS (
     SELECT
         'avalanche' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -92,6 +99,8 @@ WITH base AS (
     SELECT
         'polygon' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -119,6 +128,8 @@ WITH base AS (
     SELECT
         'bsc' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -146,6 +157,8 @@ WITH base AS (
     SELECT
         'arbitrum' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -173,6 +186,8 @@ WITH base AS (
     SELECT
         'base' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -200,6 +215,8 @@ WITH base AS (
     SELECT
         'blast' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -221,6 +238,8 @@ WITH base AS (
     SELECT
         'gnosis' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -248,6 +267,8 @@ WITH base AS (
 SELECT
     blockchain,
     platform,
+    protocol,
+    protocol_version,
     block_number AS creation_block,
     block_timestamp AS creation_time,
     tx_hash AS creation_tx,

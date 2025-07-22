@@ -4,7 +4,7 @@
     unique_key = ['_unique_key'],
     cluster_by = ['block_timestamp::DATE','blockchain','platform'],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_hash, bridge_address, source_address, destination_address, source_chain, destination_chain, token_address, token_symbol), SUBSTRING(bridge_address, source_address, destination_address, source_chain, destination_chain, token_address, token_symbol)",
-    tags = ['hourly']
+    tags = ['hourly','bridge']
 ) }}
 
 WITH ethereum AS (
@@ -12,6 +12,8 @@ WITH ethereum AS (
     SELECT
         'ethereum' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -50,6 +52,8 @@ optimism AS (
     SELECT
         'optimism' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -88,6 +92,8 @@ core AS (
     SELECT
         'core' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -126,6 +132,8 @@ avalanche AS (
     SELECT
         'avalanche' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -164,6 +172,8 @@ polygon AS (
     SELECT
         'polygon' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -202,6 +212,8 @@ bsc AS (
     SELECT
         'bsc' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -240,6 +252,8 @@ arbitrum AS (
     SELECT
         'arbitrum' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -278,6 +292,8 @@ base AS (
     SELECT
         'base' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -316,6 +332,8 @@ gnosis AS (
     SELECT
         'gnosis' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -354,6 +372,8 @@ ink AS (
     SELECT
         'ink' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -392,6 +412,8 @@ solana AS (
     SELECT
         'solana' AS blockchain,
         platform,
+        platform AS protocol,
+        NULL AS protocol_version,
         block_id AS block_number,
         block_timestamp,
         tx_id AS tx_hash,
@@ -430,6 +452,8 @@ aptos AS (
     SELECT
         'aptos' AS blockchain,
         platform,
+        platform AS protocol,
+        NULL AS protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -468,6 +492,8 @@ near AS (
     SELECT
         'near' AS blockchain,
         platform,
+        platform AS protocol,
+        NULL AS protocol_version,
         block_id AS block_number,
         block_timestamp,
         tx_hash,
@@ -571,6 +597,8 @@ all_chains_bridge AS (
 SELECT
     b.blockchain,
     b.platform,
+    b.protocol,
+    b.protocol_version,
     b.block_number,
     b.block_timestamp,
     b.tx_hash,

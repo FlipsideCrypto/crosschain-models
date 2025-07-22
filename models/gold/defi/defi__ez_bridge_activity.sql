@@ -3,12 +3,15 @@
     persist_docs ={ "relation": true,
     "columns": true },
     meta ={ 'database_tags':{ 'table':{ 'PURPOSE': 'BRIDGE',
-    } } }
+    } } },
+    tags = ['bridge']
 ) }}
 
 SELECT
     blockchain,
     platform,
+    protocol,
+    protocol_version,
     block_number,
     block_timestamp,
     tx_hash,

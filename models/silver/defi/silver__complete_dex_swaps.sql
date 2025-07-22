@@ -4,7 +4,7 @@
     unique_key = ['_unique_key'],
     cluster_by = ['block_timestamp::DATE','blockchain','platform'],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_hash, contract_address, trader, token_in, token_out, symbol_in, symbol_out, _unique_key), SUBSTRING(trader, token_in, token_out, symbol_in, symbol_out)",
-    tags = ['hourly']
+    tags = ['hourly','dex']
 ) }}
 
 WITH ethereum AS (
@@ -12,6 +12,8 @@ WITH ethereum AS (
     SELECT
         'ethereum' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -57,6 +59,8 @@ optimism AS (
     SELECT
         'optimism' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -102,6 +106,8 @@ avalanche AS (
     SELECT
         'avalanche' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -147,6 +153,8 @@ polygon AS (
     SELECT
         'polygon' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -192,6 +200,8 @@ bsc AS (
     SELECT
         'bsc' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -237,6 +247,8 @@ arbitrum AS (
     SELECT
         'arbitrum' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -282,6 +294,8 @@ base AS (
     SELECT
         'base' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -327,6 +341,8 @@ core AS (
     SELECT
         'core' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -368,56 +384,12 @@ WHERE
     )
 {% endif %}
 ),
-{# ink AS (
-SELECT
-    'ink' AS blockchain,
-    platform,
-    block_number,
-    block_timestamp,
-    tx_hash,
-    contract_address,
-    origin_from_address AS trader,
-    token_in,
-    symbol_in,
-    amount_in_unadj AS amount_in_raw,
-    amount_in,
-    amount_in_usd,
-    token_out,
-    symbol_out,
-    amount_out_unadj AS amount_out_raw,
-    amount_out,
-    amount_out_usd,
-    token_in_is_verified,
-    token_out_is_verified,
-    CONCAT(
-        tx_hash :: STRING,
-        '-',
-        event_index :: STRING
-    ) AS _log_id,
-    modified_timestamp AS _inserted_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['ez_dex_swaps_id','blockchain']) }} AS complete_dex_swaps_id,
-    {{ dbt_utils.generate_surrogate_key(['blockchain','block_number','platform']) }} AS _unique_key
-FROM
-    {{ source(
-        'ink_defi',
-        'ez_dex_swaps'
-    ) }}
-
-{% if is_incremental() and 'ink' not in var('HEAL_MODELS') %}
-WHERE
-    _inserted_timestamp >= (
-        SELECT
-            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "6 hours") }}'
-        FROM
-            {{ this }}
-    )
-{% endif %}
-),
-#}
 gnosis AS (
     SELECT
         'gnosis' AS blockchain,
         platform,
+        protocol,
+        protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -526,6 +498,8 @@ solana AS (
     SELECT
         'solana' AS blockchain,
         swap_program AS platform,
+        platform AS protocol,
+        NULL AS protocol_version,
         block_id AS block_number,
         block_timestamp,
         tx_id AS tx_hash,
@@ -567,6 +541,8 @@ near AS (
     SELECT
         'near' AS blockchain,
         platform,
+        platform AS protocol,
+        NULL AS protocol_version,
         block_id AS block_number,
         block_timestamp,
         tx_hash,
@@ -608,6 +584,8 @@ aptos AS (
     SELECT
         'aptos' AS blockchain,
         platform,
+        platform AS protocol,
+        NULL AS protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -684,11 +662,7 @@ all_chains_dex AS (
     SELECT
         *
     FROM
-        core {# UNION ALL
-    SELECT
-        *
-    FROM
-        ink #}
+        core
     UNION ALL
     SELECT
         *
@@ -719,6 +693,8 @@ all_chains_dex AS (
 SELECT
     d.blockchain,
     d.platform,
+    d.protocol,
+    d.protocol_version,
     d.block_number,
     d.block_timestamp,
     d.tx_hash,

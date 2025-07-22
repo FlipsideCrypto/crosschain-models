@@ -3,7 +3,7 @@
     unique_key = ['bridge_comparison_id'],
     incremental_strategy = 'delete+insert',
     cluster_by = ['inserted_timestamp::DATE'],
-    tags = ['ai_metrics']
+    tags = ['ai_metrics','bridge']
 ) }}
 
 WITH defillama AS (

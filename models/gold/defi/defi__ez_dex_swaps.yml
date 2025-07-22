@@ -7,7 +7,11 @@ models:
       - name: BLOCKCHAIN
         description: Blockchain, Network, or Platform the token price is recorded on.
       - name: PLATFORM
-        description: The name of the dex or swap platform
+        description: The name of the dex or swap platform, typically a concatenation of the protocol and version.
+      - name: PROTOCOL
+        description: The name of the protocol.
+      - name: PROTOCOL_VERSION
+        description: The version of the protocol.
       - name: BLOCK_NUMBER
         description: Also known as block height. The block number, which indicates the length of the blockchain, increases after the addition of each new block.      
       - name: BLOCK_TIMESTAMP
