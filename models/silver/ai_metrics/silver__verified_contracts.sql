@@ -9,7 +9,7 @@ with base as (
     
 select distinct 
     blockchain, 
-    platform,
+    protocol as platform,
     bridge_address as contract_address,
     'bridge' as contract_type
 from 
@@ -17,7 +17,7 @@ from
 union all 
 select distinct 
     blockchain, 
-    platform,
+    protocol as platform,
     contract_address,
     'dex' as contract_type
 from 
@@ -25,7 +25,7 @@ from
 union all
 select distinct 
     blockchain,
-    protocol,
+    protocol as platform,
     contract_address,
     'lending' as contract_type
 from 
@@ -33,7 +33,7 @@ from
 union all 
 select distinct 
     blockchain,
-    protocol,
+    protocol as platform,
     contract_address,
     'lending' as contract_type
 from 
