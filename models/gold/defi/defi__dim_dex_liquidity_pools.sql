@@ -187,7 +187,7 @@ WITH base AS (
         'base' AS blockchain,
         platform,
         protocol,
-        protocol_version,
+        version as protocol_version,
         block_number,
         block_timestamp,
         tx_hash,
@@ -209,29 +209,6 @@ WITH base AS (
     FROM
         {{ source(
             'base_silver_dex',
-            'complete_dex_liquidity_pools'
-        ) }}
-    UNION ALL
-    SELECT
-        'blast' AS blockchain,
-        platform,
-        protocol,
-        version as protocol_version,
-        block_number,
-        block_timestamp,
-        tx_hash,
-        contract_address,
-        pool_address,
-        pool_name,
-        tokens,
-        symbols,
-        decimals,
-        inserted_timestamp,
-        modified_timestamp,
-        {{ dbt_utils.generate_surrogate_key(['blockchain','pool_address']) }} AS dim_dex_liquidity_pools_id
-    FROM
-        {{ source(
-            'blast_silver_dex',
             'complete_dex_liquidity_pools'
         ) }}
     UNION ALL
