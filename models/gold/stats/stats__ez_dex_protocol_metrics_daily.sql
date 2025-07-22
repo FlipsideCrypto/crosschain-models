@@ -66,7 +66,7 @@ FROM
 WITH swaps AS (
     SELECT
         A.blockchain,
-        A.platform AS protocol,
+        A.protocol AS protocol,
         A.block_timestamp :: DATE AS block_date,
         COUNT(1) AS swap_count,
         COUNT(

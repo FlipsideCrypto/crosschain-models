@@ -72,7 +72,7 @@ WITH target_chains_cte AS (
 ib AS (
     SELECT
         A.destination_chain AS blockchain,
-        A.platform AS protocol,
+        A.protocol AS protocol,
         A.block_timestamp :: DATE AS block_date,
         SUM(
             CASE
@@ -103,13 +103,13 @@ ib AS (
         {{ date_filter }}
     GROUP BY
         A.destination_chain,
-        A.platform,
+        A.protocol,
         A.block_timestamp :: DATE
 ),
 ob AS (
     SELECT
         A.source_chain AS blockchain,
-        A.platform AS protocol,
+        A.protocol AS protocol,
         A.block_timestamp :: DATE AS block_date,
         SUM(
             CASE
@@ -140,7 +140,7 @@ ob AS (
         {{ date_filter }}
     GROUP BY
         A.source_chain,
-        A.platform,
+        A.protocol,
         A.block_timestamp :: DATE
 ),
 base AS (
