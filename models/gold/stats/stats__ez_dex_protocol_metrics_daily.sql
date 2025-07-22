@@ -89,9 +89,7 @@ WITH swaps AS (
     WHERE
         {{ date_filter }}
     GROUP BY
-        A.blockchain,
-        A.platform,
-        A.block_timestamp :: DATE
+        ALL
 )
 SELECT
     A.blockchain,
