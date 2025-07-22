@@ -1,3 +1,5 @@
+-- depends_on: {{ ref('silver__tokens_stablecoins') }}
+-- depends_on: {{ ref('silver__transfers') }}
 {{ config(
     materialized = 'incremental',
     incremental_strategy = 'merge',
@@ -62,14 +64,19 @@ FROM
     {% endif %}) {% endset %}
 {% endif %}
 
-WITH xfer AS (
+{#
+{% set xfer_query %}
+CREATE
+OR REPLACE temporary TABLE silver.ez_stable_token_flows___xfer_intermediate_tmp AS #}
+WITH base AS (
     SELECT
         A.blockchain,
         A.block_timestamp :: DATE AS block_date,
+        tx_hash,
         A.address AS token_address,
-        SUM(
-            amount_usd
-        ) AS stablecoin_transfer_volume_usd
+        from_address,
+        to_address,
+        amount_usd
     FROM
         {{ ref('silver__transfers') }} A
         JOIN silver.ez_stable_token_flows__intermediate_tmp b
@@ -82,10 +89,62 @@ WITH xfer AS (
         AND A.block_timestamp :: DATE >= stbl.price_date
     WHERE
         {{ date_filter }}
+        AND to_address <> from_address
+) {# {% endset %}
+{% do run_query(xfer_query) %}
+#},
+xfer_ua AS (
+    SELECT
+        blockchain,
+        block_date,
+        tx_hash,
+        token_address,
+        from_address AS user_address,
+        amount_usd * -1 AS amount_usd
+    FROM
+        base {# silver.ez_stable_token_flows___xfer_intermediate_tmp #}
+    UNION ALL
+    SELECT
+        blockchain,
+        block_date,
+        tx_hash,
+        token_address,
+        to_address AS user_address,
+        amount_usd AS amount_usd
+    FROM
+        base {# silver.ez_stable_token_flows___xfer_intermediate_tmp #}
+),
+xfer_tx_roll AS (
+    SELECT
+        blockchain,
+        block_date,
+        tx_hash,
+        token_address,
+        user_address,
+        SUM(amount_usd) AS amount_usd
+    FROM
+        xfer_ua
     GROUP BY
-        A.blockchain,
-        A.block_timestamp :: DATE,
-        A.address
+        blockchain,
+        block_date,
+        tx_hash,
+        token_address,
+        user_address
+),
+xfer_day_roll AS (
+    SELECT
+        blockchain,
+        block_date,
+        token_address,
+        SUM(
+            amount_usd
+        ) AS amount_usd
+    FROM
+        xfer_tx_roll
+    GROUP BY
+        blockchain,
+        block_date,
+        token_address
 )
 SELECT
     A.blockchain,
@@ -93,14 +152,14 @@ SELECT
     A.token_address,
     b.symbol,
     COALESCE(
-        stablecoin_transfer_volume_usd,
+        amount_usd,
         0
     ) AS stablecoin_transfer_volume_usd,
     {{ dbt_utils.generate_surrogate_key(['a.blockchain','a.block_date','a.token_address']) }} AS ez_stablecoin_token_flows_daily_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM
-    xfer A
+    xfer_day_roll A
     JOIN {{ ref('silver__tokens_enhanced') }}
     b
     ON A.blockchain = b.blockchain
