@@ -47,9 +47,9 @@ WITH ethereum AS (
 
 {% if is_incremental() and 'ethereum' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "6 hours") }}'
         FROM
             {{ this }}
     )
@@ -94,9 +94,9 @@ optimism AS (
 
 {% if is_incremental() and 'optimism' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "6 hours") }}'
         FROM
             {{ this }}
     )
@@ -141,9 +141,9 @@ avalanche AS (
 
 {% if is_incremental() and 'avalanche' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "6 hours") }}'
         FROM
             {{ this }}
     )
@@ -188,9 +188,9 @@ polygon AS (
 
 {% if is_incremental() and 'polygon' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "6 hours") }}'
         FROM
             {{ this }}
     )
@@ -235,9 +235,9 @@ bsc AS (
 
 {% if is_incremental() and 'bsc' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "6 hours") }}'
         FROM
             {{ this }}
     )
@@ -282,9 +282,9 @@ arbitrum AS (
 
 {% if is_incremental() and 'arbitrum' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "6 hours") }}'
         FROM
             {{ this }}
     )
@@ -329,9 +329,9 @@ base AS (
 
 {% if is_incremental() and 'base' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "6 hours") }}'
         FROM
             {{ this }}
     )
@@ -376,9 +376,9 @@ core AS (
 
 {% if is_incremental() and 'core' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "6 hours") }}'
         FROM
             {{ this }}
     )
@@ -423,9 +423,9 @@ gnosis AS (
 
 {% if is_incremental() and 'gnosis' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "6 hours") }}'
         FROM
             {{ this }}
     )
@@ -485,9 +485,9 @@ FROM
 
 {% if is_incremental() and 'osmosis' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -529,9 +529,9 @@ solana AS (
 
 {% if is_incremental() and 'solana' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -572,9 +572,9 @@ near AS (
 
 {% if is_incremental() and 'near' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
@@ -615,9 +615,9 @@ aptos AS (
 
 {% if is_incremental() and 'aptos' not in var('HEAL_MODELS') %}
 WHERE
-    _inserted_timestamp > (
+    _inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp)
+            MAX(_inserted_timestamp) - INTERVAL '{{ var("LOOKBACK", "24 hours") }}'
         FROM
             {{ this }}
     )
