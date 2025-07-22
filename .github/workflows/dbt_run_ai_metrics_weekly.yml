@@ -53,6 +53,7 @@ jobs:
     uses: ./.github/workflows/slack_protocol_alert.yml
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      PASSWORD: ${{ secrets.PASSWORD }}
 
   notify-failure:
     needs: [run_dbt_jobs]
