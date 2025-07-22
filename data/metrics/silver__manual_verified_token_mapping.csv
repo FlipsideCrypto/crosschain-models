@@ -136,7 +136,7 @@ base,0xefe32813dba3a783059d50e5358b9e3661218dad,usd-coin,,,
 base,0xb008bdcf9cdff9da684a190941dc3dca8c2cdd44,flux,,,TRUE
 base,0xc5fecc3a29fb57b5024eec8a2239d4621e111cbe,1inch,,,TRUE
 base,0x48bf8fcd44e2977c8a9a744658431a8e6c0d866c,ethereum,,,TRUE
-base,0xfca95aeb5bf44ae355806a5ad14659c940dc6bf7,shiba-inu,,,
+base,0xfca95aeb5bf44ae355806a5ad14659c940dc6bf7,shiba-inu,,,FALSE
 base,0x4cebc6688faa595537444068996ad9a207a19f13,wrapped-steth,,,
 base,0x99cbc45ea5bb7ef3a5bc08fb1b7e56bb2442ef0d,wrapped-steth,,,
 base,0x53e240c0f985175da046a62f26d490d1e259036e,usd-coin,,,
@@ -183,6 +183,7 @@ base,0x70654aad8b7734dc319d0c3608ec7b32e03fa162,satoshi-stablecoin,,,TRUE
 base,0xdb90a4e973b7663ce0ccc32b6fbd37ffb19bfa83,degen-usdc,,,TRUE
 base,0xad20523a7dc37babc1cc74897e4977232b3d02e5,gains-network-usdc-base,,,TRUE
 base,0x613ce28076289de255f1a6487437f03e37e4a71d,dackie-usd,,,TRUE
+base,0x54b659832f59c24cec0e4a2cd193377f1bcefc3c,,,spam,FALSE
 base,0x8e5e9df4f0ea39ae5270e79bbabfcc34203a3470,revenue-generating-usd,,,TRUE
 blast,0x1f55a02a049033e3419a8e2975cf3f572f4e6e9a,staked-frax-ether,,,
 blast,0x73c369f61c90f03eb0dd172e95c90208a28dc5bc,olecoin,,,
@@ -194,7 +195,7 @@ bob,0xba20a5e63eeefffa6fd365e7e540628f8fc61474,sovryn,,,TRUE
 bob,0x1217bfe6c773eec6cc4a38b5dc45b92292b6e189,openusdt,,,TRUE
 bsc,0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d,usd1-wlfi,,,TRUE
 bsc,0xf81ac2e1a0373dde1bce01e2fe694a9b7e3bfcb9,straitsx-xusd,,,TRUE
-bsc,0x43ef5494ac2fc8d1a6f5e838a02cb32b1941fda6,,36833,,TRUE
+bsc,0x43ef5494ac2fc8d1a6f5e838a02cb32b1941fda6,,36833,,FALSE
 bsc,0x5d3a1ff2b6bab83b63cd9ad0787074081a52ef34,bridged-usde,,,TRUE
 bsc,0xc5f0f7b66764f6ec8c8dff7ba683102295e16409,first-digital-usd,,,TRUE
 bsc,0x4268b8f0b87b6eae5d897996e6b845ddbd99adf3,axlusdc,,,TRUE
@@ -212,7 +213,7 @@ bsc,0x2492d0006411af6c8bbb1c8afc1b0197350a79e9,resolv-usr,,,TRUE
 bsc,0xf5967b4a40be5d721f06a9e8165dd11f521f37ea,,36607,,TRUE
 bsc,0xb5102cee1528ce2c760893034a4603663495fd72,token-dforce-usd,,,TRUE
 bsc,0xffffff9936bd58a008855b0812b44d2c8dffe2aa,good-game-us-dollar,,,TRUE
-bsc,0x5bb4d589467c25a5ac8db930372dc5da30c3410e,,36552,,TRUE
+bsc,0x5bb4d589467c25a5ac8db930372dc5da30c3410e,,36552,,FALSE
 bsc,0xc4a1cc5ca8955a4650bdc109bddf110e33a1e344,rzusd,,,TRUE
 bsc,0xe80772eaf6e2e18b651f160bc9158b2a5cafca65,usd,,,TRUE
 bsc,0x35e5db674d8e93a03d814fa0ada70731efe8a4b9,resolv-usr,,,TRUE
@@ -233,15 +234,16 @@ bsc,0x323665443cef804a3b5206103304bd4872ea4253,verified-usd-foundation-usdv,,,TR
 bsc,0xb0b195aefa3650a6908f15cdac7d92f8a5791b0b,bob,,,TRUE
 bsc,0xbf3950db0522a7f5caa107d4cbbbd84de9e047e2,jusd,,,TRUE
 bsc,0xce1e3cc1950d2aaeb47de04de2dec2dc86380e0a,ethos-reserve-note,,,TRUE
-bsc,0xe7ae66d7882da81217dfb9a5bebdeff89d89ed4f,,36486,,TRUE
+bsc,0xe7ae66d7882da81217dfb9a5bebdeff89d89ed4f,,36486,,FALSE
 bsc,0x3ab6c736aa54917e11e58cc2cc12e1638233b265,,35231,,TRUE
-bsc,0x79b9316d3fb45273b19cfb570aa144999d896f4e,,35599,,TRUE
+bsc,0x79b9316d3fb45273b19cfb570aa144999d896f4e,,35599,,FALSE
 bsc,0xd17479997f34dd9156deef8f95a52d81d265be9c,usdd,,,TRUE
 bsc,0x80eede496655fb9047dd39d9f418d5483ed600df,frax-usd,,,TRUE
 bsc,0xa82d8d81557f6da6dd4ddad9f09a417530cfd4e7,,32786,,TRUE
 core,0xc0e49f8c615d3d4c245970f6dc528e4a47d69a44,icecreamswap-wcore,,,TRUE
 core,0xc0e5f8e2a9a2f1fbf34ab4d5fbf417ffd02fdb79,,,not real,FALSE
 eclipse,Eth1111111111111111111111111111111111111111,ethereum,,,
+ethereum,0xb8176a66c0d0a84cfd4e403c89cf3416b1e798ad,,,spam,FALSE
 ethereum,0x0000000000a39bb272e79075ade125fd351887ac,blur,,,
 ethereum,0x0492560fa7cfd6a85e50d8be3f77318994f8f429,usd-coin,,,TRUE
 ethereum,0x2401c39d7ba9e283668a53fcc7b8f5fd9e716fdf,ethereum,,,
@@ -334,12 +336,12 @@ ethereum,0xfc1e690f61efd961294b3e1ce3313fbd8aa4f85d,aave-dai-v1,,,TRUE
 ethereum,0x101cc05f4a51c0319f570d5e146a8c625198e636,aave-tusd,,,TRUE
 ethereum,0x76972f054ab43829064d31ff5f3acc5fabe57fe8,tharwa-usd,,,TRUE
 ethereum,0x25ec98773d7b4ced4cafab96a2a1c0945f145e10,staked-usdt,,,TRUE
-ethereum,0xf0bef9840e4f7166e52c7af2d72ec566bbf39bdb,24253,,,TRUE
+ethereum,0xf0bef9840e4f7166e52c7af2d72ec566bbf39bdb,24253,,,FALSE
 ethereum,0xeea9ae787f3a620072d13b2cdc8cabffb9c0ab96,7572,,,TRUE
 ethereum,0x09fd37d9aa613789c517e76df1c53aece2b60df4,ebusd-stablecoin,,,TRUE
 ethereum,0x8c0d76c9b18779665475f3e212d9ca1ed6a1a0e6,zunami-usd,,,TRUE
 ethereum,0x1a88df1cfe15af22b3c4c783d4e6f7f9e0c1885d,aave-stkgho,,,TRUE
-ethereum,0x64684f4978f8ad9e67c2e19ca98d1f9b00cfe3a1,36513,,,TRUE
+ethereum,0x64684f4978f8ad9e67c2e19ca98d1f9b00cfe3a1,36513,,,FALSE
 flow,A.1654653399040a61.FlowToken,flow,,,
 flow,0x7f27352d5f83db87a5a3e00f4b07cc2138d8ee52,flow-bridged-usdc-flow,,,
 flow,A.cfdd90d4a00f7b5b.TeleportedTetherToken,tether,,,
