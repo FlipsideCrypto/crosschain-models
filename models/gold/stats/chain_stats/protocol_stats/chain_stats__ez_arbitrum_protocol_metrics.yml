@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: chain_stats__ez_arbitrum_protocol_metrics_daily
+  - name: chain_stats__ez_arbitrum_protocol_metrics
     description: 'Daily aggregated protocol-level metrics for Arbitrum blockchain including user activity, transaction counts, and token flow data. Combines protocol interaction data with Flipside scoring to distinguish between total activity and quality user activity (Flipside score >= 4). Metrics track inflows, outflows, and user engagement at the protocol level.'
     
     columns:
