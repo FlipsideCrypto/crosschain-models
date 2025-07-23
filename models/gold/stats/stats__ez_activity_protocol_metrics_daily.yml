@@ -1,0 +1,41 @@
+version: 2
+models:
+  - name: stats__ez_activity_protocol_metrics_daily
+    description: "An aggregated daily view of cross-chain activity metrics, including transaction counts aggregated by the protocol. This model also contains and IS_QUALITY flag that indicates whether the transaction initiator has a user score of 4 or higher."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCK_DATE
+            - BLOCKCHAIN
+            - PROTOCOL
+
+    columns:
+      - name: BLOCKCHAIN 
+        description: '{{ doc("blockchain_column") }}'
+      - name: BLOCK_DATE
+        description: '{{ doc("block_date") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 2
+      - name: TRANSACTION_COUNT
+        description: '{{ doc("crosschain_transaction_count") }}'
+        tests:
+          - not_null
+      - name: QUALITY_TRANSACTION_COUNT
+        description: '{{ doc("crosschain_transaction_count") }}'
+        tests:
+          - not_null
+      - name: NUM_USERS
+        description: 'unique addresses submitting a transaction that interacts with any protocol contract (same address can be counted across two different protocols, but never more than once within a protocol)'
+        tests:
+          - not_null
+      - name: NUM_QUALITY_USERS 
+        description: 'quality addresses with flipside score >= 4 submitting a transaction that interacts with any protocol contract (same address can be counted across two different protocols, but never more than once within a protocol)'
+      - name: EZ_ACTIVITY_PROTOCOL_METRICS_DAILY_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 
