@@ -16,7 +16,8 @@ SELECT
             'flow',
             'aptos',
             'ton',
-            'stellar'
+            'stellar',
+            'eclipse'
         ) THEN A.token_address
         ELSE LOWER(
             A.token_address
