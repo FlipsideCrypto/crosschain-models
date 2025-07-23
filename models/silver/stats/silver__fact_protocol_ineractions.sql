@@ -31,7 +31,7 @@ SELECT
     origin_from_address,
     contract_address,
     tx_hash,
-    modified_timestamp
+    modified_timestamp 
 FROM
     evm_events
 UNION ALL
