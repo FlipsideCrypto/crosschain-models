@@ -73,6 +73,7 @@ base_adj AS (
                 )
             )
             WHEN A.platform = 'aptos' THEN A.token_address
+            WHEN A.platform = 'sui' THEN A.token_address
             ELSE IFF(
                 LENGTH(
                     TRIM(
