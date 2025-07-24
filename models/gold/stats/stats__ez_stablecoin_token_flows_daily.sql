@@ -63,7 +63,14 @@ FROM
     {% endif %}) {% endset %}
 {% endif %}
 
-WITH xfer AS (
+WITH stables AS (
+    SELECT
+        DISTINCT blockchain,
+        token_address
+    FROM
+        {{ ref('silver__tokens_stablecoins') }}
+),
+xfer AS (
     SELECT
         A.blockchain,
         A.block_timestamp :: DATE AS block_date,
@@ -76,11 +83,9 @@ WITH xfer AS (
         JOIN silver.ez_stable_token_flows__intermediate_tmp b
         ON A.blockchain = b.blockchain
         AND A.block_timestamp :: DATE = b.block_date
-        JOIN {{ ref('silver__tokens_stablecoins') }}
-        stbl
+        JOIN stables stbl
         ON A.blockchain = stbl.blockchain
         AND A.address = stbl.token_address
-        AND A.block_timestamp :: DATE >= stbl.price_date
     WHERE
         {{ date_filter }}
         AND amount_usd < 500000000 -- $500M cap
