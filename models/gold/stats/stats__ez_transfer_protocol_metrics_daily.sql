@@ -44,9 +44,6 @@ WHERE
 
 {% if is_incremental() %}
 AND modified_timestamp >= '{{ max_mod }}'
-{% else %}
-    AND block_timestamp :: DATE >= '2025-01-01'
-    AND block_timestamp :: DATE <= '2025-01-03'
 {% endif %}
 
 {% endset %}
