@@ -36,6 +36,25 @@ WITH defillama AS (
     GROUP BY
         ALL
 ),
+crosschain_raw AS (
+    SELECT
+        CASE
+            WHEN (
+                token_symbol = 'USD₮0'
+                OR token_symbol = 'USDT'
+            )
+            AND protocol = 'layerzero' THEN 'usdt0'
+            ELSE platform
+        END AS platform,
+        blockchain,
+        amount_usd
+    FROM
+        {{ ref('defi__ez_bridge_activity') }}
+    WHERE
+        block_timestamp :: DATE BETWEEN CURRENT_DATE() - 8
+        AND CURRENT_DATE() - 1
+        AND direction = 'outbound'
+),
 crosschain AS (
     SELECT
         LOWER(
@@ -44,11 +63,7 @@ crosschain AS (
         blockchain,
         SUM(amount_usd) AS crosschain_volume
     FROM
-        {{ ref('defi__ez_bridge_activity') }}
-    WHERE
-        block_timestamp :: DATE BETWEEN CURRENT_DATE() - 8
-        AND CURRENT_DATE() - 1
-        AND direction = 'outbound'
+        crosschain_raw
     GROUP BY
         ALL
 ),
