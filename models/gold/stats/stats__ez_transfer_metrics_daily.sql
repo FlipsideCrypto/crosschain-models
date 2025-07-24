@@ -86,6 +86,7 @@ FROM
 WHERE
     {{ date_filter }}
     AND A.token_is_verified
+    AND amount_usd < 500000000 -- $500M cap
 GROUP BY
     A.blockchain,
     block_timestamp_hour,

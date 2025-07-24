@@ -153,6 +153,7 @@ WHERE
         c_to.label
     ) IS NOT NULL
     AND A.token_is_verified
+    AND amount_usd < 500000000 -- $500M cap
 GROUP BY
     A.blockchain,
     A.block_timestamp :: DATE,
