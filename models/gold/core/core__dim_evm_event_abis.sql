@@ -15,7 +15,6 @@
 ('blast', source('blast_silver', 'complete_event_abis')),
 ('kaia', source('kaia_silver', 'complete_event_abis')),
 ('optimism', source('optimism_silver', 'complete_event_abis')),
-('mantle', source('mantle_silver', 'complete_event_abis')),
 ('core', source('core_silver', 'complete_event_abis')),
 ('sei', source('sei_evm_silver', 'complete_event_abis')),
 ('berachain-bartio', source('berachain_bartio_silver', 'complete_event_abis'))

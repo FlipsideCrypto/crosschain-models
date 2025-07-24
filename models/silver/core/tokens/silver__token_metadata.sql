@@ -160,7 +160,6 @@ SELECT
         WHEN blockchain = 'gnosis' AND legitimacy_score > 0.93 THEN TRUE
         WHEN blockchain = 'ink' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'kaia' AND legitimacy_score > 0.9 THEN TRUE
-        WHEN blockchain = 'mantle' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'maya' AND legitimacy_score > 0.8 THEN TRUE
         WHEN blockchain = 'near' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'optimism' AND legitimacy_score > 0.9 THEN TRUE
@@ -170,7 +169,6 @@ SELECT
         WHEN blockchain = 'sei' AND legitimacy_score > 0.9 THEN TRUE
         WHEN blockchain = 'solana' AND legitimacy_score > 0.90 THEN TRUE
         WHEN blockchain = 'stellar' AND legitimacy_score > 0.95 THEN TRUE
-        WHEN blockchain = 'swell' AND legitimacy_score > 0.90 THEN TRUE
         WHEN blockchain = 'thorchain' AND legitimacy_score > 0.90 THEN TRUE
         WHEN blockchain = 'ton' AND legitimacy_score > 0.92 THEN TRUE
         ELSE FALSE

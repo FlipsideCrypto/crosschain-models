@@ -963,28 +963,6 @@ sources:
       - name: ez_core_metrics_hourly
 
   #=============================================================================
-  # MANTLE
-  #=============================================================================
-  - name: mantle_core
-    database: mantle
-    schema: core
-    tables:
-      - name: fact_transactions
-      - name: fact_event_logs
-      - name: fact_traces
-      - name: ez_decoded_event_logs
-      - name: ez_native_transfers
-      - name: ez_token_transfers
-      - name: dim_contracts
-
-  - name: mantle_silver
-    database: mantle
-    schema: silver
-    tables:
-      - name: complete_event_abis
-      - name: abis
-
-  #=============================================================================
   # MAYA
   #=============================================================================
   - name: maya_core
@@ -1342,23 +1320,6 @@ sources:
     schema: stats
     tables:
       - name: ez_core_metrics_hourly
-
-  #=============================================================================
-  # SWELL
-  #=============================================================================
-  - name: swell_core
-    database: swell
-    schema: core
-    tables:
-      - name: dim_contracts
-      - name: fact_transactions
-      - name: ez_token_transfers
-  - name: swell_silver
-    database: swell
-    schema: silver
-    tables:
-      - name: abis
-      - name: complete_event_abis
 
   #=============================================================================
   # TERRA

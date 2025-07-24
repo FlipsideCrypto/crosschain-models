@@ -498,28 +498,6 @@ AND modified_timestamp :: DATE >= '{{ max_mod }}'
 {% endif %}
 UNION ALL
 SELECT
-    address,
-    symbol,
-    NAME,
-    decimals,
-    created_block_number,
-    created_block_timestamp,
-    created_tx_hash,
-    creator_address,
-    'mantle' AS blockchain
-FROM
-    {{ source(
-        'mantle_core',
-        'dim_contracts'
-    ) }}
-WHERE
-    decimals IS NOT NULL
-
-{% if is_incremental() %}
-AND modified_timestamp :: DATE >= '{{ max_mod }}'
-{% endif %}
-UNION ALL
-SELECT
     A.asset AS address,
     NULL AS symbol,
     NULL AS NAME,
@@ -826,28 +804,6 @@ FROM
     ) }}
 WHERE
     asset_id IS NOT NULL
-
-{% if is_incremental() %}
-AND modified_timestamp :: DATE >= '{{ max_mod }}'
-{% endif %}
-UNION ALL
-SELECT
-    address,
-    symbol,
-    NAME,
-    decimals,
-    created_block_number,
-    created_block_timestamp,
-    created_tx_hash,
-    creator_address,
-    'swell' AS blockchain
-FROM
-    {{ source(
-        'swell_core',
-        'dim_contracts'
-    ) }}
-WHERE
-    decimals IS NOT NULL
 
 {% if is_incremental() %}
 AND modified_timestamp :: DATE >= '{{ max_mod }}'

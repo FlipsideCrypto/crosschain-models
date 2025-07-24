@@ -33,7 +33,6 @@ WITH evm_transfers AS (
             source('gnosis_core', 'ez_token_transfers'),
             source('ink_core', 'ez_token_transfers'),
             source('kaia_core', 'ez_token_transfers'),
-            source('mantle_core', 'ez_token_transfers'),
             source('optimism_core', 'ez_token_transfers'),
             source('polygon_core', 'ez_token_transfers'),
             source('ronin_core', 'ez_token_transfers'),

@@ -307,20 +307,6 @@ WITH base AS (
             'kaia_core',
             'fact_transactions'
         ) }}
-    UNION ALL
-    SELECT
-        tx_hash,
-        block_timestamp,
-        tx_succeeded,
-        from_address AS sender,
-        tx_fee_precise AS fee_native,
-        modified_timestamp,
-        'mantle' AS blockchain
-    FROM
-        {{ source(
-            'mantle_core',
-            'fact_transactions'
-        ) }}
         {# UNION ALL
     SELECT
         tx_hash,
@@ -494,20 +480,6 @@ WITH base AS (
     FROM
         {{ source(
             'stellar_core',
-            'fact_transactions'
-        ) }}
-    UNION ALL
-    SELECT
-        tx_hash,
-        block_timestamp,
-        tx_succeeded,
-        from_address AS sender,
-        tx_fee_precise AS fee_native,
-        modified_timestamp,
-        'swell' AS blockchain
-    FROM
-        {{ source(
-            'swell_core',
             'fact_transactions'
         ) }}
         {# UNION ALL
