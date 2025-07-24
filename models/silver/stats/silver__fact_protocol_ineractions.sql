@@ -61,3 +61,20 @@ SELECT
     modified_timestamp
 FROM
       {{ source('near_core', 'fact_transactions') }} 
+
+UNION ALL
+SELECT
+    block_timestamp,
+    'solana' AS blockchain,
+    signers [0] :: STRING AS sender,
+    e.program_id AS contract_address,
+    e.tx_id AS tx_hash,
+    modified_timestamp
+FROM
+    {{ source(
+        'solana_core',
+        'fact_events'
+    ) }} e
+WHERE
+    e.succeeded = TRUE
+    AND e.signers [0] IS NOT NULL
