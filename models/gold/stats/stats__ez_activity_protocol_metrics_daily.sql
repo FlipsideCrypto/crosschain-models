@@ -5,7 +5,7 @@
     materialized = 'incremental',
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
-    unique_key = ['blockchain','block_date'],
+    unique_key = ['blockchain','block_date','protocol'],
     cluster_by = ['blockchain','block_date'],
     tags = ['metrics_daily']
 ) }}
@@ -41,7 +41,8 @@ WHERE
     AND block_timestamp :: DATE >= '2025-01-01'
 
 {% if is_incremental() %}
-AND modified_timestamp >= '{{ max_mod }}'
+{# AND modified_timestamp >= '{{ max_mod }}' #}
+AND blockchain = 'solana'
 {% endif %}
 
 {% endset %}
