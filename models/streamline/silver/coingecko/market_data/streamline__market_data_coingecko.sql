@@ -11,7 +11,7 @@ WITH page_numbers AS (
     SELECT 
         ROW_NUMBER() OVER (ORDER BY _id) AS page_num
     FROM {{ ref('silver__number_sequence') }}
-    WHERE _id <= {{ var('MAX_PAGES', 5) }} --update to 250 for prod
+    WHERE _id <= {{ var('MAX_PAGES', 250) }}
 ),
 calls AS (
     SELECT
