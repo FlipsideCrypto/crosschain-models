@@ -41,8 +41,7 @@ WHERE
     AND block_timestamp :: DATE >= '2025-01-01'
 
 {% if is_incremental() %}
-{# AND modified_timestamp >= '{{ max_mod }}' #}
-AND blockchain = 'solana'
+AND modified_timestamp >= '{{ max_mod }}'
 {% endif %}
 
 {% endset %}
