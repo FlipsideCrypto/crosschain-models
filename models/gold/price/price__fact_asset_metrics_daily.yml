@@ -1,0 +1,68 @@
+version: 2
+models:
+  - name: price__fact_asset_metrics_daily
+    description: '{{ doc("prices_fact_asset_metrics_daily_table_doc") }}'
+
+    columns:
+      - name: DAY
+        description: '{{ doc("prices_day")}}'
+      - name: ASSET_ID
+        description: '{{ doc("prices_asset_id") }}'
+      - name: NAME
+        description: '{{ doc("prices_name") }}'
+      - name: SYMBOL
+        description: '{{ doc("prices_symbol") }}'
+      - name: FULLY_DILUTED_VALUATION
+        description: '{{ doc("prices_fully_diluted_valuation") }}'
+      - name: CIRCULATING_SUPPLY
+        description: '{{ doc("prices_circulating_supply") }}'
+      - name: TOTAL_SUPPLY
+        description: '{{ doc("prices_total_supply") }}'
+      - name: MAX_SUPPLY
+        description: '{{ doc("prices_max_supply") }}'
+      - name: CURRENT_PRICE
+        description: '{{ doc("prices_current_price") }}'
+      - name: ATH
+        description: '{{ doc("prices_ath") }}'
+      - name: ATH_CHANGE_PERCENTAGE
+        description: '{{ doc("prices_ath_change_percentage") }}'
+      - name: ATH_DATE
+        description: '{{ doc("prices_ath_date") }}'
+      - name: ATL
+        description: '{{ doc("prices_atl") }}'
+      - name: ATL_CHANGE_PERCENTAGE
+        description: '{{ doc("prices_atl_change_percentage") }}'
+      - name: ATL_DATE
+        description: '{{ doc("prices_atl_date") }}'
+      - name: HIGH_24H
+        description: '{{ doc("prices_high_24h") }}'
+      - name: LOW_24H
+        description: '{{ doc("prices_low_24h") }}'
+      - name: PRICE_CHANGE_24H
+        description: '{{ doc("prices_price_change_24h") }}'
+      - name: PRICE_CHANGE_PERCENTAGE_24H
+        description: '{{ doc("prices_price_change_percentage_24h") }}'
+      - name: MARKET_CAP
+        description: '{{ doc("prices_market_cap") }}'
+      - name: MARKET_CAP_RANK
+        description: '{{ doc("prices_market_cap_rank") }}'
+      - name: MARKET_CAP_CHANGE_24H
+        description: '{{ doc("prices_market_cap_change_24h") }}'
+      - name: MARKET_CAP_CHANGE_PERCENTAGE_24H
+        description: '{{ doc("prices_market_cap_change_percentage_24h") }}'
+      - name: TOTAL_VOLUME
+        description: '{{ doc("prices_total_volume") }}'
+      - name: ROI_JSON
+        description: '{{ doc("prices_roi_json") }}'
+      - name: IMAGE_URL
+        description: '{{ doc("prices_image_url") }}'
+      - name: LAST_UPDATED
+        description: '{{ doc("prices_last_updated") }}'
+      - name: PROVIDER
+        description: '{{ doc("prices_provider") }}'
+      - name: FACT_MARKET_DATA_DAILY_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}' 

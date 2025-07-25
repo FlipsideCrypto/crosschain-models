@@ -22,6 +22,12 @@ A convenience table for determining token prices by address and blockchain, and 
 
 {% enddocs %}
 
+{% docs prices_fact_asset_metrics_daily_table_doc %}
+
+A comprehensive fact table containing daily asset fundamentals including current pricing, supply metrics, market capitalization, historical extremes, and trading volume from provider APIs. This dataset provides a complete daily snapshot of key financial and market metrics for each asset, enabling fundamental analysis and performance tracking over time.
+
+{% enddocs %}
+
 {% docs prices_provider %}
 
 The provider or source of the data.
@@ -100,6 +106,12 @@ Hour that the price was recorded at.
 
 {% enddocs %}
 
+{% docs prices_day %}
+
+Day that the market details were recorded at
+
+{% enddocs %}
+
 {% docs prices_price %}
 
 Closing price of the recorded hour in USD.
@@ -140,5 +152,143 @@ Closing price of the recorded hour in USD
 
 A boolean flag indicating if the token is verified by either uniswap labs or passing a threshold of transfers metrics on the chain.
  
+
+{% enddocs %}
+
+{% docs prices_fully_diluted_valuation %}
+
+The total market value of the asset if all tokens were in circulation, calculated as current price multiplied by max supply.
+
+{% enddocs %}
+
+{% docs prices_circulating_supply %}
+
+The total number of tokens currently in circulation and available for trading in the market.
+
+{% enddocs %}
+
+{% docs prices_total_supply %}
+
+The total number of tokens that currently exist, including those held in reserve or locked.
+
+{% enddocs %}
+
+{% docs prices_max_supply %}
+
+The maximum number of tokens that will ever be created for this asset, or NULL if no maximum is defined.
+
+{% enddocs %}
+
+{% docs prices_current_price %}
+
+The current trading price of the asset in USD at the time of data collection.
+
+{% enddocs %}
+
+{% docs prices_ath %}
+
+The highest price (All-Time High) that the asset has ever reached in USD.
+
+{% enddocs %}
+
+{% docs prices_ath_change_percentage %}
+
+The percentage change from the current price to the all-time high price, typically shown as a negative value.
+
+{% enddocs %}
+
+{% docs prices_ath_date %}
+
+The timestamp when the asset reached its all-time high price.
+
+{% enddocs %}
+
+{% docs prices_atl %}
+
+The lowest price (All-Time Low) that the asset has ever reached in USD.
+
+{% enddocs %}
+
+{% docs prices_atl_change_percentage %}
+
+The percentage change from the current price to the all-time low price, typically shown as a positive value.
+
+{% enddocs %}
+
+{% docs prices_atl_date %}
+
+The timestamp when the asset reached its all-time low price.
+
+{% enddocs %}
+
+{% docs prices_high_24h %}
+
+The highest price the asset reached in USD within the last 24 hours.
+
+{% enddocs %}
+
+{% docs prices_low_24h %}
+
+The lowest price the asset reached in USD within the last 24 hours.
+
+{% enddocs %}
+
+{% docs prices_price_change_24h %}
+
+The absolute change in price (in USD) over the last 24 hours.
+
+{% enddocs %}
+
+{% docs prices_price_change_percentage_24h %}
+
+The percentage change in price over the last 24 hours.
+
+{% enddocs %}
+
+{% docs prices_market_cap %}
+
+The total market value of the asset, calculated as current price multiplied by circulating supply.
+
+{% enddocs %}
+
+{% docs prices_market_cap_rank %}
+
+The ranking of this asset by market capitalization compared to other assets tracked by the provider.
+
+{% enddocs %}
+
+{% docs prices_market_cap_change_24h %}
+
+The absolute change in market capitalization (in USD) over the last 24 hours.
+
+{% enddocs %}
+
+{% docs prices_market_cap_change_percentage_24h %}
+
+The percentage change in market capitalization over the last 24 hours.
+
+{% enddocs %}
+
+{% docs prices_total_volume %}
+
+The total trading volume for the asset in USD over the last 24 hours across all exchanges.
+
+{% enddocs %}
+
+{% docs prices_roi_json %}
+
+Return on investment data in JSON format, containing percentage and currency information for historical performance tracking.
+
+{% enddocs %}
+
+{% docs prices_image_url %}
+
+The URL pointing to the official image or logo representing the asset.
+
+{% enddocs %}
+
+{% docs prices_last_updated %}
+
+The timestamp when this market data record was last updated by the data provider.
 
 {% enddocs %}
