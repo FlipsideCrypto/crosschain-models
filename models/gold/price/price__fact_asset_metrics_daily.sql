@@ -40,4 +40,4 @@ SELECT
     modified_timestamp,
     complete_market_data_coingecko_id AS fact_asset_metrics_daily_id
 FROM
-    {{ ref('silver__complete_market_data_coingecko') }}
+    {{ ref('silver__complete_provider_market_data') }}

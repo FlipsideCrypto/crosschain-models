@@ -39,7 +39,7 @@ SELECT
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    {{ dbt_utils.generate_surrogate_key(['asset_id','recorded_date']) }} AS complete_market_data_coingecko_id,
+    {{ dbt_utils.generate_surrogate_key(['asset_id','recorded_date','provider']) }} AS complete_market_data_coingecko_id,
     '{{ invocation_id }}' AS _invocation_id
 FROM {{ ref('bronze__all_market_data_coingecko') }} m
 
@@ -52,6 +52,6 @@ WHERE _inserted_timestamp > (
 )
 {% endif %}
 
-qualify(ROW_NUMBER() over (PARTITION BY asset_id, recorded_date
+qualify(ROW_NUMBER() over (PARTITION BY asset_id, recorded_date, provider
 ORDER BY
     _inserted_timestamp DESC)) = 1

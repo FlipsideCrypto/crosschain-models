@@ -1,12 +1,13 @@
 version: 2
 
 models:
-  - name: silver__complete_market_data_coingecko
+  - name: silver__complete_provider_market_data
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - ASSET_ID
-            - RECORDED_DATE 
+            - RECORDED_DATE
+            - PROVIDER
     columns:
       - name: ASSET_ID
         tests:
@@ -14,6 +15,6 @@ models:
       - name: RECORDED_DATE
         tests:
           - not_null
-      - name: FULLY_DILUTED_VALUATION
+      - name: PROVIDER
         tests:
           - not_null

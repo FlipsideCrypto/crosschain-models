@@ -106,6 +106,12 @@ Hour that the price was recorded at.
 
 {% enddocs %}
 
+{% docs prices_day %}
+
+Day that the market details were recorded at
+
+{% enddocs %}
+
 {% docs prices_price %}
 
 Closing price of the recorded hour in USD.
