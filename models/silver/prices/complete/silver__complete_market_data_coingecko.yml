@@ -1,19 +1,19 @@
 version: 2
 
 models:
-  - name: bronze__market_data_coingecko
+  - name: silver__complete_market_data_coingecko
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - ID
-            - _INSERTED_DATE 
+            - ASSET_ID
+            - RECORDED_DATE 
     columns:
-      - name: ID
+      - name: ASSET_ID
         tests:
           - not_null
-      - name: _INSERTED_DATE
+      - name: RECORDED_DATE
         tests:
           - not_null
-      - name: DATA
+      - name: FULLY_DILUTED_VALUATION
         tests:
           - not_null
